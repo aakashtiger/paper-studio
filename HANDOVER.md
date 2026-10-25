@@ -3,8 +3,9 @@
 **Date:** 2026-10-26
 **Repo:** https://github.com/aakashtiger/paper-studio
 **Local:** `Y:\NewVideoTest\studio`
-**Last commit:** `22f4bce` — `feat: add style definition system and sealed keepsake control`
+**Last commit:** `a408051` — `docs: add session handover and Lemo review`
 **Status:** S1a complete, accepted **9/10 GO**. No renderer, no video produced.
+**Companion:** read `CONVERSATION-HANDOVER.md` for the narrative context the repo cannot carry.
 
 ---
 
@@ -13,7 +14,7 @@
 Paste this into a new session opened in `Y:\NewVideoTest\studio`:
 
 ```text
-Read Y:\NewVideoTest\studio\HANDOVER.md and AGENTS.md.
+Read Y:\NewVideoTest\studio\HANDOVER.md, CONVERSATION-HANDOVER.md and AGENTS.md.
 Continue from the "Next step" section.
 
 Start with the pilot conversion of the Lemo watercolor style into our style pack.
