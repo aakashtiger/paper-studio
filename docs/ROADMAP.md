@@ -2,7 +2,27 @@
 
 Each phase has a gate. A phase is not done because the work is finished; it is done because the gate passes.
 
-## Phase 0 — Vertical slice (week 1)
+## Phase 0a — Style Definition System (S1a)
+
+Prove a style can be defined as a machine-checkable, reusable package. No renderer, no video.
+
+- 27-decision style contract, six-artifact pack.
+- One CLI: `new`, `check`, `approve`, `resolve`, `seal`.
+- Template, authoring guide and frozen style brief.
+- Mutation suite.
+- Blind-authored control style `keepsake`.
+
+**Gate:** the mutation suite passes, `keepsake` is `REVIEWABLE`, two briefs and two formats resolve, and both verifiers return GO at 9/10 or above.
+
+## Phase 0b — Paper K-pop reference pack (S1b)
+
+- Migrate `styles/paper-vows` into the new pack.
+- Extract Paper K-pop tokens, runtime primitives, rigs, recipes, evidence and conformance plan.
+- Content-swap and blind-application tests.
+
+**Gate:** Paper K-pop passes the contract and the reuse test with no renderer.
+
+## Phase 0c — Vertical slice
 
 Build the contract and prove the pipeline is real.
 

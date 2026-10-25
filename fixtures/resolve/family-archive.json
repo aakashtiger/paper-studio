@@ -1,0 +1,21 @@
+{
+  "content": {
+    "title": "Fifty Years of Sundays",
+    "subtitle": "A family archive for Margaret and Harold",
+    "names": "Margaret and Harold Whitfield",
+    "date": "14 June 2026",
+    "venue": "The Garden Room, Lewes",
+    "body": "Fifty years of Sunday lunches, garden chairs, burnt toast and the same blue teapot.",
+    "caption": "The teapot survived every move.",
+    "hashtag": "#FiftyYearsOfSundays",
+    "rsvp": "No replies needed. This one is a gift.",
+    "monogram": "M & H"
+  },
+  "photos": {
+    "hero": "photos/whitfield-garden-1978.jpg",
+    "supporting": [
+      "photos/whitfield-kitchen-1989.jpg",
+      "photos/whitfield-teapot-2004.jpg"
+    ]
+  }
+}

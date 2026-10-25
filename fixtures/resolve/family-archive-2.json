@@ -1,0 +1,22 @@
+{
+  "content": {
+    "title": "The House on Almond Street",
+    "subtitle": "An archive for the Alvarez family",
+    "names": "Rosa and Mateo Alvarez",
+    "date": "1962 to 2026",
+    "years": "1962 to 2026",
+    "venue": "Almond Street, Valencia",
+    "body": "One kitchen, four generations, and a table that was always one chair too small.",
+    "caption": "Every Sunday, the same table, the same two chairs, a small row about the garden, and nobody moved.",
+    "epigraph": "For everyone who ate standing up.",
+    "credit": "Photographs from the Alvarez family album",
+    "monogram": "R & M"
+  },
+  "photos": {
+    "hero": "photos/alvarez-kitchen-1971.jpg",
+    "supporting": [
+      "photos/alvarez-table-1994.jpg",
+      "photos/alvarez-balcony-2012.jpg"
+    ]
+  }
+}

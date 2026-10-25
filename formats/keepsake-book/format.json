@@ -1,0 +1,25 @@
+{
+  "id": "keepsake-book",
+  "name": "Keepsake book",
+  "beatRoleMap": {
+    "cover": "title",
+    "spread": "portrait",
+    "caption": "detail",
+    "close": "close"
+  },
+  "sequence": [
+    { "beat": "cover", "role": "title", "count": 1 },
+    { "beat": "spread", "role": "portrait", "count": 3 },
+    { "beat": "caption", "role": "detail", "count": 3 },
+    { "beat": "close", "role": "close", "count": 1 }
+  ],
+  "durations": [
+    30,
+    45,
+    60
+  ],
+  "aspects": [
+    "1:1"
+  ],
+  "primaryAspect": "1:1"
+}

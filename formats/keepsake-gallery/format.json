@@ -1,0 +1,23 @@
+{
+  "id": "keepsake-gallery",
+  "name": "Keepsake gallery",
+  "beatRoleMap": {
+    "opening": "title",
+    "portrait-a": "portrait",
+    "note-a": "detail",
+    "portrait-b": "portrait",
+    "note-b": "detail",
+    "closing": "close"
+  },
+  "sequence": [
+    { "beat": "opening", "role": "title", "count": 1 },
+    { "beat": "portrait-a", "role": "portrait", "count": 1 },
+    { "beat": "note-a", "role": "detail", "count": 2 },
+    { "beat": "portrait-b", "role": "portrait", "count": 2 },
+    { "beat": "note-b", "role": "detail", "count": 1 },
+    { "beat": "closing", "role": "close", "count": 1 }
+  ],
+  "durations": [45],
+  "aspects": ["1:1"],
+  "primaryAspect": "1:1"
+}

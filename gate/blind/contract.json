@@ -1,0 +1,314 @@
+{
+  "version": 1,
+  "primitives": [
+    "layer",
+    "shape",
+    "path",
+    "text",
+    "image",
+    "camera",
+    "effect",
+    "transition"
+  ],
+  "transitions": [
+    "cut",
+    "page_turn",
+    "dissolve",
+    "iris",
+    "wipe",
+    "match_cut",
+    "hold"
+  ],
+  "effects": [
+    "grain",
+    "vignette",
+    "fiber",
+    "halftone",
+    "shadow",
+    "glow",
+    "flash",
+    "iris"
+  ],
+  "cameraMoves": [
+    "static",
+    "push_in",
+    "pull_back",
+    "pan",
+    "tilt",
+    "orbit",
+    "parallax"
+  ],
+  "easings": [
+    "linear",
+    "ease",
+    "easeIn",
+    "easeOut",
+    "easeInOut",
+    "backOut"
+  ],
+  "assetTypes": [
+    "character",
+    "prop",
+    "set",
+    "frame",
+    "texture",
+    "type",
+    "hud"
+  ],
+  "beatRoles": [
+    "open",
+    "title",
+    "portrait",
+    "detail",
+    "list",
+    "quote",
+    "transition",
+    "close"
+  ],
+  "typeRoles": [
+    "display",
+    "body",
+    "caption",
+    "label",
+    "monogram"
+  ],
+  "physics": [
+    "ease",
+    "squash",
+    "overshoot",
+    "anticipation",
+    "none"
+  ],
+  "slotVocabulary": [
+    "content.title",
+    "content.subtitle",
+    "content.names",
+    "content.date",
+    "content.venue",
+    "content.body",
+    "content.caption",
+    "content.hashtag",
+    "content.rsvp",
+    "content.monogram",
+    "photos.hero",
+    "photos.supporting"
+  ],
+  "dimensions": [
+    {
+      "id": "D01",
+      "decision": "Medium & brush",
+      "where": "tokens.medium.brush",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "brush non-empty"
+    },
+    {
+      "id": "D02",
+      "decision": "Material & surface",
+      "where": "tokens.medium.material",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "non-empty"
+    },
+    {
+      "id": "D03",
+      "decision": "Light & shadow",
+      "where": "tokens.medium.light",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "direction + softness + opacity"
+    },
+    {
+      "id": "D04",
+      "decision": "Colour system",
+      "where": "tokens.color",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "≥2 palettes, six roles, default, maxColours 1–8"
+    },
+    {
+      "id": "D05",
+      "decision": "Texture & finish",
+      "where": "tokens.medium.texture",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "numeric 0–1"
+    },
+    {
+      "id": "D06",
+      "decision": "Compositing order",
+      "where": "tokens.medium.layerOrder",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "≥3 entries"
+    },
+    {
+      "id": "D07",
+      "decision": "Shape & geometry",
+      "where": "tokens.layout.shapes",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "non-empty"
+    },
+    {
+      "id": "D08",
+      "decision": "Composition & safe zones",
+      "where": "tokens.layout",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "margins 0–1, maxWords 1–40"
+    },
+    {
+      "id": "D09",
+      "decision": "Typography & lettering",
+      "where": "tokens.type",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "name + file + licence; scale numeric"
+    },
+    {
+      "id": "D10",
+      "decision": "Camera & depth",
+      "where": "tokens.motion.camera",
+      "required": false,
+      "n/aAllowed": true,
+      "rule": "moves from CAMERA_MOVES"
+    },
+    {
+      "id": "D11",
+      "decision": "Rig & character construction",
+      "where": "capabilities.assets.rigs",
+      "required": false,
+      "n/aAllowed": true,
+      "rule": "rigs or N/A with reason"
+    },
+    {
+      "id": "D12",
+      "decision": "Timing & beat grid",
+      "where": "tokens.motion.timing",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "bpm 30–220, offset 0–2, bar > 0"
+    },
+    {
+      "id": "D13",
+      "decision": "Motion & physics",
+      "where": "tokens.motion",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "easings from EASINGS, physics from PHYSICS"
+    },
+    {
+      "id": "D14",
+      "decision": "Edit & transitions",
+      "where": "tokens.motion.transitions",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "allowed from TRANSITIONS, minShot > 0"
+    },
+    {
+      "id": "D15",
+      "decision": "Sound & silence",
+      "where": "tokens.sound",
+      "required": false,
+      "n/aAllowed": true,
+      "rule": "sound block or N/A with reason"
+    },
+    {
+      "id": "D16",
+      "decision": "Signature",
+      "where": "STYLE.md signature",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "shot, transition, texture"
+    },
+    {
+      "id": "D17",
+      "decision": "Refusals",
+      "where": "STYLE.md refusals",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "≥5"
+    },
+    {
+      "id": "D18",
+      "decision": "Register & fitness",
+      "where": "STYLE.md notFor",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "≥3"
+    },
+    {
+      "id": "D19",
+      "decision": "Capabilities & limits",
+      "where": "capabilities.limits",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "aspects, durations, maxCast, maxWords"
+    },
+    {
+      "id": "D20",
+      "decision": "Assets & registry",
+      "where": "capabilities.assets",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "grammar + starter library; id, type, anchors"
+    },
+    {
+      "id": "D21",
+      "decision": "Recipes & shot contract",
+      "where": "recipes/*.json",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "≥1 recipe; ops closed; slots closed"
+    },
+    {
+      "id": "D22",
+      "decision": "Runtime contract & seed",
+      "where": "capabilities.runtime, tokens.seed",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "primitives ⊆ PRIMITIVES; seeded + fixed non-empty"
+    },
+    {
+      "id": "D23",
+      "decision": "Cost class",
+      "where": "capabilities.costClass",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "light, standard, heavy"
+    },
+    {
+      "id": "D24",
+      "decision": "Reference media",
+      "where": "capabilities.evidence.sources",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "≥3 sources; take / not-take / rights"
+    },
+    {
+      "id": "D25",
+      "decision": "Conformance protocol",
+      "where": "capabilities.proof",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "status declared; frames, aspects, metrics named"
+    },
+    {
+      "id": "D26",
+      "decision": "Provenance, rights & lineage",
+      "where": "capabilities.identity, capabilities.governance",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "author, licence, sources, lineage"
+    },
+    {
+      "id": "D27",
+      "decision": "Authoring protocol",
+      "where": "capabilities.bindings, BRIEF.md",
+      "required": true,
+      "n/aAllowed": false,
+      "rule": "brief present; hashes match; questions log"
+    }
+  ]
+}

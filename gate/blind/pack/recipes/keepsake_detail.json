@@ -1,0 +1,85 @@
+{
+  "id": "keepsake_detail",
+  "beatRoles": [
+    "detail"
+  ],
+  "duration": {
+    "min": 4,
+    "max": 8,
+    "default": 5.6
+  },
+  "camera": {
+    "move": "static"
+  },
+  "slots": [
+    "photos.supporting",
+    "content.caption"
+  ],
+  "assets": [
+    "frame.page-edge",
+    "texture.paper-fibre"
+  ],
+  "composition": [
+    {
+      "op": "layer",
+      "id": "paper",
+      "z": 0
+    },
+    {
+      "op": "effect",
+      "kind": "shadow",
+      "z": 0,
+      "opacity": 0.18
+    },
+    {
+      "op": "image",
+      "id": "detail",
+      "slot": "photos.supporting",
+      "frame": "frame.page-edge",
+      "align": "center",
+      "x": 0.22,
+      "y": 0.08,
+      "w": 0.56,
+      "h": 0.56
+    },
+    {
+      "op": "shape",
+      "id": "rule",
+      "kind": "rule",
+      "color": "clay",
+      "align": "left",
+      "x": 0.22,
+      "y": 0.7,
+      "w": 0.18,
+      "h": 0.004
+    },
+    {
+      "op": "text",
+      "id": "caption",
+      "slot": "content.caption",
+      "typeRole": "caption",
+      "align": "left",
+      "x": 0.22,
+      "y": 0.74,
+      "w": 0.56,
+      "h": 0.16
+    },
+    {
+      "op": "effect",
+      "kind": "fiber",
+      "z": 3,
+      "opacity": 0.12
+    },
+    {
+      "op": "transition",
+      "kind": "page_turn"
+    }
+  ],
+  "transitionOut": "page_turn",
+  "failureModes": [
+    "more than one photograph on the spread",
+    "caption longer than 18 words",
+    "a photograph sharper than the source",
+    "more than four colours in the frame"
+  ]
+}

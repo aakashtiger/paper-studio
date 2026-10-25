@@ -1,0 +1,132 @@
+{
+  "id": "keepsake_title",
+  "beatRoles": [
+    "title"
+  ],
+  "duration": {
+    "min": 4,
+    "max": 8,
+    "default": 5.6
+  },
+  "camera": {
+    "move": "push_in",
+    "from": 1.0,
+    "to": 1.03,
+    "ease": "easeOut"
+  },
+  "slots": [
+    "content.monogram",
+    "content.names",
+    "content.title",
+    "content.subtitle",
+    "content.date",
+    "content.venue"
+  ],
+  "assets": [
+    "frame.page-edge",
+    "texture.paper-fibre"
+  ],
+  "composition": [
+    {
+      "op": "layer",
+      "id": "paper",
+      "z": 0
+    },
+    {
+      "op": "effect",
+      "kind": "shadow",
+      "z": 0,
+      "opacity": 0.18
+    },
+    {
+      "op": "text",
+      "id": "monogram",
+      "slot": "content.monogram",
+      "typeRole": "monogram",
+      "align": "left",
+      "x": 0.07,
+      "y": 0.08,
+      "w": 0.2,
+      "h": 0.05
+    },
+    {
+      "op": "text",
+      "id": "names",
+      "slot": "content.names",
+      "typeRole": "display",
+      "align": "left",
+      "x": 0.07,
+      "y": 0.24,
+      "w": 0.86,
+      "h": 0.18
+    },
+    {
+      "op": "text",
+      "id": "title",
+      "slot": "content.title",
+      "typeRole": "display",
+      "align": "left",
+      "x": 0.07,
+      "y": 0.44,
+      "w": 0.86,
+      "h": 0.1
+    },
+    {
+      "op": "shape",
+      "id": "rule",
+      "kind": "rule",
+      "color": "clay",
+      "align": "left",
+      "x": 0.07,
+      "y": 0.58,
+      "w": 0.24,
+      "h": 0.004
+    },
+    {
+      "op": "text",
+      "id": "place",
+      "slot": "content.venue",
+      "typeRole": "label",
+      "align": "left",
+      "x": 0.07,
+      "y": 0.62,
+      "w": 0.56,
+      "h": 0.06
+    },
+    {
+      "op": "text",
+      "id": "date",
+      "slot": "content.date",
+      "typeRole": "label",
+      "align": "left",
+      "x": 0.07,
+      "y": 0.82,
+      "w": 0.4,
+      "h": 0.06
+    },
+    {
+      "op": "effect",
+      "kind": "fiber",
+      "z": 3,
+      "opacity": 0.12
+    },
+    {
+      "op": "camera",
+      "move": "push_in",
+      "from": 1.0,
+      "to": 1.03,
+      "ease": "easeOut"
+    },
+    {
+      "op": "transition",
+      "kind": "page_turn"
+    }
+  ],
+  "transitionOut": "page_turn",
+  "failureModes": [
+    "a photograph on the title spread",
+    "a push-in faster than four percent",
+    "names or date set smaller than the title",
+    "more than four colours in the frame"
+  ]
+}

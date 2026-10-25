@@ -49,6 +49,21 @@ src/engine/         planner, renderer, compiler
 scripts/            command line entry points
 ```
 
+## Style system
+
+A style is a reusable package: `STYLE.md`, `tokens.json`, `capabilities.json`,
+recipes and a one-page card. The contract is
+`docs/specs/0003-style-definition-system.md`; start from `styles/_template/`.
+The director-facing guide is `docs/STYLE-AUTHORING.md`.
+
+```bash
+npm run style:new -- <id> --brief <file>
+npm run style:check -- <path>
+npm run style:approve -- <id> --by "<name>"
+npm run style:resolve -- --style <path> --seed <n> --brief <file> --format <file>
+npm run style:seal
+```
+
 ## Who owns what
 
 | Path | Owner |

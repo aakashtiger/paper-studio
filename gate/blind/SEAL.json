@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "createdAt": "2026-10-25T20:45:50.704Z",
+  "templateHash": "sha256:6da2490d70a4d3aa916213b67e02b06343388a234c572ad52aeb80c89246d346",
+  "contractHash": "sha256:03626634cdd53b622c5969864c1ba155e8491378bf06f192747673278642aca2",
+  "briefHash": "sha256:73bbcde889aaac70faf1b4b3a8b998fc16e45fc179da06d3dfcb422d20c6b823",
+  "authoringHash": "sha256:2d69e9179cbdf6f3a689922ffc395749d98c0d812601966c9ea715a58d18f42a",
+  "promptHash": "sha256:d2c6dd0dda3f093f10bdbdbc5ee6198b7a2cb546cd2593b68757dfe9e85c256b",
+  "validatorHash": "sha256:99a1223b614b36f1a9de3622dce5e4eb9507cb37e9e9f52ad115cb07897b8399",
+  "files": {
+    "_template/BRIEF.md": "sha256:b6f6983c71b8216fe48356ddc7f22b8831334bb57d7d981ed0bde77e958513ce",
+    "_template/capabilities.json": "sha256:f873bd211c50b856a76d185e1c3d828ad3e96827343255df2cffdf02539897cb",
+    "_template/card.html": "sha256:f7e07da5ff28a485cf6dabfb582ee110f5830af2a6a4bb7430e04b607b166071",
+    "_template/recipes/_example.json": "sha256:bcd359c4c036b24059f72ab843df9339ec5b7f801670073a2ad0ee0a3a86f477",
+    "_template/STYLE.md": "sha256:cc888b2feca9c48d1d170dd90a42c2eca27b74627a93897df2b687d3af0a4c2d",
+    "_template/tokens.json": "sha256:c3ff8b1b215483f61ff5ebb325b977a68761ea5d2dd97d93937dabf4a8c66d8e",
+    "brief.md": "sha256:73bbcde889aaac70faf1b4b3a8b998fc16e45fc179da06d3dfcb422d20c6b823",
+    "contract.json": "sha256:e7f4a5d9a55539d8509ed17d691320b13e5dcbbab1526e5248ff72964f7afefb",
+    "prompt.md": "sha256:d2c6dd0dda3f093f10bdbdbc5ee6198b7a2cb546cd2593b68757dfe9e85c256b",
+    "README.md": "sha256:8963d0eb39f19411f77e5efdb99692e377e69b2f727f5450c6a26c17807a0109",
+    "STYLE-AUTHORING.md": "sha256:2d69e9179cbdf6f3a689922ffc395749d98c0d812601966c9ea715a58d18f42a",
+    "validator/package.json": "sha256:d807314e047dca87b59506e59d3eeb0101c2d6fa12ffc8297ff41e2880d89506",
+    "validator/scripts/style.ts": "sha256:85f76e272d1b5d237fbaa61e6bb3e789964169e204f7a3f5066d70ae522bb015",
+    "validator/src/core/style.ts": "sha256:8acd5c7d8fa86fb50671e3283a95c2925dca2e9ab63ee82f4ab82eb70074772f",
+    "validator/tsconfig.json": "sha256:1ae24f8b9b710117c6698db9abb18241d00e9e3e577e989c2f3ee98bfba1c690"
+  }
+}

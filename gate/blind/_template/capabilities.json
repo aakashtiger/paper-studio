@@ -1,0 +1,128 @@
+{
+  "identity": {
+    "id": "template",
+    "name": "Template",
+    "version": "0.1.0",
+    "family": "paper",
+    "status": "draft",
+    "author": "Paper Studio",
+    "licence": "CC0-1.0 (template only)",
+    "lineage": [
+      "styles/_template"
+    ],
+    "bindings": {
+      "briefHash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "templateHash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "contractHash": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  },
+  "limits": {
+    "aspects": [
+      "1:1",
+      "9:16",
+      "16:9"
+    ],
+    "durations": [
+      15,
+      30,
+      45,
+      60
+    ],
+    "maxCast": 0,
+    "maxWords": 18
+  },
+  "adaptation": {
+    "aspects": "Crop from the 1:1 master; never stretch.",
+    "type": "One Latin family only until a second is licensed.",
+    "photographs": "One hero photograph at 2400 px on the long edge."
+  },
+  "assets": {
+    "grammar": "Every element is a printed layer on one sheet of paper.",
+    "starterLibrary": [
+      {
+        "id": "frame.example",
+        "type": "frame",
+        "anchors": [
+          "page edge",
+          "photo corner"
+        ]
+      },
+      {
+        "id": "texture.example",
+        "type": "texture",
+        "anchors": [
+          "paper grain",
+          "print tooth"
+        ]
+      }
+    ],
+    "rigs": {
+      "notApplicable": true,
+      "reason": "The template has no on-camera cast."
+    }
+  },
+  "runtime": {
+    "primitives": [
+      "layer",
+      "image",
+      "text",
+      "effect",
+      "transition"
+    ]
+  },
+  "evidence": {
+    "sources": [
+      {
+        "take": "quiet margins",
+        "notTake": "busy collage",
+        "rights": "public reference, observed only"
+      },
+      {
+        "take": "paper fibre at low contrast",
+        "notTake": "digital gloss",
+        "rights": "public reference, observed only"
+      },
+      {
+        "take": "one slow page turn",
+        "notTake": "fast cuts",
+        "rights": "public reference, observed only"
+      }
+    ]
+  },
+  "proof": {
+    "status": "declared",
+    "frames": [
+      "hero",
+      "spread",
+      "close"
+    ],
+    "aspects": [
+      "1:1"
+    ],
+    "metrics": [
+      "caption word count",
+      "palette colour count",
+      "transition count"
+    ]
+  },
+  "governance": {
+    "owner": "Paper Studio",
+    "review": "The director reviews the card and signs.",
+    "questions": [
+      "Which single page turn is the signature?"
+    ],
+    "choices": [
+      {
+        "id": "page-turn",
+        "question": "Page-turn speed: 0.8 s, 1.2 s or 1.6 s?",
+        "options": [
+          "0.8 s",
+          "1.2 s",
+          "1.6 s"
+        ],
+        "where": "STYLE.md > Signature"
+      }
+    ]
+  },
+  "costClass": "light"
+}

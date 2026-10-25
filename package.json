@@ -7,7 +7,12 @@
   "scripts": {
     "plan": "tsx scripts/plan.ts",
     "test": "node --import tsx --test test/*.test.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "style:new": "tsx scripts/style.ts new",
+    "style:check": "tsx scripts/style.ts check",
+    "style:approve": "tsx scripts/style.ts approve",
+    "style:resolve": "tsx scripts/style.ts resolve",
+    "style:seal": "tsx scripts/style.ts seal"
   },
   "dependencies": {
     "zod": "^3.24.1"

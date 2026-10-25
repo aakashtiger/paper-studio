@@ -50,28 +50,33 @@ Do not refactor across an ownership boundary without a PR labelled `contract-cha
 npm install            # install
 npm run plan -- fixtures/wedding-min/brief.json   # print a shot plan
 npm run typecheck      # TypeScript check
+npm test               # unit and mutation tests
 ```
 
-Planned, not built yet:
+Style commands, built in S1a:
 
 ```bash
-npm run style:check <style>    # validate tokens, capabilities, recipes
-npm run style:reel <style>     # contact sheet of every recipe
-npm run render -- <project>    # frames + encode
+npm run style:new -- <id> --brief <file>
+npm run style:check -- <path>
+npm run style:approve -- <id> --by "<name>"
+npm run style:resolve -- --style <path> --seed <n> --brief <file> --format <file>
+npm run style:seal
 ```
 
 ## Current phase
 
-**Week 1 — vertical slice.**
+**S1a — Style Definition System.**
 
 Build only:
 
-- wedding brief schema
-- deterministic planner
-- Paper Vows tokens, capabilities and recipes
-- fixture brief
+- style schema, validator, resolver and CLI
+- template, authoring guide and style brief
+- mutation suite
+- the control style `keepsake`, which is a control and not a product style
 
-Do not build: the web app, the renderer, payments, auth, a second style, long-form YouTube.
+Do not build: the renderer, a video, the web app, the Paper K-pop pack, or a second product style.
+
+Paper K-pop is S1b. `styles/paper-vows` is legacy during S1a and is not expected to pass the new validator.
 
 ## How to make a change
 

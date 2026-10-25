@@ -1,0 +1,58 @@
+{
+  "id": "example_spread",
+  "beatRoles": [
+    "portrait",
+    "detail"
+  ],
+  "duration": {
+    "min": 4,
+    "max": 10,
+    "default": 6
+  },
+  "camera": {
+    "move": "push_in",
+    "from": 1.0,
+    "to": 1.03,
+    "ease": "easeOut"
+  },
+  "slots": [
+    "photos.hero",
+    "content.caption"
+  ],
+  "assets": [
+    "frame.example",
+    "texture.example"
+  ],
+  "composition": [
+    {
+      "op": "layer",
+      "id": "paper",
+      "z": 0
+    },
+    {
+      "op": "image",
+      "slot": "photos.hero",
+      "frame": "frame.example"
+    },
+    {
+      "op": "text",
+      "slot": "content.caption",
+      "typeRole": "caption",
+      "align": "left"
+    },
+    {
+      "op": "effect",
+      "kind": "fiber"
+    },
+    {
+      "op": "transition",
+      "kind": "page_turn"
+    }
+  ],
+  "transitionOut": "page_turn",
+  "failureModes": [
+    "caption longer than two lines",
+    "photo below print resolution",
+    "more than four colours in the frame"
+  ]
+}

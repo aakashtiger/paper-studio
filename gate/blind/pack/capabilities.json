@@ -1,0 +1,196 @@
+{
+  "identity": {
+    "id": "keepsake",
+    "name": "Keepsake",
+    "version": "0.1.0",
+    "family": "paper",
+    "status": "reviewable",
+    "author": "Paper Studio",
+    "licence": "CC0-1.0 (control style; sealed template lineage)",
+    "lineage": [
+      "gate/blind/_template"
+    ],
+    "bindings": {
+      "briefHash": "sha256:73bbcde889aaac70faf1b4b3a8b998fc16e45fc179da06d3dfcb422d20c6b823",
+      "templateHash": "sha256:6da2490d70a4d3aa916213b67e02b06343388a234c572ad52aeb80c89246d346",
+      "contractHash": "sha256:03626634cdd53b622c5969864c1ba155e8491378bf06f192747673278642aca2"
+    }
+  },
+  "limits": {
+    "aspects": [
+      "1:1"
+    ],
+    "durations": [
+      45
+    ],
+    "maxCast": 0,
+    "maxWords": 18
+  },
+  "adaptation": {
+    "aspects": "Crop from the 1:1 master; never stretch. Keep the seven percent margin.",
+    "type": "Instrument Serif for display and monogram; Space Grotesk for captions, labels and body. No third family.",
+    "photographs": "One hero photograph at 2400 px on the long edge; supporting details at 1600 px.",
+    "captions": "At 390 px, caption text stays at 14 px or larger and never exceeds 18 words."
+  },
+  "assets": {
+    "grammar": "Every element is a printed layer on one sheet of warm paper; nothing floats and nothing shines.",
+    "starterLibrary": [
+      {
+        "id": "frame.page-edge",
+        "type": "frame",
+        "anchors": [
+          "page edge",
+          "photo corner"
+        ]
+      },
+      {
+        "id": "texture.paper-fibre",
+        "type": "texture",
+        "anchors": [
+          "paper grain",
+          "print tooth"
+        ]
+      }
+    ],
+    "rigs": {
+      "notApplicable": true,
+      "reason": "No on-camera cast, no rig and no character construction."
+    }
+  },
+  "runtime": {
+    "primitives": [
+      "layer",
+      "image",
+      "shape",
+      "text",
+      "effect",
+      "camera",
+      "transition"
+    ]
+  },
+  "evidence": {
+    "sources": [
+      {
+        "take": "quiet margins and one photograph per page",
+        "notTake": "busy collage or scrapbook clutter",
+        "rights": "public-domain family-album pages, observed only; no image reproduced"
+      },
+      {
+        "take": "paper fibre at low contrast",
+        "notTake": "digital gloss, foil or metallic sheen",
+        "rights": "public reference, observed only"
+      },
+      {
+        "take": "one slow page turn, held long enough to read",
+        "notTake": "fast cuts or auto-advance",
+        "rights": "public reference, observed only"
+      },
+      {
+        "take": "matte terracotta as the only accent",
+        "notTake": "gold, brass or wedding-stationery metallics",
+        "rights": "public reference, observed only"
+      }
+    ]
+  },
+  "proof": {
+    "status": "declared",
+    "frames": [
+      "keepsake_title",
+      "keepsake_spread",
+      "keepsake_close"
+    ],
+    "aspects": [
+      "1:1"
+    ],
+    "metrics": [
+      "caption word count",
+      "palette colour count",
+      "page-turn count",
+      "caption size at 390 px"
+    ]
+  },
+  "governance": {
+    "owner": "Paper Studio",
+    "review": "The director reviews the card at 900 x 700 and on a 390 px phone, then signs.",
+    "questions": [
+      "Should the page turn take 1.2 s or 1.6 s? The recorded choice is in governance.choices."
+    ],
+    "choices": [
+      {
+        "id": "page-turn-speed",
+        "question": "Page-turn speed: 1.2 s or 1.6 s?",
+        "options": [
+          "1.2 s",
+          "1.6 s"
+        ],
+        "where": "STYLE.md > Signature > page-turn speed"
+      }
+    ],
+    "decisions": [
+      {
+        "id": "caption-density",
+        "answer": "18 words maximum per caption, one or two full sentences.",
+        "reason": "The frozen brief fixes 18 words and asks for dense captions.",
+        "decidedBy": "Blind style author",
+        "decidedAt": "2026-10-25"
+      },
+      {
+        "id": "colour-roles",
+        "answer": "paper, ink, clay, linen, slate, umber. There is no metal role; slate is matte stone.",
+        "reason": "The brief bans metallic sheen; the authoring guide says metal is a slot, not a material.",
+        "decidedBy": "Blind style author",
+        "decidedAt": "2026-10-25"
+      },
+      {
+        "id": "photograph-colour",
+        "answer": "A photograph counts as one colour in the four-colour cap.",
+        "reason": "The brief sets a four-colour frame, so a photograph has to be counted.",
+        "decidedBy": "Blind style author",
+        "decidedAt": "2026-10-25"
+      },
+      {
+        "id": "transition-set",
+        "answer": "Only page_turn and hold. No cut, dissolve, iris, wipe or match cut.",
+        "reason": "The brief asks for slow page turns and bans fast cuts; fewer transitions keep the style reusable.",
+        "decidedBy": "Blind style author",
+        "decidedAt": "2026-10-25"
+      },
+      {
+        "id": "title-close-photo",
+        "answer": "The title and close are type and rule only; the middle spreads carry the photographs.",
+        "reason": "The brief says the first spread is the title, the last is a short close, and the six in between are photographs.",
+        "decidedBy": "Blind style author",
+        "decidedAt": "2026-10-25"
+      },
+      {
+        "id": "reference-treatment",
+        "answer": "No cleared image; the reference is described, not reproduced.",
+        "reason": "No rights-cleared reference image is supplied in the sealed run.",
+        "decidedBy": "Blind style author",
+        "decidedAt": "2026-10-25"
+      },
+      {
+        "id": "proof-frames",
+        "answer": "keepsake_title, keepsake_spread and keepsake_close at 1:1.",
+        "reason": "The brief asks for one title spread, one caption-heavy spread and one close.",
+        "decidedBy": "Blind style author",
+        "decidedAt": "2026-10-25"
+      },
+      {
+        "id": "recipe-reuse",
+        "answer": "Four reusable shot contracts carry the eight spreads.",
+        "reason": "The style is a reusable system; the brief fixes one film, not eight bespoke layouts.",
+        "decidedBy": "Blind style author",
+        "decidedAt": "2026-10-25"
+      },
+      {
+        "id": "licence",
+        "answer": "CC0-1.0 control licence inherited from the sealed template.",
+        "reason": "The pack is an internal control style and carries no third-party assets.",
+        "decidedBy": "Blind style author",
+        "decidedAt": "2026-10-25"
+      }
+    ]
+  },
+  "costClass": "light"
+}
