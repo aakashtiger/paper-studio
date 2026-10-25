@@ -65,3 +65,27 @@ The creative owner works through an LLM inside `styles/` only. The technical own
 2. `docs/ARCHITECTURE.md`
 3. `docs/SPEC.md`
 4. `docs/ROADMAP.md`
+
+## Repo setup (one-time)
+
+CI is defined in `.github/workflows/ci.yml` but is not committed yet: the current GitHub token lacks the `workflow` scope. To enable it:
+
+```bash
+gh auth refresh -s workflow
+git add .github/workflows/ci.yml
+git commit -m "ci: add workflow"
+git push
+```
+
+To add the second owner once their GitHub handle is known:
+
+```bash
+gh api --method PUT repos/aakashtiger/paper-studio/collaborators/<handle> -f permission=push
+```
+
+## Next slice
+
+**Technical owner:** build `docs/specs/0002-renderer-v0.md` — three shots, 540×960, deterministic stills.
+
+**Creative owner:** refine `styles/paper-vows/` — palette, type lockup, hero reference frames, and the remaining recipes. Run `npm run plan` after every recipe change and read the warnings.
+
