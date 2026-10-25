@@ -1,0 +1,16 @@
+{
+  "slug": "keepsake",
+  "name": "Keepsake",
+  "category": "Family archive",
+  "summary": "A 1:1 family-archive book film: one photograph per spread, a dense caption, room tone and slow page turns.",
+  "uses": ["Family archive", "Anniversary", "Heirloom photo book"],
+  "aspects": ["1:1"],
+  "durations": [45],
+  "maxWords": 18,
+  "status": "reviewable",
+  "licence": "CC0-1.0",
+  "card": "card.html",
+  "humanBrief": "STYLE.md",
+  "machineContract": "capabilities.json",
+  "lineage": "Human brief structure adapted from the Lemo-Opuscar STYLE.md template (MIT); no demo content, story, imagery or code reused."
+}

@@ -138,6 +138,35 @@ page-turn speed paragraph after the three lines.
 - **Fonts.** Name each family's file, licence and role in `tokens.type.families`; the card loads the file with an `@font-face` rule, and a missing rule blocks approval.
 - **The engine-free rule** catches library names such as `Three.js`, `WebGLRenderer` and `p5.brush`, not ordinary words like "three".
 
+## The 11-part human brief
+
+`STYLE.md` follows the Lemo-Opuscar structure, because it is a better human brief than a flat list of invariants. The machine still reads the 27 decisions in `tokens.json` and `capabilities.json`; this is the part a person reads.
+
+| # | Section | What it holds |
+|---|---|---|
+| 1 | Essence, and what it is not | 3–5 defining traits; the styles it is easily confused with |
+| 2 | Materials & rendering | The physical medium and how code imitates it; surfaces, edges, light, layers |
+| 3 | Colour logic | Roles, ratios, what the accent is for, what may never be coloured |
+| 4 | Type & subtitles | Faces, roles, sizes, reading-time rules, where text lives |
+| 5 | Motion quality | Frame rate, easing, what moves, what never moves |
+| 6 | Camera grammar | A vocabulary of moves, not a route; allowed and forbidden transitions |
+| 7 | Sound palette | Instruments, foley materials, silence, mix character |
+| 8 | Native moves | The moments only this medium can do, with three content examples each |
+| 9 | Pitfalls of the medium | Mistakes that come from the medium, each with its fix |
+| 10 | Engine | Which recipes and runtime primitives draw the style |
+| 11 | Variation space | What the director may change; three structures, openings and endings |
+
+The validator also requires four headings, which sit alongside the eleven:
+
+- `## Signature` — the shot, transition and texture people remember
+- `## Refusals` — at least five concrete bans
+- `## Not for` — at least three formats or occasions this style is wrong for
+- `## Questions` — the author's log of gaps and decisions
+
+## Gallery metadata
+
+`style.json` is optional gallery metadata: slug, name, category, summary, uses, aspects, durations, maximum words, status, licence, card path, human brief and machine contract. It is for the app, the marketplace and the style gallery. The validator does not read it yet.
+
 ## What the report means
 
 | Status | What it means | What you do |

@@ -6,6 +6,7 @@
 **Last commit:** `a408051` — `docs: add session handover and Lemo review`
 **Status:** S1a complete, accepted **9/10 GO**. No renderer, no video produced.
 **Companion:** read `CONVERSATION-HANDOVER.md` for the narrative context the repo cannot carry.
+**Update 2026-10-26:** the living `keepsake` example now uses the 11-section Lemo-style human brief and carries `style.json` gallery metadata. The machine contract, the template and the frozen `gate/blind/pack` are unchanged. See `docs/decisions/0006-lemo-brief-structure.md`.
 
 ---
 

@@ -173,6 +173,8 @@ Local copy:
 
 **S1a is done. Lemo is reviewed. The next job is a pilot conversion, not a renderer.**
 
+**Update 2026-10-26:** the living `keepsake` example has been restructured to the 11-section Lemo-style human brief and now carries `style.json` gallery metadata. The machine contract and the frozen `gate/blind/pack` are unchanged. See `docs/decisions/0006-lemo-brief-structure.md`. The watercolor pilot can use the same human-brief structure.
+
 ### Next step
 
 Convert **one** Lemo style into our pack, with no renderer:
