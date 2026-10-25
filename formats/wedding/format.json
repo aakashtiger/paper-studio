@@ -1,0 +1,23 @@
+{
+  "id": "wedding",
+  "name": "Wedding invitation film",
+  "durations": [30, 45, 60],
+  "aspects": ["9:16", "16:9", "1:1"],
+  "primaryAspect": "9:16",
+  "audio": "music-led",
+  "textDensity": "low",
+  "burnedInCaptions": true,
+  "beatMap": [
+    { "beat": "open", "purpose": "establish the paper world", "share": 0.15 },
+    { "beat": "names", "purpose": "who is getting married", "share": 0.2 },
+    { "beat": "portrait", "purpose": "make it personal", "share": 0.2 },
+    { "beat": "details", "purpose": "when and where", "share": 0.2 },
+    { "beat": "rsvp", "purpose": "what to do next", "share": 0.15 },
+    { "beat": "close", "purpose": "monogram and blessing", "share": 0.1 }
+  ],
+  "deliverables": ["9:16", "16:9", "1:1", "still", "rsvp-qr", "captions"],
+  "requires": ["brief", "music"],
+  "optional": ["photos", "families", "hashtag"],
+  "skips": ["research", "narration", "genre"],
+  "loudnessLufs": -16
+}

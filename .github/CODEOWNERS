@@ -1,0 +1,10 @@
+# Default owner. Add the second owner's GitHub handle when their account is known.
+* @aakashtiger
+
+# Creative surface
+/styles/ @aakashtiger
+/fixtures/ @aakashtiger
+
+# Shared contract
+/src/core/ @aakashtiger
+/docs/decisions/ @aakashtiger

@@ -1,0 +1,18 @@
+{
+  "id": "blessing_text",
+  "name": "Blessing",
+  "purpose": "A quiet text beat: a blessing, quote or family line, set on paper with almost no motion.",
+  "defaultDuration": 5,
+  "duration": { "min": 3, "max": 10 },
+  "camera": { "move": "push_in", "from": 1.0, "to": 1.03, "ease": "cubic-bezier(0.22, 1, 0.36, 1)" },
+  "slots": ["text.blessing"],
+  "requires": ["paper.background", "type.body"],
+  "requiresPhotos": false,
+  "transitionOut": "cut",
+  "reference": "references/frames/04-hero-blessing.jpg",
+  "failureModes": [
+    "the line is too long for one card",
+    "the quote is centred as a paragraph",
+    "italics are used for more than one phrase"
+  ]
+}

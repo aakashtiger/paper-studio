@@ -1,0 +1,18 @@
+{
+  "id": "monogram_end",
+  "name": "Monogram",
+  "purpose": "Close the film: the couple's initials, pressed or embossed, and a held final frame.",
+  "defaultDuration": 5,
+  "duration": { "min": 3, "max": 10 },
+  "camera": { "move": "pull_back", "from": 1.04, "to": 1.0, "ease": "cubic-bezier(0.22, 1, 0.36, 1)" },
+  "slots": ["couple.initials"],
+  "requires": ["paper.card", "type.display", "prop.waxSeal"],
+  "requiresPhotos": false,
+  "transitionOut": "hold",
+  "reference": "references/frames/07-hero-monogram.jpg",
+  "failureModes": [
+    "initials are set in a different face than the names",
+    "the monogram is centred with no optical correction",
+    "the final frame cuts before the music resolves"
+  ]
+}

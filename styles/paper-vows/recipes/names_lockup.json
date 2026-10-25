@@ -1,0 +1,18 @@
+{
+  "id": "names_lockup",
+  "name": "Names lockup",
+  "purpose": "The typographic hero: the two names, set large, with the invitation line beneath.",
+  "defaultDuration": 6,
+  "duration": { "min": 4, "max": 12 },
+  "camera": { "move": "pull_back", "from": 1.04, "to": 1.0, "ease": "cubic-bezier(0.22, 1, 0.36, 1)" },
+  "slots": ["couple.namesLine", "text.inviteLine"],
+  "requires": ["paper.background", "type.display"],
+  "requiresPhotos": false,
+  "transitionOut": "cut",
+  "reference": "references/frames/02-hero-names.jpg",
+  "failureModes": [
+    "the ampersand wraps to its own line",
+    "the invitation line is longer than the names",
+    "tracking is too tight at large sizes"
+  ]
+}

@@ -1,0 +1,27 @@
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# renders and large media
+out/
+*.mp4
+*.mov
+*.wav
+*.aiff
+*.psd
+*.blend1
+
+# keep small reference clips if we add them deliberately
+!fixtures/**/*.mp4
+!styles/**/references/**/*.mp4
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

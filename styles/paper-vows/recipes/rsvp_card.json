@@ -1,0 +1,19 @@
+{
+  "id": "rsvp_card",
+  "name": "RSVP card",
+  "purpose": "The action beat: how to respond, plus the hashtag if supplied.",
+  "defaultDuration": 4,
+  "duration": { "min": 3, "max": 8 },
+  "camera": { "move": "static", "from": 1.0, "to": 1.0, "ease": "linear" },
+  "slots": ["rsvp.line", "text.hashtag"],
+  "optionalSlots": ["text.hashtag"],
+  "requires": ["paper.card", "type.body"],
+  "requiresPhotos": false,
+  "transitionOut": "cut",
+  "reference": "references/frames/06-hero-rsvp.jpg",
+  "failureModes": [
+    "the number is split across lines",
+    "the hashtag is larger than the RSVP action",
+    "the card sits too low in the 9:16 safe zone"
+  ]
+}

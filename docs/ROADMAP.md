@@ -1,0 +1,78 @@
+# Roadmap
+
+Each phase has a gate. A phase is not done because the work is finished; it is done because the gate passes.
+
+## Phase 0 — Vertical slice (week 1)
+
+Build the contract and prove the pipeline is real.
+
+- Wedding brief schema and validator.
+- Deterministic planner.
+- Paper Vows tokens, capabilities, 7 recipes.
+- Fixture brief.
+- Golden fixture test.
+
+**Gate:** `npm run plan -- fixtures/wedding-min/brief.json` produces a coherent 30-second plan, and both owners can run it on their machines.
+
+## Phase 1 — Renderer (weeks 2–3)
+
+- Seed the engine from the existing Paper K-pop renderer.
+- Render a 15-second, 3-shot MP4 from the plan.
+- Bundle fonts. Pin ffmpeg.
+- Golden frame hash test in CI.
+
+**Gate:** the same plan renders byte-identical on both machines.
+
+## Phase 2 — Full wedding film (weeks 3–4)
+
+- All 12 wedding recipes.
+- 5 palettes, 3 type lockups, 3 motif packs.
+- Photo treatment: cutout, paper frame, composition.
+- 30/45/60s, 9:16/16:9/1:1.
+- Still card and RSVP QR.
+
+**Gate:** three complete films from three real briefs, no bespoke code.
+
+## Phase 3 — Service launch (week 5)
+
+- Intake form.
+- Review link with timecoded comments.
+- Manual delivery kit.
+- Five paying weddings.
+
+**Gate:** five delivered films, at least three referrals, support under 20 minutes per film.
+
+## Phase 4 — Studio shell (weeks 6–9)
+
+- Local web app: gallery, brief, progress, preview, review, export.
+- LLM connection: Claude Code first, then Codex, Gemini, Ollama.
+- Style validation and reel commands for the creative owner.
+- Project versioning and style pinning.
+
+**Gate:** five outsiders make a wedding film unaided in under 60 minutes.
+
+## Phase 5 — Creator door (weeks 10–14)
+
+- Song format and Shorts format.
+- Subscription billing.
+- Asset browser.
+- Style pack licensing and updates.
+
+**Gate:** twenty paying creators, at least ten films exported.
+
+## Phase 6 — Depth (month 4+)
+
+- Long-form YouTube: research, script, narration playbook.
+- Second style family: Vox Collage.
+- 3D and camera-heavy tier.
+- Marketplace.
+
+**Gate:** a 90-second explainer a real YouTuber would publish.
+
+## What we say no to until Phase 5
+
+- desktop installers
+- cloud rendering
+- a full timeline editor
+- multi-user teams
+- a second style before the first one is proven across three briefs

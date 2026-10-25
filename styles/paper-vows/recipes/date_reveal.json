@@ -1,0 +1,18 @@
+{
+  "id": "date_reveal",
+  "name": "Date and venue",
+  "purpose": "The practical beat: when and where, with the date as the largest element.",
+  "defaultDuration": 5,
+  "duration": { "min": 4, "max": 10 },
+  "camera": { "move": "push_in", "from": 1.02, "to": 1.0, "ease": "cubic-bezier(0.22, 1, 0.36, 1)" },
+  "slots": ["events.primary.date", "events.primary.venue"],
+  "requires": ["paper.background", "type.display", "type.body"],
+  "requiresPhotos": false,
+  "transitionOut": "cut",
+  "reference": "references/frames/05-hero-date.jpg",
+  "failureModes": [
+    "the date uses a numeric format",
+    "the venue wraps awkwardly",
+    "the city is dropped from the venue line"
+  ]
+}

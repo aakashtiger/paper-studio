@@ -1,0 +1,45 @@
+{
+  "style": "paper-vows",
+  "version": "0.1.0",
+  "shots": [
+    "invitation_unfold",
+    "names_lockup",
+    "portrait_frame",
+    "blessing_text",
+    "date_reveal",
+    "rsvp_card",
+    "monogram_end"
+  ],
+  "palettes": [
+    "marigold-ivory",
+    "sage-blush",
+    "midnight-rose",
+    "sandalwood",
+    "ivory-gold"
+  ],
+  "motifs": ["indian-classic", "minimal", "destination"],
+  "typeLockups": ["classic", "modern", "bilingual"],
+  "aspects": ["9:16", "16:9", "1:1"],
+  "durations": [30, 45, 60],
+  "text": {
+    "maxWordsPerCard": 12,
+    "supportsQuote": true,
+    "supportsHashtag": true,
+    "supportsDevanagari": true
+  },
+  "cast": {
+    "maxSimultaneous": 2,
+    "requiresRig": false
+  },
+  "motion": ["push_in", "pull_back", "parallax", "paper_flutter", "unfold", "seal_press"],
+  "lighting": ["top-left-soft"],
+  "unsupported": [
+    "photoreal",
+    "live-action",
+    "3d-camera",
+    "map-animation",
+    "glitch",
+    "lens-flare",
+    "handheld-shake"
+  ]
+}

@@ -1,0 +1,131 @@
+# Architecture
+
+## What this is
+
+A deterministic pipeline that turns a brief into a shot plan, and a shot plan into frames.
+
+Everything else — the web app, the review room, payments, the creator studio — sits on top of that pipeline. The pipeline is the product's core; the UI is a shell around it.
+
+## Three axes
+
+| Axis | Question | Lives in | Changes |
+|---|---|---|---|
+| **Style** | How does it look and move? | `styles/` | monthly |
+| **Format** | What is the deliverable? | `formats/` | rarely |
+| **Genre** | What is the content, and how is it argued? | `genres/` | per vertical |
+
+Style and format are independent. A wedding film and a YouTube Short can share a style, but never share a format.
+
+Genre applies mainly to long-form YouTube and documentary. Weddings and songs have fixed content logic and need no genre.
+
+## Two doors
+
+**Door A — Paper Vows (service).**
+The couple fills an intake form, sends photos and a brief. We generate the film, they review a link, we deliver. Pricing is per invite.
+
+**Door B — Paper Studio (self-serve).**
+The creator brings their own LLM, picks a style, generates, reviews on a timeline, exports. Pricing is a subscription.
+
+Shared by both: brief schema, planner, renderer, review room, asset registry, export pipeline.
+
+Different: intake, who pays for inference, duration, text density, delivery, pricing.
+
+Building Door A first is deliberate. It produces revenue and real briefs while the engine matures.
+
+## Pipeline
+
+```
+brief.json
+   │
+   │ validate (Zod)
+   ▼
+ plan ──────────────────────────► renderplan.json
+   │                                   │
+   │ capabilities check                │ seed + styleVersion
+   ▼                                   ▼
+style pack                          renderer
+                                       │
+                                       ▼
+                                     frames ──► encode ──► mp4
+                                       │
+                                       ▼
+                                    review ──► comments
+                                       │
+                                       ▼
+                              revise affected shots only
+```
+
+Stages:
+
+0. **Brief** — every input the film needs, validated.
+1. **Plan** — deterministic selection of recipes, durations, slots, transitions.
+2. **Render** — frames from the plan, no decisions.
+3. **Review** — timecoded comments, per-shot approval.
+4. **Deliver** — masters, social cuts, stills, QR, captions.
+
+Research, script and narration are not in this diagram. They belong to the creator door and only to long-form. They will attach between brief and plan.
+
+## Determinism contract
+
+A render is reproducible when:
+
+- `seed` is fixed in the project
+- `styleVersion` is pinned in the project
+- fonts are bundled with the app, never taken from the system
+- ffmpeg is a pinned build
+- render code has no `Date.now()` and no unseeded `Math.random()`
+- no network access during render
+
+The project stores `style@version` and `seed`. Upgrading a style never changes an existing project.
+
+## Versioning
+
+- Styles use semver. Adding a recipe is a minor bump. Changing a recipe's slots is a major bump.
+- `capabilities.json` is the gate. The planner refuses recipes a style cannot render.
+- Projects pin `styleVersion`. Upgrading is an explicit user action, with a preview.
+
+## Folder map
+
+```
+docs/
+  ARCHITECTURE.md      this file
+  SPEC.md              product scope
+  DESIGN.md            brand and UI principles
+  ROADMAP.md           phases and gates
+  UAT.md               acceptance tests
+  decisions/           one page per irreversible choice
+  specs/               one file per feature
+fixtures/
+  wedding-min/         the contract fixture
+formats/
+  wedding/             deliverable definition
+styles/
+  paper-vows/
+    STYLE.md           the visual contract
+    tokens.json        palette, type, timing, texture
+    capabilities.json  what this style can and cannot do
+    recipes/           parameterized shots
+    references/        hero frames and anti-patterns
+src/
+  core/                schemas and shared types
+  engine/              planner, renderer, compiler
+scripts/               command line entry points
+```
+
+## Extending
+
+- **New style:** copy the style template, fill tokens, capabilities, recipes and references. No engine changes allowed.
+- **New format:** add a folder in `formats/` with a spec and a delivery checklist.
+- **New genre:** add a playbook in `genres/` with research method, structure and gates.
+
+If a new style requires an engine change, the style contract is wrong. Fix the contract first.
+
+## Deliberately not here yet
+
+- cloud rendering
+- multi-user auth
+- a full timeline NLE
+- 3D and camera-heavy work
+- a marketplace
+
+Each of these is a later phase with its own decision record.

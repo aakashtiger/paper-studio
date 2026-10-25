@@ -1,0 +1,53 @@
+{
+  "projectId": "demo-wedding-001",
+  "format": "wedding",
+  "style": "paper-vows",
+  "styleVersion": "0.1.0",
+  "seed": "demo-001",
+  "duration": 30,
+  "aspect": "9:16",
+  "locale": "en",
+  "couple": {
+    "partnerA": { "name": "Ananya", "role": "bride" },
+    "partnerB": { "name": "Rohan", "role": "groom" }
+  },
+  "families": [
+    { "relation": "parents of the bride", "names": ["Meera Sharma", "Vikram Sharma"] },
+    { "relation": "parents of the groom", "names": ["Sunita Rao", "Arun Rao"] }
+  ],
+  "events": [
+    {
+      "type": "mehndi",
+      "date": "2027-02-12",
+      "time": "16:00",
+      "venue": "The Leela Palace",
+      "city": "Bengaluru"
+    },
+    {
+      "type": "ceremony",
+      "date": "2027-02-14",
+      "time": "11:30",
+      "venue": "The Leela Palace",
+      "city": "Bengaluru"
+    },
+    {
+      "type": "reception",
+      "date": "2027-02-14",
+      "time": "19:30",
+      "venue": "The Leela Palace",
+      "city": "Bengaluru"
+    }
+  ],
+  "rsvp": { "method": "whatsapp", "value": "+91 98765 43210" },
+  "text": {
+    "inviteLine": "Together with our families, we invite you",
+    "quote": "Two families, one celebration",
+    "hashtag": "#AnanyaWedsRohan"
+  },
+  "photos": [],
+  "music": { "source": "library", "id": "paper-vows-01" },
+  "palette": "marigold-ivory",
+  "motif": "indian-classic",
+  "tone": "traditional",
+  "deliverables": ["9:16", "still", "rsvp-qr"]
+}

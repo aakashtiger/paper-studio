@@ -1,0 +1,18 @@
+{
+  "id": "invitation_unfold",
+  "name": "Invitation unfolds",
+  "purpose": "Open the film: a paper invitation unfolds to reveal the couple's names.",
+  "defaultDuration": 4,
+  "duration": { "min": 3, "max": 8 },
+  "camera": { "move": "push_in", "from": 1.0, "to": 1.06, "ease": "cubic-bezier(0.22, 1, 0.36, 1)" },
+  "slots": ["couple.namesLine"],
+  "requires": ["paper.card", "prop.waxSeal"],
+  "requiresPhotos": false,
+  "transitionOut": "cut",
+  "reference": "references/frames/01-hero-unfold.jpg",
+  "failureModes": [
+    "names overflow the card",
+    "the seal covers the first letter",
+    "the fold line crosses a name"
+  ]
+}

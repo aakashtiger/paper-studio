@@ -1,0 +1,18 @@
+{
+  "id": "portrait_frame",
+  "name": "Portrait in a paper frame",
+  "purpose": "Make it personal: a supplied photo treated as a print, mounted on paper, with a slow parallax.",
+  "defaultDuration": 6,
+  "duration": { "min": 4, "max": 12 },
+  "camera": { "move": "parallax", "from": 1.0, "to": 1.04, "ease": "cubic-bezier(0.22, 1, 0.36, 1)" },
+  "slots": ["couple.namesLine"],
+  "requires": ["photo.portrait", "paper.frame", "prop.photoCorners"],
+  "requiresPhotos": true,
+  "transitionOut": "cut",
+  "reference": "references/frames/03-hero-portrait.jpg",
+  "failureModes": [
+    "the face sits under the frame edge",
+    "the photo is too low-resolution to print",
+    "the paper treatment washes out skin tones"
+  ]
+}
