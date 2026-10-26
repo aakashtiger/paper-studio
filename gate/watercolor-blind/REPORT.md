@@ -3,7 +3,7 @@
 **Style:** `styles/watercolor` 0.1.0
 **Final run:** run 15
 **Pack hash:** `sha256:31b804d0530f5a7e4065f41dbfef683153dc9144a61336fa4b892ae74a9bafa5`
-**Result:** 6 shots · 30 s · 9:16 · 9/9 assertions · pack and inputs unchanged after LF normalization · **post-build critics 9/10 GO**
+**Result:** 6 shots · 30 s · 9:16 · 9/9 assertions · pack and inputs unchanged after LF normalization · **post-build critics 9/10 GO** · **CI pass (run 40327935982)**
 **Author:** a fresh sub-agent given only a temp copy of `inputs/`.
 
 The byte seal proves the author did not edit the inputs; it does not prove the

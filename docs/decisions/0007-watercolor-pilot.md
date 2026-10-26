@@ -79,6 +79,7 @@ The first fourteen runs are archived; the fifteenth is the live `work/`.
 ```text
 typecheck                         pass
 tests                             92 / 92
+ci (GitHub Actions)               pass (run 40327935982)
 style:check watercolor            REVIEWABLE, 0 hard, 1 open choice (paint-in speed)
 self-contained                    no other style or external asset required
 resolve page (garden + song)      8 shots, 45 s, 1:1, 9/9

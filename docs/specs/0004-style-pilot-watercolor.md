@@ -463,6 +463,7 @@ The PR/commit set carries the `contract-change` label because it re-scopes the p
 
 - `npm run typecheck` passes.
 - `npm test` passes, including `test/watercolor-gate.test.ts`.
+- GitHub Actions `ci` passes on `main` (typecheck, tests and plan).
 - `npm run plan -- fixtures/wedding-min/brief.json` still produces a valid plan (AGENTS definition of done).
 - `styles/watercolor` is REVIEWABLE, 0 hard failures, exactly one open choice.
 - The 2×2 resolve passes 9/9: page 8/45/1:1; scroll 4/45/16:9.
