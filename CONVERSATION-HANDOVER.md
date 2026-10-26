@@ -3,7 +3,7 @@
 **Date:** 2026-10-26
 **Repo:** https://github.com/aakashtiger/paper-studio
 **Local:** `Y:\NewVideoTest\studio`
-**Last commit:** `f4f234a` — docs: adopt the Lemo 11-part human brief for keepsake
+**Last commit:** `dffb47f` — feat(s1b): convert Lemo watercolor into a style pack
 **Companion:** `HANDOVER.md` has the file-level state.
 
 > **2026-10-26 — S1b re-scope.** The live plan is

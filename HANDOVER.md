@@ -3,7 +3,7 @@
 **Date:** 2026-10-26
 **Repo:** https://github.com/aakashtiger/paper-studio
 **Local:** `Y:\NewVideoTest\studio`
-**Last commit:** `f4f234a` — `docs: adopt the Lemo 11-part human brief for keepsake`
+**Last commit:** `dffb47f` — `feat(s1b): convert Lemo watercolor into a style pack`
 **Status:** S1a complete, accepted **9/10 GO**. S1b watercolor pilot complete, accepted **9/10 GO**, pack **REVIEWABLE**. No renderer, no video produced.
 **Companion:** read `CONVERSATION-HANDOVER.md` for the narrative context the repo cannot carry.
 
@@ -16,6 +16,14 @@
 > 11-section `STYLE.md` is proven in the watercolor pack and template adoption is
 > deferred; Lemo stays a reference path with a `sources/lemo/` index. Gallery
 > metadata is deferred to the app phase.
+>
+> **2026-10-26 — S1b accepted.** `styles/watercolor/` is **REVIEWABLE** with one
+> open director choice (paint-in speed). Gate: typecheck, **93/93 tests**, page
+> 8 shots / 45 s / 1:1, scroll 4 shots / 45 s / 16:9, blind 6 shots / 30 s / 9:16,
+> pack hash `e4a75b78…`, all three post-build critics **9/10 GO**. Full evidence:
+> `docs/decisions/0007-watercolor-pilot.md` and `gate/watercolor-blind/REPORT.md`.
+> Next: the director answers the paint-in choice and signs, or start S1c Paper
+> K-pop / a `papercut-red` pilot. No renderer, no video.
 **Update 2026-10-26:** the living `keepsake` example now uses the 11-section Lemo-style human brief and carries `style.json` gallery metadata. The machine contract, the template and the frozen `gate/blind/pack` are unchanged. See `docs/decisions/0006-lemo-brief-structure.md`.
 
 ---
