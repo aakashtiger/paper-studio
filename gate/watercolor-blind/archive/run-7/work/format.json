@@ -1,0 +1,21 @@
+{
+  "id": "watercolor-back-room-note-30",
+  "name": "Back Room Field Note — 6 plates, 30 s vertical",
+  "beatRoleMap": {
+    "opening": "title",
+    "plates": "detail",
+    "line": "quote",
+    "erase": "transition",
+    "closing": "close"
+  },
+  "sequence": [
+    { "beat": "opening", "role": "title", "count": 1 },
+    { "beat": "plates", "role": "detail", "count": 2 },
+    { "beat": "line", "role": "quote", "count": 1 },
+    { "beat": "erase", "role": "transition", "count": 1 },
+    { "beat": "closing", "role": "close", "count": 1 }
+  ],
+  "durations": [30],
+  "aspects": ["9:16"],
+  "primaryAspect": "9:16"
+}

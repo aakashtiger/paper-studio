@@ -14,7 +14,20 @@ Prove a style can be defined as a machine-checkable, reusable package. No render
 
 **Gate:** the mutation suite passes, `keepsake` is `REVIEWABLE`, two briefs and two formats resolve, and both verifiers return GO at 9/10 or above.
 
-## Phase 0b — Paper K-pop reference pack (S1b)
+## Phase 0b — Watercolor pilot (S1b)
+
+Convert one Lemo-Opuscar style into our pack. No renderer, no video.
+
+- Source autopsy and rights index for `watercolor`.
+- `styles/watercolor/`: six artifacts, six recipes, card, bundled OFL fonts.
+- Two formats: 1:1 journal page (8 shots, 45 s) and 16:9 handscroll (4 shots, 45 s).
+- Two reuse briefs and a full 2×2 resolve.
+- Sealed blind application: 30 s, 9:16, six shots, pack unchanged.
+
+**Gate:** `style:check` REVIEWABLE with 0 hard failures; `style:resolve` 9/9; page
+8/45/1:1 and scroll 4/45/16:9; blind 6/30/9:16; all three critics at 9/10 GO.
+
+## Phase 0c — Paper K-pop reference pack (S1c)
 
 - Migrate `styles/paper-vows` into the new pack.
 - Extract Paper K-pop tokens, runtime primitives, rigs, recipes, evidence and conformance plan.
@@ -22,7 +35,7 @@ Prove a style can be defined as a machine-checkable, reusable package. No render
 
 **Gate:** Paper K-pop passes the contract and the reuse test with no renderer.
 
-## Phase 0c — Vertical slice
+## Phase 0d — Vertical slice
 
 Build the contract and prove the pipeline is real.
 

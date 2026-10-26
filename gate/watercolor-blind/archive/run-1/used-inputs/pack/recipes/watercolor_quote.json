@@ -1,0 +1,104 @@
+{
+  "id": "watercolor_quote",
+  "beatRoles": [
+    "quote"
+  ],
+  "duration": {
+    "min": 4,
+    "max": 8,
+    "default": 6
+  },
+  "camera": {
+    "move": "static"
+  },
+  "slots": [
+    "content.body",
+    "content.caption"
+  ],
+  "assets": [
+    "set.journal-sheet",
+    "texture.cotton-fibre",
+    "prop.painted-specimen",
+    "hud.hand-label"
+  ],
+  "composition": [
+    {
+      "op": "layer",
+      "id": "paper",
+      "z": 0
+    },
+    {
+      "op": "shape",
+      "id": "wash-under",
+      "kind": "wash",
+      "color": "petal",
+      "x": 0.06,
+      "y": 0.2,
+      "w": 0.5,
+      "h": 0.34,
+      "opacity": 0.18,
+      "z": 1
+    },
+    {
+      "op": "image",
+      "id": "object",
+      "asset": "prop.painted-specimen",
+      "x": 0.64,
+      "y": 0.16,
+      "w": 0.3,
+      "h": 0.48,
+      "z": 2
+    },
+    {
+      "op": "path",
+      "id": "leader",
+      "points": [
+        [0.62, 0.34],
+        [0.5, 0.28]
+      ],
+      "stroke": "ink",
+      "opacity": 0.7,
+      "z": 3
+    },
+    {
+      "op": "text",
+      "id": "quote",
+      "slot": "content.body",
+      "typeRole": "body",
+      "x": 0.08,
+      "y": 0.24,
+      "w": 0.46,
+      "h": 0.3,
+      "align": "left"
+    },
+    {
+      "op": "text",
+      "id": "note",
+      "slot": "content.caption",
+      "typeRole": "caption",
+      "x": 0.08,
+      "y": 0.6,
+      "w": 0.42,
+      "h": 0.14,
+      "align": "left"
+    },
+    {
+      "op": "effect",
+      "kind": "fiber",
+      "z": 6,
+      "opacity": 0.22
+    },
+    {
+      "op": "transition",
+      "kind": "wipe"
+    }
+  ],
+  "transitionOut": "wipe",
+  "failureModes": [
+    "a wash rectangle behind a quote",
+    "a note without a leader line",
+    "a quote longer than sixteen words",
+    "a photograph instead of a painted object",
+    "more than five pigments in the frame"
+  ]
+}

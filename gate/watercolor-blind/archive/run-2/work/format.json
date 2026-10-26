@@ -1,0 +1,23 @@
+{
+  "id": "four-oclock-light",
+  "name": "The Four O'Clock Light - 9:16 page",
+  "beatRoleMap": {
+    "opening": "title",
+    "first-plate": "detail",
+    "line": "quote",
+    "second-plate": "detail",
+    "breath": "transition",
+    "closing": "close"
+  },
+  "sequence": [
+    { "beat": "opening", "role": "title", "count": 1 },
+    { "beat": "first-plate", "role": "detail", "count": 1 },
+    { "beat": "line", "role": "quote", "count": 1 },
+    { "beat": "second-plate", "role": "detail", "count": 1 },
+    { "beat": "breath", "role": "transition", "count": 1 },
+    { "beat": "closing", "role": "close", "count": 1 }
+  ],
+  "durations": [30],
+  "aspects": ["9:16"],
+  "primaryAspect": "9:16"
+}

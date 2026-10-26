@@ -1,0 +1,21 @@
+{
+  "id": "room-in-blue-30s-vertical",
+  "name": "The Room in Blue — 30 s vertical page",
+  "beatRoleMap": {
+    "title": "title",
+    "detail": "detail",
+    "quote": "quote",
+    "transition": "transition",
+    "close": "close"
+  },
+  "sequence": [
+    { "beat": "title", "role": "title", "count": 1 },
+    { "beat": "detail", "role": "detail", "count": 2 },
+    { "beat": "quote", "role": "quote", "count": 1 },
+    { "beat": "transition", "role": "transition", "count": 1 },
+    { "beat": "close", "role": "close", "count": 1 }
+  ],
+  "durations": [30],
+  "aspects": ["9:16"],
+  "primaryAspect": "9:16"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "watercolor-scroll",
+  "name": "Watercolor handscroll",
+  "beatRoleMap": {
+    "opening": "title",
+    "walk": "portrait",
+    "breath": "transition",
+    "closing": "close"
+  },
+  "sequence": [
+    { "beat": "opening", "role": "title", "count": 1 },
+    { "beat": "walk", "role": "portrait", "count": 1 },
+    { "beat": "breath", "role": "transition", "count": 1 },
+    { "beat": "closing", "role": "close", "count": 1 }
+  ],
+  "durations": [45],
+  "aspects": ["16:9"],
+  "primaryAspect": "16:9",
+  "loudness": "-16 LUFS"
+}

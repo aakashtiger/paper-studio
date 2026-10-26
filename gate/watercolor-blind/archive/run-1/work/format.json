@@ -1,0 +1,23 @@
+{
+  "id": "watercolor-house-inventory",
+  "name": "The Last Inventory — vertical page",
+  "beatRoleMap": {
+    "gate": "title",
+    "latch": "detail",
+    "stairs": "quote",
+    "key": "detail",
+    "erase": "transition",
+    "door": "close"
+  },
+  "sequence": [
+    { "beat": "gate", "role": "title", "count": 1 },
+    { "beat": "latch", "role": "detail", "count": 1 },
+    { "beat": "stairs", "role": "quote", "count": 1 },
+    { "beat": "key", "role": "detail", "count": 1 },
+    { "beat": "erase", "role": "transition", "count": 1 },
+    { "beat": "door", "role": "close", "count": 1 }
+  ],
+  "durations": [30],
+  "aspects": ["9:16"],
+  "primaryAspect": "9:16"
+}

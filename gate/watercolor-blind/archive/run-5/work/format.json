@@ -1,0 +1,23 @@
+{
+  "id": "watercolor-six-page",
+  "name": "Watercolor Six-Page Memory",
+  "beatRoleMap": {
+    "opening": "title",
+    "plate-one": "detail",
+    "plate-two": "detail",
+    "line": "quote",
+    "breath": "transition",
+    "closing": "close"
+  },
+  "sequence": [
+    { "beat": "opening", "role": "title", "count": 1 },
+    { "beat": "plate-one", "role": "detail", "count": 1 },
+    { "beat": "plate-two", "role": "detail", "count": 1 },
+    { "beat": "line", "role": "quote", "count": 1 },
+    { "beat": "breath", "role": "transition", "count": 1 },
+    { "beat": "closing", "role": "close", "count": 1 }
+  ],
+  "durations": [30],
+  "aspects": ["9:16"],
+  "primaryAspect": "9:16"
+}

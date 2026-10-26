@@ -1,0 +1,24 @@
+{
+  "id": "vertical-page-six-30s",
+  "name": "Vertical Page — Six Shots, 30 s",
+  "beatRoleMap": {
+    "opening": "title",
+    "plate": "detail",
+    "line": "quote",
+    "erase": "transition",
+    "return": "detail",
+    "closing": "close"
+  },
+  "sequence": [
+    { "beat": "opening", "role": "title", "count": 1 },
+    { "beat": "plate", "role": "detail", "count": 1 },
+    { "beat": "line", "role": "quote", "count": 1 },
+    { "beat": "erase", "role": "transition", "count": 1 },
+    { "beat": "return", "role": "detail", "count": 1 },
+    { "beat": "closing", "role": "close", "count": 1 }
+  ],
+  "durations": [30],
+  "aspects": ["9:16"],
+  "primaryAspect": "9:16",
+  "loudness": "-16 LUFS integrated, -1 dBTP true peak"
+}

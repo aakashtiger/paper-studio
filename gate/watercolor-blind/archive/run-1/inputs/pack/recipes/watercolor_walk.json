@@ -1,0 +1,149 @@
+{
+  "id": "watercolor_walk",
+  "beatRoles": [
+    "portrait"
+  ],
+  "duration": {
+    "min": 12,
+    "max": 30,
+    "default": 18
+  },
+  "camera": {
+    "move": "pan",
+    "from": 0,
+    "to": 1,
+    "ease": "easeInOut"
+  },
+  "slots": [
+    "content.caption",
+    "content.venue"
+  ],
+  "assets": [
+    "set.journal-sheet",
+    "texture.cotton-fibre",
+    "frame.wash-edge",
+    "prop.painted-garland",
+    "prop.painted-specimen",
+    "hud.hand-label"
+  ],
+  "composition": [
+    {
+      "op": "layer",
+      "id": "paper",
+      "z": 0
+    },
+    {
+      "op": "shape",
+      "id": "far-wash",
+      "kind": "wash",
+      "color": "wash",
+      "x": 0,
+      "y": 0.42,
+      "w": 1,
+      "h": 0.32,
+      "opacity": 0.22,
+      "z": 1
+    },
+    {
+      "op": "shape",
+      "id": "mid-wash",
+      "kind": "wash",
+      "color": "petal",
+      "x": 0,
+      "y": 0.56,
+      "w": 1,
+      "h": 0.3,
+      "opacity": 0.16,
+      "z": 2
+    },
+    {
+      "op": "image",
+      "id": "left-garland",
+      "asset": "prop.painted-garland",
+      "x": 0.02,
+      "y": 0.32,
+      "w": 0.4,
+      "h": 0.44,
+      "z": 3
+    },
+    {
+      "op": "image",
+      "id": "specimen",
+      "asset": "prop.painted-specimen",
+      "x": 0.46,
+      "y": 0.42,
+      "w": 0.28,
+      "h": 0.34,
+      "z": 4
+    },
+    {
+      "op": "image",
+      "id": "right-garland",
+      "asset": "prop.painted-garland",
+      "x": 0.72,
+      "y": 0.3,
+      "w": 0.34,
+      "h": 0.46,
+      "z": 3
+    },
+    {
+      "op": "path",
+      "id": "ground-line",
+      "points": [
+        [0.05, 0.82],
+        [0.5, 0.79],
+        [0.95, 0.82]
+      ],
+      "stroke": "ink",
+      "opacity": 0.4,
+      "z": 5
+    },
+    {
+      "op": "text",
+      "id": "note",
+      "slot": "content.caption",
+      "typeRole": "caption",
+      "x": 0.08,
+      "y": 0.76,
+      "w": 0.42,
+      "h": 0.12,
+      "align": "left"
+    },
+    {
+      "op": "text",
+      "id": "place",
+      "slot": "content.venue",
+      "typeRole": "label",
+      "x": 0.08,
+      "y": 0.89,
+      "w": 0.4,
+      "h": 0.05,
+      "align": "left"
+    },
+    {
+      "op": "effect",
+      "kind": "fiber",
+      "z": 6,
+      "opacity": 0.22
+    },
+    {
+      "op": "camera",
+      "move": "pan",
+      "from": 0,
+      "to": 1,
+      "ease": "easeInOut"
+    },
+    {
+      "op": "transition",
+      "kind": "wipe"
+    }
+  ],
+  "transitionOut": "wipe",
+  "failureModes": [
+    "a pan over a finished painting",
+    "a hard cut inside the walk",
+    "a photograph instead of a painted form",
+    "a note that covers the subject",
+    "more than five pigments in the frame"
+  ]
+}

@@ -40,6 +40,38 @@ Every family declared in `tokens.type.families` needs an `@font-face` rule in
 and waiting prose inside those markers so `style:approve` can rewrite it. A card
 missing any of these cannot be approved.
 
+## Converting a source style
+
+If the style comes from an external library, the seven steps start with an autopsy,
+not with the twelve questions:
+
+1. **Autopsy first.** Read the source bible, demo notes and code. Separate the
+   style invariants (what must hold in every film) from the demo content (story,
+   characters, exact shots, timings, music, voice, end card). Write the autopsy in
+   `sources/<library>/<style>.md`, with a D01–D27 table that cites a source line or
+   records an author decision and its reason.
+2. **Rights file.** Record the source licence, the demo-media licence and exactly
+   what is not reproduced. Copy the full licence notice; a credit is not a licence.
+   If you use fonts or other assets, bundle their notices in the pack.
+3. **Freeze the brief.** Write a real brief for a *second* film, not the source
+   demo. Scaffold from `styles/_template/` as usual.
+4. **Prove the human brief.** A converted pack may use this 11-section `STYLE.md`
+   structure, provided the four validator sections stay top-level:
+   `Intent`, `Materials & surface`, `Colour logic`, `Type & lettering`,
+   `Composition & framing`, `Motion & camera`, `Sound & silence`,
+   `Signature`, `Refusals`, `Not for`, `Questions`.
+   Put Native moves, Pitfalls, Variation space and Decisions in `###` subsections.
+   Do not copy a source "Engine" section; rewrite it as craft rules.
+5. **Prove reuse, not a demo.** Two briefs and two formats must resolve without
+   editing the pack. If the two formats are the same sequence twice, they are not
+   two formats.
+6. **Run a sealed blind application.** The author gets a copy of the pack, a brief
+   and format schema, and a commission. The author works outside the repo. The
+   pack hash and the input manifest must be unchanged. A blind run that needs a
+   pack edit is a pack defect.
+7. **Template adoption is separate.** Do not change `styles/_template/` to match a
+   pilot until the pilot is accepted; then add a template smoke test.
+
 ## The twelve questions
 
 Answer in plain language. Say what you want to see, not how to build it. Pick an

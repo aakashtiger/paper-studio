@@ -1,0 +1,175 @@
+{
+  "id": "watercolor_title",
+  "beatRoles": [
+    "title"
+  ],
+  "duration": {
+    "min": 4,
+    "max": 8,
+    "default": 6
+  },
+  "camera": {
+    "move": "push_in",
+    "from": 1.0,
+    "to": 1.04,
+    "ease": "easeOut"
+  },
+  "slots": [
+    "content.title",
+    "content.subtitle",
+    "content.names",
+    "content.date",
+    "content.venue",
+    "content.monogram"
+  ],
+  "assets": [
+    "set.journal-sheet",
+    "texture.cotton-fibre",
+    "frame.wash-edge",
+    "prop.painted-arch",
+    "prop.stamp-seal"
+  ],
+  "composition": [
+    {
+      "op": "layer",
+      "id": "paper",
+      "z": 0
+    },
+    {
+      "op": "shape",
+      "id": "horizon",
+      "kind": "wash",
+      "color": "wash",
+      "x": 0,
+      "y": 0.58,
+      "w": 1,
+      "h": 0.28,
+      "opacity": 0.35,
+      "z": 1
+    },
+    {
+      "op": "image",
+      "id": "arch",
+      "asset": "prop.painted-arch",
+      "x": 0.56,
+      "y": 0.16,
+      "w": 0.34,
+      "h": 0.48,
+      "opacity": 0.75,
+      "z": 2
+    },
+    {
+      "op": "image",
+      "id": "seal",
+      "asset": "prop.stamp-seal",
+      "x": 0.8,
+      "y": 0.08,
+      "w": 0.1,
+      "h": 0.1,
+      "z": 3
+    },
+    {
+      "op": "text",
+      "id": "monogram",
+      "slot": "content.monogram",
+      "typeRole": "monogram",
+      "x": 0.8,
+      "y": 0.2,
+      "w": 0.1,
+      "h": 0.05,
+      "align": "center"
+    },
+    {
+      "op": "text",
+      "id": "title",
+      "slot": "content.title",
+      "typeRole": "display",
+      "x": 0.08,
+      "y": 0.22,
+      "w": 0.46,
+      "h": 0.2,
+      "align": "left"
+    },
+    {
+      "op": "text",
+      "id": "subtitle",
+      "slot": "content.subtitle",
+      "typeRole": "body",
+      "x": 0.08,
+      "y": 0.44,
+      "w": 0.44,
+      "h": 0.1,
+      "align": "left"
+    },
+    {
+      "op": "text",
+      "id": "names",
+      "slot": "content.names",
+      "typeRole": "body",
+      "x": 0.08,
+      "y": 0.56,
+      "w": 0.46,
+      "h": 0.09,
+      "align": "left"
+    },
+    {
+      "op": "text",
+      "id": "venue",
+      "slot": "content.venue",
+      "typeRole": "label",
+      "x": 0.08,
+      "y": 0.76,
+      "w": 0.5,
+      "h": 0.05,
+      "align": "left"
+    },
+    {
+      "op": "text",
+      "id": "date",
+      "slot": "content.date",
+      "typeRole": "label",
+      "x": 0.08,
+      "y": 0.82,
+      "w": 0.4,
+      "h": 0.05,
+      "align": "left"
+    },
+    {
+      "op": "effect",
+      "kind": "fiber",
+      "z": 6,
+      "opacity": 0.22
+    },
+    {
+      "op": "camera",
+      "move": "push_in",
+      "from": 1.0,
+      "to": 1.04,
+      "ease": "easeOut"
+    },
+    {
+      "op": "transition",
+      "kind": "wipe"
+    }
+  ],
+  "vertical": [
+    ["title", "title"],
+    ["subtitle", "subtitle"],
+    ["names", "names"],
+    ["arch", "arch"],
+    ["horizon", "horizonWash"],
+    ["seal", "seal"],
+    ["monogram", "monogram"],
+    ["venue", "labelVenue"],
+    ["date", "labelDate"]
+  ],
+  "transitionOut": "wipe",
+  "failureModes": [
+    "a blank sheet with a title typed on it",
+    "a photograph pasted into the page",
+    "a vector outline around the title",
+    "a push-in faster than four percent",
+    "more than five pigments in the frame",
+    "a hard cut after the title"
+  ]
+}

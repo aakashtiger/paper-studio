@@ -1,0 +1,76 @@
+﻿
+> paper-studio@0.1.0 style:resolve
+> tsx scripts/style.ts resolve --style styles/watercolor --seed 7 --brief gate/watercolor-blind/work/brief.json --format gate/watercolor-blind/work/format.json --brief fixtures/resolve/watercolor-garden.json --format gate/watercolor-blind/work/format.json
+
+STYLE: watercolor 0.1.0
+SEED: 7
+PAIRS: 2
+
+1. watercolor-before-the-keys ΓÇö Before the Keys ΓÇö vertical page, 30 s ┬╖ 6 shots ┬╖ 30s ┬╖ 9:16
+   BRIEF: gate/watercolor-blind/work/brief.json (sha256:a0d9387085be2b90330306a972eec5b92e18d87610e983319958c7048af9fb92)
+   FORMAT: gate/watercolor-blind/work/format.json ┬╖ durations 30 ┬╖ aspects 9:16 ┬╖ primary 9:16
+   STYLE LIMITS: durations 30/45 ┬╖ aspects 1:1/16:9/9:16
+   WORD LIMIT: 16 words per content slot (capabilities 16 ┬╖ layout 16)
+   s01 opening ┬╖ watercolor_title ┬╖ 0ΓÇô4.667s ┬╖ wipe
+      content.title = Before the Keys
+      content.subtitle = a house, one last afternoon
+      content.names = a house measured for sale
+      content.date = 21 JUNE 2026
+      content.venue = A HOUSE MEASURED FOR SALE, 4 PM
+      content.monogram = H/M
+   s02 plate ┬╖ watercolor_specimen ┬╖ 4.667ΓÇô10.5s ┬╖ page_turn
+      content.caption = the paint stops short here
+      content.venue = A HOUSE MEASURED FOR SALE, 4 PM
+   s03 plate ┬╖ watercolor_specimen ┬╖ 10.5ΓÇô16.333s ┬╖ page_turn
+      content.caption = the paint stops short here
+      content.venue = A HOUSE MEASURED FOR SALE, 4 PM
+   s04 line ┬╖ watercolor_quote ┬╖ 16.333ΓÇô21s ┬╖ wipe
+      content.body = The rooms are empty; the light still arrives at four.
+      content.caption = the paint stops short here
+   s05 breath ┬╖ watercolor_mist ┬╖ 21ΓÇô25.5s ┬╖ wipe
+   s06 closing ┬╖ watercolor_close ┬╖ 25.5ΓÇô30s ┬╖ hold
+      content.monogram = H/M
+      content.caption = the paint stops short here
+      content.date = 21 JUNE 2026
+   VARIATIONS: grain 11.705 ┬╖ shadow 61.958 ┬╖ camera 351.687 ┬╖ timing 7.961
+
+2. watercolor-before-the-keys ΓÇö Before the Keys ΓÇö vertical page, 30 s ┬╖ 6 shots ┬╖ 30s ┬╖ 9:16
+   BRIEF: fixtures/resolve/watercolor-garden.json (sha256:06c0a9ec41be8a2c0f3dc6c418c95ecbacd88d417d060d07793ee4e16f60e774)
+   FORMAT: gate/watercolor-blind/work/format.json ┬╖ durations 30 ┬╖ aspects 9:16 ┬╖ primary 9:16
+   STYLE LIMITS: durations 30/45 ┬╖ aspects 1:1/16:9/9:16
+   WORD LIMIT: 16 words per content slot (capabilities 16 ┬╖ layout 16)
+   s01 opening ┬╖ watercolor_title ┬╖ 0ΓÇô4.667s ┬╖ wipe
+      content.title = The Garden We Borrowed
+      content.subtitle = A wedding invitation painted from the day
+      content.names = Mira and Jonah
+      content.date = 21 June 2026
+      content.venue = The Glasshouse at Field 9
+      content.monogram = M & J
+   s02 plate ┬╖ watercolor_specimen ┬╖ 4.667ΓÇô10.5s ┬╖ page_turn
+      content.caption = The roses opened the week they arrived.
+      content.venue = The Glasshouse at Field 9
+   s03 plate ┬╖ watercolor_specimen ┬╖ 10.5ΓÇô16.333s ┬╖ page_turn
+      content.caption = The roses opened the week they arrived.
+      content.venue = The Glasshouse at Field 9
+   s04 line ┬╖ watercolor_quote ┬╖ 16.333ΓÇô21s ┬╖ wipe
+      content.body = Two families, one long table, and a garden showing off.
+      content.caption = The roses opened the week they arrived.
+   s05 breath ┬╖ watercolor_mist ┬╖ 21ΓÇô25.5s ┬╖ wipe
+   s06 closing ┬╖ watercolor_close ┬╖ 25.5ΓÇô30s ┬╖ hold
+      content.monogram = M & J
+      content.caption = The roses opened the week they arrived.
+      content.date = 21 June 2026
+   VARIATIONS: grain 11.705 ┬╖ shadow 61.958 ┬╖ camera 351.687 ┬╖ timing 7.961
+
+ASSERTIONS
+1. Every slot in every selected recipe resolves non-empty ΓÇö PASS
+2. Every format beat maps to at least one recipe through beatRoleMap ΓÇö PASS
+3. Every asset resolves in capabilities.assets ΓÇö PASS
+4. Two briefs produce different plans; at least one slot value differs ΓÇö PASS
+5. The same seed twice produces byte-identical JSON ΓÇö PASS
+6. A different seed changes seed and the variations block ΓÇö PASS
+7. Every selected recipe's transitionOut is allowed by the style ΓÇö PASS
+8. The plan's duration and aspect fit the format and the style limits ΓÇö PASS
+9. Every resolved content.* text slot is within the style's word limit ΓÇö PASS
+
+No files written.

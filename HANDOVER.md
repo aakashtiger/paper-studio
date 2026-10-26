@@ -3,9 +3,19 @@
 **Date:** 2026-10-26
 **Repo:** https://github.com/aakashtiger/paper-studio
 **Local:** `Y:\NewVideoTest\studio`
-**Last commit:** `a408051` — `docs: add session handover and Lemo review`
-**Status:** S1a complete, accepted **9/10 GO**. No renderer, no video produced.
+**Last commit:** `f4f234a` — `docs: adopt the Lemo 11-part human brief for keepsake`
+**Status:** S1a complete, accepted **9/10 GO**. S1b watercolor pilot complete, accepted **9/10 GO**, pack **REVIEWABLE**. No renderer, no video produced.
 **Companion:** read `CONVERSATION-HANDOVER.md` for the narrative context the repo cannot carry.
+
+> **2026-10-26 — S1b re-scope.** The next phase is the watercolor pilot in
+> `docs/specs/0004-style-pilot-watercolor.md`, not Paper K-pop. Paper K-pop and the
+> `styles/paper-vows` migration move to S1c. The rest of this file is the S1a record
+> and the Lemo review; it remains useful, but 0004 is the live plan.
+>
+> **S1b decisions taken:** watercolor; our own pack text with MIT/OFL notices; the
+> 11-section `STYLE.md` is proven in the watercolor pack and template adoption is
+> deferred; Lemo stays a reference path with a `sources/lemo/` index. Gallery
+> metadata is deferred to the app phase.
 **Update 2026-10-26:** the living `keepsake` example now uses the 11-section Lemo-style human brief and carries `style.json` gallery metadata. The machine contract, the template and the frozen `gate/blind/pack` are unchanged. See `docs/decisions/0006-lemo-brief-structure.md`.
 
 ---
@@ -114,7 +124,7 @@ Final acceptance verdict: **9/10, GO, no blocking defects.**
 | `formats/keepsake-book/format.json` | 1:1 book, 8-shot sequence, 45s |
 | `formats/keepsake-gallery/format.json` | 1:1 gallery, different sequence, 45s |
 | `fixtures/resolve/` | Two generic briefs for the reuse test |
-| `styles/paper-vows/` | Legacy earlier wedding draft; not expected to pass; S1b migrates it |
+| `styles/paper-vows/` | Legacy earlier wedding draft; not expected to pass; S1c migrates it |
 | `reference/paper-kpop/` | Read-only `core.js` / `type.js` from the completed K-pop film |
 
 ---
@@ -122,7 +132,7 @@ Final acceptance verdict: **9/10, GO, no blocking defects.**
 ## 5. What is deliberately not built
 
 - Renderer, frames, pixels, MP4.
-- Paper K-pop pack (S1b).
+- Paper K-pop pack (S1c).
 - Web app, review room, payments, auth.
 - 3D / camera-heavy tier.
 - Marketplace, affiliate, mobile.
@@ -255,7 +265,7 @@ None block the gate.
 
 - **CI:** `.github/workflows/ci.yml` is written but **untracked** because the GitHub token lacks the `workflow` scope. Run `gh auth refresh -s workflow`, then commit and push it.
 - **Collaborator:** add your brother’s GitHub handle. `CODEOWNERS` currently points only at `aakashtiger`.
-- **Legacy:** `styles/paper-vows/` is the earlier wedding draft; it is not expected to pass the new validator. S1b migrates it.
+- **Legacy:** `styles/paper-vows/` is the earlier wedding draft; it is not expected to pass the new validator. S1c migrates it.
 - **No git submodules, no new dependencies** without a stated reason.
 
 ---

@@ -3,8 +3,14 @@
 **Date:** 2026-10-26
 **Repo:** https://github.com/aakashtiger/paper-studio
 **Local:** `Y:\NewVideoTest\studio`
-**Last commit:** `a408051` — docs: add session handover and Lemo review
+**Last commit:** `f4f234a` — docs: adopt the Lemo 11-part human brief for keepsake
 **Companion:** `HANDOVER.md` has the file-level state.
+
+> **2026-10-26 — S1b re-scope.** The live plan is
+> `docs/specs/0004-style-pilot-watercolor.md`: watercolor pilot, no renderer, no
+> video. Paper K-pop and the `styles/paper-vows` migration are S1c. The 11-section
+> `STYLE.md` is proven in the watercolor pack; template adoption and `gallery.json`
+> are deferred. Everything below is the S1a narrative that led here.
 
 This file carries the **narrative context** a new session cannot get from the repo: what we decided, what we rejected, where we stopped, and what to do next.
 
@@ -215,7 +221,7 @@ Convert **one** Lemo style into our pack, with no renderer:
 
 - CI file is local but untracked; needs `gh auth refresh -s workflow`.
 - Add the brother’s GitHub handle to `CODEOWNERS`.
-- `styles/paper-vows/` is legacy; S1b migrates it.
+- `styles/paper-vows/` is legacy; S1c migrates it.
 
 ---
 

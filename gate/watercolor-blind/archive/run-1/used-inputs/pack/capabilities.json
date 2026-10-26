@@ -1,0 +1,250 @@
+{
+  "identity": {
+    "id": "watercolor",
+    "name": "Watercolor Brush",
+    "version": "0.1.0",
+    "family": "paper",
+    "status": "reviewable",
+    "author": "Paper Studio",
+    "licence": "Proprietary — Paper Studio internal pilot; includes OFL 1.1 fonts under their own licences; third-party notices in LICENSE-THIRD-PARTY.txt",
+    "lineage": [
+      "Lemo-Opuscar watercolor STYLE.md/DEMO.md (read-only source grammar; no code or media copied)",
+      "Paper Studio S1a contract docs/specs/0003-style-definition-system.md",
+      "styles/_examples/keepsake (S1a control, not copied)"
+    ],
+    "bindings": {
+      "briefHash": "sha256:961977f966448f8dad21ac7e2a9cddeff8cc95ecb85075065ececfdd1f51c49d",
+      "templateHash": "sha256:6da2490d70a4d3aa916213b67e02b06343388a234c572ad52aeb80c89246d346",
+      "contractHash": "sha256:03626634cdd53b622c5969864c1ba155e8491378bf06f192747673278642aca2"
+    }
+  },
+  "limits": {
+    "aspects": [
+      "1:1",
+      "16:9",
+      "9:16"
+    ],
+    "durations": [
+      30,
+      45
+    ],
+    "maxCast": 0,
+    "maxWords": 16
+  },
+  "adaptation": {
+    "aspects": "Compose the 1:1 journal page for a locked sheet. The 16:9 scroll is one continuous lateral walk; never stretch a 1:1 page. The 9:16 vertical page is a different composition, not a crop of the scroll.",
+    "type": "Cormorant Garamond italic for titles and subtitles, Cormorant regular for body, Caveat for hand notes, IBM Plex Mono for measured labels. No fourth family.",
+    "photographs": "None. The style paints its subjects. A client photograph may be reference for a painted portrait, never pasted into a frame.",
+    "captions": "Sixteen words maximum per content slot, two lines maximum, fourteen pixels minimum at 390 px width.",
+    "scripts": "Latin script only. A non-Latin commission needs a licensed companion face, not a silent fallback.",
+    "sound": "The style supplies no audio files. Music and voice are cleared per film; delivery loudness belongs to the format."
+  },
+  "assets": {
+    "grammar": "One sheet of warm cotton paper; transparent washes; painted forms built from individual strokes; a hand annotation layer; no vector outline, no photograph, no gloss, no cast shadow.",
+    "starterLibrary": [
+      {
+        "id": "set.journal-sheet",
+        "type": "set",
+        "anchors": [
+          "paper edge",
+          "page centre"
+        ]
+      },
+      {
+        "id": "texture.cotton-fibre",
+        "type": "texture",
+        "anchors": [
+          "paper grain",
+          "deckle edge"
+        ]
+      },
+      {
+        "id": "frame.wash-edge",
+        "type": "frame",
+        "anchors": [
+          "soft deckle edge",
+          "page boundary"
+        ]
+      },
+      {
+        "id": "prop.painted-specimen",
+        "type": "prop",
+        "anchors": [
+          "hero subject",
+          "stem root"
+        ]
+      },
+      {
+        "id": "prop.painted-garland",
+        "type": "prop",
+        "anchors": [
+          "arch",
+          "table edge"
+        ]
+      },
+      {
+        "id": "prop.stamp-seal",
+        "type": "prop",
+        "anchors": [
+          "accent mark",
+          "date block"
+        ]
+      },
+      {
+        "id": "hud.hand-label",
+        "type": "hud",
+        "anchors": [
+          "leader line",
+          "margin note"
+        ]
+      }
+    ],
+    "rigs": {
+      "notApplicable": true,
+      "reason": "No on-camera cast; painted plants and objects are props, not rigged characters."
+    }
+  },
+  "runtime": {
+    "primitives": [
+      "layer",
+      "shape",
+      "path",
+      "text",
+      "image",
+      "camera",
+      "effect",
+      "transition"
+    ]
+  },
+  "evidence": {
+    "sources": [
+      {
+        "take": "paper as the white, transparent layering, flying white, painting-in, one annotation layer, one accent, a long lateral camera walk",
+        "notTake": "the Follow the Rain story, the Australian rainfall journey, the map, the specific plants and animals, the 113.6 s timing, the LemoLab end card",
+        "rights": "Lemo-Opuscar watercolor STYLE.md/DEMO.md: MIT docs, Copyright (c) 2026 LemoLab; demo film CC BY 4.0 LemoLab. Observed and rewritten; no code, stills, music or voice copied."
+      },
+      {
+        "take": "specimen plus note, generous paper margins, one hero subject per view, a measured label",
+        "notTake": "a specific botanical plate, artwork, character or layout",
+        "rights": "public-domain naturalist field journals and botanical plates, described and observed only; no image reproduced."
+      },
+      {
+        "take": "one continuous painted world read laterally; the camera move is the argument",
+        "notTake": "a specific handscroll, its narrative, its figures or its sequence",
+        "rights": "public-domain handscroll panoramas, described and observed only; no image reproduced."
+      },
+      {
+        "take": "wet-on-dry transparent layering, pooled edges, dry-brush flying white, paper as the white, no opaque flat fill",
+        "notTake": "ink wash, impasto, gouache opacity, a vector illustration with a watercolour texture laid on top",
+        "rights": "public-domain watercolour manuals and public reference, observed only; no text or image reproduced."
+      }
+    ]
+  },
+  "proof": {
+    "status": "declared",
+    "frames": [
+      "watercolor_title",
+      "watercolor_specimen",
+      "watercolor_close"
+    ],
+    "aspects": [
+      "1:1",
+      "16:9",
+      "9:16"
+    ],
+    "metrics": [
+      "caption word count",
+      "palette pigment count",
+      "painted-stroke and bristle count",
+      "paint-in duration",
+      "hand-note legibility at 390 px",
+      "no-vector-outline check"
+    ]
+  },
+  "governance": {
+    "owner": "Paper Studio",
+    "review": "The director opens card.html at 900 x 700 and on a 390 px phone, checks the title, specimen and close, answers the paint-in choice, then signs.",
+    "questions": [
+      "How loose is the brush? The style fixes a loaded round brush and a rigger; the looseness is in the stroke, not in a pencil sketch.",
+      "Is a hand note always present? One note per view, with a leader line; the note never covers the subject.",
+      "Does the style allow a photograph? No. A photograph may be reference for a painting, never a pasted layer."
+    ],
+    "choices": [
+      {
+        "id": "paint-in-speed",
+        "question": "Paint-in speed: 1.2 s or 1.8 s per specimen?",
+        "options": [
+          "1.2 s",
+          "1.8 s"
+        ],
+        "where": "STYLE.md > Signature > paint-in speed"
+      }
+    ],
+    "decisions": [
+      {
+        "id": "source-lineage",
+        "answer": "Lemo-Opuscar watercolor is the source grammar; the pack text is written for Paper Studio.",
+        "reason": "The source is MIT docs and a CC BY 4.0 demo; the demo story, code and media are not reusable as a product style.",
+        "decidedBy": "Paper Studio",
+        "decidedAt": "2026-10-26"
+      },
+      {
+        "id": "demo-exclusion",
+        "answer": "No Follow the Rain story, characters, map, plants, animals, timings, music, voice or end card.",
+        "reason": "The demo is one example among many; the style must carry a different film.",
+        "decidedBy": "Paper Studio",
+        "decidedAt": "2026-10-26"
+      },
+      {
+        "id": "colour-roles",
+        "answer": "paper, ink, wash, petal, accent, deep; at most five pigments per frame; deep is wash at more passes.",
+        "reason": "The source says darker comes from more passes, not a darker pigment. Six role names keep the palette legible; five pigments keep a frame watercolour.",
+        "decidedBy": "Paper Studio",
+        "decidedAt": "2026-10-26"
+      },
+      {
+        "id": "type-trio",
+        "answer": "Cormorant Garamond italic/regular, Caveat, IBM Plex Mono. Latin only in this pilot.",
+        "reason": "The source's type roles are a serif, a hand and a mono. The OFL trio is bundled and reproducible; non-Latin scripts need a licensed companion face.",
+        "decidedBy": "Paper Studio",
+        "decidedAt": "2026-10-26"
+      },
+      {
+        "id": "transition-set",
+        "answer": "wipe, page_turn, hold. No cut, no dissolve.",
+        "reason": "The source cuts rarely and uses brush-edge wipes, a new sheet and mist; a smaller set is easier to reproduce.",
+        "decidedBy": "Paper Studio",
+        "decidedAt": "2026-10-26"
+      },
+      {
+        "id": "format-structure",
+        "answer": "1:1 locked page, eight shots; 16:9 continuous walk, four shots; 9:16 blind page, six shots.",
+        "reason": "A page is locked; a handscroll is one walk. Repeating the same eight-shot montage at two aspects would not prove two formats.",
+        "decidedBy": "Paper Studio",
+        "decidedAt": "2026-10-26"
+      },
+      {
+        "id": "photo-stance",
+        "answer": "No photographic likeness and no on-camera cast. A photo may be reference for a painting.",
+        "reason": "Paper-as-white and painted forms cannot survive a pasted photograph. Photo-led weddings stay with paper-vows.",
+        "decidedBy": "Paper Studio",
+        "decidedAt": "2026-10-26"
+      },
+      {
+        "id": "deferred-gallery",
+        "answer": "No gallery.json in the pack in S1b.",
+        "reason": "It is not validated by the S1a contract, would enter packHash, and serves the Phase 4 app.",
+        "decidedBy": "Paper Studio",
+        "decidedAt": "2026-10-26"
+      },
+      {
+        "id": "deferred-template",
+        "answer": "The 11-section STYLE.md is proven in this pack; styles/_template is unchanged.",
+        "reason": "A template change needs its own scaffold smoke test and would change every pack's templateHash. Prove it once first.",
+        "decidedBy": "Paper Studio",
+        "decidedAt": "2026-10-26"
+      }
+    ]
+  },
+  "costClass": "standard"
+}

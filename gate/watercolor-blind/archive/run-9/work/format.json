@@ -1,0 +1,23 @@
+{
+  "id": "notes-on-leaving-vertical",
+  "name": "Notes on Leaving - 30 s vertical page",
+  "beatRoleMap": {
+    "opening": "title",
+    "stair": "detail",
+    "window": "detail",
+    "door": "quote",
+    "erase": "transition",
+    "closing": "close"
+  },
+  "sequence": [
+    { "beat": "opening", "role": "title", "count": 1 },
+    { "beat": "stair", "role": "detail", "count": 1 },
+    { "beat": "window", "role": "detail", "count": 1 },
+    { "beat": "door", "role": "quote", "count": 1 },
+    { "beat": "erase", "role": "transition", "count": 1 },
+    { "beat": "closing", "role": "close", "count": 1 }
+  ],
+  "durations": [30],
+  "aspects": ["9:16"],
+  "primaryAspect": "9:16"
+}

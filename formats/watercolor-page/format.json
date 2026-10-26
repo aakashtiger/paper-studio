@@ -1,0 +1,28 @@
+{
+  "id": "watercolor-page",
+  "name": "Watercolor journal page",
+  "beatRoleMap": {
+    "opening": "title",
+    "plate-a": "detail",
+    "plate-b": "detail",
+    "note-a": "quote",
+    "plate-c": "detail",
+    "note-b": "quote",
+    "breath": "transition",
+    "closing": "close"
+  },
+  "sequence": [
+    { "beat": "opening", "role": "title", "count": 1 },
+    { "beat": "plate-a", "role": "detail", "count": 1 },
+    { "beat": "plate-b", "role": "detail", "count": 1 },
+    { "beat": "note-a", "role": "quote", "count": 1 },
+    { "beat": "plate-c", "role": "detail", "count": 1 },
+    { "beat": "note-b", "role": "quote", "count": 1 },
+    { "beat": "breath", "role": "transition", "count": 1 },
+    { "beat": "closing", "role": "close", "count": 1 }
+  ],
+  "durations": [45],
+  "aspects": ["1:1"],
+  "primaryAspect": "1:1",
+  "loudness": "-16 LUFS"
+}

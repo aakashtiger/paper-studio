@@ -1,0 +1,23 @@
+{
+  "id": "what-the-room-kept",
+  "name": "What the Room Kept",
+  "beatRoleMap": {
+    "opening": "title",
+    "object-one": "detail",
+    "object-two": "detail",
+    "line": "quote",
+    "breath": "transition",
+    "closing": "close"
+  },
+  "sequence": [
+    { "beat": "opening", "role": "title", "count": 1 },
+    { "beat": "object-one", "role": "detail", "count": 1 },
+    { "beat": "object-two", "role": "detail", "count": 1 },
+    { "beat": "line", "role": "quote", "count": 1 },
+    { "beat": "breath", "role": "transition", "count": 1 },
+    { "beat": "closing", "role": "close", "count": 1 }
+  ],
+  "durations": [30],
+  "aspects": ["9:16"],
+  "primaryAspect": "9:16"
+}

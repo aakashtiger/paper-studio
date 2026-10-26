@@ -15,14 +15,15 @@ The engine is deterministic: the same project, style version and seed always pro
 
 ## Status
 
-**Pre-alpha, week 1.**
+**Pre-alpha. S1a complete; S1b watercolor pilot accepted 9/10 GO, REVIEWABLE.**
 
 Working today:
 
 - wedding brief schema and validator
 - deterministic shot planner
-- Paper Vows style skeleton: tokens, capabilities, 7 recipes
-- fixture brief with a real Indian wedding
+- the S1a style definition system: 27 decisions, six artifacts, validator, resolver, approval, seal
+- the `keepsake` control style
+- the S1b watercolor pilot: one Lemo source, two formats, a sealed blind application
 
 Not built yet: renderer, web app, review room, payments, creator studio.
 
@@ -68,9 +69,9 @@ npm run style:seal
 
 | Path | Owner |
 |---|---|
-| `styles/**`, `fixtures/**`, `docs/references/**` | creative |
-| `src/**`, `scripts/**`, `docs/**` | technical |
-| `docs/decisions/**`, `src/core/**` | both |
+| `styles/**`, `fixtures/**`, `formats/**` | creative |
+| `src/**`, `scripts/**`, `test/**`, `gate/**` | technical |
+| `src/core/**`, `docs/**`, `sources/**` | shared |
 
 The creative owner works through an LLM inside `styles/` only. The technical owner works through an LLM in `src/`. Both read `AGENTS.md` before starting.
 
@@ -100,7 +101,14 @@ gh api --method PUT repos/aakashtiger/paper-studio/collaborators/<handle> -f per
 
 ## Next slice
 
-**Technical owner:** build `docs/specs/0002-renderer-v0.md` — three shots, 540×960, deterministic stills.
+**S1b — watercolor pilot.** Read `docs/specs/0004-style-pilot-watercolor.md`.
 
-**Creative owner:** refine `styles/paper-vows/` — palette, type lockup, hero reference frames, and the remaining recipes. Run `npm run plan` after every recipe change and read the warnings.
+```bash
+npm run style:check -- styles/watercolor
+npm run style:resolve -- --style styles/watercolor --seed 42 --brief fixtures/resolve/watercolor-garden.json --format formats/watercolor-page/format.json --brief fixtures/resolve/watercolor-song.json --format formats/watercolor-page/format.json
+npm run style:resolve -- --style styles/watercolor --seed 42 --brief fixtures/resolve/watercolor-garden.json --format formats/watercolor-scroll/format.json --brief fixtures/resolve/watercolor-song.json --format formats/watercolor-scroll/format.json
+node --import tsx --test test/watercolor-gate.test.ts
+```
+
+Paper K-pop and the `styles/paper-vows` migration are S1c. The renderer is S2.
 

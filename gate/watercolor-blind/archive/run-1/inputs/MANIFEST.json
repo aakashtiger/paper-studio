@@ -1,0 +1,28 @@
+{
+  "algorithm": "sha256",
+  "files": {
+    "APPLICATION.md": "sha256:a7a308ad4b5cd50977702adbf6ac95dfb8fe5bfabafbd5e86c7b1f6365dfdea1",
+    "pack/BRIEF.md": "sha256:961977f966448f8dad21ac7e2a9cddeff8cc95ecb85075065ececfdd1f51c49d",
+    "pack/capabilities.json": "sha256:83ffb1fc3e91a50b6673779105822db6a6db899778ccb21eda2c77de3222f15a",
+    "pack/card.html": "sha256:eb5e418b3e11dd548fb634925fc3a2a2e0c05d9e905497fdcdcb1e74f08e7ab0",
+    "pack/fonts/Caveat-Variable.ttf": "sha256:0bdb6b660482d31531b3945849fba5916b3ef8695da7024a9e6b9ee3c4157988",
+    "pack/fonts/CormorantGaramond-Italic-Variable.ttf": "sha256:0f48ea6abb2084537854f7174c470991a463b13036309e3b50a81511611c530d",
+    "pack/fonts/CormorantGaramond-Variable.ttf": "sha256:b20b7d9626dd956b2c5e558692ad328b1f19e3275e2782db4fa07670d83f35e0",
+    "pack/fonts/FONT-LICENSES.md": "sha256:06617c8f28dabbddf5c1bede11d8f5fdf9b91e752f754fa9ea50ad53ced058e7",
+    "pack/fonts/IBMPlexMono-Regular.ttf": "sha256:6a3412f058c7d8dfd9170c41e85ade48e5156ecb89356110ca57a0a27734af46",
+    "pack/fonts/OFL-Caveat.txt": "sha256:1f9d81d094273d82f3898a1ee8b598a717d050ecbf5ff7bede105b704880157b",
+    "pack/fonts/OFL-Cormorant.txt": "sha256:60700d351cac4650c51f3f9db318d2a420f8b45052dba2715eb5fec41f0f6956",
+    "pack/fonts/OFL-IBMPlexMono.txt": "sha256:7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da",
+    "pack/fonts/OFL.txt": "sha256:8ffb9ae0e336d230a3999f46a4b9e8f2ce601c6a662e4e704ffd0561a0f6159c",
+    "pack/LICENSE-THIRD-PARTY.txt": "sha256:d11a04e4bcba137f579a81fa52fe3b620f01e67d3a9f372cf7ac0ece06b4b2fd",
+    "pack/recipes/watercolor_close.json": "sha256:44dbbf450a90ce4dc235193f2b5a8f3a4d33ba2b405b8d93047c1221f27d334b",
+    "pack/recipes/watercolor_mist.json": "sha256:259898b1ae2975809fc82016fdbb07c27a41207dbe87e3e249ec2ad486adaf72",
+    "pack/recipes/watercolor_quote.json": "sha256:3b6c24e7e44214fbf711e4f0ed7dd3b0fcda714d85f2d4dde26b237f627f7da0",
+    "pack/recipes/watercolor_specimen.json": "sha256:b34122def01b236b5fce5308848459909005785de303fb593f4947a695e097d5",
+    "pack/recipes/watercolor_title.json": "sha256:54b24498748336d82eeb73a6976a1ff075a8a94219d1f74b79a11554d1e23799",
+    "pack/recipes/watercolor_walk.json": "sha256:4645fd96283ec9244135043e3a02a517c973d3e0697f6359795dea0d700531fd",
+    "pack/STYLE.md": "sha256:c0356bbec6246580fc43809783ec6d53a2ea36757c9dea65a89a456f7328ac64",
+    "pack/tokens.json": "sha256:4f9569c35c1137d78af6b1a0370e971282c9d25764c4aa73f590a0fe9dd4cc08",
+    "prompt.md": "sha256:7159302169cb49c9fc86dc397fccff27d157aa477dd1e775ce6d368619aa4f99"
+  }
+}

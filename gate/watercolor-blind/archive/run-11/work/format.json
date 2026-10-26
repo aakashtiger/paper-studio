@@ -1,0 +1,21 @@
+{
+  "id": "house-measured-9x16",
+  "name": "The House, Measured (30 s vertical page)",
+  "beatRoleMap": {
+    "opening": "title",
+    "plate": "detail",
+    "line": "quote",
+    "erase": "transition",
+    "ending": "close"
+  },
+  "sequence": [
+    { "beat": "opening", "role": "title", "count": 1 },
+    { "beat": "plate", "role": "detail", "count": 2 },
+    { "beat": "line", "role": "quote", "count": 1 },
+    { "beat": "erase", "role": "transition", "count": 1 },
+    { "beat": "ending", "role": "close", "count": 1 }
+  ],
+  "durations": [30],
+  "aspects": ["9:16"],
+  "primaryAspect": "9:16"
+}

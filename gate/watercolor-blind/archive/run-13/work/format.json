@@ -1,0 +1,23 @@
+{
+  "id": "before-the-keys-30s-9x16",
+  "name": "Before the Keys — vertical page, 30 s",
+  "beatRoleMap": {
+    "opening": "title",
+    "firstPlate": "detail",
+    "said": "quote",
+    "erase": "transition",
+    "lastPlate": "detail",
+    "closing": "close"
+  },
+  "sequence": [
+    { "beat": "opening", "role": "title", "count": 1 },
+    { "beat": "firstPlate", "role": "detail", "count": 1 },
+    { "beat": "said", "role": "quote", "count": 1 },
+    { "beat": "erase", "role": "transition", "count": 1 },
+    { "beat": "lastPlate", "role": "detail", "count": 1 },
+    { "beat": "closing", "role": "close", "count": 1 }
+  ],
+  "durations": [30],
+  "aspects": ["9:16"],
+  "primaryAspect": "9:16"
+}

@@ -2,13 +2,17 @@
 
 **Status:** v5 — post-build fixes applied, re-sealing
 **Owner:** both
-**Followed by:** S1b — Paper K-pop reference pack
+**Followed by:** S1b — watercolor pilot (`docs/specs/0004-style-pilot-watercolor.md`); S1c — Paper K-pop reference pack
+
+> **Next phase:** S1b is the watercolor pilot, not Paper K-pop. This spec's S1a
+> contract, vocabularies and validator remain authoritative; S1b does not change
+> them. Paper K-pop and the `styles/paper-vows` migration are S1c.
 
 ## Goal
 
 Prove that a style can be defined as a complete, machine-checkable, reusable package — independent of any single video — before any renderer or film is built.
 
-S1a ships the **definition machine**, not a style. Paper K-pop is S1b.
+S1a ships the **definition machine**, not a style. Paper K-pop is S1c.
 
 ## What changed in v4
 
@@ -21,7 +25,7 @@ S1a ships the **definition machine**, not a style. Paper K-pop is S1b.
 - The report has a real finish: open the card, then approve.
 - The card requires an ANTI reference and a hero specimen above the fold.
 - `keepsake` is a family archive, not a wedding.
-- `styles/paper-vows` is marked legacy for S1a; S1b migrates it.
+- `styles/paper-vows` is marked legacy for S1a; S1c migrates it.
 - The gate is binary: both verifiers must return GO **and** score at least 9/10.
 
 ## The pack
@@ -328,7 +332,7 @@ npm run style:resolve -- --style styles/_examples/keepsake --seed 42 \
 - Template contains stubs and one generic recipe.
 - Hard-fail only on what breaks reuse; warnings never block.
 - No style diff, no second real style, no runtime implementation, no renderer.
-- `styles/paper-vows` is legacy for S1a and is not expected to pass. S1b migrates it.
+- `styles/paper-vows` is legacy for S1a and is not expected to pass. S1c migrates it.
 - The 27 rows are the ontology; the 12 questions are the author's surface.
 
 ## Agent plan
@@ -359,7 +363,7 @@ Done when both verifiers return **GO** on the blocker table and score **9/10 or 
 
 ## Out of scope
 
-- Paper K-pop content (S1b)
+- Paper K-pop content (S1c)
 - renderer, frames, video
 - runtime implementation
 - conformance execution and hashes (S2)

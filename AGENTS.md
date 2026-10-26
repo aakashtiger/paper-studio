@@ -38,9 +38,10 @@ Style and format are independent. Genre applies mainly to long-form YouTube.
 
 | Path | Owner | Rule |
 |---|---|---|
-| `styles/**`, `fixtures/**` | creative | engine changes never happen here |
-| `src/**`, `scripts/**` | technical | no palette or shot ids here |
-| `src/core/**`, `docs/**` | shared | change only with both owners aware |
+| `styles/**`, `fixtures/**`, `formats/**` | creative | engine changes never happen here |
+| `src/**`, `scripts/**`, `test/**` | technical | no palette or shot ids here |
+| `src/core/**`, `docs/**`, `sources/**` | shared | change only with both owners aware |
+| `gate/**` | technical | sealed evidence; never edit a sealed input |
 
 Do not refactor across an ownership boundary without a PR labelled `contract-change`.
 
@@ -61,22 +62,35 @@ npm run style:check -- <path>
 npm run style:approve -- <id> --by "<name>"
 npm run style:resolve -- --style <path> --seed <n> --brief <file> --format <file>
 npm run style:seal
+node --import tsx --test test/watercolor-gate.test.ts   # S1b pilot gate
 ```
 
 ## Current phase
 
-**S1a — Style Definition System.**
+**S1b — Watercolor pilot — complete, accepted 9/10 GO.**
+
+S1a is complete and accepted **9/10 GO**. It shipped the definition machine and the
+`keepsake` control. S1b converted one Lemo-Opuscar style into a real pack, with no
+renderer and no video.
+
+The watercolor pack is **REVIEWABLE** with one open director choice (paint-in speed).
+The full evidence is in `docs/decisions/0007-watercolor-pilot.md` and
+`gate/watercolor-blind/REPORT.md`.
 
 Build only:
 
-- style schema, validator, resolver and CLI
-- template, authoring guide and style brief
-- mutation suite
-- the control style `keepsake`, which is a control and not a product style
+- `styles/watercolor/` — six artifacts, six recipes, card, bundled fonts, licence notices
+- two formats (`watercolor-page`, `watercolor-scroll`), two fixtures
+- a sealed blind application at 30 s / 9:16 / six shots
+- a gate test that proves counts, durations, aspects, hashes and regressions
+- the source autopsy and rights index in `sources/lemo/`
 
-Do not build: the renderer, a video, the web app, the Paper K-pop pack, or a second product style.
+Do not build: the renderer, a video, the web app, the Paper K-pop pack, a second
+product style, or a conversion of the other 58 Lemo styles.
 
-Paper K-pop is S1b. `styles/paper-vows` is legacy during S1a and is not expected to pass the new validator.
+Paper K-pop and the `styles/paper-vows` migration are **S1c**. The next step is
+S1c, or a second pilot (`papercut-red`) if the wedding/festive vertical is first.
+`styles/paper-vows` remains legacy and is not expected to pass the S1a validator.
 
 ## How to make a change
 
