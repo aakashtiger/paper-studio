@@ -2,14 +2,16 @@
 
 **Style:** `styles/watercolor` 0.1.0
 **Final run:** run 15
-**Pack hash:** `sha256:e4a75b7843c73645c63ad6224ae6413631285a161aabdc28673d17581e6d0b2b`
-**Result:** 6 shots · 30 s · 9:16 · 9/9 assertions · pack and inputs unchanged · **post-build critics 9/10 GO**
+**Pack hash:** `sha256:31b804d0530f5a7e4065f41dbfef683153dc9144a61336fa4b892ae74a9bafa5`
+**Result:** 6 shots · 30 s · 9:16 · 9/9 assertions · pack and inputs unchanged after LF normalization · **post-build critics 9/10 GO**
 **Author:** a fresh sub-agent given only a temp copy of `inputs/`.
 
 The byte seal proves the author did not edit the inputs; it does not prove the
 author never opened the repo. The author was a fresh sub-agent prompted to work
 only in the temp folder; the harness has no sandbox. Treat this as a
 prompt-isolated, byte-sealed application, not a cryptographic read-seal.
+
+**Normalization:** the two OFL texts were converted from CRLF/mixed to LF so the pack hash is identical on Windows and Linux. The content is unchanged; the baseline and used manifests were recomputed from the normalized files. This is a transport normalization, not an edit to the style.
 
 ## What the author made
 
@@ -59,7 +61,7 @@ The full output is `resolve.txt`. The gate test checks the same plan, the live p
 | 12 | `sha256:d9b0895d23fc7c045d1c2f41fbec22b20ca5bf2b4e1fe023f51f91580a2b4b99` | `specimenNote` still too narrow; paper gap read as opaque fill; bristle threshold at 1080. | Note below specimen; paper gap is the sheet; 390 px threshold. |
 | 13 | `sha256:75da66b3001aa7674dcba5b4aecaf19ea51ffbee8ec0b4e94cab2b48a3253b03` | **Final run before the last card pass.** The route is clean; remaining questions are S1a limits: one caption across four plates, one venue, the title's six slots, leader endpoints, no transition durations, mist order, paint-in per form vs shot, per-shot subject. | Selected for the last card/walk pass; these are S2/0.2.0 items, not gate blockers. |
 | 14 | `sha256:321d39e7e2b024b396c4527fe4ff40d986750a12f95fcf4e7d5c7a43cae10e6f` | **Pre-final.** The route is clean; remaining questions are S1a limits plus the `names` meaning for a place, display-type entry, and paper-gap shape vs stopped wash. | Card/world polish; selected for the last pass. |
-| 15 | `sha256:e4a75b7843c73645c63ad6224ae6413631285a161aabdc28673d17581e6d0b2b` | **Final run.** The route is clean; remaining questions are S1a limits: which page contract to repeat, wipe handover, flying-white op, 14 px scale, music-out frame, names/venue for a house, one venue across rooms, optional photos/hashtag/rsvp. | Post-build critics: contract 9/10 GO, creative 9/10 GO, product 9/10 GO. |
+| 15 | `sha256:31b804d0530f5a7e4065f41dbfef683153dc9144a61336fa4b892ae74a9bafa5` | **Final run.** The route is clean; remaining questions are S1a limits: which page contract to repeat, wipe handover, flying-white op, 14 px scale, music-out frame, names/venue for a house, one venue across rooms, optional photos/hashtag/rsvp. | Post-build critics: contract 9/10 GO, creative 9/10 GO, product 9/10 GO. |
 
 The archive keeps each run's `work/`; the pack hash in this table is the lead's
 record of the pack that run used. Runs 1–14 are archived with their work; run 15

@@ -18,10 +18,12 @@
 > metadata is deferred to the app phase.
 >
 > **2026-10-26 — S1b accepted.** `styles/watercolor/` is **REVIEWABLE** with one
-> open director choice (paint-in speed). Gate: typecheck, **93/93 tests**, page
+> open director choice (paint-in speed). Gate: typecheck, **92/92 tests**, page
 > 8 shots / 45 s / 1:1, scroll 4 shots / 45 s / 16:9, blind 6 shots / 30 s / 9:16,
-> pack hash `e4a75b78…`, all three post-build critics **9/10 GO**. Full evidence:
-> `docs/decisions/0007-watercolor-pilot.md` and `gate/watercolor-blind/REPORT.md`.
+> pack hash `31b804d0…`, all three post-build critics **9/10 GO**. The gate is
+> watercolor-only; `keepsake` and `watercolor` are self-contained and share no
+> assets or tests. Full evidence: `docs/decisions/0007-watercolor-pilot.md` and
+> `gate/watercolor-blind/REPORT.md`.
 > Next: the director answers the paint-in choice and signs, or start S1c Paper
 > K-pop / a `papercut-red` pilot. No renderer, no video.
 **Update 2026-10-26:** the living `keepsake` example now uses the 11-section Lemo-style human brief and carries `style.json` gallery metadata. The machine contract, the template and the frozen `gate/blind/pack` are unchanged. See `docs/decisions/0006-lemo-brief-structure.md`.

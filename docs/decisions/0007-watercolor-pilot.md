@@ -78,14 +78,13 @@ The first fourteen runs are archived; the fifteenth is the live `work/`.
 
 ```text
 typecheck                         pass
-tests                             93 / 93
+tests                             92 / 92
 style:check watercolor            REVIEWABLE, 0 hard, 1 open choice (paint-in speed)
-style:check keepsake              REVIEWABLE, 0 hard, 1 open choice (unchanged)
-style:check template              DRAFT, 6 known hard failures, exit 0 (unchanged)
+self-contained                    no other style or external asset required
 resolve page (garden + song)      8 shots, 45 s, 1:1, 9/9
 resolve scroll (garden + song)    4 shots, 45 s, 16:9, 9/9
 blind (run 15)                    6 shots, 30 s, 9:16, 9/9
-pack hash                         sha256:e4a75b7843c73645c63ad6224ae6413631285a161aabdc28673d17581e6d0b2b
+pack hash                         sha256:31b804d0530f5a7e4065f41dbfef683153dc9144a61336fa4b892ae74a9bafa5
 pack                              21 files, 2,584,134 bytes (mostly four OFL fonts)
 manifests                         baseline and used byte-identical; every hash matches
 card                              no external requests; six evidence tests; six-frame strip; both paint-in speeds
@@ -93,7 +92,8 @@ critics                           contract 9/10 GO · creative 9/10 GO · produc
 ```
 
 The open choice is **paint-in speed: 1.2 s or 1.8 s per painted form**. The pack
-stays REVIEWABLE; the director signs. This is the same pattern as S1a's keepsake.
+stays REVIEWABLE; the director signs. This is the same pattern as S1a's
+open-choice approval.
 
 ## What the pilot proved
 

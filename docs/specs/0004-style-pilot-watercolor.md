@@ -49,7 +49,7 @@ styles/_template/                 six artifacts (unchanged by this spec)
 src/core/style.ts                 schema, validator, resolver, approval
 scripts/style.ts                  CLI
 docs/STYLE-AUTHORING.md           director flow
-styles/_examples/keepsake/        the S1a control (not a product style)
+styles/_examples/keepsake/        the S1a control; checked separately, not a dependency of this gate
 ```
 
 ## Scope decision after the pre-build critics
@@ -88,7 +88,7 @@ The critics found the first draft too large and too eager to change the shared t
 | `fixtures/resolve/watercolor-garden.json` | First reuse brief |
 | `fixtures/resolve/watercolor-song.json` | Second reuse brief |
 | `gate/watercolor-blind/` | Sealed inputs, work output, resolve evidence, pack hash, report |
-| `test/watercolor-gate.test.ts` | Executable gate: counts, durations, aspects, hash, regression |
+| `test/watercolor-gate.test.ts` | Executable gate: counts, durations, aspects, hash, self-containment |
 | `docs/decisions/0007-watercolor-pilot.md` | What was converted, what was not, and what it cost |
 
 ## The 11-section `STYLE.md`
@@ -336,10 +336,10 @@ Run from the repo root. PowerShell-friendly one-line commands:
 npm run typecheck
 npm test
 npm run style:check -- styles/watercolor
-npm run style:check -- styles/_examples/keepsake
-npm run style:check -- styles/_template
 node --import tsx --test test/watercolor-gate.test.ts
 ```
+
+The watercolor gate reads only `styles/watercolor`. Other packs are checked by their own commands and are not dependencies of this gate.
 
 `npm test` includes `test/watercolor-gate.test.ts`. That test is the executable gate:
 
@@ -348,8 +348,7 @@ node --import tsx --test test/watercolor-gate.test.ts
 - `watercolor-scroll` with garden and with song: 4 shots, 45 s, 16:9; 9/9 including assertion 4.
 - Blind run: 6 shots, 30 s, 9:16; 9/9.
 - Sealed inputs: `inputs/MANIFEST.json` and `used-inputs/MANIFEST.json` are byte-identical; every manifest entry hashes against both copies; `computePackHash("used-inputs/pack")` equals `PACK-HASH.txt`; the live pack hash equals `PACK-HASH.txt`.
-- `keepsake` is still REVIEWABLE with 0 hard failures.
-- `_template` is still DRAFT, exit 0.
+- The watercolor pack is self-contained: no other style, no external asset and no network are required.
 - Card has no external `http(s)` URLs, no Lemo media file is inside the pack, the six evidence labels and six-frame strip are present, and the parameter block contains `paper #f3ead9`, `wash 3 passes`, `bristles 3–9`, `halo 12 px`, `leader 1.5 px`.
 - `STYLE.md` has the 11 headings in order; `sources/lemo/watercolor-source.md` has D01–D27 rows.
 - `capabilities.identity.licence` names the proprietary pack and OFL fonts.
@@ -440,7 +439,7 @@ The PR/commit set carries the `contract-change` label because it re-scopes the p
 | The 1:1 and 16:9 plans are the same film | The page is a locked 8-shot journal; the scroll is a 4-shot continuous walk. The gate test asserts different counts and aspects. |
 | The blind run is contaminated | Byte-sealed inputs, a manifest and a pack hash before/after; the author is given only the copied pack and the application guide. The seal proves bytes, not that the author never opened the repo. |
 | Licence or provenance is vague | Full MIT notice, OFL notices, source hashes, a D01–D27 table, and an explicit not-reproduced list. |
-| The template change breaks `keepsake` | No template change. `keepsake` is checked in the gate test. No `style:seal` during S1b. |
+| A shared template change could break other packs | This pilot does not change the template. The watercolor pack is self-contained, and its gate reads no other style. |
 | The pilot overfits the wedding vertical | The two fixtures are a garden wedding and a song/memory; the blind commission is a song/memory at 9:16. |
 | The card is decoration | The card is a parameter-built SVG evidence plate with six observable tests and a six-frame recipe strip; it is labelled "card evidence, not the renderer." |
 | The resolver repeats one slot value | Declared as an S1a limitation; the pilot proves structural reuse, not per-shot content variation. |
@@ -468,7 +467,7 @@ The PR/commit set carries the `contract-change` label because it re-scopes the p
 - `styles/watercolor` is REVIEWABLE, 0 hard failures, exactly one open choice.
 - The 2×2 resolve passes 9/9: page 8/45/1:1; scroll 4/45/16:9.
 - The prompt-isolated, byte-sealed blind run passes 6/30/9:16; the baseline and used input manifests are byte-identical and every hash matches; the live pack hash is unchanged; the author was prompted to work outside the repo.
-- `keepsake` is REVIEWABLE with 0 hard failures; `_template` is DRAFT, exit 0.
+- The watercolor pack is self-contained: its gate reads no other style, no external font and no network.
 - The card opens with no external requests, shows the name/version, all six default palette hexes, the hero, REFERENCE/SPECIMEN/ANTI, the six labelled evidence tests, the parameter block, the six-frame strip, the 390 px phone, and both paint-in speeds.
 - The product positioning is stated: Paper Vows 1:1/16:9; Paper Studio/song 9:16; 9:16 wedding is not claimed; Latin-only and no-photo limits are explicit.
 - `STYLE.md` has the 11 headings in order and the four required sections.

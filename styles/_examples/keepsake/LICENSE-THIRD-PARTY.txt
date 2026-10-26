@@ -1,0 +1,8 @@
+Keepsake bundles two font families under the SIL Open Font License 1.1:
+
+- Instrument Serif (regular and italic)
+- Space Grotesk
+
+See `fonts/FONT-LICENSES.md` and the full licence text in `fonts/OFL.txt`.
+
+The style pack itself is CC0-1.0. The bundled fonts keep their own OFL 1.1 licence.

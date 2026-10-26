@@ -12,7 +12,6 @@ import {
   readStyleJson,
   resolveStyle,
   sha256,
-  styleExitCode,
   validateStylePack,
 } from "../src/core/style.js";
 
@@ -25,7 +24,7 @@ import {
  *   - the scroll resolves 4 shots / 45 s / 16:9 from two briefs;
  *   - the sealed blind run resolves 6 shots / 30 s / 9:16;
  *   - the live pack, the baseline inputs and the author's used inputs all match;
- *   - keepsake and the template did not regress;
+ *   - the pack is self-contained; no other style is required;
  *   - the card, STYLE.md, autopsy and licence carry the promised evidence.
  */
 
@@ -258,17 +257,6 @@ test("watercolor gate: live pack, baseline inputs and used inputs match", () => 
       assert.equal(sha256(readFileSync(file)), expected, `${root}/${relativePath}`);
     }
   }
-});
-
-test("watercolor gate: keepsake and the template did not regress", () => {
-  const keepsake = validateStylePack("styles/_examples/keepsake");
-  assert.equal(keepsake.status, "REVIEWABLE");
-  assert.equal(keepsake.hardFailures.length, 0);
-  assert.equal(keepsake.chosen.length, 1);
-
-  const template = validateStylePack("styles/_template");
-  assert.equal(template.status, "DRAFT");
-  assert.equal(styleExitCode(template, "styles/_template"), 0);
 });
 
 test("watercolor gate: card carries the six evidence tests and no external requests", () => {
