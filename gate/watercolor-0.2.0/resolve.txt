@@ -1,0 +1,78 @@
+STYLE: watercolor 0.2.0
+SEED: 7
+PAIRS: 2
+
+1. watercolor-small-inventory — A Small Inventory · 6 shots · 30s · 9:16
+   BRIEF: gate/watercolor-0.2.0/work/brief.json (sha256:5b923f96def094344edc864514cbb640e937924d36687f594f93eb2f74b44d19)
+   FORMAT: gate/watercolor-0.2.0/work/format.json · durations 30 · aspects 9:16 · primary 9:16
+   STYLE LIMITS: durations 30/45 · aspects 1:1/16:9/9:16
+   WORD LIMIT: 16 words per content slot (capabilities 16 · layout 16)
+   s01 opening · watercolor_title · 0–4.667s · wipe
+      content.title = A Small Inventory
+      content.subtitle = three objects, one kitchen
+      content.names = Ines & Mara
+      content.date = 14 March
+      content.venue = the kitchen, Alder Row
+      content.monogram = IM
+   s02 plate · watercolor_specimen · 4.667–10.5s · page_turn
+      content.caption = collected in morning light
+      content.venue = the kitchen, Alder Row
+   s03 line · watercolor_quote · 10.5–15.167s · wipe
+      content.body = Ines said morning smelled of cold butter and pencil shavi...
+      content.caption = collected in morning light
+   s04 breath · watercolor_mist · 15.167–19.667s · wipe
+   s05 reprise · watercolor_specimen · 19.667–25.5s · page_turn
+      content.caption = collected in morning light
+      content.venue = the kitchen, Alder Row
+   s06 closing · watercolor_close · 25.5–30s · hold
+      content.monogram = IM
+      content.caption = collected in morning light
+      content.date = 14 March
+   VARIATIONS: grain 11.705 · shadow 61.958 · camera 351.687 · timing 7.961
+
+2. watercolor-page — Watercolor journal page · 8 shots · 45s · 1:1
+   BRIEF: fixtures/resolve/watercolor-garden.json (sha256:06c0a9ec41be8a2c0f3dc6c418c95ecbacd88d417d060d07793ee4e16f60e774)
+   FORMAT: formats/watercolor-page/format.json · durations 45 · aspects 1:1 · primary 1:1
+   STYLE LIMITS: durations 30/45 · aspects 1:1/16:9/9:16
+   WORD LIMIT: 16 words per content slot (capabilities 16 · layout 16)
+   s01 opening · watercolor_title · 0–5.212s · wipe
+      content.title = The Garden We Borrowed
+      content.subtitle = A wedding invitation painted from the day
+      content.names = Mira and Jonah
+      content.date = 21 June 2026
+      content.venue = The Glasshouse at Field 9
+      content.monogram = M & J
+   s02 plate-a · watercolor_specimen · 5.212–11.728s · page_turn
+      content.caption = The roses opened the week they arrived.
+      content.venue = The Glasshouse at Field 9
+   s03 plate-b · watercolor_specimen · 11.728–18.243s · page_turn
+      content.caption = The roses opened the week they arrived.
+      content.venue = The Glasshouse at Field 9
+   s04 note-a · watercolor_quote · 18.243–23.455s · wipe
+      content.body = Two families, one long table, and a garden showing off.
+      content.caption = The roses opened the week they arrived.
+   s05 plate-c · watercolor_specimen · 23.455–29.97s · page_turn
+      content.caption = The roses opened the week they arrived.
+      content.venue = The Glasshouse at Field 9
+   s06 note-b · watercolor_quote · 29.97–35.182s · wipe
+      content.body = Two families, one long table, and a garden showing off.
+      content.caption = The roses opened the week they arrived.
+   s07 breath · watercolor_mist · 35.182–40.091s · wipe
+   s08 closing · watercolor_close · 40.091–45s · hold
+      content.monogram = M & J
+      content.caption = The roses opened the week they arrived.
+      content.date = 21 June 2026
+   VARIATIONS: grain 11.705 · shadow 61.958 · camera 351.687 · timing 7.961
+
+ASSERTIONS
+1. Every slot in every selected recipe resolves non-empty — PASS
+2. Every format beat maps to at least one recipe through beatRoleMap — PASS
+3. Every asset resolves in capabilities.assets — PASS
+4. Two briefs produce different plans; at least one slot value differs — PASS
+5. The same seed twice produces byte-identical JSON — PASS
+6. A different seed changes seed and the variations block — PASS
+7. Every selected recipe's transitionOut is allowed by the style — PASS
+8. The plan's duration and aspect fit the format and the style limits — PASS
+9. Every resolved content.* text slot is within the style's word limit — PASS
+
+No files written.

@@ -29,6 +29,28 @@
 > K-pop / a `papercut-red` pilot. No renderer, no video.
 **Update 2026-10-26:** the living `keepsake` example now uses the 11-section Lemo-style human brief and carries `style.json` gallery metadata. The machine contract, the template and the frozen `gate/blind/pack` are unchanged. See `docs/decisions/0006-lemo-brief-structure.md`.
 
+> **2026-10-27 — S1c accepted.** `styles/paper-kpop/` is **REVIEWABLE** with one
+> open director choice (`paper-shadow`). Final pack
+> `sha256:6c5765be435bbf494bceaee6b770828c4bdd2c33d5c795287cf96435f8c211ba`.
+> Gate: typecheck, **101/101 tests**, song 14/45/16:9, Shorts 8/30/9:16, blind
+> 6/30/9:16, 9/9 assertions, 32 manifest files, UTF-8 `resolve.txt`, geometry
+> 9/9, contract/creative/product **9/10 GO**. The blind is a disclosed
+> **plan-valid carry-forward** from `719e0582…`, not a pristine seal. The
+> geometry re-audit found 6 critical and 8 high box defects and fixed them in one
+> batch; see `gate/paper-kpop-blind/AUDIT.md`.
+>
+> **2026-10-27 — Watercolor 0.2.0 accepted.** The card/process revision is
+> **REVIEWABLE** at `sha256:196fd31501fe029f20da6c79fd1629864581182e22c59802b47a0b741c236e05`
+> in a new `styles/watercolor-0.2.0/` and `gate/watercolor-0.2.0/`. The 0.1.0
+> evidence is untouched at `31b804d0…`. Gate: page 8/45/1:1, scroll 4/45/16:9,
+> blind 6/30/9:16, 9/9 each; full suite **110/110**; exact 24-file manifests;
+> UTF-8 resolve; card 78 prose / 237 visible, 4,158 px at 900, 4,691 px at 390;
+> critics **9/10 GO**. 9:16 is the text proof; 1:1/16:9 are labelled
+> unverified/S2.
+>
+> **Next: S2 visual proof.** A short watercolor and Paper K-pop render test,
+> contact sheet and motion comparison. No renderer, video or app in this phase.
+
 ---
 
 ## Start here (new session)
@@ -37,12 +59,12 @@ Paste this into a new session opened in `Y:\NewVideoTest\studio`:
 
 ```text
 Read Y:\NewVideoTest\studio\HANDOVER.md, CONVERSATION-HANDOVER.md and AGENTS.md.
-Continue from the "Next step" section.
+Continue from the "Next: S2 visual proof" section.
 
-Start with the pilot conversion of the Lemo watercolor style into our style pack.
-No renderer, no video. Follow the process: define the step goal, run pre-build
-critics, build with sub-agents, run post-build critics, loop until all critics
-give 9/10 GO.
+Build a short watercolor and Paper K-pop render test, contact sheet and motion
+comparison. No full film, no app, no second style until that exists. Follow the
+process: define the step goal, run pre-build critics, build with sub-agents, run
+post-build critics, loop until all critics give 9/10 GO.
 
 Tell me the next step before starting. Do not ask me to do anything manually.
 ```

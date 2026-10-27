@@ -15,7 +15,7 @@ The engine is deterministic: the same project, style version and seed always pro
 
 ## Status
 
-**Pre-alpha. S1a complete; S1b watercolor pilot accepted 9/10 GO, REVIEWABLE.**
+**Pre-alpha. S1a, S1b, S1c and S1c.1 complete; Paper K-pop 0.1.0 and Watercolor 0.2.0 are REVIEWABLE.**
 
 Working today:
 
@@ -23,7 +23,9 @@ Working today:
 - deterministic shot planner
 - the S1a style definition system: 27 decisions, six artifacts, validator, resolver, approval, seal
 - the `keepsake` control style
-- the S1b watercolor pilot: one Lemo source, two formats, a sealed blind application
+- the S1b watercolor pilot and the S1c.1 Watercolor 0.2.0 card/process revision
+- the S1c Paper K-pop pack: 8 recipes, 2 formats, geometry gate, plan-valid blind
+- 110 tests, including the geometry and card-height gates
 
 Not built yet: renderer, web app, review room, payments, creator studio.
 
@@ -101,14 +103,20 @@ gh api --method PUT repos/aakashtiger/paper-studio/collaborators/<handle> -f per
 
 ## Next slice
 
-**S1b — watercolor pilot.** Read `docs/specs/0004-style-pilot-watercolor.md`.
+**S2 — visual proof.** A short watercolor and Paper K-pop render test, contact
+sheet and motion comparison. No full film, no app, no second style yet.
+
+The definition gates are:
 
 ```bash
-npm run style:check -- styles/watercolor
-npm run style:resolve -- --style styles/watercolor --seed 42 --brief fixtures/resolve/watercolor-garden.json --format formats/watercolor-page/format.json --brief fixtures/resolve/watercolor-song.json --format formats/watercolor-page/format.json
-npm run style:resolve -- --style styles/watercolor --seed 42 --brief fixtures/resolve/watercolor-garden.json --format formats/watercolor-scroll/format.json --brief fixtures/resolve/watercolor-song.json --format formats/watercolor-scroll/format.json
-node --import tsx --test test/watercolor-gate.test.ts
+npm run style:check -- styles/paper-kpop
+node --import tsx --test test/paper-kpop-gate.test.ts
+npm run style:check -- styles/watercolor-0.2.0
+node --import tsx --test test/watercolor-0.2.0-gate.test.ts
+node scripts/card-audit.mjs styles/watercolor-0.2.0/card.html 900 700
 ```
 
-Paper K-pop and the `styles/paper-vows` migration are S1c. The renderer is S2.
+Evidence: `docs/decisions/0008-paper-kpop-pilot.md`,
+`docs/decisions/0009-watercolor-0.2.0.md`, `gate/paper-kpop-blind/` and
+`gate/watercolor-0.2.0/`.
 

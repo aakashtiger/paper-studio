@@ -27,13 +27,28 @@ Convert one Lemo-Opuscar style into our pack. No renderer, no video.
 **Gate:** `style:check` REVIEWABLE with 0 hard failures; `style:resolve` 9/9; page
 8/45/1:1 and scroll 4/45/16:9; blind 6/30/9:16; all three critics at 9/10 GO.
 
-## Phase 0c — Paper K-pop reference pack (S1c)
+## Phase 0c — Paper K-pop reference pack (S1c) — complete
 
-- Migrate `styles/paper-vows` into the new pack.
-- Extract Paper K-pop tokens, runtime primitives, rigs, recipes, evidence and conformance plan.
-- Content-swap and blind-application tests.
+- `styles/paper-kpop/`: 8 recipes, 2 formats, card, bundled fonts, licence notices.
+- Song 14 shots / 45 s / 16:9; Shorts 8 shots / 30 s / 9:16; plan-valid blind 6 / 30 / 9:16.
+- Geometry re-audit and one-batch fix: 14 px floor, no overlap, margins, paired 9:16 anchors.
+- Gate: 9 tests, full suite 101.
 
-**Gate:** Paper K-pop passes the contract and the reuse test with no renderer.
+**Gate:** REVIEWABLE, one open choice, 9/9 resolve, 9/9 gate, 101/101 suite,
+geometry clean, contract/creative/product 9/10 GO. Final pack
+`sha256:6c5765be…`; the blind is a disclosed plan-valid carry-forward, not a pristine seal.
+
+## Phase 0c.1 — Watercolor 0.2.0 — complete
+
+A card and process revision of the watercolor pack, in a new
+`styles/watercolor-0.2.0/` and `gate/watercolor-0.2.0/`. The 0.1.0 evidence stays
+historical. Visual-first card, stripped `APPLICATION.md`, exact manifests, UTF-8
+resolve, density/height tests, three critics and one final blind at 6/30/9:16.
+1:1/16:9 text proof is labelled unverified/S2; the 9:16 page is the text proof.
+
+**Gate:** REVIEWABLE, one open choice; page 8/45/1:1 and scroll 4/45/16:9 resolve
+9/9; blind 6/30/9:16; 110/110 tests; card 78 prose/237 visible, 4,158 px at 900
+and 4,691 px at 390; critics 9/10 GO. Final pack `sha256:196fd315…`.
 
 ## Phase 0d — Vertical slice
 

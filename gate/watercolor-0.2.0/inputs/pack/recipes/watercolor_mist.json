@@ -1,0 +1,74 @@
+{
+  "id": "watercolor_mist",
+  "beatRoles": [
+    "transition"
+  ],
+  "duration": {
+    "min": 4,
+    "max": 7,
+    "default": 5
+  },
+  "camera": {
+    "move": "static"
+  },
+  "slots": [],
+  "assets": [
+    "set.journal-sheet",
+    "texture.cotton-fibre",
+    "frame.wash-edge"
+  ],
+  "composition": [
+    {
+      "op": "shape",
+      "id": "mist",
+      "kind": "wash",
+      "color": "paper",
+      "points": [
+        [0, 0.5],
+        [0.12, 0.46],
+        [0.24, 0.52],
+        [0.36, 0.47],
+        [0.48, 0.53],
+        [0.6, 0.48],
+        [0.72, 0.54],
+        [0.84, 0.49],
+        [1, 0.5],
+        [1, 1],
+        [0, 1]
+      ],
+      "opacity": 1,
+      "z": 1
+    },
+    {
+      "op": "shape",
+      "id": "mist-full",
+      "kind": "wash",
+      "color": "paper",
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "opacity": 1,
+      "z": 2
+    },
+    {
+      "op": "effect",
+      "kind": "fiber",
+      "z": 3,
+      "opacity": 0.22
+    },
+    {
+      "op": "transition",
+      "kind": "wipe"
+    }
+  ],
+  "transitionOut": "wipe",
+  "failureModes": [
+    "a caption during the mist",
+    "a hard cut instead of a wash",
+    "a vector cloud",
+    "a mist that leaves a ghost",
+    "a mist that leaves a hard edge",
+    "a mist that stops half-frame"
+  ]
+}

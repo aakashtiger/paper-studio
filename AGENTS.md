@@ -63,34 +63,58 @@ npm run style:approve -- <id> --by "<name>"
 npm run style:resolve -- --style <path> --seed <n> --brief <file> --format <file>
 npm run style:seal
 node --import tsx --test test/watercolor-gate.test.ts   # S1b pilot gate
+node --import tsx --test test/paper-kpop-gate.test.ts   # S1c gate
+node --import tsx --test test/watercolor-0.2.0-gate.test.ts   # S1c.1 gate
+node scripts/card-audit.mjs styles/watercolor-0.2.0/card.html 900 700   # card height
 ```
 
 ## Current phase
 
-**S1b — Watercolor pilot — complete, accepted 9/10 GO.**
+**S1c — Paper K-pop — complete, accepted 9/10 GO.**
 
-S1a is complete and accepted **9/10 GO**. It shipped the definition machine and the
-`keepsake` control. S1b converted one Lemo-Opuscar style into a real pack, with no
+S1a is complete and accepted **9/10 GO**. S1b converted watercolor into a real pack.
+S1c converted the author's own paper-cut film into the Paper K-pop pack, with no
 renderer and no video.
 
-The watercolor pack is **REVIEWABLE** with one open director choice (paint-in speed).
-The full evidence is in `docs/decisions/0007-watercolor-pilot.md` and
-`gate/watercolor-blind/REPORT.md`.
+The Paper K-pop pack is **REVIEWABLE** with one open director choice (`paper-shadow`).
+The final pack hash is `sha256:6c5765be435bbf494bceaee6b770828c4bdd2c33d5c795287cf96435f8c211ba`.
+The full evidence is in `docs/decisions/0008-paper-kpop-pilot.md`,
+`gate/paper-kpop-blind/REPORT.md` and `gate/paper-kpop-blind/AUDIT.md`.
 
-Build only:
+Proven in S1c:
 
-- `styles/watercolor/` — six artifacts, six recipes, card, bundled fonts, licence notices
-- two formats (`watercolor-page`, `watercolor-scroll`), two fixtures
-- a sealed blind application at 30 s / 9:16 / six shots
-- a gate test that proves counts, durations, aspects, hashes and regressions
-- the source autopsy and rights index in `sources/lemo/`
+- `styles/paper-kpop/` — 8 recipes, 2 formats, card, bundled fonts, licence notices
+- song 14 shots / 45 s / 16:9, Shorts 8 shots / 30 s / 9:16, blind 6 / 30 / 9:16
+- 9/9 resolver assertions, 9/9 gate tests, 101/101 full suite
+- geometry: 14 px floor, no text overlap, no rule crossing, paired 9:16 anchors,
+  margins, contact; 6 critical and 8 high findings fixed in one batch
+- a disclosed plan-valid carry-forward from `719e0582…`, not a pristine seal
+- contract 9/10 GO, creative 9/10 GO, product 9/10 GO
 
-Do not build: the renderer, a video, the web app, the Paper K-pop pack, a second
-product style, or a conversion of the other 58 Lemo styles.
+**S1c.1 — Watercolor 0.2.0 — complete, accepted 9/10 GO.**
 
-Paper K-pop and the `styles/paper-vows` migration are **S1c**. The next step is
-S1c, or a second pilot (`papercut-red`) if the wedding/festive vertical is first.
-`styles/paper-vows` remains legacy and is not expected to pass the S1a validator.
+The 0.1.0 evidence stays historical and is not edited. The new pack is
+`styles/watercolor-0.2.0/` 0.2.0, **REVIEWABLE**, one open choice
+(`paint-in-speed`), `sha256:196fd31501fe029f20da6c79fd1629864581182e22c59802b47a0b741c236e05`.
+The new gate is `gate/watercolor-0.2.0/` with `REPORT.md`, `AUDIT.md`, `CARD.md`,
+critics and one final blind (*A Small Inventory*, 6/30/9:16, 9/9).
+
+- 0.2.0 is a card/process revision: visual-first card, stripped `APPLICATION.md`,
+  exact 24-file manifests, UTF-8 resolve, density/height checks, one final blind.
+- Page 8/45/1:1 and scroll 4/45/16:9 resolve 9/9; full suite 110/110.
+- 9:16 is the text proof; 1:1 and 16:9 are labelled **unverified/S2** with box
+  diagrams. The 16:9 walk leader/entry alignment is unverified/S2.
+- Card: 78 prose / 237 visible words; 4,158 px at 900, 4,691 px at 390; phone
+  390 px, 9:16 screen.
+- Critics: contract 9/10 GO, creative 9/10 GO, product 9/10 GO.
+
+**Next: S2 visual proof.** A short watercolor and Paper K-pop render test,
+contact sheet and motion comparison. No full film, no app, no second style until
+that exists.
+
+Do not build: the renderer in this phase, a video, the web app, a second product
+style, or a conversion of the other 58 Lemo styles. `styles/paper-vows` remains
+legacy and is not expected to pass the S1a validator.
 
 ## How to make a change
 

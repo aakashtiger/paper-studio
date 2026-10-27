@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Watercolor 0.2.0 — style card</title>
+<style>
+  @font-face {
+    font-family: "Cormorant";
+    src: url("fonts/CormorantGaramond-Italic-Variable.ttf") format("truetype");
+    font-style: italic;
+    font-weight: 300 700;
+    font-display: block;
+  }
+  @font-face {
+    font-family: "Cormorant";
+    src: url("fonts/CormorantGaramond-Variable.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 300 700;
+    font-display: block;
+  }
+  @font-face {
+    font-family: "Caveat";
+    src: url("fonts/Caveat-Variable.ttf") format("truetype");
+    font-weight: 400 700;
+    font-display: block;
+  }
+  @font-face {
+    font-family: "Plex Mono";
+    src: url("fonts/IBMPlexMono-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-display: block;
+  }
+
+  :root {
+    --paper: #f3ead9;
+    --ink: #2f2a24;
+    --wash: #9fb7a4;
+    --petal: #d9a6a0;
+    --accent: #c65438;
+    --deep: #9fb7a4;
+    --outer: #e4d8c4;
+    --rule: rgba(47, 42, 36, 0.24);
+    --serif: "Cormorant", Georgia, serif;
+    --hand: "Caveat", cursive;
+    --mono: "Plex Mono", ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { background: var(--outer); }
+  body {
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.4;
+    overflow-x: hidden;
+    background: radial-gradient(circle at 12% 8%, rgba(255, 255, 255, 0.16), transparent 34%), var(--outer);
+  }
+  .sheet {
+    width: min(1080px, calc(100% - 32px));
+    margin: 16px auto 32px;
+    padding: 28px 32px 26px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+  }
+  h1, h2, h3, p, figure, dl, dd { margin: 0; }
+  h1 {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 64px;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+  }
+  h2 {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 30px;
+    line-height: 1;
+  }
+  h3 {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  p { font-size: 15px; }
+  b, strong { font-weight: 600; }
+  .mono {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .note { font-family: var(--mono); font-size: 11px; line-height: 1.45; letter-spacing: 0.02em; }
+  .hand { font-family: var(--hand); }
+  .rule { border: 0; border-top: 1px solid var(--rule); margin: 22px 0 0; }
+
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 26px;
+    align-items: center;
+  }
+  .hero-copy { padding: 4px 0; }
+  .kicker { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+  .version { display: inline-block; margin-left: 10px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; vertical-align: middle; }
+  .promise { font-size: 20px; line-height: 1.3; margin-top: 16px; max-width: 30ch; }
+  .feels { margin-top: 12px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; }
+  .feels b { display: inline-block; min-width: 48px; font-weight: 500; }
+  .stamp {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 6px 9px;
+    border: 1px solid var(--ink);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+  .choice-jump { display: inline-block; margin-top: 9px; color: var(--ink); font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .hero-art { border: 1px solid var(--rule); padding: 6px; background: var(--paper); }
+  .hero-art svg { display: block; width: 100%; height: auto; }
+  .hero-art figcaption { margin-top: 5px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  .legend {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 20px;
+    padding-top: 12px;
+    border-top: 2px solid var(--ink);
+    font-size: 13px;
+  }
+  .legend span { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; }
+
+  .section { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--rule); }
+  .head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+  .head span { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .wide { margin: 0; }
+  .wide svg { display: block; width: 100%; height: auto; border: 1px solid var(--rule); }
+  .wide figcaption, .phone-meta, .box-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 5px; }
+
+  .phone-row { display: flex; gap: 28px; align-items: flex-start; }
+  .phone { width: 390px; max-width: 100%; flex: 0 0 auto; padding: 8px; border: 1px solid var(--ink); background: var(--paper); border-radius: 30px; }
+  .phone-screen { aspect-ratio: 9 / 16; overflow: hidden; border-radius: 22px; border: 1px solid var(--rule); background: var(--paper); }
+  .phone-screen svg { display: block; width: 100%; height: 100%; }
+  .phone-copy { flex: 1 1 0; min-width: 0; padding-top: 4px; }
+  .phone-copy h2 { margin-bottom: 8px; }
+  .phone-copy p { margin-bottom: 8px; }
+
+  .anti { margin: 0; }
+  .anti svg { display: block; width: 100%; height: auto; border: 1px solid var(--rule); }
+  .anti figcaption { margin-top: 5px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  .palette-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .palette-row .pname { width: 94px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .chip { display: flex; align-items: center; gap: 5px; padding: 3px 6px; border: 1px solid var(--rule); }
+  .chip i { display: block; width: 18px; height: 18px; border: 1px solid rgba(47, 42, 36, 0.25); }
+  .chip span { font-family: var(--mono); font-size: 10px; letter-spacing: 0.03em; }
+  .chip em { font-family: var(--mono); font-style: normal; font-size: 9px; opacity: 0.7; }
+
+  .type-grid { display: grid; grid-template-columns: 1.15fr 1fr 0.85fr; gap: 18px; }
+  .type-tile { border-top: 2px solid var(--ink); padding-top: 7px; }
+  .type-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .t-display { font-family: var(--serif); font-style: italic; font-size: 42px; line-height: 0.95; margin-top: 6px; }
+  .t-body { font-family: var(--serif); font-size: 20px; line-height: 1.2; margin-top: 5px; }
+  .t-hand { font-family: var(--hand); font-size: 26px; line-height: 1.05; margin-top: 8px; }
+  .t-mono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 10px; }
+  .t-marker { font-family: var(--serif); font-size: 28px; font-style: italic; margin-top: 5px; }
+
+  .paint-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .paint-panel { margin: 0; }
+  .paint-panel svg { display: block; width: 100%; height: auto; border: 1px solid var(--rule); }
+  .paint-panel figcaption { margin-top: 4px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .paint-clip { animation: paint12 6s ease-in-out infinite; }
+  .paint18 .paint-clip { animation-name: paint18; }
+  @keyframes paint12 {
+    0%, 10% { clip-path: inset(0 100% 0 0); }
+    30%, 100% { clip-path: inset(0 0 0 0); }
+  }
+  @keyframes paint18 {
+    0%, 10% { clip-path: inset(0 100% 0 0); }
+    40%, 100% { clip-path: inset(0 0 0 0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .paint-clip { animation: none; clip-path: inset(0 0 0 0); }
+  }
+  .timeline { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 5px; border-top: 1px solid var(--rule); font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; }
+
+  .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .rules .do, .rules .refuse { border-top: 2px solid var(--ink); padding-top: 7px; }
+  .rules b { display: block; margin-bottom: 5px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; }
+  .rules span { display: inline-block; margin: 0 6px 5px 0; padding: 3px 6px; border: 1px solid var(--rule); font-size: 12px; }
+  .rules .refuse span { border-color: rgba(198, 84, 56, 0.55); color: #8f2f1b; }
+
+  .fit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px 16px; }
+  .fit-grid span { padding: 5px 0; border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .boxes { margin: 12px 0 0; }
+  .boxes svg { display: block; width: 100%; height: auto; border: 1px solid var(--rule); }
+  .boxes figcaption { margin-top: 4px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.04em; }
+
+  .proof-line { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; line-height: 1.7; }
+  .proof-line b { font-weight: 500; }
+
+  .signoff { margin-top: 24px; border-top: 2px solid var(--ink); padding-top: 12px; }
+  .signoff-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .unsigned { font-family: var(--serif); font-style: italic; font-size: 26px; }
+  .open-choice { margin-top: 8px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .open-question { font-size: 18px; margin-top: 4px; }
+  .choices { display: flex; gap: 10px; margin-top: 10px; }
+  .choices span { padding: 6px 10px; border: 1px solid var(--rule); font-family: var(--mono); font-size: 11px; }
+  .signoff .note { margin-top: 8px; }
+
+  @media (max-width: 820px) {
+    .sheet { padding: 22px 20px; }
+    h1 { font-size: 50px; }
+    .hero { grid-template-columns: 1fr; }
+    .legend { grid-template-columns: 1fr; gap: 8px; }
+    .phone-row { flex-direction: column; }
+    .phone { width: 100%; max-width: 390px; }
+    .type-grid { grid-template-columns: 1fr; }
+    .fit-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .sheet { width: 100%; margin: 0; border-left: 0; border-right: 0; padding: 18px 0 22px; }
+    h1 { font-size: 42px; }
+    .hero, .section:not(.phone) { padding-left: 14px; padding-right: 14px; }
+    .hero-art { padding: 4px; }
+    .section.phone-section { padding-left: 0; padding-right: 0; }
+    .section.phone-section .head { padding: 0 14px; }
+    .section.phone-section .phone { width: 100%; max-width: 390px; margin: 0 auto; border-radius: 0; border-left: 0; border-right: 0; }
+    .phone-copy { padding: 0 14px; }
+    .paint-grid { grid-template-columns: 1fr; }
+    .rules { grid-template-columns: 1fr; }
+    .palette-row .pname { width: 100%; }
+    .fit-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main class="sheet" data-card="watercolor-0.2.0">
+
+  <section id="hero" class="hero" data-section="hero">
+    <div class="hero-copy">
+      <p class="kicker">Paper Studio</p>
+      <h1>Watercolor Brush<span class="version">0.2.0</span></h1>
+      <p class="promise">A field journal that paints itself.</p>
+      <p class="feels"><b>FEELS</b> calm · exact · alive</p>
+      <p class="feels"><b>NEVER</b> gloss · vector · photo</p>
+      <span class="stamp" data-status>REVIEWABLE</span>
+      <span class="note" data-waiting>Waiting.</span>
+      <a class="choice-jump" href="#signoff">CHOOSE paint-in-speed</a>
+    </div>
+
+    <figure class="hero-art">
+      <svg viewBox="0 0 520 520" role="img" aria-label="1:1 hero: a painted garden arch, a branch specimen, the title, names, date, venue and a vermilion seal on warm paper.">
+        <defs>
+          <filter id="grain1" x="0" y="0" width="100%" height="100%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="3" seed="7" result="n"/>
+            <feColorMatrix in="n" type="saturate" values="0"/>
+            <feComponentTransfer><feFuncA type="linear" slope="0.08"/></feComponentTransfer>
+          </filter>
+        </defs>
+        <rect width="520" height="520" fill="#f3ead9"/>
+        <rect width="520" height="520" filter="url(#grain1)" opacity="0.55"/>
+        <g stroke="#2f2a24" stroke-width="0.7" opacity="0.06" fill="none" stroke-linecap="round">
+          <path d="M24 92 C 70 84, 98 102, 146 92"/>
+          <path d="M340 62 C 380 56, 410 70, 452 62"/>
+          <path d="M28 300 C 66 292, 92 306, 130 298"/>
+          <path d="M392 280 C 432 272, 458 286, 492 278"/>
+          <path d="M60 470 C 104 462, 132 478, 178 468"/>
+          <path d="M338 472 C 382 464, 410 480, 456 470"/>
+        </g>
+        <g fill="#9fb7a4">
+          <path d="M0 376 C 84 356, 164 392, 250 372 C 336 352, 424 390, 520 366 L520 520 L0 520 Z" opacity="0.18"/>
+          <path d="M0 394 C 92 372, 172 408, 258 388 C 344 368, 432 406, 520 384 L520 520 L0 520 Z" opacity="0.15"/>
+          <path d="M0 412 C 100 390, 180 424, 266 404 C 352 384, 440 420, 520 400 L520 520 L0 520 Z" opacity="0.38"/>
+        </g>
+        <path d="M0 376 C 84 356, 164 392, 250 372 C 336 352, 424 390, 520 366 L520 390 C 424 414, 336 376, 250 396 C 164 416, 84 380, 0 400 Z" fill="#2f2a24" opacity="0.1"/>
+        <g>
+          <path d="M300 432 L300 250 Q300 178 370 178 Q440 178 440 250 L440 432 Z" fill="#9fb7a4" opacity="0.24"/>
+          <path d="M316 432 L316 258 Q316 200 370 200 Q424 200 424 258 L424 432 Z" fill="#f3ead9" opacity="0.88"/>
+          <path d="M306 432 L306 252 Q306 186 370 186 Q434 186 434 252 L434 432" fill="none" stroke="#2f2a24" stroke-width="1.2" opacity="0.22"/>
+        </g>
+        <g transform="translate(38 -12) scale(0.82)">
+          <path d="M252 548 C 246 454, 260 344, 286 252 L294 255 C 268 346, 254 456, 260 548 Z" fill="#9fb7a4" opacity="0.82"/>
+          <g>
+            <path d="M272 404 C 220 374, 178 332, 174 286 C 226 302, 266 344, 280 394 Z" fill="#9fb7a4" opacity="0.66"/>
+            <path d="M264 392 C 220 364, 186 330, 182 292 C 224 308, 256 340, 268 384 Z" fill="#9fb7a4" opacity="0.34"/>
+            <path d="M276 352 C 318 318, 358 292, 392 286 C 380 326, 342 356, 286 368 Z" fill="#9fb7a4" opacity="0.58"/>
+            <path d="M268 454 C 224 436, 190 404, 184 366 C 226 380, 258 414, 274 450 Z" fill="#d9a6a0" opacity="0.44"/>
+            <path d="M280 300 C 304 272, 334 252, 360 248 C 354 278, 326 300, 286 312 Z" fill="#d9a6a0" opacity="0.4"/>
+          </g>
+          <g stroke="#f3ead9" stroke-width="1.5" stroke-linecap="round" opacity="0.9">
+            <path d="M260 528 C 254 458, 264 378, 284 296" stroke-dasharray="18 10"/>
+            <path d="M266 516 C 260 456, 270 386, 288 320" stroke-dasharray="12 14"/>
+            <path d="M254 500 C 250 450, 260 390, 278 330" stroke-dasharray="22 8"/>
+          </g>
+        </g>
+        <text x="34" y="30" font-family="Plex Mono" font-size="10" fill="#2f2a24" letter-spacing="1.6">1:1</text>
+        <text x="34" y="112" font-family="Cormorant" font-style="italic" font-size="44" fill="#2f2a24">The Garden</text>
+        <text x="34" y="154" font-family="Cormorant" font-style="italic" font-size="44" fill="#2f2a24">We Borrowed</text>
+        <text x="34" y="236" font-family="Cormorant" font-size="21" fill="#2f2a24">Mira &amp; Jonah</text>
+        <text x="34" y="486" font-family="Plex Mono" font-size="10" fill="#2f2a24" letter-spacing="1">21 JUNE</text>
+        <g transform="translate(438 40) rotate(-4)">
+          <rect width="50" height="50" rx="3" fill="#c65438" opacity="0.92"/>
+          <path d="M7 10 H43 M7 20 H43 M7 30 H43 M7 40 H43" stroke="#f3ead9" stroke-width="1.6" opacity="0.7" stroke-dasharray="14 5"/>
+        </g>
+      </svg>
+      <figcaption>1:1 SPECIMEN</figcaption>
+    </figure>
+  </section>
+
+  <section id="legend" class="legend" data-section="legend" aria-label="Legend">
+    <span>REFERENCE</span><span>SPECIMEN</span><span>ANTI</span>
+  </section>
+
+  <section id="visuals" class="section" data-section="walk">
+    <div class="head"><h2>16:9 walk</h2><span>4 · 45 S</span></div>
+    <figure class="wide">
+      <svg viewBox="0 0 960 540" role="img" aria-label="16:9 walk: a continuous painted handscroll with garlands, a specimen, a ground line and a hand note.">
+        <rect width="960" height="540" fill="#f3ead9"/>
+        <g fill="#9fb7a4">
+          <path d="M0 300 C 140 280, 300 320, 480 296 C 660 272, 810 312, 960 292 L960 460 C 810 480, 660 440, 480 464 C 300 488, 140 448, 0 468 Z" opacity="0.2"/>
+          <path d="M0 324 C 150 304, 310 344, 490 320 C 670 296, 820 336, 960 316 L960 470 C 820 490, 670 450, 490 474 C 310 498, 150 458, 0 478 Z" opacity="0.14"/>
+        </g>
+        <path d="M0 324 C 150 304, 310 344, 490 320 C 670 296, 820 336, 960 316 L960 336 C 820 356, 670 316, 490 340 C 310 364, 150 324, 0 344 Z" fill="#2f2a24" opacity="0.1"/>
+        <g transform="translate(34 110)">
+          <path d="M40 300 C 34 220, 58 130, 100 54" fill="none" stroke="#2f2a24" stroke-width="4" opacity="0.55"/>
+          <path d="M100 54 C 74 96, 58 160, 62 226" fill="none" stroke="#2f2a24" stroke-width="2.5" opacity="0.4"/>
+          <g fill="#9fb7a4" opacity="0.75">
+            <ellipse cx="76" cy="92" rx="28" ry="12" transform="rotate(-32 76 92)"/>
+            <ellipse cx="58" cy="140" rx="30" ry="12" transform="rotate(-26 58 140)"/>
+            <ellipse cx="62" cy="190" rx="26" ry="11" transform="rotate(-18 62 190)"/>
+            <ellipse cx="92" cy="120" rx="26" ry="11" transform="rotate(26 92 120)"/>
+            <ellipse cx="106" cy="166" rx="28" ry="11" transform="rotate(22 106 166)"/>
+          </g>
+        </g>
+        <g transform="translate(408 148)">
+          <path d="M54 300 C 48 220, 66 130, 100 58" fill="none" stroke="#2f2a24" stroke-width="3.5" opacity="0.55"/>
+          <path d="M100 58 C 78 104, 66 170, 70 236" fill="none" stroke="#2f2a24" stroke-width="2" opacity="0.4"/>
+          <g fill="#d9a6a0" opacity="0.76">
+            <ellipse cx="82" cy="96" rx="26" ry="11" transform="rotate(-30 82 96)"/>
+            <ellipse cx="68" cy="144" rx="28" ry="11" transform="rotate(-20 68 144)"/>
+            <ellipse cx="74" cy="194" rx="24" ry="10" transform="rotate(-12 74 194)"/>
+            <ellipse cx="100" cy="126" rx="24" ry="10" transform="rotate(28 100 126)"/>
+          </g>
+        </g>
+        <g transform="translate(694 104)">
+          <path d="M40 300 C 34 220, 58 130, 100 54" fill="none" stroke="#2f2a24" stroke-width="4" opacity="0.55"/>
+          <path d="M100 54 C 74 96, 58 160, 62 226" fill="none" stroke="#2f2a24" stroke-width="2.5" opacity="0.4"/>
+          <g fill="#9fb7a4" opacity="0.75">
+            <ellipse cx="76" cy="92" rx="28" ry="12" transform="rotate(-32 76 92)"/>
+            <ellipse cx="58" cy="140" rx="30" ry="12" transform="rotate(-26 58 140)"/>
+            <ellipse cx="62" cy="190" rx="26" ry="11" transform="rotate(-18 62 190)"/>
+            <ellipse cx="92" cy="120" rx="26" ry="11" transform="rotate(26 92 120)"/>
+          </g>
+        </g>
+        <path d="M40 452 C 260 438, 700 438, 920 452" fill="none" stroke="#2f2a24" stroke-width="1" opacity="0.2"/>
+        <path d="M92 446 C 140 402, 220 372, 300 352" fill="none" stroke="#2f2a24" stroke-width="1.5" opacity="0.55"/>
+        <text x="54" y="470" font-family="Caveat" font-size="28" fill="#2f2a24" stroke="#f3ead9" stroke-width="10" paint-order="stroke">the paint stops short here</text>
+        <rect x="86.4" y="43.2" width="787.2" height="437.4" fill="none" stroke="#2f2a24" stroke-width="0.8" stroke-dasharray="5 5" opacity="0.3"/>
+        <text x="828" y="36" font-family="Plex Mono" font-size="9" fill="#2f2a24" letter-spacing="1">16:9</text>
+      </svg>
+      <figcaption>TEXT UNVERIFIED / S2</figcaption>
+    </figure>
+  </section>
+
+  <section id="phone" class="section phone-section" data-section="phone">
+    <div class="phone-row">
+      <div class="phone">
+        <div class="phone-screen">
+          <svg viewBox="0 0 390 693" role="img" aria-label="9:16 page specimen: a painted arch and branch, a short title, names, hand note, date and seal on a 390 pixel page; 44 px display, 24 px body, 14 px label.">
+            <rect width="390" height="693" fill="#f3ead9"/>
+            <g fill="#9fb7a4">
+              <path d="M0 448 C 80 432, 150 462, 230 444 C 310 426, 360 456, 390 442 L390 560 C 340 572, 290 546, 210 562 C 130 578, 60 552, 0 566 Z" opacity="0.18"/>
+              <path d="M0 468 C 84 450, 154 480, 234 462 C 314 444, 364 474, 390 460 L390 572 C 340 584, 290 558, 210 574 C 130 590, 60 564, 0 578 Z" opacity="0.38"/>
+            </g>
+            <g>
+              <path d="M220 430 L220 180 Q220 120 286 120 Q352 120 352 180 L352 430 Z" fill="#9fb7a4" opacity="0.23"/>
+              <path d="M236 430 L236 188 Q236 140 286 140 Q336 140 336 188 L336 430 Z" fill="#f3ead9" opacity="0.9"/>
+              <path d="M226 430 L226 182 Q226 128 286 128 Q346 128 346 182 L346 430" fill="none" stroke="#2f2a24" stroke-width="1.1" opacity="0.22"/>
+            </g>
+            <g transform="translate(34 74) scale(0.62)">
+                  <path d="M252 548 C 246 454, 260 344, 286 252 L294 255 C 268 346, 254 456, 260 548 Z" fill="#9fb7a4" opacity="0.82"/>
+                <path d="M272 404 C 220 374, 178 332, 174 286 C 226 302, 266 344, 280 394 Z" fill="#9fb7a4" opacity="0.66"/>
+                <path d="M276 352 C 318 318, 358 292, 392 286 C 380 326, 342 356, 286 368 Z" fill="#9fb7a4" opacity="0.58"/>
+              <path d="M270 456 C 226 438, 192 406, 186 368 C 228 382, 260 416, 276 452 Z" fill="#d9a6a0" opacity="0.44"/>
+              <path d="M282 302 C 306 274, 336 254, 362 250 C 356 280, 328 302, 288 314 Z" fill="#d9a6a0" opacity="0.4"/>
+            </g>
+            <text x="28" y="70" font-family="Plex Mono" font-size="14" fill="#2f2a24" letter-spacing="1.2">9:16</text>
+            <text x="28" y="140" font-family="Cormorant" font-style="italic" font-size="44" fill="#2f2a24">Garden</text>
+            <text x="28" y="184" font-family="Cormorant" font-style="italic" font-size="44" fill="#2f2a24">Borrowed</text>
+            <text x="28" y="230" font-family="Cormorant" font-size="24" fill="#2f2a24">Mira &amp; Jonah</text>
+            <text x="28" y="566" font-family="Caveat" font-size="24" fill="#2f2a24" stroke="#f3ead9" stroke-width="8" paint-order="stroke">the paint stops short here</text>
+            <text x="28" y="600" font-family="Plex Mono" font-size="14" fill="#2f2a24" letter-spacing="1">21 JUNE</text>
+            <text x="318" y="104" font-family="Cormorant" font-size="18" fill="#2f2a24">M &amp; J</text>
+            <g transform="translate(318 40) rotate(-4)">
+              <rect width="40" height="40" rx="3" fill="#c65438" opacity="0.92"/>
+              <path d="M6 8 H34 M6 16 H34 M6 24 H34 M6 32 H34" stroke="#f3ead9" stroke-width="1.3" opacity="0.7" stroke-dasharray="11 4"/>
+            </g>
+            <rect x="35.1" y="35.2" width="319.8" height="586.8" fill="none" stroke="#2f2a24" stroke-width="0.7" stroke-dasharray="4 4" opacity="0.38"/>
+          </svg>
+        </div>
+      </div>
+      <div class="phone-copy">
+        <h2>9:16 phone</h2>
+        <p>390 px · 6 / 30 blind</p>
+        <p class="box-label">SAFE 9/8/11/8</p>
+        <p class="box-label">14 PX</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="anti" class="section" data-section="anti">
+    <div class="head"><h2>ANTI</h2><span>REFUSED</span></div>
+    <figure class="anti">
+      <svg viewBox="0 0 520 300" role="img" aria-label="ANTI: a glossy gold three-dimensional serif wedding invitation with a hard cut and pure white, all refused.">
+        <defs>
+          <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f9e7a6"/>
+            <stop offset="0.4" stop-color="#c9a227"/>
+            <stop offset="0.7" stop-color="#f9e7a6"/>
+            <stop offset="1" stop-color="#8f6a12"/>
+          </linearGradient>
+          <linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ffffff" stop-opacity="0.95"/>
+            <stop offset="0.5" stop-color="#ffffff" stop-opacity="0"/>
+          </linearGradient>
+          <filter id="drop" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="8" dy="10" stdDeviation="7" flood-color="#000000" flood-opacity="0.38"/>
+          </filter>
+        </defs>
+        <rect width="520" height="300" fill="#ffffff"/>
+        <g filter="url(#drop)">
+          <rect x="84" y="34" width="352" height="218" fill="#fffdf8" stroke="url(#gold)" stroke-width="10"/>
+          <rect x="102" y="52" width="316" height="182" fill="none" stroke="url(#gold)" stroke-width="2"/>
+        </g>
+        <path d="M112 66 L408 66 L112 232 Z" fill="url(#gloss)" opacity="0.8"/>
+        <text x="260" y="146" text-anchor="middle" font-family="Cormorant" font-style="italic" font-size="46" fill="#8f6a12">Together</text>
+        <path d="M172 168 H348" stroke="url(#gold)" stroke-width="2"/>
+        <line x1="40" y1="278" x2="480" y2="278" stroke="#c65438" stroke-width="2" stroke-dasharray="6 6"/>
+        <text x="40" y="294" font-family="Plex Mono" font-size="10" fill="#2f2a24" letter-spacing="1">GLOSS · GOLD · 3D · SERIF</text>
+      </svg>
+      <figcaption>NO GLOSS · NO VECTOR · NO PHOTO</figcaption>
+    </figure>
+  </section>
+
+  <section id="palette" class="section" data-section="palette">
+    <div class="head"><h2>Palette</h2><span>5 PIGMENTS · 6 ROLES</span></div>
+    <div class="palette-row">
+      <span class="pname">garden-day</span>
+      <span class="chip"><i style="background:#f3ead9"></i><span>paper</span></span>
+      <span class="chip"><i style="background:#2f2a24"></i><span>ink</span></span>
+      <span class="chip"><i style="background:#9fb7a4"></i><span>wash</span></span>
+      <span class="chip"><i style="background:#d9a6a0"></i><span>petal</span></span>
+      <span class="chip"><i style="background:#c65438"></i><span>accent</span></span>
+      <span class="chip"><i style="background:#9fb7a4"></i><span>deep</span></span>
+    </div>
+    <div class="palette-row">
+      <span class="pname">evening-blue</span>
+      <span class="chip"><i style="background:#efe6d4"></i></span>
+      <span class="chip"><i style="background:#262a2e"></i></span>
+      <span class="chip"><i style="background:#8fa3b0"></i></span>
+      <span class="chip"><i style="background:#c9a27e"></i></span>
+      <span class="chip"><i style="background:#c65438"></i></span>
+      <span class="chip"><i style="background:#8fa3b0"></i></span>
+    </div>
+  </section>
+
+  <section id="type" class="section" data-section="type">
+    <div class="head"><h2>Type</h2><span>OFL</span></div>
+    <div class="type-grid">
+      <div class="type-tile">
+        <span class="type-label">DISPLAY / BODY</span>
+        <div class="t-display">Watercolor</div>
+        <div class="t-body">The garden we borrowed</div>
+      </div>
+      <div class="type-tile">
+        <span class="type-label">CAPTION</span>
+        <div class="t-hand">the paint stops short here</div>
+      </div>
+      <div class="type-tile">
+        <span class="type-label">MONOGRAM</span>
+        <div class="t-mono">14 PX</div>
+        <div class="t-marker">M &amp; J</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="motion" class="section" data-section="paint">
+    <div class="head"><h2>Paint-in</h2><span>1.2 / 1.8</span></div>
+    <div class="paint-grid">
+      <figure class="paint-panel">
+        <svg viewBox="0 0 240 240" role="img" aria-label="Paint-in at 1.2 seconds: a painted arch and branch revealed left to right.">
+          <defs>
+            <g id="paint-form-a">
+              <path d="M64 210 L64 96 Q64 48 120 48 Q176 48 176 96 L176 210 Z" fill="#9fb7a4" opacity="0.3"/>
+              <path d="M76 210 L76 102 Q76 62 120 62 Q164 62 164 102 L164 210 Z" fill="#f3ead9" opacity="0.8"/>
+              <path d="M116 210 C 112 170, 118 120, 134 84" fill="none" stroke="#2f2a24" stroke-width="2.5" opacity="0.7"/>
+              <path d="M134 84 C 124 108, 120 140, 122 172" fill="none" stroke="#2f2a24" stroke-width="1.6" opacity="0.55"/>
+              <g fill="#9fb7a4" opacity="0.8">
+                <ellipse cx="126" cy="116" rx="17" ry="7" transform="rotate(-28 126 116)"/>
+                <ellipse cx="122" cy="142" rx="16" ry="7" transform="rotate(-20 122 142)"/>
+                <ellipse cx="138" cy="106" rx="15" ry="7" transform="rotate(26 138 106)"/>
+              </g>
+              <path d="M72 210 H168" stroke="#2f2a24" stroke-width="2" opacity="0.35"/>
+            </g>
+          </defs>
+          <rect width="240" height="240" fill="#f3ead9"/>
+          <use href="#paint-form-a" opacity="0.38"/>
+          <g class="paint-clip"><use href="#paint-form-a"/></g>
+        </svg>
+        <figcaption>1.2</figcaption>
+      </figure>
+      <figure class="paint-panel paint18">
+        <svg viewBox="0 0 240 240" role="img" aria-label="Paint-in at 1.8 seconds: the same arch and branch revealed more slowly.">
+          <defs>
+            <g id="paint-form-b">
+              <path d="M64 210 L64 96 Q64 48 120 48 Q176 48 176 96 L176 210 Z" fill="#9fb7a4" opacity="0.3"/>
+              <path d="M76 210 L76 102 Q76 62 120 62 Q164 62 164 102 L164 210 Z" fill="#f3ead9" opacity="0.8"/>
+              <path d="M116 210 C 112 170, 118 120, 134 84" fill="none" stroke="#2f2a24" stroke-width="2.5" opacity="0.7"/>
+              <path d="M134 84 C 124 108, 120 140, 122 172" fill="none" stroke="#2f2a24" stroke-width="1.6" opacity="0.55"/>
+              <g fill="#9fb7a4" opacity="0.8">
+                <ellipse cx="126" cy="116" rx="17" ry="7" transform="rotate(-28 126 116)"/>
+                <ellipse cx="122" cy="142" rx="16" ry="7" transform="rotate(-20 122 142)"/>
+                <ellipse cx="138" cy="106" rx="15" ry="7" transform="rotate(26 138 106)"/>
+              </g>
+              <path d="M72 210 H168" stroke="#2f2a24" stroke-width="2" opacity="0.35"/>
+            </g>
+          </defs>
+          <rect width="240" height="240" fill="#f3ead9"/>
+          <use href="#paint-form-b" opacity="0.38"/>
+          <g class="paint-clip"><use href="#paint-form-b"/></g>
+        </svg>
+        <figcaption>1.8</figcaption>
+      </figure>
+    </div>
+    <div class="timeline"><span>0</span><span>1.8</span></div>
+    <p class="note">Two speeds. Choice open.</p>
+  </section>
+
+  <section id="sound" class="section" data-section="sound">
+    <div class="head"><h2>Sound</h2><span>NO AUDIO</span></div>
+    <p class="proof-line">Felt piano · paper brush.</p>
+  </section>
+
+  <section id="rules" class="section" data-section="rules">
+    <div class="head"><h2>Rules</h2><span></span></div>
+    <div class="rules">
+      <div class="do"><b>DO</b><span>paper is the white</span><span>flying white</span><span>pooled edge</span><span>paint-in</span><span>hand note</span></div>
+      <div class="refuse"><b>REFUSE</b><span>no gloss</span><span>no vector outline</span><span>no photo</span></div>
+    </div>
+  </section>
+
+  <section id="fit" class="section" data-section="fit">
+    <div class="head"><h2>Fit</h2><span>NO VIDEO</span></div>
+    <div class="fit-grid">
+      <span>1:1 · 8/45</span>
+      <span>16:9 · 4/45</span>
+      <span>9:16 · 6/30</span>
+      <span>390 · 14 PX</span>
+      <span>5 PIGMENTS</span>
+      <span>6 RECIPES</span>
+    </div>
+    <figure class="boxes">
+      <svg viewBox="0 0 760 190" role="img" aria-label="Box diagrams: 1:1 and 16:9 text fit are unverified S2; the 9:16 page is the blind proof.">
+        <rect x="40" y="38" width="120" height="120" fill="none" stroke="#2f2a24" stroke-width="1"/>
+        <rect x="50.8" y="47.6" width="98.4" height="100.8" fill="none" stroke="#2f2a24" stroke-width="0.7" stroke-dasharray="4 4" opacity="0.5"/>
+        <path d="M56 62 H128 M56 76 H112 M56 90 H120" stroke="#2f2a24" stroke-width="2" opacity="0.35"/>
+        <text x="40" y="178" font-family="Plex Mono" font-size="9" fill="#2f2a24">1:1 unverified</text>
+        <rect x="220" y="38" width="213.3" height="120" fill="none" stroke="#2f2a24" stroke-width="1"/>
+        <rect x="239.4" y="47.6" width="174.9" height="100.8" fill="none" stroke="#2f2a24" stroke-width="0.7" stroke-dasharray="4 4" opacity="0.5"/>
+        <path d="M246 62 H410 M246 76 H360 M246 90 H392" stroke="#2f2a24" stroke-width="2" opacity="0.35"/>
+        <text x="220" y="178" font-family="Plex Mono" font-size="9" fill="#2f2a24">16:9 unverified</text>
+        <rect x="500" y="38" width="67.5" height="120" fill="none" stroke="#2f2a24" stroke-width="1"/>
+        <rect x="508.4" y="47.6" width="51" height="100.8" fill="none" stroke="#2f2a24" stroke-width="0.7" stroke-dasharray="4 4" opacity="0.5"/>
+        <path d="M514 62 H554 M514 76 H546 M514 90 H550" stroke="#2f2a24" stroke-width="2" opacity="0.35"/>
+        <text x="500" y="178" font-family="Plex Mono" font-size="9" fill="#2f2a24">9:16 proof</text>
+      </svg>
+      <figcaption>BOX DIAGRAMS</figcaption>
+    </figure>
+  </section>
+
+  <section id="proof" class="section" data-section="proof">
+    <div class="head"><h2>Proof</h2><span>0.2.0</span></div>
+    <p class="proof-line"><b>REVIEWABLE</b> · 1 OPEN<br>8/45/1:1 · 4/45/16:9 · 6/30/9:16<br>NO VIDEO</p>
+  </section>
+
+  <section id="signoff" class="section signoff" data-section="signoff">
+    <div class="signoff-head">
+      <h2>Signoff</h2>
+      <span class="unsigned" data-signoff>UNSIGNED</span>
+    </div>
+    <p class="open-choice">OPEN · paint-in-speed</p>
+    <p class="open-question">1.2 s or 1.8 s?</p>
+    <div class="choices"><span>1.2</span><span>1.8</span></div>
+    <p class="note">Open.</p>
+  </section>
+
+</main>
+</body>
+</html>
+

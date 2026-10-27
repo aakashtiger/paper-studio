@@ -12,6 +12,19 @@
 > `STYLE.md` is proven in the watercolor pack; template adoption and `gallery.json`
 > are deferred. Everything below is the S1a narrative that led here.
 
+> **2026-10-27 — S1c and watercolor 0.2.0 accepted.** Paper K-pop is
+> **REVIEWABLE**, one open choice (`paper-shadow`), final pack
+> `sha256:6c5765be…`. The gate is 9/9 and the full suite 101/101. A late geometry
+> pass had found 6 critical and 8 high box defects; the current hash was re-audited
+> from the recipes and the batch was fixed before the final gate. The blind is a
+> disclosed **plan-valid carry-forward** from `719e0582…`, not a pristine seal;
+> no blind author was used as a discovery loop. **Watercolor 0.2.0 is also done:**
+> new `styles/watercolor-0.2.0/` and `gate/watercolor-0.2.0/`, 0.1.0 evidence
+> untouched, final pack `sha256:196fd315…`, page 8/45/1:1, scroll 4/45/16:9,
+> blind 6/30/9:16, 9/9 each, full suite 110/110, card 78 prose/237 visible,
+> critics 9/10 GO. 1:1/16:9 text proof is labelled unverified/S2; the 9:16 page
+> is the proof. **Next: S2 visual proof**, no renderer or video in this phase.
+
 This file carries the **narrative context** a new session cannot get from the repo: what we decided, what we rejected, where we stopped, and what to do next.
 
 ---
@@ -177,9 +190,11 @@ Local copy:
 
 ## 6. Where we are leaving it
 
-**S1a is done. Lemo is reviewed. The next job is a pilot conversion, not a renderer.**
+**S1a is done. Lemo is reviewed. S1b, S1c and S1c.1 are done. The next job is S2 visual proof, not a production renderer.**
 
 **Update 2026-10-26:** the living `keepsake` example has been restructured to the 11-section Lemo-style human brief and now carries `style.json` gallery metadata. The machine contract and the frozen `gate/blind/pack` are unchanged. See `docs/decisions/0006-lemo-brief-structure.md`. The watercolor pilot can use the same human-brief structure.
+
+**Update 2026-10-27:** Paper K-pop is frozen at `6c5765be…`; watercolor 0.2.0 is frozen at `196fd315…` in a new pack and gate folder. The next build is S2 visual proof. The historical sections below describe the S1a/S1b path and are not the live plan.
 
 ### Next step
 
