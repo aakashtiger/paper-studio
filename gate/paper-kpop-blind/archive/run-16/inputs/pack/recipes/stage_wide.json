@@ -1,0 +1,182 @@
+{
+  "id": "stage_wide",
+  "beatRoles": [
+    "list"
+  ],
+  "duration": {
+    "min": 3.4,
+    "max": 5.5,
+    "default": 4
+  },
+  "camera": {
+    "move": "orbit",
+    "from": 1,
+    "to": 1.06,
+    "ease": "easeInOut"
+  },
+  "slots": [
+    "content.body",
+    "content.caption"
+  ],
+  "assets": [
+    "set.paper-card",
+    "set.stage",
+    "character.lead",
+    "character.second",
+    "hud.meter",
+    "texture.halftone"
+  ],
+  "composition": [
+    {
+      "op": "image",
+      "id": "paper",
+      "asset": "set.paper-card",
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "z": 0
+    },
+    {
+      "op": "image",
+      "id": "wide-stage",
+      "asset": "set.stage",
+      "x": 0,
+      "y": 0.2,
+      "w": 1,
+      "h": 0.62,
+      "z": 1
+    },
+    {
+      "op": "shape",
+      "id": "stage-burst",
+      "kind": "burst",
+      "color": "acid",
+      "x": 0.4,
+      "y": 0.13,
+      "w": 0.22,
+      "h": 0.18,
+      "opacity": 0.85,
+      "z": 2
+    },
+    {
+      "op": "image",
+      "id": "lead-figure",
+      "asset": "character.lead",
+      "x": 0.2,
+      "y": 0.28,
+      "w": 0.2,
+      "h": 0.46,
+      "z": 3
+    },
+    {
+      "op": "image",
+      "id": "second-figure",
+      "asset": "character.second",
+      "x": 0.62,
+      "y": 0.28,
+      "w": 0.2,
+      "h": 0.46,
+      "z": 3
+    },
+    {
+      "op": "image",
+      "id": "level-meter",
+      "asset": "hud.meter",
+      "x": 0.68,
+      "y": 0.06,
+      "w": 0.26,
+      "h": 0.06,
+      "z": 5
+    },
+    {
+      "op": "text",
+      "id": "body-line",
+      "slot": "content.body",
+      "typeRole": "body",
+      "x": 0.07,
+      "y": 0.76,
+      "w": 0.5,
+      "h": 0.1,
+      "align": "left",
+      "z": 6,
+      "color": "ink"
+    },
+    {
+      "op": "text",
+      "id": "caption-line",
+      "slot": "content.caption",
+      "typeRole": "caption",
+      "x": 0.07,
+      "y": 0.82,
+      "w": 0.5,
+      "h": 0.06,
+      "align": "left",
+      "z": 6,
+      "color": "ink"
+    },
+    {
+      "op": "effect",
+      "kind": "halftone",
+      "z": 2,
+      "opacity": 0.18,
+      "amount": 0.5
+    },
+    {
+      "op": "effect",
+      "kind": "vignette",
+      "z": 8,
+      "opacity": 0.24
+    },
+    {
+      "op": "camera",
+      "move": "orbit",
+      "from": 1,
+      "to": 1.06,
+      "ease": "easeInOut"
+    },
+    {
+      "op": "transition",
+      "kind": "cut"
+    }
+  ],
+  "vertical": [
+    [
+      "wide-stage",
+      "stage"
+    ],
+    [
+      "stage-burst",
+      "burst"
+    ],
+    [
+      "lead-figure",
+      "lead"
+    ],
+    [
+      "second-figure",
+      "second"
+    ],
+    [
+      "level-meter",
+      "meter"
+    ],
+    [
+      "body-line",
+      "bodyLower"
+    ],
+    [
+      "caption-line",
+      "caption"
+    ]
+  ],
+  "transitionOut": "cut",
+  "failureModes": [
+    "a third figure on stage",
+    "characters pasted flat with no paper layer",
+    "an orbit that turns into a handheld drift",
+    "a meter without a readable level",
+    "body copy over the cast faces",
+    "more than four colour roles across the stage"
+  ]
+}

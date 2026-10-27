@@ -1,0 +1,416 @@
+{
+  "identity": {
+    "id": "paper-kpop",
+    "name": "Paper K-pop",
+    "version": "0.1.0",
+    "family": "paper",
+    "status": "reviewable",
+    "author": "Paper Studio",
+    "licence": "Proprietary — Paper Studio internal pilot; includes OFL 1.1 fonts under their own licences; third-party notices in LICENSE-THIRD-PARTY.txt",
+    "lineage": [
+      "author's original 157 s paper-cut music film, read-only evidence; no story, lyrics, character names or audio copied; six cropped stills are visual evidence only",
+      "the S1a contract docs/specs/0003-style-definition-system.md",
+      "reference/paper-kpop/ read-only source modules"
+    ],
+    "bindings": {
+      "briefHash": "sha256:a541cbd6be1e7ce3e306c5f331c8c57c08e2e851f59b7cdea56e2726851192ed",
+      "templateHash": "sha256:6da2490d70a4d3aa916213b67e02b06343388a234c572ad52aeb80c89246d346",
+      "contractHash": "sha256:03626634cdd53b622c5969864c1ba155e8491378bf06f192747673278642aca2"
+    }
+  },
+  "limits": {
+    "aspects": [
+      "16:9",
+      "9:16"
+    ],
+    "durations": [
+      30,
+      45
+    ],
+    "maxCast": 2,
+    "maxWords": 8
+  },
+  "adaptation": {
+    "aspects": "16:9 is the stage. 9:16 is a re-stage, never a crop: centre 60 percent, stack title and body, re-stage both performers, and re-anchor the HUD to the 9:16 boxes. The 9:16 map is an anchor set, not a stretch: images cover, text auto-fits, rules keep thickness and nested shapes keep their relative inset.",
+    "vertical": "At 9:16 use display 56 px, body 24 px, caption 16 px, label 14 px and monogram 32 px. The boxes are in tokens.layout.aspectBoxes.9:16; the rules are in tokens.layout.aspectRules.9:16. Each recipe's vertical map points its op ids at those boxes, including separate lead, second, bodyLower and stickerText positions. The 14 px floor holds.",
+    "type": "Anton is display, Archivo Black is body, DM Mono is caption and label, Permanent Marker is monogram. The quote recipe may set content.body in display. One flat printed accent swatch where a frame uses it.",
+    "photographs": "None. A photograph may be reference for a cut-paper portrait; it is never pasted into a frame.",
+    "captions": "Eight words maximum per content slot, two lines maximum in the lyric band, and 14 px minimum at 390 px width.",
+    "scripts": "Latin script only in this pilot. A non-Latin commission needs a licensed companion face, never a silent fallback.",
+    "sound": "The style supplies no audio files. Music and voice are cleared per film; delivery loudness belongs to the format.",
+    "slots": "The pack reads content.title, content.subtitle, content.names, content.body, content.caption and content.monogram. content.date, content.venue, content.hashtag, content.rsvp and photos.* are not read; a release date or city can go in subtitle or caption, and there is no photo slot. content.title is the film title; a separate track title goes in subtitle. BPM and loudness live in tokens.json and the format, not the brief."
+  },
+  "assets": {
+    "grammar": "Every frame is a flat cut-paper stage: warm cream card, torn and cut layers, printed ink, halftone dots and one hard misregistered type shadow. No gloss, no 3D, no soft studio light. Assets are role-tinted paper shapes, not fixed-colour art; the treatment assigns four palette roles per shot and drops the accent first if a fifth would appear.",
+    "starterLibrary": [
+      {
+        "id": "set.paper-card",
+        "type": "set",
+        "anchors": [
+          "paper edge",
+          "cut edge",
+          "sheet centre"
+        ]
+      },
+      {
+        "id": "prop.paper-sticker",
+        "type": "prop",
+        "anchors": [
+          "peel corner",
+          "sticker centre",
+          "slam edge"
+        ]
+      },
+      {
+        "id": "frame.paper-window",
+        "type": "frame",
+        "anchors": [
+          "window aperture",
+          "torn lip"
+        ]
+      },
+      {
+        "id": "texture.paper-fibre",
+        "type": "texture",
+        "anchors": [
+          "fibre grain",
+          "deckle edge"
+        ]
+      },
+      {
+        "id": "texture.halftone",
+        "type": "texture",
+        "anchors": [
+          "dot field",
+          "screen angle"
+        ]
+      },
+      {
+        "id": "character.lead",
+        "type": "character",
+        "anchors": [
+          "face",
+          "hair",
+          "hand-left",
+          "hand-right",
+          "foot-left",
+          "foot-right"
+        ]
+      },
+      {
+        "id": "character.second",
+        "type": "character",
+        "anchors": [
+          "face",
+          "hair",
+          "hand-left",
+          "hand-right",
+          "foot-left",
+          "foot-right"
+        ]
+      },
+      {
+        "id": "set.stage",
+        "type": "set",
+        "anchors": [
+          "stage floor",
+          "riser",
+          "sunburst centre"
+        ]
+      },
+      {
+        "id": "set.tabletop",
+        "type": "set",
+        "anchors": [
+          "table edge",
+          "prop mark"
+        ]
+      },
+      {
+        "id": "set.corridor",
+        "type": "set",
+        "anchors": [
+          "corridor mouth",
+          "vanishing point"
+        ]
+      },
+      {
+        "id": "set.diorama",
+        "type": "set",
+        "anchors": [
+          "back wall",
+          "cutaway edge"
+        ]
+      },
+      {
+        "id": "prop.object",
+        "type": "prop",
+        "anchors": [
+          "grip point",
+          "contact mark"
+        ]
+      },
+      {
+        "id": "hud.lyric-band",
+        "type": "hud",
+        "anchors": [
+          "band edge",
+          "baseline"
+        ]
+      },
+      {
+        "id": "hud.meter",
+        "type": "hud",
+        "anchors": [
+          "readout",
+          "sticker corner"
+        ]
+      },
+      {
+        "id": "hud.corner-marks",
+        "type": "hud",
+        "anchors": [
+          "top-left mark",
+          "bottom-right mark"
+        ]
+      }
+    ],
+    "rigs": {
+      "lead": {
+        "construction": "Layered paper puppet: a flat back plate, a torso plate, a head plate, cut hair, two arm chains and two leg chains. Each layer is a separate flat card with a cream cut edge; the pivots are visible paper eyelets. There is no 3D model, no mesh and no soft body.",
+        "joints": [
+          "neck",
+          "shoulder-left",
+          "shoulder-right",
+          "elbow-left",
+          "elbow-right",
+          "hip-left",
+          "hip-right",
+          "knee-left",
+          "knee-right",
+          "ankle-left",
+          "ankle-right"
+        ],
+        "anchors": [
+          "face",
+          "hair",
+          "hand-left",
+          "hand-right",
+          "foot-left",
+          "foot-right",
+          "chest",
+          "waist"
+        ]
+      },
+      "second": {
+        "construction": "Layered paper puppet with a narrower shoulder plate, a longer hair plate and one accent sleeve. The same flat card build and visible eyelet joints apply; the silhouette reads as a second person at a glance. There is no 3D model, no mesh and no soft body.",
+        "joints": [
+          "neck",
+          "shoulder-left",
+          "shoulder-right",
+          "elbow-left",
+          "elbow-right",
+          "hip-left",
+          "hip-right",
+          "knee-left",
+          "knee-right",
+          "ankle-left",
+          "ankle-right"
+        ],
+        "anchors": [
+          "face",
+          "hair",
+          "hand-left",
+          "hand-right",
+          "foot-left",
+          "foot-right",
+          "chest",
+          "waist"
+        ]
+      }
+    }
+  },
+  "runtime": {
+    "primitives": [
+      "layer",
+      "shape",
+      "path",
+      "text",
+      "image",
+      "camera",
+      "effect",
+      "transition"
+    ]
+  },
+  "evidence": {
+    "sources": [
+      {
+        "take": "the author's own 157 s paper-cut music film: measured paper grammar, cut-edge vocabulary, type stack and beat spacing",
+        "notTake": "the film's story, lyrics, character names, audio, shot order or any uncropped still; cropped reference frames are evidence only, never a rendered asset",
+        "rights": "Author's own work, read-only evidence; no story, lyrics, character names or audio copied."
+      },
+      {
+        "take": "K-pop stage grammar: sunburst, formation, point choreography and a cut on the beat",
+        "notTake": "any artist, group, stage design, choreography, footage, logo or song",
+        "rights": "Public performance grammar, observed only; no footage, likeness or choreography reproduced."
+      },
+      {
+        "take": "cut-paper and print production: torn edge, visible fibre, halftone dot and misregistration",
+        "notTake": "a specific artwork, poster, printer or workshop design",
+        "rights": "Public craft and print references, observed only; no artwork, image or text reproduced."
+      },
+      {
+        "take": "the S1a closed contract: dimensions, vocabularies, hashes and status ladder",
+        "notTake": "any control pack, its content or its card",
+        "rights": "Paper Studio internal contract; used as structure, not copied as content."
+      }
+    ]
+  },
+  "proof": {
+    "status": "declared",
+    "frames": [
+      "paper_open",
+      "portrait_iris",
+      "pullback_close"
+    ],
+    "aspects": [
+      "16:9",
+      "9:16"
+    ],
+    "metrics": [
+      "paper shadow choice",
+      "palette count per frame",
+      "type stack legibility at 390 px",
+      "cast count",
+      "word count",
+      "transition on beat",
+      "9:16 re-stage",
+      "no gloss/3D"
+    ]
+  },
+  "governance": {
+    "owner": "Paper Studio",
+    "review": "The director opens card.html at 900 x 700 and at 390 px, checks the three proof frames, answers paper-shadow, then signs.",
+    "questions": [
+      "Is the paper a diorama or a print? The paper-shadow choice is open; the type always carries a hard misregistered ink shadow.",
+      "Can a photograph stand in for a face? No. A photograph is reference for a cut-paper portrait, never a pasted layer.",
+      "How much can the HUD say? One caption line in the lyric band, eight words maximum; the meter reads beat and palette, not a second paragraph."
+    ],
+    "choices": [
+      {
+        "id": "paper-shadow",
+        "question": "Does the paper cast a shadow? Collage: soft contact shadow and visible cut edge. Print: flat layer, only the type gets a hard offset shadow.",
+        "options": [
+          "Collage",
+          "Print"
+        ],
+        "where": "STYLE.md > Signature > paper-shadow"
+      }
+    ],
+    "decisions": [
+      {
+        "id": "source-exclusion",
+        "answer": "The author's film is read-only evidence. No story, lyrics, character names, audio or shot order is reused. The six cropped stills are visual evidence only, never a rendered asset.",
+        "reason": "The pack must be a reusable style, not a compressed film.",
+        "decidedBy": "Paper Studio"
+      },
+      {
+        "id": "palette-roles",
+        "answer": "paper, ink, red, blue, acid and accent; day-stage and night-stage; at most four colours in a frame.",
+        "reason": "Six roles keep the palette legible; four colours keep the collage loud.",
+        "decidedBy": "Paper Studio"
+      },
+      {
+        "id": "type-quartet",
+        "answer": "Anton, Archivo Black, DM Mono and Permanent Marker across five roles. Display, body, caption, label and monogram are fixed.",
+        "reason": "Four families cover the poster, the sticker, the measured label and the hand mark without a soft serif.",
+        "decidedBy": "Paper Studio"
+      },
+      {
+        "id": "transition-set",
+        "answer": "cut, iris, wipe, hold and match_cut. No dissolve and no page_turn.",
+        "reason": "The edit is a paper cut, a torn wipe or a held stare; a dissolve softens the material.",
+        "decidedBy": "Paper Studio"
+      },
+      {
+        "id": "format-structure",
+        "answer": "16:9 song at 45 s and 14 shots; 9:16 Short at 30 s and 8 shots; 9:16 blind application at 30 s and 6 shots. The shortest shot is 1.2 s.",
+        "reason": "Two formats prove two compositions; the blind run proves the grammar travels without the card.",
+        "decidedBy": "Paper Studio"
+      },
+      {
+        "id": "vertical-restage",
+        "answer": "9:16 is a re-stage: centre 60 percent, stack title and body, re-stage both performers, re-anchor the HUD.",
+        "reason": "A crop of a 16:9 stage loses the cut edges and the formation; a re-stage keeps the paper logic.",
+        "decidedBy": "Paper Studio"
+      },
+      {
+        "id": "hud",
+        "answer": "Per recipe: the portrait carries a torn ink or red lyric band with the caption inside it; the stage carries a black sticker meter with an acid readout; the close carries corner marks. No colour-bar row and no other HUD.",
+        "reason": "The HUD is part of the print object, not a software overlay, and a shot should carry only the furniture it needs.",
+        "decidedBy": "Paper Studio"
+      },
+      {
+        "id": "shadow-neutral",
+        "answer": "Recipes name only the fixed hard type shadow. A paper contact shadow is added by the renderer only under Collage.",
+        "reason": "The paper-shadow choice must stay open; a recipe cannot pre-decide it.",
+        "decidedBy": "Paper Studio"
+      },
+      {
+        "id": "vertical-insets",
+        "answer": "9:16 boxes are anchors, not stretch boxes. Images cover, text auto-fits, rules keep thickness and nested shapes keep their relative inset.",
+        "reason": "A box-only map would make a sun and its core, or a sticker and its bed, collapse onto each other.",
+        "decidedBy": "Paper Studio"
+      },
+      {
+        "id": "quote-type-exception",
+        "answer": "The quote recipe may set content.body in display; every other body slot uses Archivo Black.",
+        "reason": "The sticker is a display object; the exception is one named recipe, not an open mapping.",
+        "decidedBy": "Paper Studio"
+      },
+      {
+        "id": "timing-quantise",
+        "answer": "The resolver's shot lengths are plan values. The renderer quantises cuts to the 88 BPM grid in S2.",
+        "reason": "S1c has no renderer; pretending the planning allocation is frame-exact would be false.",
+        "decidedBy": "Paper Studio"
+      },
+      {
+        "id": "camera-precedence",
+        "answer": "The recipe's top-level camera and transitionOut are authoritative; composition camera and transition ops repeat them as render hints. Apply one move and one transition, never both.",
+        "reason": "Duplicating the values without a precedence rule would double a push or a transition.",
+        "decidedBy": "Paper Studio"
+      },
+      {
+        "id": "text-fill",
+        "answer": "The cream edge and hard ink shadow are fixed; the text fill is a palette role named by the recipe. Red fields use paper type; paper uses ink type. An ink field is not used behind paper type because the ink shadow would disappear.",
+        "reason": "The type treatment defines the finish, not the fill, and a text op must be legible on its field.",
+        "decidedBy": "Paper Studio"
+      },
+      {
+        "id": "asset-tinting",
+        "answer": "Assets are role-tinted paper shapes. The treatment assigns the four roles per shot; character and stage plates are recoloured from them; drop the accent first.",
+        "reason": "Fixed-colour assets would make the four-colour budget uncomputable and the cast impossible to restage.",
+        "decidedBy": "Paper Studio"
+      },
+      {
+        "id": "independence",
+        "answer": "The pack is self-contained: no other style, no external asset, no network and no drive path.",
+        "reason": "A style that needs a neighbour cannot be reused or blind-authored.",
+        "decidedBy": "Paper Studio"
+      },
+      {
+        "id": "deferred-renderer",
+        "answer": "No renderer, frame or MP4 in this pack. Proof is definition-level; the film is a later phase.",
+        "reason": "The pack is judged on the contract, the card and the plan, not on a renderer that does not exist.",
+        "decidedBy": "Paper Studio"
+      },
+      {
+        "id": "blind-protocol",
+        "answer": "A fresh author carries out a sealed 6-shot, 30 s, 9:16 application without editing the pack; any pack change invalidates the run.",
+        "reason": "A blind result is only evidence if the pack hash holds.",
+        "decidedBy": "Paper Studio"
+      }
+    ]
+  },
+  "costClass": "heavy"
+}

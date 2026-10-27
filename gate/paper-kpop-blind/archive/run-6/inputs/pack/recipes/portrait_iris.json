@@ -1,0 +1,148 @@
+{
+  "id": "portrait_iris",
+  "beatRoles": [
+    "portrait"
+  ],
+  "duration": {
+    "min": 2.2,
+    "max": 5.5,
+    "default": 3.2
+  },
+  "camera": {
+    "move": "push_in",
+    "from": 1,
+    "to": 1.12,
+    "ease": "easeOut"
+  },
+  "slots": [
+    "content.names",
+    "content.caption"
+  ],
+  "assets": [
+    "set.paper-card",
+    "character.lead",
+    "frame.paper-window",
+    "hud.lyric-band"
+  ],
+  "composition": [
+    {
+      "op": "image",
+      "id": "paper",
+      "asset": "set.paper-card",
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "z": 0
+    },
+    {
+      "op": "image",
+      "id": "lead-portrait",
+      "asset": "character.lead",
+      "x": 0.2,
+      "y": 0.06,
+      "w": 0.6,
+      "h": 0.78,
+      "z": 2
+    },
+    {
+      "op": "image",
+      "id": "paper-window",
+      "asset": "frame.paper-window",
+      "x": 0.14,
+      "y": 0.04,
+      "w": 0.72,
+      "h": 0.82,
+      "z": 3
+    },
+    {
+      "op": "text",
+      "id": "names-line",
+      "slot": "content.names",
+      "typeRole": "display",
+      "x": 0.1,
+      "y": 0.64,
+      "w": 0.62,
+      "h": 0.1,
+      "align": "left",
+      "z": 8,
+      "color": "ink"
+    },
+    {
+      "op": "text",
+      "id": "caption-line",
+      "slot": "content.caption",
+      "typeRole": "caption",
+      "x": 0.1,
+      "y": 0.88,
+      "w": 0.52,
+      "h": 0.06,
+      "align": "left",
+      "z": 8,
+      "color": "paper"
+    },
+    {
+      "op": "image",
+      "id": "lyric-band",
+      "asset": "hud.lyric-band",
+      "x": 0.06,
+      "y": 0.86,
+      "w": 0.88,
+      "h": 0.1,
+      "z": 7
+    },
+    {
+      "op": "effect",
+      "kind": "iris",
+      "z": 9,
+      "opacity": 0.9
+    },
+    {
+      "op": "effect",
+      "kind": "fiber",
+      "z": 10,
+      "opacity": 0.18
+    },
+    {
+      "op": "camera",
+      "move": "push_in",
+      "from": 1,
+      "to": 1.12,
+      "ease": "easeOut"
+    },
+    {
+      "op": "transition",
+      "kind": "iris"
+    }
+  ],
+  "vertical": [
+    [
+      "lead-portrait",
+      "portrait"
+    ],
+    [
+      "paper-window",
+      "frame"
+    ],
+    [
+      "names-line",
+      "names"
+    ],
+    [
+      "caption-line",
+      "lyric"
+    ],
+    [
+      "lyric-band",
+      "lyric"
+    ]
+  ],
+  "transitionOut": "iris",
+  "failureModes": [
+    "a photographic face inside the paper window",
+    "the iris opening faster than the cut",
+    "names set in the caption face",
+    "a lyric band empty or wider than the safe margin",
+    "a window frame that floats above the cast"
+  ]
+}

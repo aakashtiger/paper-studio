@@ -1,0 +1,129 @@
+{
+  "id": "type_stack",
+  "beatRoles": [
+    "title"
+  ],
+  "duration": {
+    "min": 1.5,
+    "max": 5.5,
+    "default": 2.6
+  },
+  "camera": {
+    "move": "static",
+    "from": 1,
+    "to": 1,
+    "ease": "linear"
+  },
+  "slots": [
+    "content.title",
+    "content.body"
+  ],
+  "assets": [
+    "set.paper-card",
+    "texture.halftone"
+  ],
+  "composition": [
+    {
+      "op": "image",
+      "id": "paper",
+      "asset": "set.paper-card",
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "z": 0
+    },
+    {
+      "op": "shape",
+      "id": "ink-card",
+      "kind": "frame",
+      "color": "ink",
+      "x": 0.06,
+      "y": 0.08,
+      "w": 0.88,
+      "h": 0.8,
+      "z": 1
+    },
+    {
+      "op": "text",
+      "id": "title-display",
+      "slot": "content.title",
+      "typeRole": "display",
+      "x": 0.1,
+      "y": 0.18,
+      "w": 0.78,
+      "h": 0.3,
+      "align": "left",
+      "z": 3,
+      "color": "paper"
+    },
+    {
+      "op": "shape",
+      "id": "stack-rule",
+      "kind": "rule",
+      "color": "acid",
+      "x": 0.1,
+      "y": 0.55,
+      "w": 0.28,
+      "h": 0.008,
+      "z": 4
+    },
+    {
+      "op": "text",
+      "id": "body-copy",
+      "slot": "content.body",
+      "typeRole": "body",
+      "x": 0.1,
+      "y": 0.6,
+      "w": 0.58,
+      "h": 0.14,
+      "align": "left",
+      "z": 5,
+      "color": "paper"
+    },
+    {
+      "op": "effect",
+      "kind": "halftone",
+      "z": 2,
+      "opacity": 0.22,
+      "amount": 0.55
+    },
+    {
+      "op": "camera",
+      "move": "static",
+      "from": 1,
+      "to": 1,
+      "ease": "linear"
+    },
+    {
+      "op": "transition",
+      "kind": "cut"
+    }
+  ],
+  "vertical": [
+    [
+      "ink-card",
+      "inkCard"
+    ],
+    [
+      "title-display",
+      "title"
+    ],
+    [
+      "stack-rule",
+      "body"
+    ],
+    [
+      "body-copy",
+      "body"
+    ]
+  ],
+  "transitionOut": "cut",
+  "failureModes": [
+    "display type set without its hard offset shadow",
+    "body copy pushed below two lines",
+    "halftone visible as a digital dot screen",
+    "the ink card floating without a cut edge",
+    "a second display face on the same card"
+  ]
+}

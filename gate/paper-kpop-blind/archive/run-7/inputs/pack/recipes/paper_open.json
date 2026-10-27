@@ -1,0 +1,152 @@
+{
+  "id": "paper_open",
+  "beatRoles": [
+    "open"
+  ],
+  "duration": {
+    "min": 2.2,
+    "max": 5.5,
+    "default": 3.4
+  },
+  "camera": {
+    "move": "push_in",
+    "from": 0.99,
+    "to": 1.04,
+    "ease": "easeOut"
+  },
+  "slots": [
+    "content.title",
+    "content.subtitle"
+  ],
+  "assets": [
+    "set.paper-card",
+    "texture.paper-fibre"
+  ],
+  "composition": [
+    {
+      "op": "image",
+      "id": "paper",
+      "asset": "set.paper-card",
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "z": 0
+    },
+    {
+      "op": "shape",
+      "id": "open-sun",
+      "kind": "sunburst",
+      "color": "acid",
+      "x": 0.14,
+      "y": 0.1,
+      "w": 0.72,
+      "h": 0.62,
+      "opacity": 0.95,
+      "z": 1
+    },
+    {
+      "op": "shape",
+      "id": "core-burst",
+      "kind": "burst",
+      "color": "accent",
+      "x": 0.36,
+      "y": 0.24,
+      "w": 0.28,
+      "h": 0.24,
+      "opacity": 0.9,
+      "z": 2
+    },
+    {
+      "op": "text",
+      "id": "title-line",
+      "slot": "content.title",
+      "typeRole": "display",
+      "x": 0.12,
+      "y": 0.3,
+      "w": 0.76,
+      "h": 0.18,
+      "align": "center",
+      "z": 4,
+      "color": "ink"
+    },
+    {
+      "op": "shape",
+      "id": "baseline-rule",
+      "kind": "rule",
+      "color": "ink",
+      "x": 0.18,
+      "y": 0.585,
+      "w": 0.64,
+      "h": 0.006,
+      "opacity": 0.8,
+      "z": 6
+    },
+    {
+      "op": "text",
+      "id": "subtitle-line",
+      "slot": "content.subtitle",
+      "typeRole": "caption",
+      "x": 0.16,
+      "y": 0.62,
+      "w": 0.68,
+      "h": 0.07,
+      "align": "center",
+      "z": 5,
+      "color": "ink"
+    },
+    {
+      "op": "effect",
+      "kind": "fiber",
+      "z": 7,
+      "opacity": 0.18
+    },
+    {
+      "op": "effect",
+      "kind": "vignette",
+      "z": 8,
+      "opacity": 0.22
+    },
+    {
+      "op": "camera",
+      "move": "push_in",
+      "from": 0.99,
+      "to": 1.04,
+      "ease": "easeOut"
+    },
+    {
+      "op": "transition",
+      "kind": "iris"
+    }
+  ],
+  "vertical": [
+    [
+      "open-sun",
+      "openSun"
+    ],
+    [
+      "core-burst",
+      "openSun"
+    ],
+    [
+      "title-line",
+      "title"
+    ],
+    [
+      "subtitle-line",
+      "subtitle"
+    ],
+    [
+      "baseline-rule",
+      "subtitle"
+    ]
+  ],
+  "transitionOut": "iris",
+  "failureModes": [
+    "a sunburst grown from a clean vector centre",
+    "title and subtitle sharing one baseline",
+    "a push-in that reveals a photographic background",
+    "the burst cropped by the frame edge",
+    "more than four colour roles inside the sunburst"
+  ]
+}

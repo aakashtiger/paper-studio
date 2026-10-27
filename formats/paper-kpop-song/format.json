@@ -1,0 +1,101 @@
+{
+  "id": "paper-kpop-song",
+  "name": "Paper K-pop song",
+  "beatRoleMap": {
+    "song-01": "open",
+    "song-02": "title",
+    "song-03": "portrait",
+    "song-04": "detail",
+    "song-05": "list",
+    "song-06": "quote",
+    "song-07": "portrait",
+    "song-08": "detail",
+    "song-09": "list",
+    "song-10": "quote",
+    "song-11": "transition",
+    "song-12": "title",
+    "song-13": "detail",
+    "song-14": "close"
+  },
+  "sequence": [
+    {
+      "beat": "song-01",
+      "role": "open",
+      "count": 1
+    },
+    {
+      "beat": "song-02",
+      "role": "title",
+      "count": 1
+    },
+    {
+      "beat": "song-03",
+      "role": "portrait",
+      "count": 1
+    },
+    {
+      "beat": "song-04",
+      "role": "detail",
+      "count": 1
+    },
+    {
+      "beat": "song-05",
+      "role": "list",
+      "count": 1
+    },
+    {
+      "beat": "song-06",
+      "role": "quote",
+      "count": 1
+    },
+    {
+      "beat": "song-07",
+      "role": "portrait",
+      "count": 1
+    },
+    {
+      "beat": "song-08",
+      "role": "detail",
+      "count": 1
+    },
+    {
+      "beat": "song-09",
+      "role": "list",
+      "count": 1
+    },
+    {
+      "beat": "song-10",
+      "role": "quote",
+      "count": 1
+    },
+    {
+      "beat": "song-11",
+      "role": "transition",
+      "count": 1
+    },
+    {
+      "beat": "song-12",
+      "role": "title",
+      "count": 1
+    },
+    {
+      "beat": "song-13",
+      "role": "detail",
+      "count": 1
+    },
+    {
+      "beat": "song-14",
+      "role": "close",
+      "count": 1
+    }
+  ],
+  "durations": [
+    45
+  ],
+  "aspects": [
+    "16:9"
+  ],
+  "primaryAspect": "16:9",
+  "loudness": "-14 LUFS",
+  "palette": "day-stage"
+}

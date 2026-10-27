@@ -1,0 +1,23 @@
+{
+  "id": "vera-lune-rooftop-soundcheck",
+  "name": "Vera Lune — Rooftop Soundcheck",
+  "beatRoleMap": {
+    "opening": "open",
+    "title": "title",
+    "portrait": "portrait",
+    "stage": "list",
+    "quote": "quote",
+    "closing": "close"
+  },
+  "sequence": [
+    { "beat": "opening", "role": "open", "count": 1 },
+    { "beat": "title", "role": "title", "count": 1 },
+    { "beat": "portrait", "role": "portrait", "count": 1 },
+    { "beat": "stage", "role": "list", "count": 1 },
+    { "beat": "quote", "role": "quote", "count": 1 },
+    { "beat": "closing", "role": "close", "count": 1 }
+  ],
+  "durations": [30],
+  "aspects": ["9:16"],
+  "primaryAspect": "9:16"
+}

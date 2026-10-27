@@ -1,0 +1,24 @@
+{
+  "id": "last-soundcheck",
+  "name": "Last Soundcheck — 9:16 Short",
+  "beatRoleMap": {
+    "opening": "open",
+    "title": "title",
+    "portrait": "portrait",
+    "formation": "list",
+    "quote": "quote",
+    "closing": "close"
+  },
+  "sequence": [
+    { "beat": "opening", "role": "open", "count": 1 },
+    { "beat": "title", "role": "title", "count": 1 },
+    { "beat": "portrait", "role": "portrait", "count": 1 },
+    { "beat": "formation", "role": "list", "count": 1 },
+    { "beat": "quote", "role": "quote", "count": 1 },
+    { "beat": "closing", "role": "close", "count": 1 }
+  ],
+  "durations": [30],
+  "aspects": ["9:16"],
+  "primaryAspect": "9:16",
+  "loudness": "-14 LUFS"
+}

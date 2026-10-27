@@ -1,0 +1,139 @@
+{
+  "id": "side_scroll_chase",
+  "beatRoles": [
+    "transition"
+  ],
+  "duration": {
+    "min": 1.5,
+    "max": 5.5,
+    "default": 2.2
+  },
+  "camera": {
+    "move": "pan",
+    "from": 0.94,
+    "to": 1.06,
+    "ease": "easeInOut"
+  },
+  "slots": [
+    "content.caption"
+  ],
+  "assets": [
+    "set.paper-card",
+    "set.corridor",
+    "texture.halftone"
+  ],
+  "composition": [
+    {
+      "op": "image",
+      "id": "paper",
+      "asset": "set.paper-card",
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "z": 0
+    },
+    {
+      "op": "image",
+      "id": "corridor-run",
+      "asset": "set.corridor",
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 0.8,
+      "z": 1
+    },
+    {
+      "op": "shape",
+      "id": "speed-rule",
+      "kind": "rule",
+      "color": "ink",
+      "x": 0.06,
+      "y": 0.78,
+      "w": 0.88,
+      "h": 0.006,
+      "opacity": 0.8,
+      "z": 2
+    },
+    {
+      "op": "shape",
+      "id": "chase-arrow",
+      "kind": "arrow",
+      "color": "acid",
+      "x": 0.66,
+      "y": 0.24,
+      "w": 0.22,
+      "h": 0.12,
+      "opacity": 0.95,
+      "z": 3
+    },
+    {
+      "op": "text",
+      "id": "caption-run",
+      "slot": "content.caption",
+      "typeRole": "caption",
+      "x": 0.06,
+      "y": 0.84,
+      "w": 0.44,
+      "h": 0.06,
+      "align": "left",
+      "z": 4
+    },
+    {
+      "op": "effect",
+      "kind": "halftone",
+      "z": 5,
+      "opacity": 0.18,
+      "amount": 0.5
+    },
+    {
+      "op": "effect",
+      "kind": "grain",
+      "z": 6,
+      "opacity": 0.1
+    },
+    {
+      "op": "effect",
+      "kind": "vignette",
+      "z": 7,
+      "opacity": 0.18
+    },
+    {
+      "op": "camera",
+      "move": "pan",
+      "from": 0.94,
+      "to": 1.06,
+      "ease": "easeInOut"
+    },
+    {
+      "op": "transition",
+      "kind": "wipe"
+    }
+  ],
+  "vertical": [
+    [
+      "corridor-run",
+      "corridor"
+    ],
+    [
+      "speed-rule",
+      "caption"
+    ],
+    [
+      "chase-arrow",
+      "corridor"
+    ],
+    [
+      "caption-run",
+      "caption"
+    ]
+  ],
+  "transitionOut": "wipe",
+  "failureModes": [
+    "a lateral pan that reveals the corridor ends",
+    "whip motion without a readable caption",
+    "a still frame inside the chase",
+    "the corridor painted as a photographic plate",
+    "more than three repeating props"
+  ]
+}

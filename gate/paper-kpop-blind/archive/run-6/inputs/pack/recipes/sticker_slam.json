@@ -1,0 +1,152 @@
+{
+  "id": "sticker_slam",
+  "beatRoles": [
+    "quote"
+  ],
+  "duration": {
+    "min": 1.5,
+    "max": 5.5,
+    "default": 2.2
+  },
+  "camera": {
+    "move": "static",
+    "from": 1,
+    "to": 1,
+    "ease": "linear"
+  },
+  "slots": [
+    "content.body"
+  ],
+  "assets": [
+    "set.paper-card",
+    "prop.paper-sticker",
+    "texture.halftone"
+  ],
+  "composition": [
+    {
+      "op": "image",
+      "id": "paper",
+      "asset": "set.paper-card",
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "z": 0
+    },
+    {
+      "op": "shape",
+      "id": "torn-bed",
+      "kind": "torn-strip",
+      "color": "red",
+      "x": 0.05,
+      "y": 0.14,
+      "w": 0.9,
+      "h": 0.7,
+      "rotate": -3,
+      "opacity": 0.96,
+      "z": 1
+    },
+    {
+      "op": "shape",
+      "id": "slam-burst",
+      "kind": "burst",
+      "color": "accent",
+      "x": 0.36,
+      "y": 0.1,
+      "w": 0.28,
+      "h": 0.18,
+      "opacity": 0.9,
+      "z": 2
+    },
+    {
+      "op": "image",
+      "id": "sticker-slam",
+      "asset": "prop.paper-sticker",
+      "x": 0.24,
+      "y": 0.2,
+      "w": 0.52,
+      "h": 0.48,
+      "rotate": 4,
+      "z": 3
+    },
+    {
+      "op": "text",
+      "id": "body-slam",
+      "slot": "content.body",
+      "typeRole": "display",
+      "x": 0.2,
+      "y": 0.32,
+      "w": 0.6,
+      "h": 0.3,
+      "align": "center",
+      "z": 4,
+      "color": "paper"
+    },
+    {
+      "op": "shape",
+      "id": "slam-rule",
+      "kind": "rule",
+      "color": "ink",
+      "x": 0.36,
+      "y": 0.64,
+      "w": 0.28,
+      "h": 0.008,
+      "opacity": 0.85,
+      "z": 5
+    },
+    {
+      "op": "effect",
+      "kind": "halftone",
+      "z": 2,
+      "opacity": 0.24,
+      "amount": 0.6
+    },
+    {
+      "op": "effect",
+      "kind": "flash",
+      "z": 8,
+      "opacity": 0.18
+    },
+    {
+      "op": "camera",
+      "move": "static",
+      "from": 1,
+      "to": 1,
+      "ease": "linear"
+    },
+    {
+      "op": "transition",
+      "kind": "cut"
+    }
+  ],
+  "vertical": [
+    [
+      "torn-bed",
+      "sticker"
+    ],
+    [
+      "slam-burst",
+      "burst"
+    ],
+    [
+      "sticker-slam",
+      "sticker"
+    ],
+    [
+      "body-slam",
+      "stickerText"
+    ],
+    [
+      "slam-rule",
+      "stickerText"
+    ]
+  ],
+  "transitionOut": "cut",
+  "failureModes": [
+    "a clean vector sticker with no torn edge",
+    "the sticker landing without its hard type shadow or cut edge",
+    "body copy smaller than the sticker edge",
+    "halftone printed above the type",
+    "the sticker cropped by the safe margin"
+  ]
+}

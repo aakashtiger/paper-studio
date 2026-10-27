@@ -1,0 +1,36 @@
+# Sources and frame provenance
+
+## The source film
+
+The style was extracted from the author's own 157-second paper-cut music film: 1920 x 1080, 30 fps, 4,699 source frames. The film is read-only evidence. Its story, lyrics, character names, audio, shot order and title are not part of this pack. The pack uses the measured paper grammar, not the film.
+
+The full extraction, with the D01-D27 evidence table and the not-taken list, is in the project's `sources/paper-kpop/autopsy.md`.
+
+## Reference frames
+
+Six local crops live in `references/frames/`. They are visual evidence only, never rendered output and never a shot plan. The card uses three of them.
+
+| Local file | Source frame | Timecode | Crop (x,y,w,h) | What it proves |
+|---|---|---|---|---|
+| `references/frames/open-sunflower.jpg` | f00027 | 00:00:00.900 | 800,300,320,480 | Cut-paper sun: radial petals, gold centre, dark ground, no soft brush. |
+| `references/frames/portrait-paper-cast.jpg` | f00105 | 00:00:03.500 | 925,160,635,740 | Paper portrait: layered hair, petal collar, brad joints, cream edge, offset shadow. |
+| `references/frames/chorus-stage.jpg` | f00700 | 00:00:23.333 | 920,100,720,720 | Stage grammar: sunburst, repeated cast, blue floor, confetti, costume rhythm. |
+| `references/frames/throne-orbit.jpg` | f00426 | 00:00:14.200 | 900,100,560,600 | Prop-portrait: paper chair, seated lead, halo, red room, limited palette. |
+| `references/frames/macro-prop.jpg` | f00516 | 00:00:17.200 | 600,160,700,760 | Macro prop: stacked cut cylinders, contact shadow, negative space. |
+| `references/frames/desk-diorama.jpg` | f04590 | 00:02:33.000 | 280,600,280,240 | Desk diorama: paper figure on a ruled sheet, cutting mat, tabletop scale. |
+
+Every crop removes the source lyric band, the source title and the source character labels. The text gate cannot read pixels; the crop table above is the manual on-image check.
+
+## What is not included
+
+- No song, lyric, vocal, music, stem, sound effect or audio file.
+- No source character name, source scene name, source title or source story.
+- No uncropped source frame and no frame used as a rendered asset.
+- No third-party code. The read-only `reference/paper-kpop/` modules are not imported.
+- No external URL, network request or path outside this pack at runtime.
+
+## Rights
+
+The film, its frames and the style extraction are the author's own work. The six crops are included as evidence with the pack; they are not a licence to reuse the film outside this project. The fonts are third-party works under the SIL Open Font License 1.1; see `fonts/FONT-LICENSES.md`, `fonts/OFL.txt` and `LICENSE-THIRD-PARTY.txt`.
+
+The pack itself is proprietary Paper Studio work. It is not CC0 and it is not a redistribution of the source film.

@@ -1,0 +1,65 @@
+{
+  "id": "paper-kpop-shorts",
+  "name": "Paper K-pop shorts",
+  "beatRoleMap": {
+    "short-01": "open",
+    "short-02": "title",
+    "short-03": "portrait",
+    "short-04": "detail",
+    "short-05": "list",
+    "short-06": "quote",
+    "short-07": "transition",
+    "short-08": "close"
+  },
+  "sequence": [
+    {
+      "beat": "short-01",
+      "role": "open",
+      "count": 1
+    },
+    {
+      "beat": "short-02",
+      "role": "title",
+      "count": 1
+    },
+    {
+      "beat": "short-03",
+      "role": "portrait",
+      "count": 1
+    },
+    {
+      "beat": "short-04",
+      "role": "detail",
+      "count": 1
+    },
+    {
+      "beat": "short-05",
+      "role": "list",
+      "count": 1
+    },
+    {
+      "beat": "short-06",
+      "role": "quote",
+      "count": 1
+    },
+    {
+      "beat": "short-07",
+      "role": "transition",
+      "count": 1
+    },
+    {
+      "beat": "short-08",
+      "role": "close",
+      "count": 1
+    }
+  ],
+  "durations": [
+    30
+  ],
+  "aspects": [
+    "9:16"
+  ],
+  "primaryAspect": "9:16",
+  "loudness": "-14 LUFS",
+  "palette": "day-stage"
+}

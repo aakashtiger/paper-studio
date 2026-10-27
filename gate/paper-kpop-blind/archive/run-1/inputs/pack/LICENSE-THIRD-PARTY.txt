@@ -1,0 +1,36 @@
+Paper K-pop style pack: third-party notices
+
+FONTS
+=====
+
+The pack bundles four font families, five files, under the SIL Open Font
+License, Version 1.1:
+
+- Anton, Anton-Regular.ttf
+- Archivo Black, ArchivoBlack-Regular.ttf
+- DM Mono Regular, DMMono-Regular.ttf
+- DM Mono Medium, DMMono-Medium.ttf
+- Permanent Marker, PermanentMarker-Regular.ttf
+
+Copyright notices and the full licence text are in fonts/FONT-LICENSES.md and
+fonts/OFL.txt. The fonts are bundled only so the card and a future renderer do
+not depend on the network, the repository or another style.
+
+FILM FRAMES
+===========
+
+The six cropped reference frames in references/frames/ are the author's own
+work. They are evidence for the style, not output, not a shot plan and not a
+licence to reuse the source film outside this project.
+
+NO THIRD-PARTY CODE
+===================
+
+No third-party code is copied into this pack. The read-only reference modules
+are not imported, and the pack has no runtime dependency outside its own folder.
+
+NO AUDIO
+========
+
+No song, lyric, vocal, music, stem, sound effect or audio file is included. The
+sound block in tokens.json is descriptive only.

@@ -1,0 +1,126 @@
+{
+  "id": "macro_prop_beat",
+  "beatRoles": [
+    "detail"
+  ],
+  "duration": {
+    "min": 1.2,
+    "max": 5.5,
+    "default": 2
+  },
+  "camera": {
+    "move": "push_in",
+    "from": 1,
+    "to": 1.12,
+    "ease": "easeOut"
+  },
+  "slots": [
+    "content.caption"
+  ],
+  "assets": [
+    "set.paper-card",
+    "prop.object",
+    "set.tabletop",
+    "texture.halftone"
+  ],
+  "composition": [
+    {
+      "op": "image",
+      "id": "paper",
+      "asset": "set.paper-card",
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "z": 0
+    },
+    {
+      "op": "image",
+      "id": "tabletop-plane",
+      "asset": "set.tabletop",
+      "x": 0,
+      "y": 0.42,
+      "w": 1,
+      "h": 0.58,
+      "z": 1
+    },
+    {
+      "op": "image",
+      "id": "macro-object",
+      "asset": "prop.object",
+      "x": 0.28,
+      "y": 0.2,
+      "w": 0.44,
+      "h": 0.46,
+      "z": 3
+    },
+    {
+      "op": "shape",
+      "id": "macro-rule",
+      "kind": "rule",
+      "color": "ink",
+      "x": 0.08,
+      "y": 0.74,
+      "w": 0.22,
+      "h": 0.006,
+      "z": 4
+    },
+    {
+      "op": "text",
+      "id": "caption-line",
+      "slot": "content.caption",
+      "typeRole": "caption",
+      "x": 0.08,
+      "y": 0.77,
+      "w": 0.52,
+      "h": 0.08,
+      "align": "left",
+      "z": 5,
+      "color": "ink"
+    },
+    {
+      "op": "effect",
+      "kind": "halftone",
+      "z": 2,
+      "opacity": 0.2,
+      "amount": 0.5
+    },
+    {
+      "op": "camera",
+      "move": "push_in",
+      "from": 1,
+      "to": 1.12,
+      "ease": "easeOut"
+    },
+    {
+      "op": "transition",
+      "kind": "cut"
+    }
+  ],
+  "vertical": [
+    [
+      "tabletop-plane",
+      "tabletop"
+    ],
+    [
+      "macro-object",
+      "prop"
+    ],
+    [
+      "macro-rule",
+      "captionRule"
+    ],
+    [
+      "caption-line",
+      "caption"
+    ]
+  ],
+  "transitionOut": "cut",
+  "failureModes": [
+    "a soft photographic shadow under the object",
+    "the object smaller than its cut edge",
+    "caption crossing the object edge",
+    "halftone at full opacity over the object",
+    "a tabletop with no cut edge"
+  ]
+}

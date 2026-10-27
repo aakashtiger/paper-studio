@@ -1,0 +1,61 @@
+Paper K-pop 0.1.0 - third-party notices
+
+This file is separate from the style licence. The Paper K-pop style pack,
+its text, tokens, recipes and card are proprietary Paper Studio work. This
+file records only the third-party works that travel with the pack.
+
+FONTS - FOUR FAMILIES, FIVE FILES
+=================================
+
+The pack bundles four font families under the SIL Open Font License,
+Version 1.1:
+
+- Anton - Anton-Regular.ttf
+  Copyright 2020 The Anton Project Authors.
+
+- Archivo Black - ArchivoBlack-Regular.ttf
+  Copyright 2017 The Archivo Black Project Authors.
+
+- DM Mono Regular - DMMono-Regular.ttf
+- DM Mono Medium - DMMono-Medium.ttf
+  Copyright 2020 The DM Mono Project Authors.
+
+- Permanent Marker - PermanentMarker-Regular.ttf
+  Copyright (c) 2010 Font Diner, Inc. All rights reserved.
+
+The full SIL Open Font License 1.1 text is in fonts/OFL.txt. The per-file
+register is in fonts/FONT-LICENSES.md. The fonts are bundled only so the
+card and a future renderer do not depend on the network, the repository or
+another style. The OFL permits embedding and redistribution of the font
+software with this pack, provided the copyright and licence notices travel
+with it.
+
+Licence note: the Permanent Marker TTF as supplied carries an Apache
+License 2.0 notice in its embedded name table. The pack register declares
+it under OFL 1.1. Confirm the upstream licence before redistribution; if
+this pack must be strictly OFL-only, replace Permanent Marker with an OFL
+build and update fonts/FONT-LICENSES.md. No font is modified by this pack.
+
+FILM FRAMES — AUTHOR'S OWN WORK
+===============================
+
+The six cropped reference frames in references/frames/ are the author's own
+work. They are included as evidence for the style, not as output, not as a
+shot plan and not as a licence to reuse the source film outside this
+project. No film title, song, lyric, vocal, character name or audio file is
+included. The frame provenance table is in SOURCES.md.
+
+NO THIRD-PARTY CODE
+===================
+
+No third-party code is copied into this pack. The read-only reference
+modules are not imported, and the pack has no runtime dependency outside
+its own folder.
+
+NO AUDIO
+========
+
+No song, lyric, vocal, music, stem, sound effect or audio file is included.
+The sound block in tokens.json is descriptive only.
+
+END OF NOTICES

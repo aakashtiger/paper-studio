@@ -1,0 +1,180 @@
+{
+  "id": "pullback_close",
+  "beatRoles": [
+    "close"
+  ],
+  "duration": {
+    "min": 3.6,
+    "max": 5.5,
+    "default": 4.2
+  },
+  "camera": {
+    "move": "pull_back",
+    "from": 1.12,
+    "to": 1,
+    "ease": "easeOut"
+  },
+  "slots": [
+    "content.monogram",
+    "content.body"
+  ],
+  "assets": [
+    "set.paper-card",
+    "set.diorama",
+    "prop.object",
+    "texture.paper-fibre",
+    "hud.corner-marks"
+  ],
+  "composition": [
+    {
+      "op": "image",
+      "id": "paper",
+      "asset": "set.paper-card",
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "z": 0
+    },
+    {
+      "op": "image",
+      "id": "diorama-set",
+      "asset": "set.diorama",
+      "x": 0.06,
+      "y": 0.08,
+      "w": 0.88,
+      "h": 0.72,
+      "z": 1
+    },
+    {
+      "op": "image",
+      "id": "small-object",
+      "asset": "prop.object",
+      "x": 0.42,
+      "y": 0.42,
+      "w": 0.16,
+      "h": 0.18,
+      "z": 3
+    },
+    {
+      "op": "image",
+      "id": "corner-marks",
+      "asset": "hud.corner-marks",
+      "x": 0.06,
+      "y": 0.06,
+      "w": 0.88,
+      "h": 0.88,
+      "z": 6.5
+    },
+    {
+      "op": "text",
+      "id": "monogram-mark",
+      "slot": "content.monogram",
+      "typeRole": "monogram",
+      "x": 0.08,
+      "y": 0.16,
+      "w": 0.16,
+      "h": 0.08,
+      "align": "left",
+      "z": 6,
+      "color": "ink"
+    },
+    {
+      "op": "shape",
+      "id": "close-rule",
+      "kind": "rule",
+      "color": "acid",
+      "x": 0.08,
+      "y": 0.74,
+      "w": 0.16,
+      "h": 0.006,
+      "z": 5.8
+    },
+    {
+      "op": "shape",
+      "id": "close-strip",
+      "kind": "torn-strip",
+      "color": "paper",
+      "x": 0.06,
+      "y": 0.74,
+      "w": 0.5,
+      "h": 0.12,
+      "z": 5.5
+    },
+    {
+      "op": "text",
+      "id": "body-line",
+      "slot": "content.body",
+      "typeRole": "body",
+      "x": 0.08,
+      "y": 0.76,
+      "w": 0.56,
+      "h": 0.06,
+      "align": "left",
+      "z": 6,
+      "color": "ink"
+    },
+    {
+      "op": "effect",
+      "kind": "fiber",
+      "z": 7,
+      "opacity": 0.18
+    },
+    {
+      "op": "effect",
+      "kind": "vignette",
+      "z": 8,
+      "opacity": 0.2
+    },
+    {
+      "op": "camera",
+      "move": "pull_back",
+      "from": 1.12,
+      "to": 1,
+      "ease": "easeOut"
+    },
+    {
+      "op": "transition",
+      "kind": "hold"
+    }
+  ],
+  "vertical": [
+    [
+      "diorama-set",
+      "diorama"
+    ],
+    [
+      "small-object",
+      "prop"
+    ],
+    [
+      "corner-marks",
+      "screen"
+    ],
+    [
+      "monogram-mark",
+      "monogram"
+    ],
+    [
+      "close-rule",
+      "bodyRuleLower"
+    ],
+    [
+      "body-line",
+      "bodyLower"
+    ],
+    [
+      "close-strip",
+      "bodyLower"
+    ]
+  ],
+  "transitionOut": "hold",
+  "failureModes": [
+    "a diorama pulled back beyond its edge",
+    "monogram set as body copy",
+    "corner marks missing at the final hold",
+    "a pull-back that ends on a crop",
+    "diorama and object share no cut edge or contact point"
+  ],
+  "reStage": "The monogram moves from the upper-left paper margin in 16:9 to the lower-left margin in 9:16 so the taller diorama keeps a clear sign-off."
+}
