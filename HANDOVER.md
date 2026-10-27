@@ -37,7 +37,7 @@
 > 9/9, contract/creative/product **9/10 GO**. The blind is a disclosed
 > **plan-valid carry-forward** from `719e0582…`, not a pristine seal. The
 > geometry re-audit found 6 critical and 8 high box defects and fixed them in one
-> batch; see `gate/paper-kpop-blind/AUDIT.md`. CI is green (run `40474161734`).
+> batch; see `gate/paper-kpop-blind/AUDIT.md`. CI is green (run `40474575139`).
 >
 > **2026-10-27 — Watercolor 0.2.0 accepted.** The card/process revision is
 > **REVIEWABLE** at `sha256:196fd31501fe029f20da6c79fd1629864581182e22c59802b47a0b741c236e05`
@@ -45,7 +45,7 @@
 > evidence is untouched at `31b804d0…`. Gate: page 8/45/1:1, scroll 4/45/16:9,
 > blind 6/30/9:16, 9/9 each; full suite **110/110**; exact 24-file manifests;
 > UTF-8 resolve; card 78 prose / 237 visible, 4,158 px at 900, 4,691 px at 390;
-> critics **9/10 GO**; CI green (run `40474161734`). 9:16 is the text proof;
+> critics **9/10 GO**; CI green (run `40474575139`). 9:16 is the text proof;
 > 1:1/16:9 are labelled unverified/S2.
 >
 > **Next: S2 visual proof.** A short watercolor and Paper K-pop render test,

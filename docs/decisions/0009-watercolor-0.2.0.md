@@ -32,7 +32,7 @@ Ship a **card and process revision** as a new pack and gate:
 ```text
 typecheck                         pass
 tests                             110 / 110
-ci (GitHub Actions)               success 40474161734
+ci (GitHub Actions)               success 40474575139
 style:check                       REVIEWABLE, 0 hard, 1 open choice (paint-in-speed)
 page (two briefs)                 8 shots, 45 s, 1:1, 9/9
 scroll (two briefs)               4 shots, 45 s, 16:9, 9/9
