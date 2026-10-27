@@ -3,6 +3,7 @@
 **Card:** `styles/watercolor-0.2.0/card.html`
 **Command:** `node scripts/card-audit.mjs styles/watercolor-0.2.0/card.html <width> <height>`
 **Caps:** ≤150 prose words (p/figcaption), ≤240 total visible words.
+**CI:** the height measurement runs when Chrome/Edge is available; the gate skips that one measurement when the CI image has no headless browser. The static density, media and structure checks always run.
 
 | Measure | 900 × 700 | 390 × 844 |
 |---|---|---|

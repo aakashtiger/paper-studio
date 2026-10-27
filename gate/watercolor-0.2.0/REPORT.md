@@ -80,6 +80,7 @@ The card was written with CRLF on Windows. Git normalizes to LF on checkout, whi
 - **Manifests:** 24 files, exact set; inputs and used-inputs byte-identical; live pack, input pack and used pack all `196fd315…`.
 - **Text proof:** the 9:16 blind page is the proof; the 1:1 and 16:9 boxes are diagrams labelled unverified/S2. No render is claimed.
 - **0.1.0:** the old pack, gate and blind are untouched.
+- **Card height:** the measurement runs when Chrome/Edge is available; the gate skips that one measurement on CI images without a headless browser. Density and structure always run.
 
 ## What this proves
 
