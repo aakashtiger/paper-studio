@@ -86,14 +86,8 @@ The creative owner works through an LLM inside `styles/` only. The technical own
 
 ## Repo setup (one-time)
 
-CI is defined in `.github/workflows/ci.yml` but is not committed yet: the current GitHub token lacks the `workflow` scope. To enable it:
-
-```bash
-gh auth refresh -s workflow
-git add .github/workflows/ci.yml
-git commit -m "ci: add workflow"
-git push
-```
+CI runs on every push: typecheck, tests and the wedding plan. The latest S1c.1
+push is green (run `40474161734`).
 
 To add the second owner once their GitHub handle is known:
 
