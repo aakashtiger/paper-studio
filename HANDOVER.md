@@ -1,10 +1,13 @@
 # HANDOVER — Paper Studio
 
-**Date:** 2026-10-26
+**Date:** 2026-10-29
 **Repo:** https://github.com/aakashtiger/paper-studio
 **Local:** `Y:\NewVideoTest\studio`
-**Last commit:** `dffb47f` — `feat(s1b): convert Lemo watercolor into a style pack`
-**Status:** S1a complete, accepted **9/10 GO**. S1b watercolor pilot complete, accepted **9/10 GO**, pack **REVIEWABLE**. No renderer, no video produced.
+**Last commit:** `deb22aa` — `docs: survey all 59 lemo styles and adopt the scored-film model`
+**Status:** S1a/S1b/S1c complete. S2 has a 15 s Paper K-pop proof (design 7/10,
+motion 5.5/10), a repaired rig, a treatment validator and 122 tests. The next
+gate is a scored-film render: score schema, per-film assets, plan-driven
+renderer, `film-audit`. Read `docs/STATUS.md` first.
 **Companion:** read `CONVERSATION-HANDOVER.md` for the narrative context the repo cannot carry.
 
 > **2026-10-28 — all 59 Lemo styles read.** The survey is
