@@ -44,9 +44,10 @@ timeline, not a multi-track editor.
 
 - `reviews/ARCHITECT.md` — one engine + style backends; this proof is not the
   plan-driven engine yet.
-- `reviews/MOTION.md` — first pass 4.5/10; the motion fixes applied after it.
+- `reviews/MOTION.md` — first pass 4.5/10; second pass 5.5/10.
+- `reviews/DESIGN.md` — DOP/design pass 5/10, then 7/10 after the art fixes.
 - `reviews/QA.md` — first pass FAIL; determinism, palette, boot, snapshots and
-  README fixes applied.
+  README fixes applied. Final pass: one render bug fixed (lower-third alpha).
 
 ## What this proves
 
@@ -57,6 +58,15 @@ timeline, not a multi-track editor.
 - HyperFrames gives a preview timeline and a deterministic seek/render path.
 - The proof is authored from fictional content, not the source film's story.
 
+## Director's note
+
+Honest scores on this pass: design **7/10**, motion **5.5/10**. The look is on
+the paper-craft bar; the movement still reads as designed posters with parts
+drifting rather than a cut of a song video. It is a real improvement on the
+first pass (4.5 motion / 5 design), but it is not yet "crazy good". The next
+motion pass needs true choreography (weight, anticipation, follow-through, a
+formation change) rather than more drift. `reviews/MOTION.md` lists the gap.
+
 ## QA fixes in this pass
 
 - Grain is seeded, not `Math.random()`; two fresh snapshot runs produced identical hashes at all six sampled times.
@@ -65,6 +75,11 @@ timeline, not a multi-track editor.
 - The open and close irises now resolve to red/cream paper, not off-palette blue.
 - The stale snapshot set was regenerated after the final render; the contact sheet matches the MP4.
 - The README commands now say `studio/`, not the repository root.
+- Lower-third text no longer leaks at 9 s: the gate is `lt < 4.34 → 0`, and the
+  text now receives the reveal alpha explicitly (`TY.type`/`TY.text` reset the
+  canvas `globalAlpha`).
+- The second cast is `mira` (coat, trousers, glasses), not a mirrored `idol`.
+- Dev snapshot folders and the temporary GIF are not shipped.
 
 ## What it does not prove
 

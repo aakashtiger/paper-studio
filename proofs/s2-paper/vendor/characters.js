@@ -132,7 +132,7 @@ function varsityTorso(ctx, main, sleeve, accent = PAL.gold) {
 /* sunflower / flower head. centre is (0,0). */
 function flowerHead(ctx, o, t) {
   const F = o.flower || FLOWERS.sun;
-  const n = o.petals || 22;
+  const n = o.petals ?? 22;
   const spin = o.spin || 0;
   const pulse = 1 + .045 * C.bpmPulse(t || 0, 4);
   const r0 = (o.r0 || 24), r1 = (o.r1 || 146) * pulse;
