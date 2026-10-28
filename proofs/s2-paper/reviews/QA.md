@@ -28,6 +28,17 @@ it to 1, so the panel was invisible and the text was not.
   GIF and the debug stills are removed.
 - `.hyperframes/` is gitignored and removed before packaging.
 
+## Cast regression
+
+The reviewer saw hands detached from the sleeves. Root cause: the joint chain
+was mirrored (`limb()` returned `x + sin` while drawing `x - sin`), the far arm
+was outside the torso lean group, the arm root was 4 px above the shoulder
+eyelet, and the pose tables were authored against the buggy chain.
+
+Fixed in `vendor/characters.js`; the geometry now lives in `src/engine/rig.ts`
+with `test/rig.test.ts`. A pose sheet at 11 / 12.5 / 13 s confirms both arms,
+both legs and both hands are continuous.
+
 ## Remaining for the S2 gate
 
 - Plan-driven 15 s / 3-shot render from a treatment file.

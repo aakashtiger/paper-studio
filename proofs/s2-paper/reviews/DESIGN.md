@@ -35,3 +35,8 @@ deepened to `blueD`, the ghost 07 moved fully on screen.
 
 **Verdict:** the look can carry the style. The rig and the dance are the next
 quality ceiling, not the palette.
+
+**After this review:** the rig was found to be mirrored at the joint-return
+level, not merely loose. Hands, boots and elbows now sit on their joints, and
+the far arm follows the torso lean. Item 2 above (the arm rebuild) should be
+re-judged on the fixed rig before another design score is taken.

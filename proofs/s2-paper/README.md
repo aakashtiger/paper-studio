@@ -60,12 +60,31 @@ timeline, not a multi-track editor.
 
 ## Director's note
 
-Honest scores on this pass: design **7/10**, motion **5.5/10**. The look is on
-the paper-craft bar; the movement still reads as designed posters with parts
-drifting rather than a cut of a song video. It is a real improvement on the
-first pass (4.5 motion / 5 design), but it is not yet "crazy good". The next
-motion pass needs true choreography (weight, anticipation, follow-through, a
-formation change) rather than more drift. `reviews/MOTION.md` lists the gap.
+Honest scores on the last review: design **7/10**, motion **5.5/10**. Since
+then the cast was rebuilt (see below), which removes the largest "broken asset"
+defect. The look is on the paper-craft bar; the movement still reads as designed
+posters with parts drifting rather than a cut of a song video. The next motion
+pass needs true choreography (weight, anticipation, follow-through, a formation
+change) rather than more drift. `reviews/MOTION.md` lists the gap, and
+`docs/decisions/0011-rig-and-asset-quality.md` defines the gates that hold a
+9/10.
+
+## Cast fix (root cause)
+
+The hands were not "slightly off": the whole joint chain was mirrored.
+
+- `limb()` drew each segment at `x - sin(ang)*len` but returned
+  `x + sin(ang)*len`, so every elbow, wrist, knee, ankle and boot after the
+  first segment sat on the wrong side of its joint.
+- The far arm was drawn outside the torso lean group, so it did not follow the
+  shoulders; the near arm did.
+- The arm root was at `-512` while the shoulder eyelet was at `-516`.
+- The pose tables had been authored against the broken chain, so their sign
+  convention was inverted and every limb crossed inward.
+
+All four are fixed in `vendor/characters.js`; the geometry is now specified and
+tested in `src/engine/rig.ts` and `test/rig.test.ts`. The eight-count pose
+tables were re-authored for the corrected convention.
 
 ## QA fixes in this pass
 
@@ -79,6 +98,8 @@ formation change) rather than more drift. `reviews/MOTION.md` lists the gap.
   text now receives the reveal alpha explicitly (`TY.type`/`TY.text` reset the
   canvas `globalAlpha`).
 - The second cast is `mira` (coat, trousers, glasses), not a mirrored `idol`.
+- The joint chain is no longer mirrored; hands sit on the wrist, boots on the
+  ankle, and both arms inherit the torso lean.
 - Dev snapshot folders and the temporary GIF are not shipped.
 
 ## Treatment contract

@@ -47,7 +47,7 @@ function limb(ctx, x, y, len, w1, w2, ang, col, edge = C.rgba(PAL.ink, .78), sha
   g.addColorStop(0, 'rgba(255,255,255,.2)'); g.addColorStop(.4, 'rgba(255,255,255,0)'); g.addColorStop(1, 'rgba(0,0,0,.12)');
   ctx.fillStyle = g; ctx.fillRect(-w1, 0, w1 * 2, len + 2); ctx.restore();
   ctx.restore();
-  return [x + Math.sin(ang) * len, y + Math.cos(ang) * len];
+  return [x - Math.sin(ang) * len, y + Math.cos(ang) * len];
 }
 
 /* platform boot, drawn around the ankle. angle matches the shin. */
@@ -382,8 +382,8 @@ function idol(ctx, x, y, s, o = {}) {
   const skirt = col.skirt || PAL.blue;
   const bootCol = col.boot || PAL.blue;
   const bounce = p.bounce || 0, sway = p.sway || 0, lean = p.lean || 0;
-  const armL = p.armL || [-.14, -.06], armR = p.armR || [.14, .06];
-  const legL = p.legL || [-.035, -.015], legR = p.legR || [.035, .015];
+  const armL = p.armL || [.14, .06], armR = p.armR || [-.14, -.06];
+  const legL = p.legL || [.035, .015], legR = p.legR || [-.035, -.015];
   const headTilt = p.headTilt || 0, headTurn = p.headTurn || 0;
   const flip = o.flip || 1;
   const shadow = o.shadow ?? 1;
@@ -412,8 +412,11 @@ function idol(ctx, x, y, s, o = {}) {
   }
   ctx.restore();
 
-  // far arm (behind torso)
+  // far arm (behind torso); must inherit the torso lean like the near arm
+  ctx.save();
+  ctx.translate(0, -334); ctx.rotate(lean); ctx.translate(0, 334);
   drawArm(-1, armL, true);
+  ctx.restore();
 
   // legs
   drawLeg(-1, legL, true);
@@ -507,7 +510,7 @@ function idol(ctx, x, y, s, o = {}) {
   drawArm(1, armR, false);
 
   function drawArm(side, ang, far) {
-    const sx = side * 45, sy = -512;
+    const sx = side * 45, sy = -516;
     const a1 = ang[0], a2 = ang[1];
     const sleeveCol = far ? C.shade(sleeve, -16) : sleeve;
     const elbow = limb(ctx, sx, sy, 104, 23, 19, a1, sleeveCol, C.rgba(PAL.ink, .65), true);
@@ -565,8 +568,8 @@ function mira(ctx, x, y, s, o = {}) {
   const t = o.t || 0, p = o.pose || {}, f = o.face || {};
   const flip = o.flip || 1;
   const bounce = p.bounce || 0, sway = p.sway || 0, lean = p.lean || 0;
-  const armL = p.armL || [-.16, -.08], armR = p.armR || [.16, .08];
-  const legL = p.legL || [-.03, -.01], legR = p.legR || [.03, .01];
+  const armL = p.armL || [.16, .08], armR = p.armR || [-.16, -.08];
+  const legL = p.legL || [.03, .01], legR = p.legR || [-.03, -.01];
   const headTilt = p.headTilt || 0;
   const HIP = -270, SHOULDER = -452, HEAD = -536;
   const coat = o.coat === false ? null : (o.coatCol || PAL.cream);
@@ -579,8 +582,11 @@ function mira(ctx, x, y, s, o = {}) {
   shadowEllipse(ctx, 0, 0, 40 * s, 9 * s, .22);
   ctx.scale(flip * s, s);
 
-  // far arm
+  // far arm; must inherit the torso lean like the near arm
+  ctx.save();
+  ctx.translate(0, -270); ctx.rotate(lean); ctx.translate(0, 270);
   drawArm(-1, armL, true);
+  ctx.restore();
 
   // legs
   drawLeg(-1, legL, true);

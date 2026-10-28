@@ -367,25 +367,25 @@ function stickerShot(lt, t) {
    eight-step dance, three crowd tiers and a beat-pulsed camera. */
 
 const LEAD_POSES = [
-  { bounce: 0, sway: 0, lean: -0.02, armL: [-0.9, 0], armR: [0.25, 0], legL: [-0.07, -0.02], legR: [0.07, 0.02], headTilt: 0.03, headTurn: 0.02, hairSwing: 4 },
-  { bounce: -26, sway: 12, lean: 0.06, armL: [-0.55, 0], armR: [0.95, 0], legL: [-0.09, -0.02], legR: [0.06, 0.02], headTilt: -0.06, headTurn: -0.04, hairSwing: -8 },
-  { bounce: -10, sway: -8, lean: -0.07, armL: [-1, 0], armR: [0.15, 0], legL: [-0.05, -0.02], legR: [0.1, 0.02], headTilt: 0.05, headTurn: 0.05, hairSwing: 10 },
-  { bounce: -34, sway: 16, lean: 0.09, armL: [-0.3, 0], armR: [1, 0], legL: [-0.1, -0.02], legR: [0.04, 0.02], headTilt: -0.07, headTurn: -0.06, hairSwing: -12 },
-  { bounce: -6, sway: 4, lean: 0.02, armL: [-0.85, 0], armR: [0.35, 0], legL: [-0.06, -0.02], legR: [0.08, 0.02], headTilt: 0.04, headTurn: 0.03, hairSwing: 6 },
-  { bounce: -30, sway: -14, lean: -0.08, armL: [-0.2, 0], armR: [0.85, 0], legL: [-0.08, -0.02], legR: [0.05, 0.02], headTilt: -0.05, headTurn: 0.07, hairSwing: -9 },
-  { bounce: -14, sway: 10, lean: 0.05, armL: [-0.95, 0], armR: [0.5, 0], legL: [-0.05, -0.02], legR: [0.09, 0.02], headTilt: 0.06, headTurn: -0.03, hairSwing: 7 },
-  { bounce: -38, sway: -10, lean: -0.05, armL: [-0.45, 0], armR: [0.9, 0], legL: [-0.09, -0.02], legR: [0.07, 0.02], headTilt: -0.03, headTurn: 0.04, hairSwing: -11 },
+  { bounce: 0, sway: 0, lean: -0.02, armL: [1.45, 0.05], armR: [-1.45, -0.05], legL: [0.06, 0.02], legR: [-0.06, -0.02], headTilt: 0.03, headTurn: 0.02, hairSwing: 4 },
+  { bounce: -26, sway: 12, lean: 0.06, armL: [2.35, 0.1], armR: [-0.45, 0.35], legL: [0.09, 0.04], legR: [-0.04, -0.02], headTilt: -0.06, headTurn: -0.04, hairSwing: -8 },
+  { bounce: -10, sway: -8, lean: -0.07, armL: [2.15, 0.2], armR: [-2.15, -0.2], legL: [0.04, 0.02], legR: [-0.1, -0.04], headTilt: 0.05, headTurn: 0.05, hairSwing: 10 },
+  { bounce: -34, sway: 16, lean: 0.09, armL: [0.85, 0.45], armR: [-1.6, -0.1], legL: [0.1, 0.04], legR: [-0.03, -0.01], headTilt: -0.07, headTurn: -0.06, hairSwing: -12 },
+  { bounce: -6, sway: 4, lean: 0.02, armL: [0.55, 0.05], armR: [-0.55, -0.05], legL: [0.05, 0.02], legR: [-0.05, -0.02], headTilt: 0.04, headTurn: 0.03, hairSwing: 6 },
+  { bounce: -30, sway: -14, lean: -0.08, armL: [1.35, 0.2], armR: [-2.35, -0.1], legL: [0.08, 0.03], legR: [-0.05, -0.02], headTilt: -0.05, headTurn: 0.07, hairSwing: -9 },
+  { bounce: -14, sway: 10, lean: 0.05, armL: [1.6, 0.05], armR: [-0.7, 0.35], legL: [0.04, 0.02], legR: [-0.09, -0.03], headTilt: 0.06, headTurn: -0.03, hairSwing: 7 },
+  { bounce: -38, sway: -10, lean: -0.05, armL: [2.0, 0.45], armR: [-2.0, -0.45], legL: [0.09, 0.04], legR: [-0.06, -0.02], headTilt: -0.03, headTurn: 0.04, hairSwing: -11 },
 ];
 
 const DOUBLE_POSES = [
-  { bounce: -12, sway: 8, lean: 0.04, armL: [-0.4, 0], armR: [0.5, 0], legL: [-0.06, -0.02], legR: [0.08, 0.02], headTilt: -0.04, headTurn: -0.03, hairSwing: 5 },
-  { bounce: -30, sway: -10, lean: -0.06, armL: [-0.7, 0], armR: [0.2, 0], legL: [-0.05, -0.02], legR: [0.09, 0.02], headTilt: 0.05, headTurn: 0.05, hairSwing: -7 },
-  { bounce: -8, sway: 12, lean: 0.07, armL: [-0.3, 0], armR: [0.75, 0], legL: [-0.08, -0.02], legR: [0.05, 0.02], headTilt: -0.02, headTurn: -0.05, hairSwing: 9 },
-  { bounce: -36, sway: -14, lean: -0.09, armL: [-0.6, 0], armR: [0.15, 0], legL: [-0.05, -0.02], legR: [0.1, 0.02], headTilt: 0.06, headTurn: 0.06, hairSwing: -10 },
-  { bounce: -18, sway: 6, lean: 0.03, armL: [-0.5, 0], armR: [0.6, 0], legL: [-0.07, -0.02], legR: [0.07, 0.02], headTilt: -0.05, headTurn: 0.02, hairSwing: 6 },
-  { bounce: -24, sway: -8, lean: -0.04, armL: [-0.25, 0], armR: [0.7, 0], legL: [-0.09, -0.02], legR: [0.06, 0.02], headTilt: 0.03, headTurn: -0.06, hairSwing: -8 },
-  { bounce: -10, sway: 14, lean: 0.08, armL: [-0.65, 0], armR: [0.3, 0], legL: [-0.06, -0.02], legR: [0.08, 0.02], headTilt: -0.03, headTurn: 0.05, hairSwing: 8 },
-  { bounce: -34, sway: -12, lean: -0.07, armL: [-0.45, 0], armR: [0.55, 0], legL: [-0.07, -0.02], legR: [0.06, 0.02], headTilt: 0.04, headTurn: -0.04, hairSwing: -10 },
+  { bounce: -12, sway: 8, lean: 0.04, armL: [0.9, 0.2], armR: [-0.9, -0.2], legL: [0.05, 0.02], legR: [-0.05, -0.02], headTilt: -0.04, headTurn: -0.03, hairSwing: 5 },
+  { bounce: -30, sway: -10, lean: -0.06, armL: [1.6, 0.1], armR: [-0.3, 0.3], legL: [0.04, 0.02], legR: [-0.08, -0.03], headTilt: 0.05, headTurn: 0.05, hairSwing: -7 },
+  { bounce: -8, sway: 12, lean: 0.07, armL: [0.4, 0.4], armR: [-1.6, -0.1], legL: [0.08, 0.03], legR: [-0.04, -0.02], headTilt: -0.02, headTurn: -0.05, hairSwing: 9 },
+  { bounce: -36, sway: -14, lean: -0.09, armL: [1.4, 0.1], armR: [-1.4, -0.1], legL: [0.04, 0.02], legR: [-0.09, -0.03], headTilt: 0.06, headTurn: 0.06, hairSwing: -10 },
+  { bounce: -18, sway: 6, lean: 0.03, armL: [0.6, 0.3], armR: [-0.6, -0.3], legL: [0.06, 0.02], legR: [-0.06, -0.02], headTilt: -0.05, headTurn: 0.02, hairSwing: 6 },
+  { bounce: -24, sway: -8, lean: -0.04, armL: [2.0, 0.2], armR: [-0.5, 0.3], legL: [0.08, 0.03], legR: [-0.05, -0.02], headTilt: 0.03, headTurn: -0.06, hairSwing: -8 },
+  { bounce: -10, sway: 14, lean: 0.08, armL: [0.5, 0.4], armR: [-1.5, -0.2], legL: [0.05, 0.02], legR: [-0.07, -0.02], headTilt: -0.03, headTurn: 0.05, hairSwing: 8 },
+  { bounce: -34, sway: -12, lean: -0.07, armL: [1.5, 0.2], armR: [-1.5, -0.2], legL: [0.06, 0.02], legR: [-0.05, -0.02], headTilt: 0.04, headTurn: -0.04, hairSwing: -10 },
 ];
 
 function lerpPose2(a, b, u) {
