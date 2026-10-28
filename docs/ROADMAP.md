@@ -32,11 +32,11 @@ Convert one Lemo-Opuscar style into our pack. No renderer, no video.
 - `styles/paper-kpop/`: 8 recipes, 2 formats, card, bundled fonts, licence notices.
 - Song 14 shots / 45 s / 16:9; Shorts 8 shots / 30 s / 9:16; plan-valid blind 6 / 30 / 9:16.
 - Geometry re-audit and one-batch fix: 14 px floor, no overlap, margins, paired 9:16 anchors.
-- Gate: 9 tests, full suite 101.
+- Gate: 9 tests, full suite 110.
 
-**Gate:** REVIEWABLE, one open choice, 9/9 resolve, 9/9 gate, 101/101 suite,
+**Gate:** REVIEWABLE, one open choice, 9/9 resolve, 9/9 gate, 110/110 suite,
 geometry clean, contract/creative/product 9/10 GO. Final pack
-`sha256:6c5765be…`; the blind is a disclosed plan-valid carry-forward, not a pristine seal.
+`sha256:6c5765be…`; the live blind is *Last Cue* (run-18), a fresh run on the final hash.
 
 ## Phase 0c.1 — Watercolor 0.2.0 — complete
 

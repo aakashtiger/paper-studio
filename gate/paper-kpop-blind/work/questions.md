@@ -1,47 +1,51 @@
-# Questions — ROOFTOP SOUNDCHECK
+# Questions — Last Cue
 
-The pack answers the recipe grammar, the slot limits and the 9:16 anchor rules. These are the questions it leaves open for this film. I have not chosen the `paper-shadow` option.
+The pack fixes the grammar; these are the questions it leaves. None of them changes the pack. Each is either the director's open choice, a contract gap, or a provisional reading recorded in `treatment.md`.
 
-## The open choice: paper-shadow
+## 1. `paper-shadow` — the open choice
 
-1. **Which option should the film use, Collage or Print?** Collage gives every layer a soft contact shadow and a visible cut edge; Print keeps the layers flat with the same cut edge and gives only the type a hard offset shadow. The choice changes the read of Shot 1's acid sun, Shot 3's paper window, Shot 4's paper-on-paper stage and Shot 6's diorama. I have designed the route so both options are possible, but I have not chosen one.
+Does the paper cast a shadow? **Collage** gives every layer a soft contact shadow and a visible cut edge; **Print** keeps the layers flat with the same visible cut edge and gives only the type a hard offset shadow. I have not answered this. The film is built to hold both: the close's diorama is read from overlapping cut edges and will take either finish, and the type shadow is fixed in both. The director must choose before sign-off.
 
-2. **Under Collage, do the printed HUD layers cast contact shadows too?** The pack says Collage gives "every layer" a contact shadow, but also that the HUD is printed, not floating. Should the lyric band in Shot 3, the meter sticker in Shot 4 and the corner marks in Shot 6 stay flat, or do they cast a paper shadow like the set?
+## 2. The stage meter
 
-3. **Under Print, do the paper-on-paper stage (Shot 4) and diorama (Shot 6) separate on the cut edge alone?** The cream lip and the ink line are fixed in both choices, but without a contact shadow a cream stage on a cream sheet may merge. Is that the intended print look, or should those plates take a second colour when the director chooses Print?
+`stage_wide` requires a black sticker meter with "a beat count and a four-role bar in DM Mono", and `tokens.medium.hud.meter` says the four roles come from the format's `palette` field (default `day-stage`). Day-stage names six roles; a frame may carry four; my stage frame uses paper, ink, red and acid. Which four does the bar show — the frame's four, or a fixed palette four that includes blue and accent? Is "88" the BPM or the beat count? Does the meter's acid readout count against the frame's four? I have drawn the bar from the frame's four and read 88 as the BPM; if the bar must show a fixed four that includes blue and accent, the stage frame would carry more than four roles.
 
-## Palette, HUD and review
+## 3. The lyric band's red
 
-4. **Who signs off the palette?** `STYLE.md` says the director decides `day-stage` or `night-stage`, but also that the palette is named by the treatment and is not a second sign-off choice. Is the treatment's `night-stage` a proposal for the director, or the author's final choice?
+`portrait_iris` sets the band op `color: red`. `STYLE.md` calls the band "a torn ink or red strip, role-tinted by the treatment". Is red fixed by the recipe, or may the treatment tint the band ink and free red for the costume? I kept red, because the recipe writes it and the band is the frame's red plate.
 
-5. **The card shows only `day-stage` swatches.** If the treatment names `night-stage`, is the card still the review evidence, or should the director see a night-stage specimen before signing?
+## 4. Ink type on the accent core
 
-6. **How does the `stage_wide` meter get its four-role bar?** The meter is "generated from the plan," but the palette is not a plan field and neither the brief nor the format carries palette roles. Does the plan carry the treatment's per-shot roles, or does the bar show only the recipe's fixed colours? And does the bar read the current frame's four roles or the film's palette? Shot 4 uses paper/ink/red/acid; the film also uses blue and the accent elsewhere.
+`paper_open` sets the title `color: ink` over a `core-burst` in `accent`. The text-fill decision covers red fields (paper type) and paper fields (ink type), but not the accent/gold field. Is ink-on-gold the intended fill, or should the core become paper or red behind the title? I kept the recipe's ink; the cream lip and the hard ink shadow read on gold.
 
-## Brief and content
+## 5. The iris and the hold
 
-7. **Is the release date required on screen?** The pack does not read `content.date`; a date can go in `subtitle` or `caption`. I put the venue in `subtitle`, so the subtitle is already carrying the event line. Is the date needed in the film, or is the brief's `date` enough?
+The pack names `iris` and `hold` as transitions but gives no duration, easing or share of the shot. `paper_open` and `portrait_iris` both leave on an iris; `pullback_close` ends on a hold. Does the iris close to paper or ink and the next shot cut in, or does it open onto the next image? How much of the 5.199 s close is the hold? I planned the iris on the gold core (shot 1) and the face (shot 3), and a pull-back then hold at the close; the pack defines neither.
 
-8. **`content.body` is one value across four type roles.** It is the body line in Shot 2, the lower-third in Shot 4, the display sticker in Shot 5 and the close line in Shot 6. Is a per-shot override allowed in S2, or must one phrase carry all four? The pack says one value per film; it also says per-shot content is S2.
+## 6. The rotated sticker's shadow
 
-9. **Is the caption printed only, or also performed?** `content.caption` may be an original vocal line, but voice is a performance track, not a content slot. Should “Hold the sky up with me” be printed in the lyric band only, or also sung? Who clears the vocal?
+`sticker_slam` rotates the sticker 4° and the body text 4°. The type shadow is "one fixed offset for the whole stack", down and right. Does the shadow rotate with the sticker/text, or stay screen-down-right? At 4° the difference is visible, and "fixed" could mean either.
 
-10. **Which seed is canonical for the blind pass?** The pack lists seeded fields but no default seed; the plan command takes `--seed`. Which seed should the lead use?
+## 7. The caption outside the band
 
-## 9:16 re-stage
+The caption is one value used in the lyric band (two lines allowed), the macro caption and the stage lower caption. The stage caption box is 0.06 h (about 42 px at 390 px wide); the macro box is 0.10 h. Is the two-line allowance band-only? My seven-word line wraps to two lines in the stage box or auto-fits just under 16 px; both clear the 14 px floor, but the pack does not say which.
 
-11. **Do the anchor maps also change poses?** `stage_wide` moves the foil from x0.62 to x0.58 at 9:16, but the map gives boxes, not poses. Does the foil turn in, does the lead shift weight, or do the bodies keep their 16:9 poses? The pack says "re-stage both performers," not only move the anchors.
+## 8. The `palette` field
 
-12. **Which lyric-band geometry is authoritative?** `STYLE.md` and `tokens.hud.lyricBand` say bottom 14%; `portrait_iris` places the band at 84–96% in 16:9, and the 9:16 `lyric` box is 86–96%. That is 12% high in 16:9 and 10% high in 9:16, not 14%. Is the 14% a zone for the caption, or the band's height?
+`STYLE.md` says the format may carry a `palette` field so the meter can read the four roles. The `inputs/APPLICATION.md` format shape does not list it; the pack's own APPLICATION example includes it. Is it resolver passthrough metadata like `loudness`, or is it read by the meter? I include `"palette": "day-stage"`; if the resolver rejects unknown format fields, it should be dropped.
 
-## HUD, type and colour
+## 9. The voice and the caption
 
-13. **What colour is the `sticker_slam` flash?** The recipe has a `flash` effect with no colour; `STYLE.md` assigns “one flash” to acid. But the recipe already uses paper, ink, red and accent. Is the flash paper (a bleach) or acid? If acid, which of paper/ink/red/accent drops to keep four colours?
+The pack says the caption may be an original vocal line and that voice is an optional performance track, not a content slot. Is the caption meant to be heard (one short line), or only printed? If heard, where does it sit — the portrait band, the stage, or the close? The pack gives no voice timing. I have treated the caption as the printed lyric line and committed no voice.
 
-14. **Is the `second` rig's “one accent sleeve” fixed to the accent role?** If it is, `stage_wide` with a red lead, acid burst and ink meter would be five colours. Is the sleeve a tintable costume plate, or a fixed accent?
+## 10. The 30 s / 88 BPM end
 
-## Sound and delivery
+The plan sums to 30.000 s, but the pack's 0.21 s offset puts the 88 BPM beats at 0.210, 0.892, … and the next beat after 30.000 at 30.210. The plan's cut points are not all on the grid. S2 quantises cuts to the grid; does the final 30.000 s hold, and how far may a cut move? The treatment quotes plan seconds, not frame-exact seconds.
 
-15. **Is -14 LUFS the house target?** The pack leaves delivery loudness to the format but gives no target. I have put `-14 LUFS` in the format as a proposal.
+## 11. The title's line break
 
-16. **Where is the one-beat silence/drop, and how long is the close hold?** The pack allows one beat of silence before a drop; the loudest hit in this route is Shot 5's sticker slam. Should Shot 5 take the silence, or is there another drop? `pullback_close` ends on a hold and the plan gives it 5.193 s; does that time include the pull-back and the hold, or does the hold sit after the move? The pack does not say how long the final frame holds.
+The style says display lines break "where the paper would cut, not where a text box ends". `paper_open` has one title text op; `content.title` is "Last Cue". Does the treatment pin the break as LAST / CUE, or does auto-fit decide? I have directed the two-line stack; the pack has no per-slot line-break field.
+
+## 12. Halftone screen
+
+`tokens.medium.halftone` sets `alpha: 0.5` and gives the angle as `0.2` with no unit; the recipes set the halftone effect `opacity` to 0.18–0.24 and `amount` to 0.5–0.6. Is 0.2 radians or degrees, and do the opacities multiply (an effective 0.09–0.12) or does the recipe opacity replace the token alpha? The dot's strength changes the stage and the sticker. I read the recipe opacity as the layer opacity and the token alpha as the dot's own alpha; the pack does not state the composition.

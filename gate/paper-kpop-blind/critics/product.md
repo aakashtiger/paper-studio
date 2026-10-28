@@ -1,7 +1,7 @@
 # Product critic — Paper K-pop 0.1.0
 
 **Pack:** `sha256:6c5765be435bbf494bceaee6b770828c4bdd2c33d5c795287cf96435f8c211ba`
-**Date:** 2026-10-27
+**Date:** 2026-10-28
 **Score:** **9 / 10 — GO**
 **Scope:** the card as a product surface, density, phone review, open choice, evidence quality.
 

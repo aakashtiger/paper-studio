@@ -17,8 +17,8 @@ Convert the completed CLAUDE POP film into a reusable **Paper K-pop style pack**
 - **Paired 9:16 anchors.** `openCore`, `lyricText`, `stickerBed`, `stickerText`, `stickerRule`, `stickerBurst`, `stageBurst`, `chaseArrow`, `closeStrip` and `closeBody` are explicit. A box-only renderer cannot collapse a bed, sticker, copy and rule.
 - **Text fit.** Six 16:9 lower-thirds were below the 14 px floor at 390 px; they now measure 14.5–18 px. No text enters the bottom 12% except the portrait lyric band.
 - **Card mobile.** Below 640 px the board is full-bleed and the motion section drops its side padding; the phone illustration is 390 px on a mobile viewport instead of 327 px.
-- **Gate.** The gate is now **9 tests** (the geometry test added); the full suite is **101 tests**.
-- **Blind.** The live run is a disclosed plan-valid carry-forward from `719e0582…`, not a pristine seal; the final plan re-resolves 9/9 on `6c5765be…`.
+- **Gate.** The gate is now **9 tests** (the geometry test added); the full suite is **110 tests**.
+- **Blind.** The live run is *Last Cue* (run-18), a fresh blind on `6c5765be…`; the old *Rooftop Soundcheck* run is archived under `archive/run-17/`.
 
 ## What changed in v3
 
@@ -126,7 +126,7 @@ The autopsy expands D01–D27 with a source line or an author decision + reason.
 - **D19 limits:** 16:9 + 9:16, 30/45 s, maxCast 2, maxWords 8.
 - **D23 cost class:** heavy.
 - **D25 proof:** declared; all 8 recipe ids; 16:9 + 9:16; metrics.
-- **D27 blind:** byte-sealed final inputs, pack hash `6c5765be…`, 6/30/9:16. The live run is a disclosed plan-valid carry-forward from `719e0582…`; a fresh blind on the final hash is the strict proof and is not claimed.
+- **D27 blind:** byte-sealed final inputs, pack hash `6c5765be…`, 6/30/9:16. The live run is *Last Cue* (run-18), a fresh blind on the final hash; the old *Rooftop Soundcheck* run is archived under `archive/run-17/`.
 
 ## Gate
 
@@ -145,7 +145,7 @@ npm run style:check -- styles/paper-kpop
 - Self-containment test: no `http(s)`, `../`, drive paths, `watercolor`, `keepsake`, `src/`, `assets/`, `out/frames`; local fonts/frames; card references inside pack.
 - Banned-token test: no film title, character names, `P(DOOM)` or lyric lines in the pack or blind work.
 - No signoff. `resolve.txt` is UTF-8 without BOM. Three post-build critics **9/10 GO**.
-- Full suite **101/101**. No MP4.
+- Full suite **110/110**. No MP4.
 
 ## Non-goals
 
@@ -160,7 +160,7 @@ Renderer, new frames, MP4, audio, 3D, 1:1, 60 s, other Lemo styles, changing `st
 4. Card + sources/licences + APPLICATION — complete.
 5. Check/resolve loop to REVIEWABLE + 9/9 — complete.
 6. Blind 6/30/9:16; gate test; three critics; docs; CI — complete.
-7. Geometry re-audit, one-batch fix, 9-test gate, 101-test suite — complete.
+7. Geometry re-audit, one-batch fix, 9-test gate, 110-test suite — complete.
 
 ## Definition of done
 

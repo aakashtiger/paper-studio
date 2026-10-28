@@ -122,7 +122,16 @@ test("paper-kpop gate: sealed blind run resolves 6 shots / 30 s / 9:16 and the p
   assert.equal(plan.aspect, "9:16");
   assert.deepEqual(
     plan.shots.map((shot) => shot.recipe),
-    ["paper_open", "type_stack", "portrait_iris", "stage_wide", "sticker_slam", "pullback_close"],
+    ["paper_open", "macro_prop_beat", "portrait_iris", "stage_wide", "sticker_slam", "pullback_close"],
+  );
+  assert.equal(plan.shots[0]?.slots["content.title"], "Last Cue");
+  const archived = readStyleJson(join(BLIND, "archive", "run-17", "work", "brief.json")) as {
+    content: { title: string };
+  };
+  assert.equal(archived.content.title, "ROOFTOP SOUNDCHECK");
+  assert.equal(
+    readFileSync(join(BLIND, "archive", "run-17", "PACK-HASH.txt"), "utf8").trim(),
+    "sha256:719e05825639e0338c31f06099be38d62caa69520752f7736375dd2a6048b2d5",
   );
 
   const recorded = readFileSync(join(BLIND, "PACK-HASH.txt"), "utf8").trim();

@@ -14,11 +14,12 @@
 
 > **2026-10-27 — S1c and watercolor 0.2.0 accepted.** Paper K-pop is
 > **REVIEWABLE**, one open choice (`paper-shadow`), final pack
-> `sha256:6c5765be…`. The gate is 9/9 and the full suite 101/101. A late geometry
+> `sha256:6c5765be…`. The gate is 9/9 and the full suite 110/110. A late geometry
 > pass had found 6 critical and 8 high box defects; the current hash was re-audited
-> from the recipes and the batch was fixed before the final gate. The blind is a
-> disclosed **plan-valid carry-forward** from `719e0582…`, not a pristine seal;
-> no blind author was used as a discovery loop. **Watercolor 0.2.0 is also done:**
+> from the recipes and the batch was fixed before the final gate. The final blind
+> is *Last Cue* (run-18), a fresh author on the final hash; the old *Rooftop
+> Soundcheck* run is archived. No blind author was used as a discovery loop.
+> **Watercolor 0.2.0 is also done:**
 > new `styles/watercolor-0.2.0/` and `gate/watercolor-0.2.0/`, 0.1.0 evidence
 > untouched, final pack `sha256:196fd315…`, page 8/45/1:1, scroll 4/45/16:9,
 > blind 6/30/9:16, 9/9 each, full suite 110/110, card 78 prose/237 visible,

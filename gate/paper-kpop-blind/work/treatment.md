@@ -1,43 +1,47 @@
-# Treatment — ROOFTOP SOUNDCHECK
+# Treatment — Last Cue
 
 ## Route
 
 | # | Recipe | Beat role | Seconds | Grammar it proves |
 |---|---|---|---|---|
-| 1 | `paper_open` | open | 4.968 | Night-stage; cut-paper edge; accent #1; iris out. |
-| 2 | `type_stack` | title | 4.855 | Cream type edge and hard ink shadow; halftone; type drop; match_cut out. |
-| 3 | `portrait_iris` | portrait | 4.968 | Cut-paper window; lyric band; one lead; iris out. |
-| 4 | `stage_wide` | list | 5.161 | Two-cast rig; meter; 9:16 re-stage; beat cut out. |
-| 5 | `sticker_slam` | quote | 4.855 | Torn fibre and sticker; accent #2; sticker slam; cut out. |
-| 6 | `pullback_close` | close | 5.193 | Diorama pull-back; corner marks; monogram; hold. |
+| 1 | `paper_open` | open | 4.976 | Cut-paper sun; display title with the cream edge and hard ink shadow; iris out on the gold core. |
+| 2 | `macro_prop_beat` | detail | 4.818 | Macro cut edge on the cue lamp and tabletop; fixed halftone; the red lens. |
+| 3 | `portrait_iris` | portrait | 4.976 | Paper portrait with visible eyelets; torn red lyric band; paper caption on red. |
+| 4 | `stage_wide` | list | 5.167 | Two-cast rig; halftone stage; beat-locked orbit; the meter HUD. |
+| 5 | `sticker_slam` | quote | 4.865 | Torn bed, paper sticker, accent burst; display body; hard cut in and out. |
+| 6 | `pullback_close` | close | 5.198 | Diorama cutaway; torn close strip; corner marks; 9:16 monogram re-stage; hold. |
 
-Vera Lune at The Fold, rooftop. Total 30.000 s. Minima 14.4 s; maxima 33.0 s. Palette: `night-stage`. Four roles by shot: 1 paper/ink/acid/accent; 2 paper/ink/red/acid; 3 paper/ink/red/blue; 4 paper/ink/red/acid; 5 paper/ink/red/accent; 6 paper/ink/blue/acid. The accent appears only in Shots 1 and 5.
+**The film.** *Last Cue* is a 30 s, 9:16 paper short for the fictional artist Nova Kim: the last entrance of the night. The house is full; the cue lamp is the only red light in the wings; the crowd comes through the wall as a printed lyric; the stage takes her and there are two of her, the lead and a paper double half a beat behind; the sticker calls the last cue — the house lights; the film ends on the empty diorama with the lamp dark. The track is “Eight Count”, out 07 Nov. Day-stage palette, 88 BPM electronic pop, paper foley, one beat of silence before the sticker.
+
+**Fit.** Six recipes: min 2.2 + 1.2 + 2.2 + 3.4 + 1.5 + 3.6 = 14.100 s; max 5.5 × 6 = 33.000 s. 14.100 ≤ 30.000 ≤ 33.000. The resolver starts each shot at its minimum and shares the remaining 15.900 s by remaining capacity (3.3, 4.3, 3.3, 2.1, 4.0, 1.9 of 18.9), in whole milliseconds with leftovers to the largest remainders: 4.976 / 4.818 / 4.976 / 5.167 / 4.865 / 5.198 s, sum 30.000. These are plan seconds; S2 quantises the cuts to the 88 BPM grid.
+
+**Palette.** Day-stage. Four roles a frame: 1 paper, ink, acid, accent; 2 paper, ink, red, blue; 3 paper, ink, red, blue; 4 paper, ink, red, acid; 5 paper, ink, red, accent; 6 paper, ink, blue, acid. Accent (gold) appears exactly twice, shots 1 and 5; no frame carries a fifth role. Shot 3’s red lyric band is the frame’s red; shot 4’s acid meter readout is the frame’s acid; the double’s rig “accent sleeve” is tinted to the stage frame’s acid so the formation stays at four.
+
+**HUD.** Per recipe only: shot 3’s torn red lyric band with the caption inside it; shot 4’s black sticker meter, top right inside the 26 percent safe zone, with the acid readout and the four-role bar; shot 6’s ink corner marks at 1.5 px with 16 px arms inside the screen margin. Shots 1, 2 and 5 carry no HUD. There is no colour-bar row and no other HUD.
+
+**Type scale.** At 9:16: display 56, body 24, caption 16, label 14, monogram 32; the meter’s label is the 14 px floor. The caption fits at 16 px on two lines in the band and the macro, and auto-fits to about 15.8 px or wraps in the 0.06 h stage box; no slot drops below 14 px at 390 px. All six content slots are seven words or fewer.
 
 ## Grammar check
 
-- **Cut-paper edge:** Shot 3, where the paper window's cream lip and ink line sit over the lead's cut hair and shoulder plates; Shot 5's torn red bed shows the fibre edge. The edge is fixed in both `paper-shadow` options; only the contact shadow changes.
-- **Cream type edge and hard ink shadow:** Shot 2, where the title and body are paper-fill type on the red card, each with the cream cut edge and one hard misregistered ink shadow; Shot 1 repeats the title treatment on the acid sun.
-- **Torn fibre or sticker:** Shot 5, where the red torn bed and the paper sticker with its peel corner and cut edge carry the material; the global fibre boil is at 18%, and Shot 1 carries the fibre effect explicitly.
-- **Halftone:** Shot 2, where the 0.22 halftone prints under the type; Shot 4, where the 0.18 halftone sits under the stage. Fixed screen angle, not an airbrush.
-- **Two-cast rig:** Shot 4, where the lead and the foil are the only two performers, both layered paper puppets with visible eyelets; Shot 3 is one lead and Shot 6 has no performer.
-- **Beat cut or beat-locked move:** Shot 4 into Shot 5, where the `stage_wide` orbit lands and a hard `cut` takes the film to the sticker slam; Shot 5 lands with the pack's squash and overshoot, and Shot 2's type drop stacks line by line. The seconds are plan values; S2 quantises to the pack's beat grid.
-- **9:16 re-stage:** Shot 4, where the stage is re-staged to x0.04–0.96, y0.20–0.74, the lead to x0.20–0.42 and the foil to x0.58–0.80, and the meter re-anchors to x0.70–0.94, y0.06–0.11, with body and caption below at y0.76 and y0.82. Shot 6 moves the monogram to the lower-left. This is a re-stage, not a crop.
+- **Cut-paper edge:** Every layer is a flat cut card. The clearest read is shot 2’s cue lamp — a cream lip and an ink underline along the lens housing and the table edge — and shot 6’s diorama, where the blue back wall, the paper floor, the riser and the dark lamp each carry the same cream lip and ink cut line, and the lamp’s base meets the riser. The sun’s petals (1), the portrait plates (3), the stage floor and riser (4) and the sticker’s cut edge (5) carry it too; no soft edge, no gloss.
+- **Cream type edge and hard ink shadow:** Shot 1’s Anton title on the gold core, shot 3’s paper caption inside the red lyric band, shot 5’s display body on the paper sticker. One cream lip, one hard ink shadow down and right, never softened; the fill follows the field — ink on paper and gold, paper on red. The type boils at 12 Hz in two- and three-frame holds.
+- **Torn fibre or sticker:** Shot 5 is the sticker slam: a red torn bed under a paper sticker, the body set in display, the accent burst behind. Shot 3’s lyric band is a torn red strip; shot 6’s close strip is a torn paper strip. The fibre sits at 18%; the tears step at 12 Hz, never smooth.
+- **Halftone:** Shot 4’s stage and meter sit on the fixed dot screen (0.2 screen angle, 14–22 px cells, dot 0.55) at the recipe’s 0.18; shot 2 at 0.20; shot 5 at 0.24. The dot is a printed screen under the type, never above it, never an airbrush.
+- **Two-cast rig:** Shot 4 only: the lead at the `lead` anchor and the double at the `second` anchor, two layered paper puppets with visible eyelet joints. The double has the narrower shoulder plate, the longer hair plate and one acid sleeve; there is no third figure. The double is the uncredited foil the pack permits, so `content.names` stays one billing. The portrait is one lead (3) and the close has no performer (6), as the pack requires.
+- **Beat cut or beat-locked move:** The edit is planned on the 88 BPM grid (0.21 s offset, four-beat bar). The cut from the stage into the sticker (4→5) and the cut from the sticker into the close (5→6) are hard cuts; shot 4’s orbit (1.00→1.06, easeInOut) is a beat-locked move around a flat stage, not a handheld drift; the sticker lands with the paper snap. The resolver’s seconds are plan values; S2 quantises the cuts.
+- **9:16 re-stage:** Every shot uses its recipe’s `vertical` map. Shot 4 is the clearest: the wide stage becomes a taller frontal stage (0.04–0.96 × 0.20–0.74), the lead and double take separate anchors (0.20–0.42 and 0.58–0.80), the burst sits above them (0.36–0.64 × 0.11–0.29) and the meter re-anchors top right. Shot 1 sends the sun, core, title, subtitle and baseline rule to `openSun`, `openCore`, `title`, `subtitle` and `subtitleRule`; shot 3’s portrait takes the 0.22–0.78 × 0.15–0.69 box; shot 6’s monogram moves to the lower-left of the diorama at 0.64, above the close strip. Character, prop and diorama plates are contain-staged, never cropped; only background plates bleed.
 
 ## Questions
 
-- Which `paper-shadow` option should the film use, Collage or Print? It changes the read of Shots 1, 3, 4 and 6; I have not chosen.
-- Under Collage, do the printed HUD layers in Shots 3, 4 and 6 cast contact shadows too?
-- Under Print, do the paper-on-paper stage in Shot 4 and the diorama in Shot 6 separate on the cut edge alone, or should they take a second colour?
-- Who signs off the palette: the director or the treatment? `STYLE.md` says both.
-- The card shows only `day-stage`; how should a `night-stage` film be reviewed against it?
-- How does the `stage_wide` meter get its four-role bar from the plan when palette is not a plan field, and does the bar read the frame's four roles or the film palette?
-- Is the release date required on screen, or is the unread `content.date` enough? The venue is already in `subtitle`.
-- `content.body` is one value across four type roles; is a per-shot override allowed in S2?
-- Is the caption printed only, or also performed as a vocal? Who clears it?
-- Which seed is canonical for the blind pass? The pack lists seeded fields but no default seed.
-- Do the 9:16 anchors also change poses, or do the bodies keep their 16:9 poses?
-- Which lyric-band geometry is authoritative: bottom 14%, or the recipe's 84–96% in 16:9 and 86–96% in 9:16?
-- Is the `sticker_slam` flash paper or acid? If acid, which of paper/ink/red/accent drops to keep four colours?
-- Is the `second` rig's “one accent sleeve” fixed to the accent role, or a tintable costume plate?
-- Is -14 LUFS the house loudness target?
-- Where is the one-beat silence/drop, and how long is the close hold within Shot 6's 5.193 s?
+- **`paper-shadow` (open choice).** Collage or Print? Not answered here. The film holds both: the close’s diorama is built from overlapping cut edges so it reads under either choice, and the type shadow is fixed either way. The director must choose before sign-off.
+- **The stage meter.** The spec asks for a beat count and a four-role bar; the card shows “88” and “34%”. Is 88 the BPM or the beat count, and which four roles does the bar show when the format palette is day-stage (six roles) but the frame budget is four? Does the meter’s acid readout count against the frame’s four? I read the bar as the frame’s four and 88 as the BPM.
+- **The lyric band’s red.** `portrait_iris` writes the band `color: red`; STYLE calls it “a torn ink or red strip, role-tinted by the treatment”. Is red fixed by the recipe, or may the treatment tint it ink and free red for the costume? I kept red.
+- **Ink type on the accent core.** `paper_open` sets the title ink over an accent core. The text-fill decision covers red and paper fields, not accent. Is ink-on-gold intended, or should the core change? I kept the recipe’s ink; the cream lip and ink shadow read on gold.
+- **The iris and the hold.** The pack names `iris` and `hold` but gives no duration, easing or share of the shot. Does the iris close to paper or ink and the next shot cut in, or does it open onto the next image? How much of the 5.198 s close is the hold? I planned the iris on the gold core (1) and the face (3), and a pull-back then hold at the close.
+- **The rotated sticker’s shadow.** `sticker_slam` rotates the sticker and its body 4°, while the type shadow is one fixed offset down and right. Does the shadow rotate with the sticker, or stay screen-down-right? The difference is visible at 4°.
+- **The caption outside the band.** The caption is one value in the band (two lines allowed), the macro caption and the stage lower caption; the stage box is 0.06 h (about 42 px at 390 px wide). Is the two-line allowance band-only? My 7-word line wraps to two lines in the stage box or auto-fits just under 16 px; both clear the 14 px floor.
+- **The `palette` field.** STYLE says the format may carry `palette` so the meter can read the four roles; the `inputs/APPLICATION.md` format shape omits it; the pack’s own example includes it. Is it passthrough like `loudness` or read by the meter? I include `"palette": "day-stage"`.
+- **The voice and the caption.** The pack allows the caption to be an original vocal line and calls voice an optional performance track, not a slot. Is the caption meant to be heard, or only printed? If heard, where does it sit? I have printed it and committed no voice.
+- **The 30 s / 88 BPM end.** The plan sums to 30.000 s, but the 0.21 s offset puts the next beat after 30.000 at 30.210. The plan’s cuts are not all on the grid. How far may S2 move a cut, and does the final 30.000 s hold? The treatment quotes plan seconds.
+- **The title’s line break.** The style says display lines break where the paper would cut. `paper_open` has one title op. Does the treatment pin LAST / CUE, or does auto-fit decide? I directed the two-line stack; the pack has no per-slot break field.
+- **Halftone screen.** The token sets `alpha: 0.5` and gives the angle as `0.2` with no unit; the recipes set the effect `opacity` to 0.18–0.24 and `amount` to 0.5–0.6. Is 0.2 radians or degrees, and do the opacities multiply (0.09–0.12 effective) or does the recipe opacity replace the token alpha? I read the recipe opacity as the layer and the token alpha as the dot’s own alpha; the pack does not state the composition.

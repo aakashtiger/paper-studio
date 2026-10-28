@@ -85,10 +85,10 @@ Proven in S1c:
 
 - `styles/paper-kpop/` — 8 recipes, 2 formats, card, bundled fonts, licence notices
 - song 14 shots / 45 s / 16:9, Shorts 8 shots / 30 s / 9:16, blind 6 / 30 / 9:16
-- 9/9 resolver assertions, 9/9 gate tests, 101/101 full suite
+- 9/9 resolver assertions, 9/9 gate tests, 110/110 full suite
 - geometry: 14 px floor, no text overlap, no rule crossing, paired 9:16 anchors,
   margins, contact; 6 critical and 8 high findings fixed in one batch
-- a disclosed plan-valid carry-forward from `719e0582…`, not a pristine seal
+- a fresh blind, *Last Cue* (run-18), on the final `6c5765be…` hash; the old *Rooftop Soundcheck* run is archived
 - contract 9/10 GO, creative 9/10 GO, product 9/10 GO
 
 **S1c.1 — Watercolor 0.2.0 — complete, accepted 9/10 GO.**

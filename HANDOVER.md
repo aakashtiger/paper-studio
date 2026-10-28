@@ -32,12 +32,13 @@
 > **2026-10-27 — S1c accepted.** `styles/paper-kpop/` is **REVIEWABLE** with one
 > open director choice (`paper-shadow`). Final pack
 > `sha256:6c5765be435bbf494bceaee6b770828c4bdd2c33d5c795287cf96435f8c211ba`.
-> Gate: typecheck, **101/101 tests**, song 14/45/16:9, Shorts 8/30/9:16, blind
+> Gate: typecheck, **110/110 tests**, song 14/45/16:9, Shorts 8/30/9:16, blind
 > 6/30/9:16, 9/9 assertions, 32 manifest files, UTF-8 `resolve.txt`, geometry
-> 9/9, contract/creative/product **9/10 GO**. The blind is a disclosed
-> **plan-valid carry-forward** from `719e0582…`, not a pristine seal. The
-> geometry re-audit found 6 critical and 8 high box defects and fixed them in one
-> batch; see `gate/paper-kpop-blind/AUDIT.md`. CI is green (run `40474575139`).
+> 9/9, contract/creative/product **9/10 GO**. The geometry re-audit found 6
+> critical and 8 high box defects and fixed them in one batch; see
+> `gate/paper-kpop-blind/AUDIT.md`. The final blind is *Last Cue* (run-18) on the
+> final hash; the old *Rooftop Soundcheck* run is archived. CI is green (run
+> `40474575139`).
 >
 > **2026-10-27 — Watercolor 0.2.0 accepted.** The card/process revision is
 > **REVIEWABLE** at `sha256:196fd31501fe029f20da6c79fd1629864581182e22c59802b47a0b741c236e05`

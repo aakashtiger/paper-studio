@@ -2,9 +2,10 @@
 
 > **Done.** Paper K-pop is frozen at `sha256:6c5765be435bbf494bceaee6b770828c4bdd2c33d5c795287cf96435f8c211ba`.
 > The current-hash geometry re-audit found 6 critical and 8 high box defects and
-> fixed them in one batch; the gate is 9/9, the full suite 101/101, and the three
-> critics are 9/10 GO. The blind is a disclosed plan-valid carry-forward from
-> `719e0582…`, not a pristine seal. See `gate/paper-kpop-blind/AUDIT.md`,
+> fixed them in one batch; the gate is 9/9, the full suite 110/110, and the three
+> critics are 9/10 GO. The final blind is *Last Cue* (run-18), a fresh author on
+> the final hash; the old *Rooftop Soundcheck* run is archived under
+> `gate/paper-kpop-blind/archive/run-17/`. See `gate/paper-kpop-blind/AUDIT.md`,
 > `gate/paper-kpop-blind/REPORT.md` and `docs/decisions/0008-paper-kpop-pilot.md`.
 > **Next:** S2 visual proof. Watercolor 0.2.0 followed S1c in a new
 > `styles/watercolor-0.2.0/` and `gate/watercolor-0.2.0/`, with the 0.1.0 evidence
@@ -15,7 +16,7 @@
 
 > **Late audit warning.** A geometry pass returned 106 findings (6 critical, 30 high) against a snapshot of this pack. Some are already fixed (title-card fill, duplicate iris, flash, hero body position, tag), but NOT all. The audit is not a current 6665af27 audit. Do not trust the prior 9/10 claims until the new session re-audits the current hash, fixes the blockers, and reruns the gate.
 >
-> Current live pack: **`sha256:6665af27c193cb234dbef8ecbb7c6f04a0f0452914eac59a8212b0869798265c`**, REVIEWABLE. The blind `inputs`/`used-inputs` are still `719e0582…`, so the gate currently fails on the hash. The final work is a plan-valid carry-forward, not a pristine seal.
+> Historical starting state: **`sha256:6665af27c193cb234dbef8ecbb7c6f04a0f0452914eac59a8212b0869798265c`**, REVIEWABLE. The blind `inputs`/`used-inputs` were still `719e0582…` at that moment. The final freeze is `6c5765be…` with a fresh *Last Cue* blind; see the banner above.
 
 ## Current S1c state
 

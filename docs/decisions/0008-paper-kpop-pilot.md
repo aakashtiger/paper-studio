@@ -45,7 +45,7 @@ The recipes name only the fixed type shadow. The director answers `paper-shadow`
 
 ```text
 typecheck                         pass
-tests                             101 / 101
+tests                             110 / 110
 ci (GitHub Actions)               success 40474575139
 style:check                       REVIEWABLE, 0 hard, 1 open choice (paper-shadow)
 song (two briefs)                 14 shots, 45 s, 16:9, 9/9
@@ -59,7 +59,7 @@ card                              no external request; 3 reference stills; 3 rec
 critics                           contract 9/10 GO · creative 9/10 GO · product 9/10 GO
 ```
 
-The final author worked against `cc16e1fd…`; three contract-only clarifications followed (format palette field, lyric band start, uncoloured flash removed), then the geometry batch (6 critical and 8 high findings) brought the pack to `6c5765be…`. No slot, recipe, duration or format structure changed; the work re-resolves 9/9 on the final pack. This is a **plan-valid carry-forward**, not a pristine seal; the report discloses both hashes.
+The old *Rooftop Soundcheck* author worked against `719e0582…`; it is archived under `archive/run-17/`. After the geometry batch froze the pack at `6c5765be…`, a fresh author made *Last Cue* (run-18) on the final hash. The live plan re-resolves 9/9; there is no carry-forward in the final evidence.
 
 ## What the pilot proved
 
@@ -73,7 +73,7 @@ The final author worked against `cc16e1fd…`; three contract-only clarification
 ## What it did not prove
 
 - Pixels, motion feel, phone legibility, actual paper depth or the 88 BPM cut at frame exactness. That is S2.
-- That the blind author saw the final `6c5765be…` pack. The run is a plan-valid carry-forward from `719e0582…`.
+- That the old *Rooftop Soundcheck* author saw the final `6c5765be…` pack. That run is archived; the live *Last Cue* author did see it.
 - That the 16:9 authored type scale fits every box at 390 px without auto-fit. The 14 px floor is proven; the authored 64/26 px scale is a ceiling.
 - The 1.2 s floor is available but not used by the blind; the song exercises 2.7–4.3 s cuts.
 - Per-shot content variation. S1a is one value per slot.

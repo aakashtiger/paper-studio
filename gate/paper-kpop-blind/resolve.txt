@@ -2,28 +2,27 @@ STYLE: paper-kpop 0.1.0
 SEED: 7
 PAIRS: 2
 
-1. rooftop-soundcheck — Rooftop Soundcheck — 9:16 Short · 6 shots · 30s · 9:16
-   BRIEF: gate/paper-kpop-blind/work/brief.json (sha256:d5602d6f75aac51e199aa4f2d8f7768b90914ba8c492f94d77e13069ea82ac70)
+1. last-cue — Last Cue — 9:16 Short · 6 shots · 30s · 9:16
+   BRIEF: gate/paper-kpop-blind/work/brief.json (sha256:81d11082109853a6e275a48fe6765ac185ada8720c892907ddec878c05c1c418)
    FORMAT: gate/paper-kpop-blind/work/format.json · durations 30 · aspects 9:16 · primary 9:16
    STYLE LIMITS: durations 30/45 · aspects 16:9/9:16
    WORD LIMIT: 8 words per content slot (capabilities 8 · layout 8)
-   s01 opening · paper_open · 0–4.968s · iris
-      content.title = ROOFTOP SOUNDCHECK
-      content.subtitle = Vera Lune at The Fold, rooftop
-   s02 title · type_stack · 4.968–9.823s · match_cut
-      content.title = ROOFTOP SOUNDCHECK
-      content.body = One rooftop, one night
-   s03 portrait · portrait_iris · 9.823–14.791s · iris
-      content.names = Vera Lune
-      content.caption = Hold the sky up with me
-   s04 formation · stage_wide · 14.791–19.952s · cut
-      content.body = One rooftop, one night
-      content.caption = Hold the sky up with me
-   s05 quote · sticker_slam · 19.952–24.807s · cut
-      content.body = One rooftop, one night
-   s06 closing · pullback_close · 24.807–30s · hold
-      content.monogram = VL
-      content.body = One rooftop, one night
+   s01 opening · paper_open · 0–4.976s · iris
+      content.title = Last Cue
+      content.subtitle = Eight Count · Out 07 Nov
+   s02 cue · macro_prop_beat · 4.976–9.794s · cut
+      content.caption = I hear the crowd through the wall
+   s03 portrait · portrait_iris · 9.794–14.77s · iris
+      content.names = Nova Kim
+      content.caption = I hear the crowd through the wall
+   s04 formation · stage_wide · 14.77–19.937s · cut
+      content.body = House Lights
+      content.caption = I hear the crowd through the wall
+   s05 hook · sticker_slam · 19.937–24.802s · cut
+      content.body = House Lights
+   s06 closing · pullback_close · 24.802–30s · hold
+      content.monogram = NK
+      content.body = House Lights
    VARIATIONS: grain 11.705 · shadow 61.958 · camera 351.687 · timing 7.961
 
 2. paper-kpop-shorts — Paper K-pop shorts · 8 shots · 30s · 9:16

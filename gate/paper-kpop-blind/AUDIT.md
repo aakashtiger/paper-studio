@@ -35,7 +35,7 @@ The late warning was right: the pack was mechanically green but its box system h
 - **Margins:** no content text enters the 12% bottom margin. The one exception is the `portrait_iris` lyric-band caption at `.86–.96`, which the HUD rule explicitly allows.
 - **Paired anchors:** the sun and core, lyric band and caption, sticker bed/sticker/copy/rule, stage burst, chase arrow, and close strip/body are separate boxes; the inner box is fully inside the outer box in both aspects.
 - **Contact and balance:** the macro object sits on the tabletop at `.66`; both stage figures stand on the stage floor at `.74`; explicit colour roles never exceed four.
-- **Gate:** `node --import tsx --test test/paper-kpop-gate.test.ts` passes **9/9**, including the new geometry test; `npm test` passes **101/101**; `style:check` is REVIEWABLE with one open choice (`paper-shadow`).
+- **Gate:** `node --import tsx --test test/paper-kpop-gate.test.ts` passes **9/9**, including the new geometry test; `npm test` passes **110/110**; `style:check` is REVIEWABLE with one open choice (`paper-shadow`).
 
 ### Card check
 
@@ -60,5 +60,5 @@ Three audit notes remain, all accepted:
 ## Boundary of this proof
 
 - It is a box audit at 390 px, not a render. It does not prove glyph pixels, line-break aesthetics, kerning, motion or phone legibility.
-- It does not re-run the blind author. The frozen pack changed after the author worked; the run is a **plan-valid carry-forward**, not a pristine seal. The author worked on `719e0582...`; the final plan re-resolves 9/9 on `6c5765be...`; both hashes are in `REPORT.md`.
+- The live blind is a fresh run on the final hash, *Last Cue* (run-18). The old *Rooftop Soundcheck* run is archived under `archive/run-17/` against `719e0582...`; it is not live. The final plan re-resolves 9/9 on `6c5765be...`.
 - It does not update the historical watercolor 0.1.0 evidence. Watercolor 0.2.0 is a separate pack and gate.
