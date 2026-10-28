@@ -29,6 +29,10 @@ Working today:
 
 Not built yet: renderer, web app, review room, payments, creator studio.
 
+A first **S2 visual proof** is in `proofs/s2/`: three stills per style and a
+15-second split-screen motion proof. It is authored from the pack tokens, not the
+plan renderer.
+
 ## Quick start
 
 ```bash

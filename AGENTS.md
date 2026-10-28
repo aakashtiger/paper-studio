@@ -66,6 +66,7 @@ node --import tsx --test test/watercolor-gate.test.ts   # S1b pilot gate
 node --import tsx --test test/paper-kpop-gate.test.ts   # S1c gate
 node --import tsx --test test/watercolor-0.2.0-gate.test.ts   # S1c.1 gate
 node scripts/card-audit.mjs styles/watercolor-0.2.0/card.html 900 700   # card height
+node scripts/s2-proof.mjs   # S2 visual proof v0 (15 s split-screen)
 ```
 
 ## Current phase
@@ -108,9 +109,12 @@ critics and one final blind (*A Small Inventory*, 6/30/9:16, 9/9).
   390 px, 9:16 screen.
 - Critics: contract 9/10 GO, creative 9/10 GO, product 9/10 GO.
 
-**Next: S2 visual proof.** A short watercolor and Paper K-pop render test,
-contact sheet and motion comparison. No full film, no app, no second style until
-that exists.
+**Next: S2 visual proof.** A first comparison is built in `proofs/s2/`: three
+stills per style and a 15-second split-screen motion proof
+(`node scripts/s2-proof.mjs`). It is authored from the pack tokens, not the plan
+renderer. The remaining S2 gate is a plan-driven 15-second, three-shot MP4 that
+renders byte-identically on two machines. No full film, no app, no second style
+until that exists.
 
 Do not build: the renderer in this phase, a video, the web app, a second product
 style, or a conversion of the other 58 Lemo styles. `styles/paper-vows` remains

@@ -49,8 +49,15 @@
 > critics **9/10 GO**; CI green (run `40640629374`). 9:16 is the text proof;
 > 1:1/16:9 are labelled unverified/S2.
 >
+> **2026-10-28 — S2 proof v0.** `proofs/s2/` now holds three stills per style and
+> a 15-second split-screen motion proof (`node scripts/s2-proof.mjs`). It is
+> authored from the pack tokens and composition grammar, **not** the plan
+> renderer. The remaining S2 gate is a plan-driven 15 s / 3-shot MP4 that renders
+> byte-identically on two machines.
+>
 > **Next: S2 visual proof.** A short watercolor and Paper K-pop render test,
-> contact sheet and motion comparison. No renderer, video or app in this phase.
+> contact sheet and motion comparison. No full film, no app, no second style
+> until that exists.
 
 ---
 

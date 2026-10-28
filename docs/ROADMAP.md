@@ -69,6 +69,11 @@ Build the contract and prove the pipeline is real.
 - Bundle fonts. Pin ffmpeg.
 - Golden frame hash test in CI.
 
+**First visual proof (v0):** `proofs/s2/` — three stills per style and a 15-second
+split-screen motion proof authored from the pack tokens
+(`node scripts/s2-proof.mjs`). This is a visual comparison, not the plan
+renderer.
+
 **Gate:** the same plan renders byte-identical on both machines.
 
 ## Phase 2 — Full wedding film (weeks 3–4)
