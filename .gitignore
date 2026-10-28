@@ -1,4 +1,4 @@
-﻿node_modules/
+node_modules/
 dist/
 coverage/
 *.tsbuildinfo
@@ -21,6 +21,7 @@ out/
 !fixtures/**/*.mp4
 !styles/**/references/**/*.mp4
 !proofs/**/*.mp4
+!films/**/voice.wav
 
 # tool artifacts
 proofs/**/.hyperframes/

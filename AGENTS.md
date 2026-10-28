@@ -51,6 +51,8 @@ Do not refactor across an ownership boundary without a PR labelled `contract-cha
 npm install            # install
 npm run plan -- fixtures/wedding-min/brief.json   # print a shot plan
 npm run treatment -- proofs/s2-paper/plan.json    # validate a creative treatment
+npm run film -- films/understudy/score.json      # validate a scored film
+npm run captions -- films/understudy/score.json  # generate transcript + SRT
 npm run typecheck      # TypeScript check
 npm test               # unit and mutation tests
 ```
@@ -111,12 +113,14 @@ critics and one final blind (*A Small Inventory*, 6/30/9:16, 9/9).
   390 px, 9:16 screen.
 - Critics: contract 9/10 GO, creative 9/10 GO, product 9/10 GO.
 
-**Next: S2 visual proof.** A first real proof is built in `proofs/s2-paper/`:
-a 15-second, three-shot Paper K-pop piece (4 / 5 / 6 s) on HyperFrames, with a
-Studio preview timeline. It is authored scenes, not yet the plan-driven renderer.
-The S2 gate remains a plan-driven 15 s / 3-shot MP4 with a deterministic frame
-check and a production asset library. No full film, no app, no second style until
-that exists.
+**Next: the scored pilot.** `docs/PRODUCTION-PLAN.md` v1.1 is accepted after
+three critic rounds. The pilot is *The Understudy*, 30 s, 16:9, 30 fps, nine
+shots, narration + SFX, no music. `films/understudy/score.json` validates
+(`npm run film`), and the voice + transcript + SRT exist. The proof in
+`proofs/s2-paper/` remains the look reference, but it is authored scenes, not the
+scored renderer. Next: the technical slice — port the rig fix, make the painter
+read the score, render shots 1–4 as a 0–10.6 s window, and run the audit from the
+first render. No app, no asset library, no watercolor until the pilot ships.
 
 Do not build: the renderer in this phase, a video, the web app, a second product
 style, or a conversion of the other 58 Lemo styles. `styles/paper-vows` remains

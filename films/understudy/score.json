@@ -1,0 +1,586 @@
+{
+  "id": "understudy",
+  "style": "paper-kpop",
+  "styleVersion": "0.1.0",
+  "aspect": "16:9",
+  "fps": 30,
+  "duration": 30,
+  "seed": "understudy-01",
+  "edit": {
+    "minShot": 1.2,
+    "medianShot": 3,
+    "maxShot": 5.5
+  },
+  "clock": {
+    "mode": "narration",
+    "lines": [
+      {
+        "id": "v01",
+        "text": "Every night, the cue lamp calls one name.",
+        "start": 0.4,
+        "duration": 3.62,
+        "hold": 0.78
+      },
+      {
+        "id": "v02",
+        "text": "Tonight, it called Nova.",
+        "start": 5,
+        "duration": 2.73,
+        "hold": 0.77
+      },
+      {
+        "id": "v03",
+        "text": "But the wings were empty.",
+        "start": 8.7,
+        "duration": 2.19,
+        "hold": 0.61
+      },
+      {
+        "id": "v04",
+        "text": "The understudy knew the light.",
+        "start": 11.9,
+        "duration": 2.32,
+        "hold": 0.6
+      },
+      {
+        "id": "v05",
+        "text": "Mira walked on.",
+        "start": 15.3,
+        "duration": 1.99,
+        "hold": 0.61
+      },
+      {
+        "id": "v06",
+        "text": "The crowd never knew.",
+        "start": 18.4,
+        "duration": 1.95,
+        "hold": 0.65
+      }
+    ]
+  },
+  "audio": {
+    "mode": "narration",
+    "voice": "films/understudy/voice.wav",
+    "sfx": [
+      {
+        "id": "sfx-lamp",
+        "at": 0.2,
+        "kind": "lamp",
+        "note": "paper lamp buzz"
+      },
+      {
+        "id": "sfx-snap",
+        "at": 2.2,
+        "kind": "snap",
+        "note": "paper snap into iris"
+      },
+      {
+        "id": "sfx-build",
+        "at": 5.2,
+        "kind": "whoosh",
+        "note": "stage build"
+      },
+      {
+        "id": "sfx-slam",
+        "at": 8.8,
+        "kind": "slam",
+        "note": "sticker slam"
+      },
+      {
+        "id": "sfx-step",
+        "at": 10.6,
+        "kind": "step",
+        "note": "Mira's step"
+      },
+      {
+        "id": "sfx-swing",
+        "at": 13.6,
+        "kind": "swing",
+        "note": "cue lamp swings"
+      },
+      {
+        "id": "sfx-crowd",
+        "at": 15.8,
+        "kind": "crowd",
+        "note": "crowd rises"
+      },
+      {
+        "id": "sfx-cheer",
+        "at": 19.8,
+        "kind": "crowd",
+        "note": "crowd answers"
+      },
+      {
+        "id": "sfx-confetti",
+        "at": 24.6,
+        "kind": "confetti",
+        "note": "paper confetti"
+      },
+      {
+        "id": "sfx-iris",
+        "at": 27,
+        "kind": "iris",
+        "note": "cream iris"
+      }
+    ]
+  },
+  "captions": {
+    "source": "films/understudy/captions.srt",
+    "lines": [
+      {
+        "id": "v01",
+        "text": "Every night, the cue lamp calls one name.",
+        "start": 0.4,
+        "end": 4.8
+      },
+      {
+        "id": "v02",
+        "text": "Tonight, it called Nova.",
+        "start": 5,
+        "end": 8.5
+      },
+      {
+        "id": "v03",
+        "text": "But the wings were empty.",
+        "start": 8.7,
+        "end": 11.5
+      },
+      {
+        "id": "v04",
+        "text": "The understudy knew the light.",
+        "start": 11.9,
+        "end": 14.82
+      },
+      {
+        "id": "v05",
+        "text": "Mira walked on.",
+        "start": 15.3,
+        "end": 17.9
+      },
+      {
+        "id": "v06",
+        "text": "The crowd never knew.",
+        "start": 18.4,
+        "end": 21
+      }
+    ]
+  },
+  "assets": [
+    {
+      "id": "character.lead",
+      "version": "0.1.0",
+      "hash": "sha256:90b6481788004b7d34aa3ce387e3b48f2ab9e21bf0b4917ee9f3d296fe30e946",
+      "source": "reused"
+    },
+    {
+      "id": "character.second",
+      "version": "0.1.0",
+      "hash": "sha256:90b6481788004b7d34aa3ce387e3b48f2ab9e21bf0b4917ee9f3d296fe30e946",
+      "source": "reused"
+    },
+    {
+      "id": "set.paper-card",
+      "version": "0.1.0",
+      "hash": "sha256:12541f59e207a2848ca7c019c5947410d7ec230571f3f231d1a49bb5d244fe7e",
+      "source": "reused"
+    },
+    {
+      "id": "set.stage",
+      "version": "0.1.0",
+      "hash": "sha256:8049896f31ca3ddf04633ace959d32e40c01639ca621a750b901bac95f896957",
+      "source": "reused"
+    },
+    {
+      "id": "prop.paper-sticker",
+      "version": "0.1.0",
+      "hash": "sha256:8049896f31ca3ddf04633ace959d32e40c01639ca621a750b901bac95f896957",
+      "source": "reused"
+    },
+    {
+      "id": "type.paper",
+      "version": "0.1.0",
+      "hash": "sha256:e0d1638c46e3e3316187769625edb8a69642d96fb211a22b11034be545fba8b4",
+      "source": "reused"
+    }
+  ],
+  "shots": [
+    {
+      "recipe": "paper_open",
+      "duration": 2.2,
+      "slots": {
+        "content.title": "THE UNDERSTUDY",
+        "content.subtitle": "A PAPER STAGE SHORT"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.045,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "note": "Title drops; the cue lamp answers."
+      },
+      "transitionOut": "iris",
+      "direction": {
+        "entry": "cream card, empty",
+        "exit": "red iris edge",
+        "spine": "The title lands and the lamp answers.",
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "type",
+            "note": "title drops character by character"
+          },
+          {
+            "t": 1,
+            "kind": "light",
+            "note": "lamp glow sweeps"
+          },
+          {
+            "t": 1.8,
+            "kind": "transition",
+            "note": "red iris starts"
+          }
+        ]
+      }
+    },
+    {
+      "recipe": "portrait_iris",
+      "duration": 3,
+      "slots": {
+        "content.names": "NOVA KIM",
+        "content.caption": "THE STAR"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1.02,
+        "to": 1.09,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "note": "Nova waits; her hand finds the lamp."
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "Nova centred at the cue",
+        "exit": "hand on the lamp",
+        "spine": "Nova waits; the lamp buzzes; she reaches for it.",
+        "events": [
+          {
+            "t": 0.3,
+            "kind": "pose",
+            "note": "head turn to the lamp"
+          },
+          {
+            "t": 1.2,
+            "kind": "pose",
+            "note": "hand lifts"
+          },
+          {
+            "t": 2.2,
+            "kind": "light",
+            "note": "lamp pulses"
+          }
+        ]
+      }
+    },
+    {
+      "recipe": "stage_wide",
+      "duration": 3.6,
+      "slots": {
+        "content.body": "ONE NIGHT",
+        "content.caption": "THE LAST CUE"
+      },
+      "camera": {
+        "move": "orbit",
+        "from": 1,
+        "to": 1.03,
+        "ease": "easeInOut"
+      },
+      "motion": {
+        "note": "The stage builds from the floor up."
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "dark stage",
+        "exit": "stage full",
+        "spine": "Floor, sun and crowd build into the stage.",
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "build",
+            "note": "floor wipes up"
+          },
+          {
+            "t": 1,
+            "kind": "build",
+            "note": "sun drops"
+          },
+          {
+            "t": 2.2,
+            "kind": "build",
+            "note": "crowd rises"
+          },
+          {
+            "t": 3,
+            "kind": "confetti",
+            "note": "first confetti"
+          }
+        ]
+      }
+    },
+    {
+      "recipe": "sticker_slam",
+      "duration": 1.8,
+      "slots": {
+        "content.body": "NO NOVA"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.03,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "note": "The sticker slams over the empty mark."
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "red bed",
+        "exit": "sticker settled",
+        "spine": "NO NOVA slams onto the empty stage.",
+        "events": [
+          {
+            "t": 0.1,
+            "kind": "slam",
+            "note": "sticker hits with squash"
+          },
+          {
+            "t": 0.7,
+            "kind": "shards",
+            "note": "paper shards"
+          },
+          {
+            "t": 1.3,
+            "kind": "settle",
+            "note": "sticker settles"
+          }
+        ]
+      }
+    },
+    {
+      "recipe": "portrait_iris",
+      "duration": 3,
+      "slots": {
+        "content.names": "MIRA",
+        "content.caption": "THE UNDERSTUDY"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1.02,
+        "to": 1.1,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "note": "Mira steps into the light."
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "wing shadow",
+        "exit": "spotlight",
+        "spine": "Mira steps from the wing into the light.",
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "step",
+            "note": "foot lands"
+          },
+          {
+            "t": 1.1,
+            "kind": "light",
+            "note": "spotlight finds her"
+          },
+          {
+            "t": 2.4,
+            "kind": "pose",
+            "note": "she points to the stage"
+          }
+        ]
+      }
+    },
+    {
+      "recipe": "macro_prop_beat",
+      "duration": 2.2,
+      "slots": {
+        "content.caption": "THE CUE LAMP"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.12,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "note": "The lamp swings; Nova's hand almost reaches it."
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "lamp close",
+        "exit": "hand enters",
+        "spine": "The cue lamp swings; Nova's hand enters and misses.",
+        "events": [
+          {
+            "t": 0.3,
+            "kind": "prop",
+            "note": "lamp swings"
+          },
+          {
+            "t": 1,
+            "kind": "pose",
+            "note": "hand enters"
+          },
+          {
+            "t": 1.7,
+            "kind": "tear",
+            "note": "paper tear"
+          }
+        ]
+      }
+    },
+    {
+      "recipe": "stage_wide",
+      "duration": 4,
+      "slots": {
+        "content.body": "THE LIGHT",
+        "content.caption": "MIRA WALKS ON"
+      },
+      "camera": {
+        "move": "orbit",
+        "from": 1.02,
+        "to": 1.06,
+        "ease": "easeInOut"
+      },
+      "motion": {
+        "note": "Mira points; the crowd answers."
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "stage left",
+        "exit": "crowd up",
+        "spine": "Mira points and the crowd answers.",
+        "events": [
+          {
+            "t": 0.3,
+            "kind": "pose",
+            "note": "Mira points"
+          },
+          {
+            "t": 1.4,
+            "kind": "crowd",
+            "note": "crowd rises"
+          },
+          {
+            "t": 2.6,
+            "kind": "confetti",
+            "note": "confetti hits"
+          },
+          {
+            "t": 3.4,
+            "kind": "hold",
+            "note": "held reaction"
+          }
+        ]
+      }
+    },
+    {
+      "recipe": "stage_wide",
+      "duration": 4.8,
+      "slots": {
+        "content.body": "TWO OF THEM",
+        "content.caption": "THE CROWD NEVER KNEW"
+      },
+      "camera": {
+        "move": "orbit",
+        "from": 1.03,
+        "to": 1.08,
+        "ease": "easeInOut"
+      },
+      "motion": {
+        "note": "Nova joins late; two silhouettes."
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "Mira alone",
+        "exit": "duet formation",
+        "spine": "Nova joins late; the two perform the same eight counts.",
+        "events": [
+          {
+            "t": 0.4,
+            "kind": "entrance",
+            "note": "Nova enters from the wing"
+          },
+          {
+            "t": 1.6,
+            "kind": "pose",
+            "note": "duet begins"
+          },
+          {
+            "t": 3,
+            "kind": "formation",
+            "note": "formation shifts"
+          },
+          {
+            "t": 4,
+            "kind": "hold",
+            "note": "held two-shot"
+          }
+        ]
+      }
+    },
+    {
+      "recipe": "pullback_close",
+      "duration": 5.4,
+      "slots": {
+        "content.monogram": "NK",
+        "content.body": "THE UNDERSTUDY"
+      },
+      "camera": {
+        "move": "pull_back",
+        "from": 1.12,
+        "to": 1,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "note": "Bow; the cream iris closes on the lamp."
+      },
+      "transitionOut": "iris",
+      "direction": {
+        "entry": "two-shot",
+        "exit": "cream paper",
+        "spine": "They bow; the iris closes on the cue lamp.",
+        "events": [
+          {
+            "t": 0.3,
+            "kind": "pose",
+            "note": "bow"
+          },
+          {
+            "t": 1.8,
+            "kind": "confetti",
+            "note": "confetti"
+          },
+          {
+            "t": 3.6,
+            "kind": "transition",
+            "note": "cream iris"
+          },
+          {
+            "t": 5,
+            "kind": "paper",
+            "note": "paper texture"
+          }
+        ]
+      }
+    }
+  ]
+}

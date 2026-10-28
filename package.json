@@ -7,6 +7,8 @@
   "scripts": {
     "plan": "tsx scripts/plan.ts",
     "treatment": "tsx scripts/treatment.ts",
+    "film": "tsx scripts/film.ts",
+    "captions": "tsx scripts/captions.ts",
     "test": "node --import tsx --test test/*.test.ts",
     "typecheck": "tsc --noEmit",
     "style:new": "tsx scripts/style.ts new",

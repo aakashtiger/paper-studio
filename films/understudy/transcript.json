@@ -1,0 +1,200 @@
+{
+  "film": "understudy",
+  "voice": "films/understudy/voice.wav",
+  "duration": 30,
+  "lines": [
+    {
+      "id": "v01",
+      "text": "Every night, the cue lamp calls one name.",
+      "start": 0.4,
+      "duration": 3.62,
+      "words": [
+        {
+          "w": "Every",
+          "start": 0.4,
+          "end": 0.917
+        },
+        {
+          "w": "night,",
+          "start": 0.917,
+          "end": 1.52
+        },
+        {
+          "w": "the",
+          "start": 1.52,
+          "end": 1.865
+        },
+        {
+          "w": "cue",
+          "start": 1.865,
+          "end": 2.21
+        },
+        {
+          "w": "lamp",
+          "start": 2.21,
+          "end": 2.641
+        },
+        {
+          "w": "calls",
+          "start": 2.641,
+          "end": 3.158
+        },
+        {
+          "w": "one",
+          "start": 3.158,
+          "end": 3.503
+        },
+        {
+          "w": "name.",
+          "start": 3.503,
+          "end": 4.02
+        }
+      ]
+    },
+    {
+      "id": "v02",
+      "text": "Tonight, it called Nova.",
+      "start": 5,
+      "duration": 2.73,
+      "words": [
+        {
+          "w": "Tonight,",
+          "start": 5,
+          "end": 5.983
+        },
+        {
+          "w": "it",
+          "start": 5.983,
+          "end": 6.31
+        },
+        {
+          "w": "called",
+          "start": 6.31,
+          "end": 7.075
+        },
+        {
+          "w": "Nova.",
+          "start": 7.075,
+          "end": 7.73
+        }
+      ]
+    },
+    {
+      "id": "v03",
+      "text": "But the wings were empty.",
+      "start": 8.7,
+      "duration": 2.19,
+      "words": [
+        {
+          "w": "But",
+          "start": 8.7,
+          "end": 9.037
+        },
+        {
+          "w": "the",
+          "start": 9.037,
+          "end": 9.374
+        },
+        {
+          "w": "wings",
+          "start": 9.374,
+          "end": 9.879
+        },
+        {
+          "w": "were",
+          "start": 9.879,
+          "end": 10.3
+        },
+        {
+          "w": "empty.",
+          "start": 10.3,
+          "end": 10.89
+        }
+      ]
+    },
+    {
+      "id": "v04",
+      "text": "The understudy knew the light.",
+      "start": 11.9,
+      "duration": 2.32,
+      "words": [
+        {
+          "w": "The",
+          "start": 11.9,
+          "end": 12.199
+        },
+        {
+          "w": "understudy",
+          "start": 12.199,
+          "end": 13.023
+        },
+        {
+          "w": "knew",
+          "start": 13.023,
+          "end": 13.397
+        },
+        {
+          "w": "the",
+          "start": 13.397,
+          "end": 13.696
+        },
+        {
+          "w": "light.",
+          "start": 13.696,
+          "end": 14.22
+        }
+      ]
+    },
+    {
+      "id": "v05",
+      "text": "Mira walked on.",
+      "start": 15.3,
+      "duration": 1.99,
+      "words": [
+        {
+          "w": "Mira",
+          "start": 15.3,
+          "end": 15.922
+        },
+        {
+          "w": "walked",
+          "start": 15.922,
+          "end": 16.793
+        },
+        {
+          "w": "on.",
+          "start": 16.793,
+          "end": 17.29
+        }
+      ]
+    },
+    {
+      "id": "v06",
+      "text": "The crowd never knew.",
+      "start": 18.4,
+      "duration": 1.95,
+      "words": [
+        {
+          "w": "The",
+          "start": 18.4,
+          "end": 18.755
+        },
+        {
+          "w": "crowd",
+          "start": 18.755,
+          "end": 19.286
+        },
+        {
+          "w": "never",
+          "start": 19.286,
+          "end": 19.818
+        },
+        {
+          "w": "knew.",
+          "start": 19.818,
+          "end": 20.35
+        }
+      ]
+    }
+  ]
+}

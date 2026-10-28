@@ -1,6 +1,11 @@
 # Paper Studio — status audit
 
 **Date:** 2026-10-29
+**Update:** `docs/PRODUCTION-PLAN.md` v1.1 is accepted; the scored pilot
+*The Understudy* now has a validating `score.json`, a 29.5 s scratch voice, a
+transcript and an SRT. The renderer still does not read the score. The next
+slice is the painter + 0–10.6 s technical render + audit.
+
 **Purpose:** an honest inventory of what exists, what is weak, and what is
 missing, with a deliberately small build plan. No new architecture unless it
 removes a real blocker.
