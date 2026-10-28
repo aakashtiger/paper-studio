@@ -7,6 +7,17 @@
 **Status:** S1a complete, accepted **9/10 GO**. S1b watercolor pilot complete, accepted **9/10 GO**, pack **REVIEWABLE**. No renderer, no video produced.
 **Companion:** read `CONVERSATION-HANDOVER.md` for the narrative context the repo cannot carry.
 
+> **2026-10-28 — S2 paper proof, pass 2.** `proofs/s2-paper/` is a 15 s,
+> three-shot Paper K-pop proof (4 / 5 / 6 s) with a Studio preview timeline.
+> Design **7/10**, motion **5.5/10** — improved, still not "crazy good"; the
+> remaining gap is choreography, not craft. The proof is deterministic (two
+> snapshot runs hash-identical) and the final MP4 is clean. A treatment contract
+> now exists: `src/engine/treatment.ts`, `scripts/treatment.ts`,
+> `test/treatment.test.ts`, `proofs/s2-paper/plan.json` and
+> `docs/decisions/0010-treatment-contract.md`. The proof renderer still does not
+> read the plan. Next: migrate the paper renderer onto the treatment plan, then
+> the watercolor backend.
+
 > **2026-10-26 — S1b re-scope.** The next phase is the watercolor pilot in
 > `docs/specs/0004-style-pilot-watercolor.md`, not Paper K-pop. Paper K-pop and the
 > `styles/paper-vows` migration move to S1c. The rest of this file is the S1a record

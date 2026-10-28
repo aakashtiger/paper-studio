@@ -81,10 +81,28 @@ formation change) rather than more drift. `reviews/MOTION.md` lists the gap.
 - The second cast is `mira` (coat, trousers, glasses), not a mirrored `idol`.
 - Dev snapshot folders and the temporary GIF are not shipped.
 
+## Treatment contract
+
+`plan.json` is the film's creative direction in the new treatment format. It
+names the recipes, the 4 / 5 / 6 s durations, the copy, the camera hint, the
+motion note and the transitions. Validate it with:
+
+```powershell
+npm run treatment -- proofs/s2-paper/plan.json
+```
+
+The resolver reports one deliberate proof warning: `stage_wide` runs 6 s while
+the recipe allows 3.4–5.5 s. A real film would be an error; this proof is marked
+`"proof": true`. See `docs/decisions/0010-treatment-contract.md`.
+
+The renderer of this proof does **not** consume `plan.json` yet — the scenes are
+still authored. The plan is the contract the next renderer is built against, and
+its timings match the authored scenes.
+
 ## What it does not prove
 
-- It is not plan-driven. The three scenes are authored HTML/Canvas, not a generic
-  renderer reading a resolver plan and a full asset library.
+- It is not plan-driven. The three scenes are authored HTML/Canvas; `plan.json`
+  validates the creative direction but is not yet read by the renderer.
 - It is not the watercolor backend.
 - It is not the final S2 gate: a plan-driven 15 s / 3-shot MP4 with golden-frame
   checks and a production asset library.
@@ -101,6 +119,7 @@ formation change) rather than more drift. `reviews/MOTION.md` lists the gap.
 | `vendor/` | local GSAP, paper primitives, fonts |
 | `assets/fonts/` | bundled Paper K-pop fonts |
 | `CREATIVE.md` | detailed creative direction / beat sheet / shot sheet |
+| `plan.json` | treatment: recipes, durations, slots, camera, motion, transitions |
 | `snapshots/` | review stills and contact sheet |
 | `paper-proof.mp4` | 15 s output |
 

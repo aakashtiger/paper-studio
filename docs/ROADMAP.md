@@ -74,6 +74,12 @@ K-pop proof on HyperFrames (4 / 5 / 6 s), with a Studio preview timeline
 (`npx hyperframes preview proofs/s2-paper`). It is authored scenes, not the plan
 renderer. Watercolor is the next backend.
 
+**Treatment contract (done):** `src/engine/treatment.ts` resolves an authored
+treatment (recipes, durations, slots, camera, motion, transitions) against a
+style pack and validates it. `proofs/s2-paper/plan.json` is the first treatment;
+`npm run treatment -- proofs/s2-paper/plan.json` validates it. The renderer does
+not consume it yet. This is the input contract for the plan-driven S2 gate.
+
 **Gate:** the same plan renders byte-identical on both machines.
 
 ## Phase 2 — Full wedding film (weeks 3–4)

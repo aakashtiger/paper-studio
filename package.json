@@ -6,6 +6,7 @@
   "description": "Deterministic, local-first video engine for wedding films and creator videos.",
   "scripts": {
     "plan": "tsx scripts/plan.ts",
+    "treatment": "tsx scripts/treatment.ts",
     "test": "node --import tsx --test test/*.test.ts",
     "typecheck": "tsc --noEmit",
     "style:new": "tsx scripts/style.ts new",

@@ -50,6 +50,7 @@ Do not refactor across an ownership boundary without a PR labelled `contract-cha
 ```bash
 npm install            # install
 npm run plan -- fixtures/wedding-min/brief.json   # print a shot plan
+npm run treatment -- proofs/s2-paper/plan.json    # validate a creative treatment
 npm run typecheck      # TypeScript check
 npm test               # unit and mutation tests
 ```

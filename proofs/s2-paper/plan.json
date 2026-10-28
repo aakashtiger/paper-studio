@@ -1,0 +1,53 @@
+{
+  "id": "last-cue-proof",
+  "style": "paper-kpop",
+  "styleVersion": "0.1.0",
+  "aspect": "16:9",
+  "fps": 30,
+  "duration": 15,
+  "seed": "last-cue-18",
+  "proof": true,
+  "shots": [
+    {
+      "recipe": "paper_open",
+      "duration": 4,
+      "slots": {
+        "content.title": "LAST CUE",
+        "content.subtitle": "NOVA KIM · ONE NIGHT · 07 NOV"
+      },
+      "camera": { "move": "push_in", "from": 1, "to": 1.075, "ease": "easeOut" },
+      "motion": {
+        "beat": "88 BPM, 0.21 s offset",
+        "note": "Sunburst opens and turns; the core lands with an overshoot. The title drops character by character, the mono line lands on a cream tab, the sticker slams at 2.05 s with squash and a 6 px shake. A cue-lamp glow sweeps 3.1–3.65 s; red iris 3.7–4.0."
+      },
+      "transitionOut": "iris"
+    },
+    {
+      "recipe": "sticker_slam",
+      "duration": 5,
+      "slots": {
+        "content.body": "HOUSE LIGHTS"
+      },
+      "camera": { "move": "push_in", "from": 1, "to": 1.055, "ease": "easeOut" },
+      "motion": {
+        "beat": "88 BPM",
+        "note": "Four layers drift at different rates. The sticker pulses on every beat; a travelling key light crosses the red bed. Second shard hit at 6.0 s, date ticket at 6.15 s, corner peel at 7.15 s, blue strip wipe 8.0–8.55 s into the cut."
+      },
+      "transitionOut": "cut"
+    },
+    {
+      "recipe": "stage_wide",
+      "duration": 6,
+      "slots": {
+        "content.body": "HOUSE LIGHTS",
+        "content.caption": "NOVA KIM / THE LAST CUE"
+      },
+      "camera": { "move": "orbit", "from": 1, "to": 1.09, "ease": "easeInOut" },
+      "motion": {
+        "beat": "88 BPM, two-cast offset of three half-beats",
+        "note": "Floor wipes up, sun drops, crowd rises in three tiers, cast lands with a squash by 9.9 s. Eight-count dance with anticipation and a beat-pulsed camera. Mira crosses toward Nova 12.2–13.1. Lower third lands 13.35. Cream iris 14.7–15.0."
+      },
+      "transitionOut": "cut"
+    }
+  ]
+}
