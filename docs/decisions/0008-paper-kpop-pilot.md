@@ -46,7 +46,7 @@ The recipes name only the fixed type shadow. The director answers `paper-shadow`
 ```text
 typecheck                         pass
 tests                             110 / 110
-ci (GitHub Actions)               success 40474575139
+ci (GitHub Actions)               success 40640629374
 style:check                       REVIEWABLE, 0 hard, 1 open choice (paper-shadow)
 song (two briefs)                 14 shots, 45 s, 16:9, 9/9
 shorts (two briefs)               8 shots, 30 s, 9:16, 9/9
