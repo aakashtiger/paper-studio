@@ -69,10 +69,10 @@ Build the contract and prove the pipeline is real.
 - Bundle fonts. Pin ffmpeg.
 - Golden frame hash test in CI.
 
-**First visual proof (v0):** `proofs/s2/` — three stills per style and a 15-second
-split-screen motion proof authored from the pack tokens
-(`node scripts/s2-proof.mjs`). This is a visual comparison, not the plan
-renderer.
+**First visual proof (v0):** `proofs/s2-paper/` — a 15-second, three-shot Paper
+K-pop proof on HyperFrames (4 / 5 / 6 s), with a Studio preview timeline
+(`npx hyperframes preview proofs/s2-paper`). It is authored scenes, not the plan
+renderer. Watercolor is the next backend.
 
 **Gate:** the same plan renders byte-identical on both machines.
 

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920, height=1080">
+<script src="vendor/gsap.min.js"></script>
+<style>
+  @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-Regular.ttf"); font-display: block; }
+  @font-face { font-family: "Archivo Black"; src: url("assets/fonts/ArchivoBlack-Regular.ttf"); font-display: block; }
+  @font-face { font-family: "DMMono"; src: url("assets/fonts/DMMono-Regular.ttf"); font-display: block; }
+  @font-face { font-family: "Permanent Marker"; src: url("assets/fonts/PermanentMarker-Regular.ttf"); font-display: block; }
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #171310; }
+  #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #F2E8D5; }
+  #out { display: block; width: 1920px; height: 1080px; }
+</style>
+</head>
+<body>
+<div data-hf-id="hf-ia76" id="root" data-composition-id="paper-proof" data-start="0" data-duration="15" data-fps="30" data-width="1920" data-height="1080">
+  <canvas data-hf-id="hf-gp1b" id="out" class="clip" data-start="0" data-duration="15" data-track-index="0" width="1920" height="1080"></canvas>
+</div>
+
+<script src="vendor/core.js"></script>
+<script src="vendor/type.js"></script>
+<script src="vendor/characters.js"></script>
+<script src="vendor/props.js"></script>
+<script src="vendor/scene_kit.js"></script>
+<script src="scenes.js"></script>
+<script>
+  var cv = document.getElementById("out");
+  var ctx = cv.getContext("2d", { alpha: false });
+
+  initTextures();
+  const state = { t: 0 };
+  const timeline = gsap.timeline({ paused: true });
+  timeline.to(state, {
+    t: 15,
+    duration: 15,
+    ease: "none",
+    onUpdate: () => drawPaperAt(state.t),
+  });
+  window.__timelines = window.__timelines || {};
+  window.__timelines["paper-proof"] = timeline;
+  window.__state = state;
+  window.__timeline = timeline;
+  drawPaperAt(0);
+  timeline.seek(0);
+  document.fonts.ready.then(() => {
+    TY.ready = true;
+    drawPaperAt(timeline.time());
+  });
+</script>
+</body>
+</html>

@@ -24,9 +24,10 @@
 > untouched, final pack `sha256:196fd315…`, page 8/45/1:1, scroll 4/45/16:9,
 > blind 6/30/9:16, 9/9 each, full suite 110/110, card 78 prose/237 visible,
 > critics 9/10 GO. 1:1/16:9 text proof is labelled unverified/S2; the 9:16 page
-> is the proof. A first **S2 proof v0** is in `proofs/s2/`: three stills per
-> style and a 15-second split-screen motion proof, authored from the pack tokens,
-> not the plan renderer. **Next: the plan-driven S2 gate.**
+> is the proof. A first **S2 proof v0** is in `proofs/s2-paper/`: a 15-second,
+> three-shot Paper K-pop proof on HyperFrames (4 / 5 / 6 s), with a Studio
+> preview timeline and a 1080p MP4. It is authored scenes, not the plan renderer.
+> **Next: the plan-driven S2 gate and the watercolor backend.**
 
 This file carries the **narrative context** a new session cannot get from the repo: what we decided, what we rejected, where we stopped, and what to do next.
 

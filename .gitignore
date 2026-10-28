@@ -1,4 +1,4 @@
-node_modules/
+﻿node_modules/
 dist/
 coverage/
 *.tsbuildinfo
@@ -20,6 +20,10 @@ out/
 # keep small reference clips if we add them deliberately
 !fixtures/**/*.mp4
 !styles/**/references/**/*.mp4
+!proofs/**/*.mp4
+
+# tool artifacts
+proofs/**/.hyperframes/
 
 # OS
 .DS_Store
