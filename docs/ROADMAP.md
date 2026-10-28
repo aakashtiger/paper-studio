@@ -80,6 +80,14 @@ style pack and validates it. `proofs/s2-paper/plan.json` is the first treatment;
 `npm run treatment -- proofs/s2-paper/plan.json` validates it. The renderer does
 not consume it yet. This is the input contract for the plan-driven S2 gate.
 
+**Reference research (done):** all 59 Lemo-Opuscar styles were read in detail —
+`docs/research/lemo-59-survey.md`. The result is the scored-film model in
+`docs/decisions/0012-scored-film-model.md`: one timed score drives picture, voice,
+captions and sound; assets are per film with a growing library; the style owns a
+duration envelope and clock modes; characters step at 8–12 fps while the camera
+runs on ones; six critics at four gates. The next build is the score schema,
+asset manifest and `film-audit`, then the 15 s proof re-cut through it.
+
 **Gate:** the same plan renders byte-identical on both machines.
 
 ## Phase 2 — Full wedding film (weeks 3–4)

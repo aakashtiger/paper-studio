@@ -7,6 +7,15 @@
 **Status:** S1a complete, accepted **9/10 GO**. S1b watercolor pilot complete, accepted **9/10 GO**, pack **REVIEWABLE**. No renderer, no video produced.
 **Companion:** read `CONVERSATION-HANDOVER.md` for the narrative context the repo cannot carry.
 
+> **2026-10-28 — all 59 Lemo styles read.** The survey is
+> `docs/research/lemo-59-survey.md`; the resulting production model is
+> `docs/decisions/0012-scored-film-model.md`. Key corrections: the film is a
+> timed score (not a shot list), assets are per film with a growing library, the
+> style owns a min/median/max duration envelope and clock modes (music,
+> narration, SFX, real time, reading, free), characters step at 8–12 fps while
+> the camera runs on ones, and six critics review at four gates. Cut density is
+> style-defined: the survey spans 0 cuts to 79 shots in 161.6 s.
+>
 > **2026-10-28 — S2 paper proof, pass 2.** `proofs/s2-paper/` is a 15 s,
 > three-shot Paper K-pop proof (4 / 5 / 6 s) with a Studio preview timeline.
 > Design **7/10**, motion **5.5/10** — improved, still not "crazy good"; the
