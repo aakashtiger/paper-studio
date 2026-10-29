@@ -39,7 +39,7 @@ const words = lines.map((line) => {
 
 const transcript = {
   film: score.id,
-  voice: score.audio.voice ?? null,
+  voice: score.audio.narration?.voice ?? null,
   duration: score.duration,
   lines: words,
 };

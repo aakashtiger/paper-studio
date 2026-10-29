@@ -1,0 +1,18 @@
+{
+  "id": "understudy",
+  "title": "The Understudy",
+  "audience": "Paper Studio internal test; creator short",
+  "style": "paper-kpop",
+  "styleVersion": "0.1.0",
+  "aspect": "16:9",
+  "duration": 30,
+  "fps": 30,
+  "audioMode": "narration",
+  "references": ["papercut-red", "paper-popup", "spy-titles"],
+  "mustSay": [
+    "Nova is the star",
+    "Mira is the understudy",
+    "the crowd never knew"
+  ],
+  "notes": "Fixture for contract tests only. The first real film is the user's idea."
+}

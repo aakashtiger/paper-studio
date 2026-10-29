@@ -1,0 +1,45 @@
+{
+  "character": "Mira",
+  "rig": "mira@0.1.0",
+  "anchors": ["face", "hair", "hand-left", "hand-right", "foot-left", "foot-right", "chest", "waist"],
+  "poses": [
+    {
+      "name": "idle",
+      "params": { "bounce": 0, "sway": 0, "lean": 0.02, "headTilt": 0.02, "headTurn": -0.02, "hairSwing": 2, "armL": [0.3, 0.1], "armR": [-0.3, -0.1], "legL": [0.03, 0.01], "legR": [-0.03, -0.01] }
+    },
+    {
+      "name": "step",
+      "params": { "bounce": -10, "sway": 6, "lean": 0.05, "headTilt": -0.03, "headTurn": 0.04, "hairSwing": 4, "armL": [0.6, 0.2], "armR": [-0.4, -0.2], "legL": [0.08, 0.03], "legR": [-0.04, -0.02] }
+    },
+    {
+      "name": "point",
+      "params": { "bounce": -6, "sway": 8, "lean": 0.04, "headTilt": 0.03, "headTurn": -0.05, "hairSwing": 5, "armL": [1.5, 0.1], "armR": [-0.5, 0.2], "legL": [0.05, 0.02], "legR": [-0.06, -0.02] }
+    },
+    {
+      "name": "turn",
+      "params": { "bounce": -14, "sway": -8, "lean": -0.04, "headTilt": 0.04, "headTurn": 0.06, "hairSwing": -6, "armL": [1.2, 0.1], "armR": [-1.2, -0.1], "legL": [0.06, 0.02], "legR": [-0.05, -0.02] }
+    },
+    {
+      "name": "listen",
+      "params": { "bounce": -4, "sway": 2, "lean": 0.06, "headTilt": 0.08, "headTurn": 0.08, "hairSwing": 3, "armL": [0.4, 0.3], "armR": [-0.5, -0.1], "legL": [0.04, 0.02], "legR": [-0.04, -0.02] }
+    },
+    {
+      "name": "duet-left",
+      "params": { "bounce": -16, "sway": 4, "lean": 0.02, "headTilt": -0.02, "headTurn": 0.03, "hairSwing": 4, "armL": [1.7, 0.2], "armR": [-0.9, -0.1], "legL": [0.05, 0.02], "legR": [-0.05, -0.02] }
+    },
+    {
+      "name": "duet-right",
+      "params": { "bounce": -22, "sway": -6, "lean": -0.03, "headTilt": 0.03, "headTurn": -0.04, "hairSwing": -5, "armL": [0.9, 0.1], "armR": [-1.7, -0.2], "legL": [0.06, 0.02], "legR": [-0.04, -0.02] }
+    },
+    {
+      "name": "bow",
+      "params": { "bounce": -4, "sway": 0, "lean": 0.14, "headTilt": 0.16, "headTurn": 0, "hairSwing": 1, "armL": [0.5, 0.2], "armR": [-0.5, -0.2], "legL": [0.04, 0.02], "legR": [-0.04, -0.02] }
+    }
+  ],
+  "expressions": [
+    { "name": "neutral", "params": { "open": 0.85, "brow": 0, "lookX": 0, "lookY": 0 } },
+    { "name": "smile", "params": { "open": 0.9, "brow": 0.2, "lookX": 0.1, "lookY": 0, "smile": 0.6 } },
+    { "name": "alarm", "params": { "open": 1.3, "brow": 0.9, "lookX": 0, "lookY": 0.1, "mouthOpen": 0.5 } },
+    { "name": "tender", "params": { "open": 0.7, "brow": 0.4, "lookX": 0.2, "lookY": 0.2, "smile": 0.5 } }
+  ]
+}

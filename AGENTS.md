@@ -119,11 +119,13 @@ first real film; the user will provide the idea. The board is derived from the
 score, not a fixed count; SFX are generated in code; audio resolves before shot
 timing. The source rig is patched and `test/rig-drift.test.ts` guards it.
 
-Build in this order: contract layer (brief, format, audio, score, assets, pose);
-audio resolver with fixture audio; asset/rig/pose system and sheet generator;
-board generator; animatic builder; audit and critic pack; painter and look pass.
-Only then does the user's idea become a film. No film render before the core is
-fixed. No app, no asset library, no watercolor until the first film ships.
+The **contract layer is implemented**: film brief, audio resolver
+(recorded/TTS narration, library/generated music, generated SFX), asset manifest,
+pose library and the film score, with 146 tests. Build next: asset/rig/pose sheet
+generator; board generator; animatic builder; audit and critic pack; painter and
+look pass. Only then does the user's idea become a film. No film render before
+the core is fixed. No app, no asset library, no watercolor until the first film
+ships.
 
 Do not build: the renderer in this phase, a video, the web app, a second product
 style, or a conversion of the other 58 Lemo styles. `styles/paper-vows` remains

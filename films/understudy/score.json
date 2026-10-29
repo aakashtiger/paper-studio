@@ -60,69 +60,120 @@
   },
   "audio": {
     "mode": "narration",
-    "voice": "films/understudy/voice.wav",
-    "sfx": [
-      {
-        "id": "sfx-lamp",
-        "at": 0.2,
-        "kind": "lamp",
-        "note": "paper lamp buzz"
-      },
-      {
-        "id": "sfx-snap",
-        "at": 2.2,
-        "kind": "snap",
-        "note": "paper snap into iris"
-      },
-      {
-        "id": "sfx-build",
-        "at": 5.2,
-        "kind": "whoosh",
-        "note": "stage build"
-      },
-      {
-        "id": "sfx-slam",
-        "at": 8.8,
-        "kind": "slam",
-        "note": "sticker slam"
-      },
-      {
-        "id": "sfx-step",
-        "at": 10.6,
-        "kind": "step",
-        "note": "Mira's step"
-      },
-      {
-        "id": "sfx-swing",
-        "at": 13.6,
-        "kind": "swing",
-        "note": "cue lamp swings"
-      },
-      {
-        "id": "sfx-crowd",
-        "at": 15.8,
-        "kind": "crowd",
-        "note": "crowd rises"
-      },
-      {
-        "id": "sfx-cheer",
-        "at": 19.8,
-        "kind": "crowd",
-        "note": "crowd answers"
-      },
-      {
-        "id": "sfx-confetti",
-        "at": 24.6,
-        "kind": "confetti",
-        "note": "paper confetti"
-      },
-      {
-        "id": "sfx-iris",
-        "at": 27,
-        "kind": "iris",
-        "note": "cream iris"
-      }
-    ]
+    "narration": {
+      "source": "recorded",
+      "voice": "films/understudy/voice.wav",
+      "transcript": "films/understudy/transcript.json",
+      "srt": "films/understudy/captions.srt"
+    },
+    "sfx": {
+      "source": "generated",
+      "cues": [
+        {
+          "id": "sfx-lamp",
+          "at": 0.2,
+          "kind": "lamp",
+          "note": "paper lamp buzz",
+          "layers": [
+            "transient",
+            "body",
+            "tail"
+          ]
+        },
+        {
+          "id": "sfx-snap",
+          "at": 2.2,
+          "kind": "snap",
+          "note": "paper snap into iris",
+          "layers": [
+            "transient",
+            "body",
+            "tail"
+          ]
+        },
+        {
+          "id": "sfx-build",
+          "at": 5.2,
+          "kind": "whoosh",
+          "note": "stage build",
+          "layers": [
+            "body",
+            "tail"
+          ]
+        },
+        {
+          "id": "sfx-slam",
+          "at": 8.8,
+          "kind": "slam",
+          "note": "sticker slam",
+          "layers": [
+            "transient",
+            "body",
+            "tail"
+          ]
+        },
+        {
+          "id": "sfx-step",
+          "at": 10.6,
+          "kind": "step",
+          "note": "Mira's step",
+          "layers": [
+            "transient",
+            "body"
+          ]
+        },
+        {
+          "id": "sfx-swing",
+          "at": 13.6,
+          "kind": "swing",
+          "note": "cue lamp swings",
+          "layers": [
+            "body",
+            "tail"
+          ]
+        },
+        {
+          "id": "sfx-crowd",
+          "at": 15.8,
+          "kind": "crowd",
+          "note": "crowd rises",
+          "layers": [
+            "body",
+            "tail"
+          ]
+        },
+        {
+          "id": "sfx-cheer",
+          "at": 19.8,
+          "kind": "crowd",
+          "note": "crowd answers",
+          "layers": [
+            "body",
+            "tail"
+          ]
+        },
+        {
+          "id": "sfx-confetti",
+          "at": 24.6,
+          "kind": "confetti",
+          "note": "paper confetti",
+          "layers": [
+            "transient",
+            "body"
+          ]
+        },
+        {
+          "id": "sfx-iris",
+          "at": 27,
+          "kind": "iris",
+          "note": "cream iris",
+          "layers": [
+            "body",
+            "tail"
+          ]
+        }
+      ]
+    }
   },
   "captions": {
     "source": "films/understudy/captions.srt",
@@ -170,37 +221,82 @@
       "id": "character.lead",
       "version": "0.1.0",
       "hash": "sha256:90b6481788004b7d34aa3ce387e3b48f2ab9e21bf0b4917ee9f3d296fe30e946",
-      "source": "reused"
+      "source": "reused",
+      "type": "character",
+      "anchors": [
+        "face",
+        "hair",
+        "hand-left",
+        "hand-right",
+        "foot-left",
+        "foot-right"
+      ],
+      "path": "proofs/s2-paper/vendor/characters.js"
     },
     {
       "id": "character.second",
       "version": "0.1.0",
       "hash": "sha256:90b6481788004b7d34aa3ce387e3b48f2ab9e21bf0b4917ee9f3d296fe30e946",
-      "source": "reused"
+      "source": "reused",
+      "type": "character",
+      "anchors": [
+        "face",
+        "hair",
+        "hand-left",
+        "hand-right",
+        "foot-left",
+        "foot-right"
+      ],
+      "path": "proofs/s2-paper/vendor/characters.js"
     },
     {
       "id": "set.paper-card",
       "version": "0.1.0",
       "hash": "sha256:12541f59e207a2848ca7c019c5947410d7ec230571f3f231d1a49bb5d244fe7e",
-      "source": "reused"
+      "source": "reused",
+      "type": "set",
+      "anchors": [
+        "paper edge",
+        "cut edge",
+        "sheet centre"
+      ],
+      "path": "proofs/s2-paper/vendor/core.js"
     },
     {
       "id": "set.stage",
       "version": "0.1.0",
       "hash": "sha256:8049896f31ca3ddf04633ace959d32e40c01639ca621a750b901bac95f896957",
-      "source": "reused"
+      "source": "reused",
+      "type": "set",
+      "anchors": [
+        "stage floor",
+        "sunburst centre"
+      ],
+      "path": "proofs/s2-paper/vendor/props.js"
     },
     {
       "id": "prop.paper-sticker",
       "version": "0.1.0",
       "hash": "sha256:8049896f31ca3ddf04633ace959d32e40c01639ca621a750b901bac95f896957",
-      "source": "reused"
+      "source": "reused",
+      "type": "prop",
+      "anchors": [
+        "sticker centre",
+        "peel corner"
+      ],
+      "path": "proofs/s2-paper/vendor/props.js"
     },
     {
       "id": "type.paper",
       "version": "0.1.0",
       "hash": "sha256:e0d1638c46e3e3316187769625edb8a69642d96fb211a22b11034be545fba8b4",
-      "source": "reused"
+      "source": "reused",
+      "type": "type",
+      "anchors": [
+        "display",
+        "caption"
+      ],
+      "path": "proofs/s2-paper/vendor/type.js"
     }
   ],
   "shots": [
@@ -581,6 +677,19 @@
           }
         ]
       }
+    }
+  ],
+  "brief": "films/understudy/brief.json",
+  "cast": [
+    {
+      "character": "Nova Kim",
+      "poses": "films/understudy/cast/nova.poses.json",
+      "rig": "idol@0.1.0"
+    },
+    {
+      "character": "Mira",
+      "poses": "films/understudy/cast/mira.poses.json",
+      "rig": "mira@0.1.0"
     }
   ]
 }

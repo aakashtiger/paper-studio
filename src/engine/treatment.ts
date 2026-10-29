@@ -1,7 +1,17 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { z } from "zod";
 import { loadStyle, type Recipe } from "./plan.js";
+import {
+  AudioPlanSchema,
+  type AudioPlan,
+  resolveAudio,
+  type SfxCue,
+  SfxCueSchema,
+} from "./audio.js";
+import { AssetRefSchema, type AssetRef, resolveAssets } from "./assets.js";
+import { FilmBriefSchema, resolveBrief } from "./film-brief.js";
+import { PoseLibrarySchema, resolvePoseLibrary } from "./pose.js";
 
 /**
  * A treatment is the authored creative direction: which recipe each shot uses,
@@ -91,13 +101,6 @@ export const NarrationLineSchema = z.object({
   hold: z.number().nonnegative().optional(),
 });
 
-export const SoundCueSchema = z.object({
-  id: z.string().min(1),
-  at: z.number().nonnegative(),
-  kind: z.string().min(1),
-  note: z.string().optional(),
-});
-
 export const CaptionLineSchema = z.object({
   id: z.string().min(1),
   text: z.string().min(1),
@@ -116,7 +119,7 @@ export const ClockSchema = z.discriminatedUnion("mode", [
     mode: z.literal("narration"),
     lines: z.array(NarrationLineSchema).min(1),
   }),
-  z.object({ mode: z.literal("sfx"), cues: z.array(SoundCueSchema).min(1) }),
+  z.object({ mode: z.literal("sfx"), cues: z.array(SfxCueSchema).min(1) }),
   z.object({
     mode: z.literal("realtime"),
     start: z.number(),
@@ -147,32 +150,28 @@ export const DirectionSchema = z.object({
 
 export const FilmScoreSchema = TreatmentSchema.omit({ proof: true })
   .extend({
+    brief: z.string().min(1),
     edit: z.object({
       minShot: z.number().positive(),
       medianShot: z.number().positive(),
       maxShot: z.number().positive(),
     }),
     clock: ClockSchema,
-    audio: z.object({
-      mode: z.enum(["music", "narration", "sfx", "hybrid"]),
-      voice: z.string().optional(),
-      music: z.string().optional(),
-      sfx: z.array(SoundCueSchema).default([]),
-    }),
+    audio: AudioPlanSchema,
     captions: z.object({
       source: z.string().min(1),
       lines: z.array(CaptionLineSchema).min(1),
     }),
-    assets: z
+    assets: z.array(AssetRefSchema).min(1),
+    cast: z
       .array(
         z.object({
-          id: z.string().min(1),
-          version: z.string().min(1),
-          hash: z.string().regex(/^sha256:[a-f0-9]{64}$/),
-          source: z.enum(["new", "reused"]),
+          character: z.string().min(1),
+          poses: z.string().min(1),
+          rig: z.string().min(1).optional(),
         }),
       )
-      .min(1),
+      .default([]),
     shots: z
       .array(TreatmentShotSchema.extend({ direction: DirectionSchema }))
       .min(1),
@@ -184,16 +183,18 @@ export type FilmShot = z.infer<typeof FilmScoreSchema>["shots"][number];
 export type Clock = z.infer<typeof ClockSchema>;
 export type Direction = z.infer<typeof DirectionSchema>;
 export type NarrationLine = z.infer<typeof NarrationLineSchema>;
-export type SoundCue = z.infer<typeof SoundCueSchema>;
+export type SoundCue = SfxCue;
 export type CaptionLine = z.infer<typeof CaptionLineSchema>;
 
 export type ResolvedFilmShot = ResolvedShot & { direction: Direction };
 
 export type ResolvedFilm = Omit<ResolvedTreatment, "shots"> & {
+  brief: string;
   clock: Clock;
-  audio: FilmScore["audio"];
+  audio: AudioPlan;
   captions: FilmScore["captions"];
-  assets: FilmScore["assets"];
+  assets: AssetRef[];
+  cast: FilmScore["cast"];
   shots: ResolvedFilmShot[];
 };
 
@@ -302,6 +303,7 @@ export function resolveTreatment(
 export function resolveFilm(
   input: unknown,
   styleDir: string,
+  root: string = process.cwd(),
 ): { plan: ResolvedFilm; errors: TreatmentIssue[]; warnings: TreatmentIssue[] } {
   const film = FilmScoreSchema.parse(input);
   const capabilities = JSON.parse(
@@ -338,6 +340,76 @@ export function resolveFilm(
       message: `duration ${film.duration}s is not in ${capabilities.limits.durations.join(", ")}`,
     });
   }
+
+  const briefPath = resolve(root, film.brief);
+  if (!existsSync(briefPath)) {
+    errors.push({ code: "brief_missing", message: `brief "${film.brief}" does not exist` });
+  } else {
+    try {
+      const brief = FilmBriefSchema.parse(JSON.parse(readFileSync(briefPath, "utf8")));
+      const briefResult = resolveBrief(brief, styleDir);
+      errors.push(...briefResult.errors.map((issue) => ({ code: issue.code, message: issue.message })));
+      warnings.push(...briefResult.warnings.map((issue) => ({ code: issue.code, message: issue.message })));
+      for (const [field, expected, actual] of [
+        ["id", brief.id, film.id],
+        ["style", brief.style, film.style],
+        ["styleVersion", brief.styleVersion, film.styleVersion],
+        ["aspect", brief.aspect, film.aspect],
+        ["duration", brief.duration, film.duration],
+        ["fps", brief.fps, film.fps],
+        ["audioMode", brief.audioMode, film.audio.mode],
+      ] as const) {
+        if (expected !== actual) {
+          errors.push({
+            code: "brief_mismatch",
+            message: `brief ${field} "${expected}" does not match the score "${actual}"`,
+          });
+        }
+      }
+    } catch (error) {
+      errors.push({
+        code: "brief_invalid",
+        message: `brief could not be parsed: ${error instanceof Error ? error.message : "unknown"}`,
+      });
+    }
+  }
+
+  for (const entry of film.cast) {
+    const posePath = resolve(root, entry.poses);
+    if (!existsSync(posePath)) {
+      errors.push({ code: "cast_missing", message: `pose library "${entry.poses}" does not exist` });
+      continue;
+    }
+    try {
+      const library = PoseLibrarySchema.parse(JSON.parse(readFileSync(posePath, "utf8")));
+      if (library.character !== entry.character) {
+        errors.push({
+          code: "cast_character",
+          message: `pose library "${entry.poses}" is for "${library.character}", not "${entry.character}"`,
+        });
+      }
+      const poseResult = resolvePoseLibrary(library);
+      errors.push(...poseResult.errors.map((issue) => ({ code: issue.code, message: issue.message })));
+      warnings.push(...poseResult.warnings.map((issue) => ({ code: issue.code, message: issue.message })));
+    } catch (error) {
+      errors.push({
+        code: "cast_invalid",
+        message: `pose library "${entry.poses}" could not be parsed: ${error instanceof Error ? error.message : "unknown"}`,
+      });
+    }
+  }
+
+  const audioResult = resolveAudio(film.audio, {
+    duration: film.duration,
+    clockMode: film.clock.mode,
+    root,
+  });
+  errors.push(...audioResult.errors.map((issue) => ({ code: issue.code, message: issue.message })));
+  warnings.push(...audioResult.warnings.map((issue) => ({ code: issue.code, message: issue.message })));
+
+  const assetResult = resolveAssets(film.assets, { root });
+  errors.push(...assetResult.errors.map((issue) => ({ code: issue.code, message: issue.message })));
+  warnings.push(...assetResult.warnings.map((issue) => ({ code: issue.code, message: issue.message })));
 
   let start = 0;
   const shots: ResolvedFilmShot[] = film.shots.map((shot, index) => {
@@ -397,8 +469,6 @@ export function resolveFilm(
 
   checkClock(film, errors);
   checkCaptions(film, capabilities, errors);
-  checkAudio(film, errors);
-  checkAssets(film, errors);
 
   const plan: ResolvedFilm = {
     projectId: film.id,
@@ -411,10 +481,12 @@ export function resolveFilm(
     frames: Math.round(film.duration * film.fps),
     shots,
     warnings: warnings.map((issue) => issue.message),
+    brief: film.brief,
     clock: film.clock,
     audio: film.audio,
     captions: film.captions,
     assets: film.assets,
+    cast: film.cast,
   };
 
   return { plan, errors, warnings };
@@ -554,48 +626,6 @@ function checkCaptions(
         });
       }
     }
-  }
-}
-
-function checkAudio(film: FilmScore, errors: TreatmentIssue[]) {
-  if (film.audio.mode !== "sfx" && !film.audio.voice && film.audio.mode !== "music") {
-    errors.push({
-      code: "audio_voice_missing",
-      message: `${film.audio.mode} film has no voice file`,
-    });
-  }
-  if (film.audio.mode === "music" && !film.audio.music) {
-    errors.push({
-      code: "audio_music_missing",
-      message: "music film has no music file",
-    });
-  }
-  if (film.audio.mode === "sfx" && film.audio.sfx.length === 0) {
-    errors.push({
-      code: "audio_sfx_missing",
-      message: "sfx film has no sound cues",
-    });
-  }
-  for (const cue of film.audio.sfx) {
-    if (cue.at >= film.duration) {
-      errors.push({
-        code: "sfx_outside_film",
-        message: `sfx "${cue.id}" at ${cue.at}s is outside the film`,
-      });
-    }
-  }
-}
-
-function checkAssets(film: FilmScore, errors: TreatmentIssue[]) {
-  const ids = new Set<string>();
-  for (const asset of film.assets) {
-    if (ids.has(asset.id)) {
-      errors.push({
-        code: "asset_duplicate",
-        message: `asset "${asset.id}" is listed twice`,
-      });
-    }
-    ids.add(asset.id);
   }
 }
 

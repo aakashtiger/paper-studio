@@ -81,9 +81,9 @@ test("a caption that does not match its narration is an error", () => {
   assert.ok(errors.some((issue) => issue.code === "caption_text"));
 });
 
-test("a narration film without a voice file is an error", () => {
+test("a recorded narration film without a voice file is an error", () => {
   const score = clone();
-  delete score.audio.voice;
+  if (score.audio.narration) delete score.audio.narration.voice;
   const { errors } = resolveFilm(score, styleDir);
   assert.ok(errors.some((issue) => issue.code === "audio_voice_missing"));
 });
