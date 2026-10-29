@@ -1,14 +1,21 @@
 # Production plan — one 9/10 film, repeatable
 
-**Status:** v1.3, generic system pass, 2026-10-29
+**Status:** v1.4, core-before-render, 2026-10-29
 **Goal:** one 30 s paper film at a 9/10 bar, then repeat without broken frames or
 timing drift.
 
-**v1.3 makes the system generic.** The board is a **derived view** of the score,
-not a fixed frame count. Audio has a source resolver: narration is recorded or
-TTS; music is chosen from a library or generated; SFX are generated in code. The
-audio resolves **before** shot timing. The pilot is one instance of the system,
-not the system itself.
+**v1.4 is a scope correction.** Do not render a film until the core is fixed.
+*The Understudy* is a **fixture** for contract tests, not the first real film. The
+first real film is the user's idea. The build order is contracts → generators →
+assets/rigs/poses → audit/critics → painter → the user's film. No shot is
+pre-empted.
+
+**v1.3 made the system generic; v1.4 makes it core-first.** The board is a
+**derived view** of the score, not a fixed frame count. Audio has a source
+resolver: narration is recorded or TTS; music is chosen from a library or
+generated; SFX are generated in code. The audio resolves **before** shot timing.
+The fixture is one instance, not the system; no film renders until the core
+contracts, generators, assets, rigs and audit are in place.
 
 This plan amends decision 0012. Where 0012 and this file disagree, this file wins
 and 0012 is updated in the same commit.
@@ -29,8 +36,9 @@ A failed gate sends the film back one step.
 
 ## Principles
 
-1. **Film first, system second.** Build only what the pilot needs. Extract the
-   library and the second style after the pilot ships.
+1. **Core first, film second.** Build the generic contracts, generators, assets,
+   rigs and audit before the first real film. Use the fixture to test them.
+   Extract the library and the second style after the first film ships.
 2. **Direction is prose plus a board.** The score's shot rows carry the
    direction; the board is generated from the score: one frame per shot plus any
    key beat the director marks. The count is derived, never fixed. The board is
@@ -61,6 +69,49 @@ The director has the final call; no agent overrides taste.
 | Sound designer / mixer | SFX design, layers, space, mix | bad or missing sound |
 | QA / UAT | every gate, audit, evidence, claims | any failed check |
 
+## What is code, what is an artifact, what is process
+
+| Thing | Where it lives | Is it code? |
+|---|---|---|
+| Idea / brief | `films/<id>/brief.md` | No — input |
+| Script / lyrics | `films/<id>/script.md` | No — input |
+| Style | `styles/<style>/` | Code + data |
+| Format | `formats/<format>/format.json` | Data |
+| Audio sources | `films/<id>/audio/` | Files; the resolver is code |
+| Score | `films/<id>/score.json` | Data, validated by code |
+| Board | `build/<id>/board/` | Generated artifacts |
+| Animatic | `build/<id>/animatic.mp4` | Generated artifact |
+| Cast / set / prop sheets | `build/<id>/sheets/` | Generated artifacts |
+| Rig / pose data | `src/engine/backends/<style>/` + `films/<id>/cast/` | Code + data |
+| Renderer / painter | `src/engine/` + `styles/<style>/backend.js` | Code |
+| Audit | `src/engine/audit/` | Code |
+| Critics | `critics/<role>.md` + `docs/GATES.md` | Process, not runtime |
+| Gates | `build/<id>/gates/` | Output + process |
+| Library | `library/` + registry | Data + code |
+
+The idea, script, creative direction, approvals and critic judgment are **not**
+code. The system accepts them and checks them; it does not invent them.
+
+## Core before render
+
+No film is rendered until these are in place:
+
+1. **Contract layer.** Brief, format, style, audio, score, assets and pose
+   schemas; validators; tests. One source of truth.
+2. **Audio resolver.** Narration (recorded/TTS), music (library/generated), SFX
+   (generated); fixture audio now; no final voice or music needed.
+3. **Asset, rig and pose system.** Per-film manifest; character/set/prop sheet
+   generator; named poses and expressions; rig geometry shared by source and
+   backend.
+4. **Board generator.** One frame per shot plus marked beats, derived from the
+   score; contact sheet; no fixed count.
+5. **Animatic builder.** Board + audio + camera moves; no final render.
+6. **Audit and critic pack.** Cue, ASR, read, motion, frame, trace, determinism;
+   seven role files and gate checklists.
+7. **Painter and backend.** Score-driven renderer; the proof stays the look
+   reference.
+8. **The user's film.** Only now: the idea becomes a brief, a score and a film.
+
 ## The process
 
 ### Step 0 — Brief
@@ -76,13 +127,13 @@ audio mode, references, must-say points.
 - `voice.wav` — recorded scratch or local TTS, pinned by hash;
 - `transcript.json` with word timings;
 - `captions.srt` generated from the transcript;
-- the clock: narration phrase marks (pilot), BPM if music is chosen, or SFX hits;
+- the clock: narration phrase marks (fixture), BPM if music is chosen, or SFX hits;
 - the SFX cue list.
 
 **Gate 1 (binary):** voice file present and hashed; transcript covers every word;
 SRT lines match the script; total voice 28.5–29.5 s inside a 30 s film; every cue
 holds at least `max(1.8 s, speech + 0.6 s)`; peak below −1 dBFS. No music in the
-pilot.
+fixture.
 
 ### Step 2 — Direction, look, score
 
@@ -305,12 +356,12 @@ unlicensed track.
 
 **SFX:** generated in code from the cue list. No sample library.
 
-**Pilot:** narration only, scratch voice now; final recorded or TTS later. No
+**Fixture:** narration only, scratch voice now; final recorded or TTS later. No
 music. The schema and order already support the other modes.
 
-## Generic system vs the pilot
+## Generic system vs the fixture
 
-| Layer | Generic contract | Pilot instance |
+| Layer | Generic contract | Fixture instance |
 |---|---|---|
 | Brief | topic, audience, format, style, audio mode, references, rights | *The Understudy*, 30 s, 16:9 |
 | Format | aspect, duration, fps, safe zones, delivery | 16:9, 30 s, 30 fps, MP4 + SRT |
@@ -332,8 +383,8 @@ These are real gaps, listed so they are not mistaken for done:
 | Gap | Why it matters | When |
 |---|---|---|
 | **Music library + licensing** | pick or generate a track; no unlicensed music | before the first music film |
-| **Voice pipeline** | recorded vs TTS, transcript, ASR; final voice quality | before the final pilot voice |
-| **Format contract 9:16 / 1:1** | re-stage, safe zones, delivery | after the 16:9 pilot |
+| **Voice pipeline** | recorded vs TTS, transcript, ASR; final voice quality | before the first film's final voice |
+| **Format contract 9:16 / 1:1** | re-stage, safe zones, delivery | after the first 16:9 film |
 | **Asset library + provenance** | reuse at scale, versions, rights | after three films |
 | **Rights and licences** | fonts, music, voice, references; sellable output | before delivery |
 | **Versioning / change control** | style or asset changes must not silently alter a film | now, via hashes |
@@ -342,7 +393,12 @@ These are real gaps, listed so they are not mistaken for done:
 | **Fallbacks** | missing voice, missing music, unsupported clock | now, as resolver errors |
 | **Library curation** | which assets are good enough to promote | after three films |
 
-## The pilot
+## The fixture (*The Understudy*)
+
+**This is not the test video.** The user will provide the idea. *The Understudy*
+exists only to exercise the contracts, the board generator, the animatic, the
+audit and the rig tests. It must never become a hardcoded shot list in the
+engine.
 
 ***The Understudy* — 30 s, 16:9, 30 fps, narration + SFX, no music**
 
@@ -392,7 +448,7 @@ All recipes are inside their limits (stage_wide min 3.4). No `proof: true`.
 | Piece | What it does | Slice |
 |---|---|---|
 | `film` score + validator | extend `treatment.ts`; one CLI; no `proof: true` | 0 |
-| pilot `score.json` | 9 legal shots, narration/SFX, captions, assets | 0 |
+| fixture `score.json` | 9 legal shots, narration/SFX, captions, assets | 0 |
 | backend registry | `styles/paper-kpop/backend.js` maps recipe ids to draw functions | 1 |
 | painter | `renderShot(shot, t)`; engine has no shot ids | 1 |
 | rig port | `src/characters.js` uses the same `limbEnd`; drift test | 1 |
@@ -407,26 +463,25 @@ All recipes are inside their limits (stage_wide min 3.4). No `proof: true`.
 
 ## Build order
 
-1. **Brief, script, voice, SRT, score.** Extend `treatment.ts` with
-   `FilmScoreSchema`; write the nine-shot score; record the six lines;
-   transcript; SRT; validator passes.
-2. **Rig, backend registry, painter, audit skeleton.** Port the rig fix; add the
-   paper registry; render shots 1–4 as a **0–10.6 s window** (not 12.5 s); run
-   the audit from the first render.
-3. **Look pass and board.** Rebuild the stage; poster; generate the derived
-   board and contact sheet; five hero frames at 1920 and the 390 legibility
-   check; pass Gate 2.
-4. **Asset sheets (Gate 4).** Character and prop sheets for the pilot; rig test;
-   approve before animation.
-5. **Animatic, full 30 s.** Board pass, then stepped rough for all nine shots;
-   pass Gate 3.
-6. **Pose layer and full pilot.** Animate all nine shots; contact sheets every
-   0.5 s; pass Gate 5.
-7. **SFX and mix.** Synthesise the 10 cues with `scripts/sfx.ts`; mix voice + SFX
-   to −14 LUFS; pass Gate 6.
-8. **Audit, critics, delivery.** ASR, readcheck, motioncheck, cuecheck, frame
-   hashes, seven critics; pass Gate 7.
-9. **Only then:** watercolor backend, asset library, second film.
+**Core first. No film render until steps 1–6 are in place.**
+
+1. **Contract layer.** Brief, format, style, audio, score, asset and pose schemas;
+   resolvers; tests. The existing treatment/film schema is the base.
+2. **Audio resolver.** Narration (recorded/TTS), music (library/generated), SFX
+   (generated); fixture audio only; no final voice or music needed.
+3. **Asset, rig and pose system.** Per-film manifest; character/set/prop sheet
+   generator; named poses and expressions; shared rig geometry; the source and
+   proof vendor drift test.
+4. **Board generator.** One frame per shot plus marked beats, derived from the
+   score; contact sheet; no fixed count.
+5. **Animatic builder.** Board + audio + camera moves; no final render.
+6. **Audit and critic pack.** Cue, ASR, read, motion, frame, trace, determinism;
+   seven role files and gate checklists.
+7. **Painter and look pass.** Score-driven backend; stage rebuild, poster and
+   hero frames on the fixture; the proof still renders.
+8. **The user's film.** The idea becomes a brief, a score, a board, an animatic,
+   assets, animation, SFX, mix and audit. Only now do we render a film.
+9. **Only after that:** watercolor backend, asset library, second film.
 
 ## What not to build
 
@@ -440,11 +495,12 @@ All recipes are inside their limits (stage_wide min 3.4). No `proof: true`.
 - Per-shot native moves; one signature (slam) and one transition (iris).
 - 24–36-frame idles; a 0.4 s blanket that forces twitch.
 - 390 px approval sets; one legibility check is enough.
-- Crowd tiers and speaker faces in the pilot look pass.
+- Crowd tiers and speaker faces in the fixture look pass.
 
-## Definition of done
+## Definition of done for the first real film
 
-- 30.000 s, 900 frames, 16:9, 30 fps.
+- 30.000 s, 900 frames, 16:9, 30 fps (the fixture's format; the user's film
+  chooses its own).
 - 9 shots, median 3.0 s, all recipes legal.
 - 6 narration lines, 6 SRT cues, read-time holds met.
 - The board covers every shot and marked beat; five hero frames approved at 1920

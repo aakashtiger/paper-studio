@@ -80,12 +80,14 @@ style pack and validates it. `proofs/s2-paper/plan.json` is the first treatment;
 `npm run treatment -- proofs/s2-paper/plan.json` validates it. The renderer does
 not consume it yet. This is the input contract for the plan-driven S2 gate.
 
-**Production plan (accepted):** `docs/PRODUCTION-PLAN.md` v1.3 — film-first,
-one score, audio resolver (narration/music/SFX), derived board, code-generated
-SFX, binary gates, seven critics. The pilot is *The Understudy*, 30 s / 9 shots / narration + SFX.
+**Production plan (accepted):** `docs/PRODUCTION-PLAN.md` v1.4 — core first,
+then the film. One score, audio resolver (narration/music/SFX), derived board,
+code-generated SFX, binary gates, seven critics. *The Understudy* is a fixture
+for contract tests, not the first film; the user will provide the idea.
 `films/understudy/score.json` validates, and the voice, transcript and SRT
-exist. Next is the painter and the 0–10.6 s technical slice with `film-audit`;
-then the look pass and board, animatic and full pilot.
+exist. Next is the core system: contracts, audio resolver, asset/rig/pose
+system, board generator, animatic builder, audit and critic pack; the painter
+comes after that. No film render before the core is fixed.
 
 **Reference research (done):** all 59 Lemo-Opuscar styles were read in detail —
 `docs/research/lemo-59-survey.md`. The result is the scored-film model in

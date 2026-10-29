@@ -1,12 +1,13 @@
 # Paper Studio — status audit
 
 **Date:** 2026-10-29
-**Update:** `docs/PRODUCTION-PLAN.md` v1.3 is accepted; the scored pilot
-*The Understudy* now has a validating `score.json`, a 29.5 s scratch voice, a
-transcript and an SRT. The plan is generic: the board is derived from the score,
-audio resolves from narration/music/SFX sources before shot timing, and SFX are
-generated in code. The renderer still does not read the score. The next slice is
-the painter + 0–10.6 s technical render + audit.
+**Update:** `docs/PRODUCTION-PLAN.md` v1.4 is accepted. The plan is generic and
+core-first: contracts, audio resolver, asset/rig/pose system, board generator,
+animatic builder, audit and critic pack come before any film render. *The
+Understudy* is a fixture for tests, not the first film; the user will provide the
+idea. It has a validating `score.json`, a 29.5 s scratch voice, a transcript and
+an SRT. The renderer still does not read the score. The next work is the core
+system, not a render.
 
 **Purpose:** an honest inventory of what exists, what is weak, and what is
 missing, with a deliberately small build plan. No new architecture unless it
