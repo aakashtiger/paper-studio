@@ -9,10 +9,10 @@ warning.
 | G0 brief | `brief.json` | `npm run film -- <score>` | fields complete; style, aspect, duration, fps and audio mode match the score | architect, editor | ready |
 | G1 audio | voice, `transcript.json`, `captions.srt`, cue list | `npm run captions -- <score>` | files exist and hash; transcript covers the script; SRT cues match; read-time holds | editor, sound, QA | ready |
 | G2 direction + look | score, `build/<id>/board/`, hero frames | `npm run board -- <score>` | all shots inside the envelope; median in band; board covers every shot and marked beat; look table complete | designer, editor | ready |
-| G3 animatic | board pass + stepped rough | pending builder | every cue on frame; no camera-only shot; no undeclared hold >0.4 s; ≥2 breakdowns per transition | motion, editor, QA | **pending** |
+| G3 animatic | board pass + stepped rough | `npm run animatic -- <score>` | board pass signed 9/10; stepped rough requires the painter; every cue on frame; no camera-only shot; no undeclared hold >0.4 s; ≥2 breakdowns per transition | motion, editor, QA | **board pass signed; rough pending** |
 | G4 assets | `build/<id>/sheets/*.png` | `npm run sheet -- <score>` | seam gap 0; feet planted; contact shadow; 8 poses + 4 expressions; joint map; hand/foot/coat panels | designer, developer, QA | ready |
 | G5 shots | animated shots, contact sheets | pending painter | entry/exit match; ≥3 events; no floating part; motion floor met | motion, editor | **pending** |
-| G6 mix | master + SFX | pending `scripts/sfx.ts` | layers, space, ducking, −14 LUFS ±1, true peak ≤ −1 dBTP | sound, editor, QA | **pending** |
+| G6 mix | master + SFX | `npm run sfx -- <score>` | 13 cues generated; board mix −15.0 LUFS / −1.6 dBTP; final master still needs ducking and stepped-rough sound | sound, editor, QA | **SFX ready; master pending** |
 | G7 final | MP4 + SRT + score + stills + audit | `npm run audit -- <score>` | score-level checks pass; frame checks pending the painter; seven critics sign | all seven + director | **partial** |
 
 ## Current audit

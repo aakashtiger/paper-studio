@@ -19,15 +19,15 @@ crowd never knows.
 
 | # | Time | Recipe | What happens |
 |---|---|---|---|
-| 1 | 0.0–2.2 | paper_open | Cream card; THE UNDERSTUDY; the cue lamp answers. |
-| 2 | 2.2–5.2 | portrait_iris | Nova alone at the cue, hand on the lamp. |
-| 3 | 5.2–8.8 | stage_wide | Floor, sun and crowd build. |
-| 4 | 8.8–10.6 | sticker_slam | NO NOVA slams over the empty mark. |
-| 5 | 10.6–13.6 | portrait_iris | Mira steps into the light. |
-| 6 | 13.6–15.8 | macro_prop_beat | The cue lamp swings; Nova's hand almost reaches it. |
-| 7 | 15.8–19.8 | stage_wide | Mira points; the crowd answers. |
-| 8 | 19.8–24.6 | stage_wide | Nova joins late; two silhouettes. |
-| 9 | 24.6–30.0 | pullback_close | Bow; the cream iris closes on the lamp. |
+| 1 | 0.0-2.2 | paper_open | Cream card; THE UNDERSTUDY; the cue lamp answers. |
+| 2 | 2.2-5.5 | portrait_iris | Nova alone at the cue, hand on the lamp. |
+| 3 | 5.5-8.9 | stage_wide | Floor, sun and crowd build. |
+| 4 | 8.9-10.5 | sticker_slam | NO NOVA slams over the empty mark. |
+| 5 | 10.5-13.3 | portrait_iris | Mira steps into the light. |
+| 6 | 13.3-15.4 | macro_prop_beat | The cue lamp swings; Nova's hand almost reaches it. |
+| 7 | 15.4-19.5 | stage_wide | Mira points; the crowd answers. |
+| 8 | 19.5-24.6 | stage_wide | Nova joins late; two silhouettes. |
+| 9 | 24.6-30.0 | pullback_close | Bow; the cream iris closes on the lamp. |
 
 ## Direction notes
 

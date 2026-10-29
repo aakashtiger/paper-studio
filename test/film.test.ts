@@ -22,7 +22,7 @@ test("the pilot score resolves to 30 s, 900 frames, nine legal shots", () => {
   assert.equal(plan.shots.length, 9);
   assert.deepEqual(
     plan.shots.map((shot) => shot.duration),
-    [2.2, 3, 3.6, 1.8, 3, 2.2, 4, 4.8, 5.4],
+    [2.2, 3.3, 3.4, 1.6, 2.8, 2.1, 4.1, 5.1, 5.4],
   );
   assert.equal(plan.shots[8]?.start, 24.6);
   assert.equal(plan.shots[0]?.direction.events.length, 3);
@@ -33,7 +33,7 @@ test("the shot direction survives resolution", () => {
   const shot = plan.shots[7];
   assert.ok(shot);
   assert.equal(shot.direction.spine.length > 0, true);
-  assert.equal(shot.direction.events.length, 4);
+  assert.equal(shot.direction.events.length, 5);
 });
 
 test("a film cannot declare the old proof override", () => {

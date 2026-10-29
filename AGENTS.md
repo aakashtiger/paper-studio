@@ -56,6 +56,8 @@ npm run captions -- films/understudy/score.json  # generate transcript + SRT
 npm run board -- films/understudy/score.json     # derive board + contact sheet
 npm run audit -- films/understudy/score.json     # score-level audit
 npm run sheet -- films/understudy/score.json     # character/pose sheet PNG
+npm run sfx -- films/understudy/score.json       # code-generated SFX + mix
+npm run animatic -- films/understudy/score.json  # board animatic + voice/SFX/SRT
 npm run typecheck      # TypeScript check
 npm test               # unit and mutation tests
 ```
@@ -125,13 +127,16 @@ timing. The source rig is patched and `test/rig-drift.test.ts` guards it.
 The **contract layer and the first generators are implemented**: film brief,
 audio resolver (recorded/TTS narration, library/generated music, generated SFX),
 asset manifest, pose library, film score, derived **board**, score-level
-**audit** and the **character/pose sheet** generator. **158 tests.** The sheet
-has a signed **9/10 design** review. The paper rig now has two-bone leg IK,
-ankle targets, foot pitch and a hip-based bounce; the pose set is still
-**7/10 motion** pending a better weight shift. The seven critics and the gate
-checklist are in `critics/` and `docs/GATES.md`. Build next: animatic builder;
-painter and look pass; SFX/mix. Only then does the user's idea become a film.
-No film render before the core is fixed. No app, no asset library, no watercolor
+**audit**, the **character/pose sheet** generator and the **board animatic**
+builder. **158 tests.** The sheet has a signed **9/10 design** review. The paper
+rig has two-bone leg IK, ankle targets, foot pitch and a hip-based bounce; the
+pose set is still **7/10 motion** pending a better weight shift. The board
+animatic is **9/10 signed** (editor + QA) with voice, captions and 13 generated
+SFX cues; it is a board pass, not a stepped rough. The seven critics and gate
+checklist are in `critics/` and `docs/GATES.md`. Carry-forward: the board mix is -15.0 LUFS /
+-1.6 dBTP; the stepped rough and final master are still pending. Build next:
+stepped rough and painter; look pass. Only then does the user's idea become a film. No
+film render before the core is fixed. No app, no asset library, no watercolor
 until the first film ships.
 
 Do not build: the renderer in this phase, a video, the web app, a second product

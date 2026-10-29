@@ -6,193 +6,193 @@
     {
       "id": "v01",
       "text": "Every night, the cue lamp calls one name.",
-      "start": 0.4,
-      "duration": 3.6,
+      "start": 0.5,
+      "duration": 2.6,
       "words": [
         {
           "w": "Every",
-          "start": 0.4,
-          "end": 0.914
+          "start": 0.5,
+          "end": 0.871
         },
         {
           "w": "night,",
-          "start": 0.914,
-          "end": 1.514
+          "start": 0.871,
+          "end": 1.305
         },
         {
           "w": "the",
-          "start": 1.514,
-          "end": 1.857
+          "start": 1.305,
+          "end": 1.552
         },
         {
           "w": "cue",
-          "start": 1.857,
-          "end": 2.2
+          "start": 1.552,
+          "end": 1.8
         },
         {
           "w": "lamp",
-          "start": 2.2,
-          "end": 2.629
+          "start": 1.8,
+          "end": 2.11
         },
         {
           "w": "calls",
-          "start": 2.629,
-          "end": 3.143
+          "start": 2.11,
+          "end": 2.481
         },
         {
           "w": "one",
-          "start": 3.143,
-          "end": 3.486
+          "start": 2.481,
+          "end": 2.729
         },
         {
           "w": "name.",
-          "start": 3.486,
-          "end": 4
+          "start": 2.729,
+          "end": 3.1
         }
       ]
     },
     {
       "id": "v02",
       "text": "Tonight, it called Nova.",
-      "start": 5,
-      "duration": 2.7,
+      "start": 5.1,
+      "duration": 1.733333,
       "words": [
         {
           "w": "Tonight,",
-          "start": 5,
-          "end": 5.972
+          "start": 5.1,
+          "end": 5.724
         },
         {
           "w": "it",
-          "start": 5.972,
-          "end": 6.296
+          "start": 5.724,
+          "end": 5.932
         },
         {
           "w": "called",
-          "start": 6.296,
-          "end": 7.052
+          "start": 5.932,
+          "end": 6.417
         },
         {
           "w": "Nova.",
-          "start": 7.052,
-          "end": 7.7
+          "start": 6.417,
+          "end": 6.833
         }
       ]
     },
     {
       "id": "v03",
       "text": "But the wings were empty.",
-      "start": 8.7,
-      "duration": 2.2,
+      "start": 8.9,
+      "duration": 1.1,
       "words": [
         {
           "w": "But",
-          "start": 8.7,
-          "end": 9.038
+          "start": 8.9,
+          "end": 9.069
         },
         {
           "w": "the",
-          "start": 9.038,
-          "end": 9.377
+          "start": 9.069,
+          "end": 9.238
         },
         {
           "w": "wings",
-          "start": 9.377,
-          "end": 9.885
+          "start": 9.238,
+          "end": 9.492
         },
         {
           "w": "were",
-          "start": 9.885,
-          "end": 10.308
+          "start": 9.492,
+          "end": 9.704
         },
         {
           "w": "empty.",
-          "start": 10.308,
-          "end": 10.9
+          "start": 9.704,
+          "end": 10
         }
       ]
     },
     {
       "id": "v04",
       "text": "The understudy knew the light.",
-      "start": 11.9,
-      "duration": 2.3,
+      "start": 12,
+      "duration": 1.3,
       "words": [
         {
           "w": "The",
-          "start": 11.9,
-          "end": 12.197
+          "start": 12,
+          "end": 12.168
         },
         {
           "w": "understudy",
-          "start": 12.197,
-          "end": 13.013
+          "start": 12.168,
+          "end": 12.629
         },
         {
           "w": "knew",
-          "start": 13.013,
-          "end": 13.384
+          "start": 12.629,
+          "end": 12.839
         },
         {
           "w": "the",
-          "start": 13.384,
-          "end": 13.681
+          "start": 12.839,
+          "end": 13.006
         },
         {
           "w": "light.",
-          "start": 13.681,
-          "end": 14.2
+          "start": 13.006,
+          "end": 13.3
         }
       ]
     },
     {
       "id": "v05",
       "text": "Mira walked on.",
-      "start": 15.3,
-      "duration": 2,
+      "start": 15.4,
+      "duration": 1,
       "words": [
         {
           "w": "Mira",
-          "start": 15.3,
-          "end": 15.925
+          "start": 15.4,
+          "end": 15.713
         },
         {
           "w": "walked",
-          "start": 15.925,
-          "end": 16.8
+          "start": 15.713,
+          "end": 16.15
         },
         {
           "w": "on.",
-          "start": 16.8,
-          "end": 17.3
+          "start": 16.15,
+          "end": 16.4
         }
       ]
     },
     {
       "id": "v06",
       "text": "The crowd never knew.",
-      "start": 18.4,
-      "duration": 1.9,
+      "start": 18.5,
+      "duration": 1,
       "words": [
         {
           "w": "The",
-          "start": 18.4,
-          "end": 18.745
+          "start": 18.5,
+          "end": 18.682
         },
         {
           "w": "crowd",
-          "start": 18.745,
-          "end": 19.264
+          "start": 18.682,
+          "end": 18.955
         },
         {
           "w": "never",
-          "start": 19.264,
-          "end": 19.782
+          "start": 18.955,
+          "end": 19.227
         },
         {
           "w": "knew.",
-          "start": 19.782,
-          "end": 20.3
+          "start": 19.227,
+          "end": 19.5
         }
       ]
     }

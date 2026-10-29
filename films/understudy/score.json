@@ -17,44 +17,44 @@
       {
         "id": "v01",
         "text": "Every night, the cue lamp calls one name.",
-        "start": 0.4,
-        "duration": 3.6,
-        "hold": 0.8
+        "start": 0.5,
+        "duration": 2.6,
+        "hold": 0.9
       },
       {
         "id": "v02",
         "text": "Tonight, it called Nova.",
-        "start": 5,
-        "duration": 2.7,
-        "hold": 0.8
+        "start": 5.1,
+        "duration": 1.733333,
+        "hold": 0.867
       },
       {
         "id": "v03",
         "text": "But the wings were empty.",
-        "start": 8.7,
-        "duration": 2.2,
-        "hold": 0.6
+        "start": 8.9,
+        "duration": 1.1,
+        "hold": 0.9
       },
       {
         "id": "v04",
         "text": "The understudy knew the light.",
-        "start": 11.9,
-        "duration": 2.3,
-        "hold": 0.6
+        "start": 12,
+        "duration": 1.3,
+        "hold": 0.9
       },
       {
         "id": "v05",
         "text": "Mira walked on.",
-        "start": 15.3,
-        "duration": 2,
-        "hold": 0.6
+        "start": 15.4,
+        "duration": 1,
+        "hold": 0.9
       },
       {
         "id": "v06",
         "text": "The crowd never knew.",
-        "start": 18.4,
-        "duration": 1.9,
-        "hold": 0.7
+        "start": 18.5,
+        "duration": 1,
+        "hold": 0.9
       }
     ]
   },
@@ -93,7 +93,7 @@
         },
         {
           "id": "sfx-build",
-          "at": 5.2,
+          "at": 5.5,
           "kind": "whoosh",
           "note": "stage build",
           "layers": [
@@ -103,7 +103,7 @@
         },
         {
           "id": "sfx-slam",
-          "at": 8.8,
+          "at": 8.9,
           "kind": "slam",
           "note": "sticker slam",
           "layers": [
@@ -114,7 +114,7 @@
         },
         {
           "id": "sfx-step",
-          "at": 10.6,
+          "at": 10.5,
           "kind": "step",
           "note": "Mira's step",
           "layers": [
@@ -124,7 +124,7 @@
         },
         {
           "id": "sfx-swing",
-          "at": 13.6,
+          "at": 13.3,
           "kind": "swing",
           "note": "cue lamp swings",
           "layers": [
@@ -134,7 +134,7 @@
         },
         {
           "id": "sfx-crowd",
-          "at": 15.8,
+          "at": 15.4,
           "kind": "crowd",
           "note": "crowd rises",
           "layers": [
@@ -144,7 +144,7 @@
         },
         {
           "id": "sfx-cheer",
-          "at": 19.8,
+          "at": 19.5,
           "kind": "crowd",
           "note": "crowd answers",
           "layers": [
@@ -171,6 +171,42 @@
             "body",
             "tail"
           ]
+        },
+        {
+          "id": "sfx-room",
+          "at": 0,
+          "kind": "room",
+          "note": "low paper room tone",
+          "duration": 30,
+          "gain": 0.1,
+          "layers": [
+            "body",
+            "tail"
+          ]
+        },
+        {
+          "id": "sfx-crowd2",
+          "at": 20.5,
+          "kind": "crowd",
+          "note": "crowd settles",
+          "duration": 1.8,
+          "gain": 0.5,
+          "layers": [
+            "body",
+            "tail"
+          ]
+        },
+        {
+          "id": "sfx-paper",
+          "at": 28.5,
+          "kind": "whoosh",
+          "note": "paper settle",
+          "duration": 0.8,
+          "gain": 0.4,
+          "layers": [
+            "body",
+            "tail"
+          ]
         }
       ]
     }
@@ -181,38 +217,38 @@
       {
         "id": "v01",
         "text": "Every night, the cue lamp calls one name.",
-        "start": 0.4,
-        "end": 4.8
+        "start": 0.5,
+        "end": 4
       },
       {
         "id": "v02",
         "text": "Tonight, it called Nova.",
-        "start": 5,
-        "end": 8.5
+        "start": 5.1,
+        "end": 7.7
       },
       {
         "id": "v03",
         "text": "But the wings were empty.",
-        "start": 8.7,
-        "end": 11.5
+        "start": 8.9,
+        "end": 10.9
       },
       {
         "id": "v04",
         "text": "The understudy knew the light.",
-        "start": 11.9,
-        "end": 14.8
+        "start": 12,
+        "end": 14.2
       },
       {
         "id": "v05",
         "text": "Mira walked on.",
-        "start": 15.3,
-        "end": 17.9
+        "start": 15.4,
+        "end": 17.3
       },
       {
         "id": "v06",
         "text": "The crowd never knew.",
-        "start": 18.4,
-        "end": 21
+        "start": 18.5,
+        "end": 20.4
       }
     ]
   },
@@ -342,7 +378,7 @@
     },
     {
       "recipe": "portrait_iris",
-      "duration": 3,
+      "duration": 3.3,
       "slots": {
         "content.names": "NOVA KIM",
         "content.caption": "THE STAR"
@@ -382,7 +418,7 @@
     },
     {
       "recipe": "stage_wide",
-      "duration": 3.6,
+      "duration": 3.4,
       "slots": {
         "content.body": "ONE NIGHT",
         "content.caption": "THE LAST CUE"
@@ -427,7 +463,7 @@
     },
     {
       "recipe": "sticker_slam",
-      "duration": 1.8,
+      "duration": 1.6,
       "slots": {
         "content.body": "NO NOVA"
       },
@@ -466,7 +502,7 @@
     },
     {
       "recipe": "portrait_iris",
-      "duration": 3,
+      "duration": 2.8,
       "slots": {
         "content.names": "MIRA",
         "content.caption": "THE UNDERSTUDY"
@@ -506,7 +542,7 @@
     },
     {
       "recipe": "macro_prop_beat",
-      "duration": 2.2,
+      "duration": 2.1,
       "slots": {
         "content.caption": "THE CUE LAMP"
       },
@@ -545,7 +581,7 @@
     },
     {
       "recipe": "stage_wide",
-      "duration": 4,
+      "duration": 4.1,
       "slots": {
         "content.body": "THE LIGHT",
         "content.caption": "MIRA WALKS ON"
@@ -590,7 +626,7 @@
     },
     {
       "recipe": "stage_wide",
-      "duration": 4.8,
+      "duration": 5.1,
       "slots": {
         "content.body": "TWO OF THEM",
         "content.caption": "THE CROWD NEVER KNEW"
@@ -629,6 +665,11 @@
             "t": 4,
             "kind": "hold",
             "note": "held two-shot"
+          },
+          {
+            "t": 4.6,
+            "kind": "beat",
+            "note": "paper shard on the hold"
           }
         ]
       }
