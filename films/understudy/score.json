@@ -256,7 +256,7 @@
     {
       "id": "character.lead",
       "version": "0.1.0",
-      "hash": "sha256:3fb7038a97c070803995c9f8fec2e43ba60a61365f6aea4e220de4a9be8272f6",
+      "hash": "sha256:5e88a8acf75b2a821a3f37d8a3f0f6b49d5a44aeea93338d29b9b9b47e4a1d52",
       "source": "reused",
       "type": "character",
       "anchors": [
@@ -267,12 +267,12 @@
         "foot-left",
         "foot-right"
       ],
-      "path": "proofs/s2-paper/vendor/characters.js"
+      "path": "films/understudy/vendor/characters.js"
     },
     {
       "id": "character.second",
       "version": "0.1.0",
-      "hash": "sha256:3fb7038a97c070803995c9f8fec2e43ba60a61365f6aea4e220de4a9be8272f6",
+      "hash": "sha256:5e88a8acf75b2a821a3f37d8a3f0f6b49d5a44aeea93338d29b9b9b47e4a1d52",
       "source": "reused",
       "type": "character",
       "anchors": [
@@ -283,12 +283,12 @@
         "foot-left",
         "foot-right"
       ],
-      "path": "proofs/s2-paper/vendor/characters.js"
+      "path": "films/understudy/vendor/characters.js"
     },
     {
       "id": "set.paper-card",
       "version": "0.1.0",
-      "hash": "sha256:12541f59e207a2848ca7c019c5947410d7ec230571f3f231d1a49bb5d244fe7e",
+      "hash": "sha256:018c7f5a9ca8f3f981c058fb2d9ea0c80ea2ba891f109e7b3a610212dd05b52b",
       "source": "reused",
       "type": "set",
       "anchors": [
@@ -296,31 +296,43 @@
         "cut edge",
         "sheet centre"
       ],
-      "path": "proofs/s2-paper/vendor/core.js"
+      "path": "films/understudy/vendor/core.js"
     },
     {
       "id": "set.stage",
       "version": "0.1.0",
-      "hash": "sha256:8049896f31ca3ddf04633ace959d32e40c01639ca621a750b901bac95f896957",
+      "hash": "sha256:a813516e4717efe400ad4d4c7671f9b6ea34296dc35ef3b860dcf14d18001aac",
       "source": "reused",
       "type": "set",
       "anchors": [
         "stage floor",
         "sunburst centre"
       ],
-      "path": "proofs/s2-paper/vendor/props.js"
+      "path": "films/understudy/vendor/props.js"
+    },
+    {
+      "id": "set.scene-kit",
+      "version": "0.1.0",
+      "hash": "sha256:9aee6914f17eccdb3e911888910ae823fd653cb35dccb80a3ac6f878b15d66ad",
+      "source": "reused",
+      "type": "set",
+      "anchors": [
+        "stage set",
+        "paper light"
+      ],
+      "path": "films/understudy/vendor/scene_kit.js"
     },
     {
       "id": "prop.paper-sticker",
       "version": "0.1.0",
-      "hash": "sha256:8049896f31ca3ddf04633ace959d32e40c01639ca621a750b901bac95f896957",
+      "hash": "sha256:a813516e4717efe400ad4d4c7671f9b6ea34296dc35ef3b860dcf14d18001aac",
       "source": "reused",
       "type": "prop",
       "anchors": [
         "sticker centre",
         "peel corner"
       ],
-      "path": "proofs/s2-paper/vendor/props.js"
+      "path": "films/understudy/vendor/props.js"
     },
     {
       "id": "type.paper",
@@ -332,7 +344,7 @@
         "display",
         "caption"
       ],
-      "path": "proofs/s2-paper/vendor/type.js"
+      "path": "films/understudy/vendor/type.js"
     }
   ],
   "shots": [
@@ -380,7 +392,7 @@
       "recipe": "portrait_iris",
       "duration": 3.3,
       "slots": {
-        "content.names": "NOVA KIM",
+        "content.names": "NOVA",
         "content.caption": "THE STAR"
       },
       "camera": {
@@ -678,7 +690,7 @@
       "recipe": "pullback_close",
       "duration": 5.4,
       "slots": {
-        "content.monogram": "NK",
+        "content.monogram": "N",
         "content.body": "THE UNDERSTUDY"
       },
       "camera": {
@@ -723,7 +735,7 @@
   "brief": "films/understudy/brief.json",
   "cast": [
     {
-      "character": "Nova Kim",
+      "character": "Nova",
       "poses": "films/understudy/cast/nova.poses.json",
       "rig": "idol@0.1.0"
     },

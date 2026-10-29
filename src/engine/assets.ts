@@ -1,4 +1,5 @@
-import { existsSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { z } from "zod";
 
@@ -43,8 +44,20 @@ export function resolveAssets(
     }
     ids.add(asset.id);
 
-    if (asset.path && !existsSync(resolve(options.root, asset.path))) {
-      errors.push({ code: "asset_path", message: `asset path "${asset.path}" does not exist`, asset: asset.id });
+    if (asset.path) {
+      const absolute = resolve(options.root, asset.path);
+      if (!existsSync(absolute)) {
+        errors.push({ code: "asset_path", message: `asset path "${asset.path}" does not exist`, asset: asset.id });
+      } else {
+        const actual = `sha256:${createHash("sha256").update(readFileSync(absolute)).digest("hex")}`;
+        if (actual !== asset.hash) {
+          errors.push({
+            code: "asset_hash",
+            message: `asset "${asset.id}" hash ${asset.hash} does not match ${actual}`,
+            asset: asset.id,
+          });
+        }
+      }
     }
 
     if (asset.type === "character") {

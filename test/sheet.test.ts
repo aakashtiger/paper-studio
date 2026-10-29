@@ -33,7 +33,7 @@ test("the sheet contains the ready marker and the character", () => {
   const { html } = sheetHtml(nova, options);
   assert.ok(html.includes("__sheetReady"));
   assert.ok(html.includes("PAPER ASSET SHEET"));
-  assert.ok(html.includes("Nova Kim"));
+  assert.ok(html.includes(nova.character));
 });
 
 test("script-breaking pose names are escaped out of the JSON block", () => {

@@ -26,6 +26,7 @@ build/
 
 # tool artifacts
 proofs/**/.hyperframes/
+films/**/.hyperframes/
 
 # OS
 .DS_Store
