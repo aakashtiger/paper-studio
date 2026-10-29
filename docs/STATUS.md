@@ -8,8 +8,9 @@ score, derived **board**, score-level **audit** and the **character/pose sheet**
 generator. **158 tests pass.** The sheet has a signed **9/10 design** review.
 The paper rig now has two-bone leg IK, ankle targets, foot pitch and a hip-based
 bounce; the pose set is still **7/10 motion** pending a better weight shift. The
+seven critics are in `critics/`, the gate checklist in `docs/GATES.md`. The
 board is a slate contact sheet; visual frames come from the painter. Next:
-critic pack, animatic builder, painter. No film render before those.
+animatic builder, painter, SFX/mix. No film render before those.
 
 **Purpose:** an honest inventory of what exists, what is weak, and what is
 missing, with a deliberately small build plan. No new architecture unless it

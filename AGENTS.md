@@ -128,10 +128,11 @@ asset manifest, pose library, film score, derived **board**, score-level
 **audit** and the **character/pose sheet** generator. **158 tests.** The sheet
 has a signed **9/10 design** review. The paper rig now has two-bone leg IK,
 ankle targets, foot pitch and a hip-based bounce; the pose set is still
-**7/10 motion** pending a better weight shift. Build next: critic pack;
-animatic builder; painter and look pass. Only then does the user's idea become a
-film. No film render before the core is fixed. No app, no asset library, no
-watercolor until the first film ships.
+**7/10 motion** pending a better weight shift. The seven critics and the gate
+checklist are in `critics/` and `docs/GATES.md`. Build next: animatic builder;
+painter and look pass; SFX/mix. Only then does the user's idea become a film.
+No film render before the core is fixed. No app, no asset library, no watercolor
+until the first film ships.
 
 Do not build: the renderer in this phase, a video, the web app, a second product
 style, or a conversion of the other 58 Lemo styles. `styles/paper-vows` remains
