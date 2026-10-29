@@ -10,6 +10,7 @@ coverage/
 
 # renders and large media
 out/
+build/
 *.mp4
 *.mov
 *.wav

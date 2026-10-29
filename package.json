@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "paper-studio",
   "version": "0.1.0",
   "private": true,
@@ -8,6 +8,8 @@
     "plan": "tsx scripts/plan.ts",
     "treatment": "tsx scripts/treatment.ts",
     "film": "tsx scripts/film.ts",
+    "board": "tsx scripts/board.ts",
+    "audit": "tsx scripts/audit.ts",
     "captions": "tsx scripts/captions.ts",
     "test": "node --import tsx --test test/*.test.ts",
     "typecheck": "tsc --noEmit",

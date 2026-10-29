@@ -53,6 +53,8 @@ npm run plan -- fixtures/wedding-min/brief.json   # print a shot plan
 npm run treatment -- proofs/s2-paper/plan.json    # validate a creative treatment
 npm run film -- films/understudy/score.json      # validate a scored film
 npm run captions -- films/understudy/score.json  # generate transcript + SRT
+npm run board -- films/understudy/score.json     # derive board + contact sheet
+npm run audit -- films/understudy/score.json     # score-level audit
 npm run typecheck      # TypeScript check
 npm test               # unit and mutation tests
 ```
@@ -119,13 +121,13 @@ first real film; the user will provide the idea. The board is derived from the
 score, not a fixed count; SFX are generated in code; audio resolves before shot
 timing. The source rig is patched and `test/rig-drift.test.ts` guards it.
 
-The **contract layer is implemented**: film brief, audio resolver
-(recorded/TTS narration, library/generated music, generated SFX), asset manifest,
-pose library and the film score, with 146 tests. Build next: asset/rig/pose sheet
-generator; board generator; animatic builder; audit and critic pack; painter and
-look pass. Only then does the user's idea become a film. No film render before
-the core is fixed. No app, no asset library, no watercolor until the first film
-ships.
+The **contract layer and the first generators are implemented**: film brief,
+audio resolver (recorded/TTS narration, library/generated music, generated SFX),
+asset manifest, pose library, film score, the derived **board** and the
+score-level **audit**, with **151 tests**. Build next: asset/rig/pose sheet
+generator; critic pack; animatic builder; painter and look pass. Only then does
+the user's idea become a film. No film render before the core is fixed. No app,
+no asset library, no watercolor until the first film ships.
 
 Do not build: the renderer in this phase, a video, the web app, a second product
 style, or a conversion of the other 58 Lemo styles. `styles/paper-vows` remains

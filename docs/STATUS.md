@@ -1,14 +1,15 @@
 # Paper Studio — status audit
 
 **Date:** 2026-10-29
-**Update:** `docs/PRODUCTION-PLAN.md` v1.4 is accepted. The contract layer now
-exists: film brief, audio resolver (recorded/TTS narration, library/generated
-music, generated SFX), asset manifest, pose library and the film score, with
-validators and tests. *The Understudy* is a fixture, not the first film; it has
-a validating score, a 29.5 s scratch voice, transcript, SRT, a brief and two
-8-pose/4-expression libraries. **146 tests pass.** The renderer still does not
-read the score. Next: board generator, animatic builder, asset sheet generator,
-audit and critic pack; no film render before those.
+**Update:** `docs/PRODUCTION-PLAN.md` v1.4 is accepted. The contract layer and
+the first generators exist: film brief, audio resolver (recorded/TTS narration,
+library/generated music, generated SFX), asset manifest, pose library, film
+score, the **derived board** and the **score-level audit**. *The Understudy* is a
+fixture, not the first film; it has a validating score, a 29.5 s scratch voice,
+transcript, SRT, a brief and two 8-pose/4-expression libraries. **151 tests
+pass.** The board is currently a slate contact sheet; visual frames come from
+the painter. Next: asset/pose sheet generator, critic pack, animatic builder,
+painter. No film render before those.
 
 **Purpose:** an honest inventory of what exists, what is weak, and what is
 missing, with a deliberately small build plan. No new architecture unless it

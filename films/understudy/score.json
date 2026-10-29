@@ -18,43 +18,43 @@
         "id": "v01",
         "text": "Every night, the cue lamp calls one name.",
         "start": 0.4,
-        "duration": 3.62,
-        "hold": 0.78
+        "duration": 3.6,
+        "hold": 0.8
       },
       {
         "id": "v02",
         "text": "Tonight, it called Nova.",
         "start": 5,
-        "duration": 2.73,
-        "hold": 0.77
+        "duration": 2.7,
+        "hold": 0.8
       },
       {
         "id": "v03",
         "text": "But the wings were empty.",
         "start": 8.7,
-        "duration": 2.19,
-        "hold": 0.61
+        "duration": 2.2,
+        "hold": 0.6
       },
       {
         "id": "v04",
         "text": "The understudy knew the light.",
         "start": 11.9,
-        "duration": 2.32,
+        "duration": 2.3,
         "hold": 0.6
       },
       {
         "id": "v05",
         "text": "Mira walked on.",
         "start": 15.3,
-        "duration": 1.99,
-        "hold": 0.61
+        "duration": 2,
+        "hold": 0.6
       },
       {
         "id": "v06",
         "text": "The crowd never knew.",
         "start": 18.4,
-        "duration": 1.95,
-        "hold": 0.65
+        "duration": 1.9,
+        "hold": 0.7
       }
     ]
   },
@@ -200,7 +200,7 @@
         "id": "v04",
         "text": "The understudy knew the light.",
         "start": 11.9,
-        "end": 14.82
+        "end": 14.8
       },
       {
         "id": "v05",
