@@ -1,45 +1,281 @@
 {
   "character": "Nova Kim",
   "rig": "idol@0.1.0",
-  "anchors": ["face", "hair", "hand-left", "hand-right", "foot-left", "foot-right", "chest", "waist"],
+  "anchors": [
+    "face",
+    "hair",
+    "hand-left",
+    "hand-right",
+    "foot-left",
+    "foot-right",
+    "chest",
+    "waist"
+  ],
+  "colors": {
+    "jacket": "red",
+    "sleeve": "cream",
+    "skirt": "blue",
+    "boot": "red",
+    "hair": "ink",
+    "skin": "#F0C9A4"
+  },
   "poses": [
     {
       "name": "idle",
-      "params": { "bounce": 0, "sway": 0, "lean": -0.02, "headTilt": 0.03, "headTurn": 0.02, "hairSwing": 4, "armL": [1.45, 0.05], "armR": [-1.45, -0.05], "legL": [0.06, 0.02], "legR": [-0.06, -0.02] }
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": -0.02,
+        "headTilt": 0.03,
+        "headTurn": 0.02,
+        "hairSwing": 4,
+        "armL": [
+          0.25,
+          0.05
+        ],
+        "armR": [
+          -0.25,
+          -0.05
+        ],
+        "legL": [
+          0.05,
+          0.02
+        ],
+        "legR": [
+          -0.05,
+          -0.02
+        ]
+      }
     },
     {
       "name": "reach",
-      "params": { "bounce": -8, "sway": 4, "lean": 0.04, "headTilt": -0.02, "headTurn": 0.05, "hairSwing": 6, "armL": [1.6, 0.1], "armR": [-0.7, 0.35], "legL": [0.04, 0.02], "legR": [-0.08, -0.03] }
+      "params": {
+        "bounce": -8,
+        "sway": 4,
+        "lean": 0.08,
+        "headTilt": -0.02,
+        "headTurn": -0.1,
+        "hairSwing": 6,
+        "armL": [
+          1.9,
+          0.3
+        ],
+        "armR": [
+          -1.2,
+          -0.2
+        ],
+        "legL": [
+          0.12,
+          0.08
+        ],
+        "legR": [
+          -0.08,
+          -0.05
+        ]
+      }
     },
     {
       "name": "point",
-      "params": { "bounce": -14, "sway": 10, "lean": 0.05, "headTilt": 0.06, "headTurn": -0.03, "hairSwing": 7, "armL": [1.6, 0.05], "armR": [-0.7, 0.35], "legL": [0.04, 0.02], "legR": [-0.09, -0.03] }
+      "params": {
+        "bounce": -14,
+        "sway": 10,
+        "lean": 0.05,
+        "headTilt": 0.06,
+        "headTurn": -0.03,
+        "hairSwing": 7,
+        "armL": [
+          1.6,
+          0.05
+        ],
+        "armR": [
+          -0.7,
+          0.35
+        ],
+        "legL": [
+          0.18,
+          0.12
+        ],
+        "legR": [
+          -0.1,
+          -0.08
+        ]
+      }
     },
     {
       "name": "turn",
-      "params": { "bounce": -10, "sway": -8, "lean": -0.07, "headTilt": 0.05, "headTurn": 0.05, "hairSwing": 10, "armL": [2.15, 0.2], "armR": [-2.15, -0.2], "legL": [0.04, 0.02], "legR": [-0.1, -0.04] }
+      "params": {
+        "bounce": -10,
+        "sway": -8,
+        "lean": -0.07,
+        "headTilt": 0.05,
+        "headTurn": 0.05,
+        "hairSwing": 10,
+        "armL": [
+          2.15,
+          0.2
+        ],
+        "armR": [
+          -2.15,
+          -0.2
+        ],
+        "legL": [
+          0.08,
+          0.05
+        ],
+        "legR": [
+          -0.18,
+          -0.12
+        ]
+      }
     },
     {
       "name": "lift",
-      "params": { "bounce": -26, "sway": 12, "lean": 0.06, "headTilt": -0.06, "headTurn": -0.04, "hairSwing": -8, "armL": [2.35, 0.1], "armR": [-0.45, 0.35], "legL": [0.09, 0.04], "legR": [-0.04, -0.02] }
+      "params": {
+        "bounce": -26,
+        "sway": 12,
+        "lean": 0.06,
+        "headTilt": -0.06,
+        "headTurn": -0.04,
+        "hairSwing": -8,
+        "armL": [
+          2.35,
+          0.1
+        ],
+        "armR": [
+          -0.45,
+          0.35
+        ],
+        "legL": [
+          0.1,
+          0.05
+        ],
+        "legR": [
+          -0.15,
+          -0.2
+        ]
+      }
     },
     {
       "name": "duet-left",
-      "params": { "bounce": -18, "sway": 6, "lean": 0.03, "headTilt": -0.03, "headTurn": 0.02, "hairSwing": 5, "armL": [1.9, 0.2], "armR": [-1.2, -0.1], "legL": [0.06, 0.02], "legR": [-0.06, -0.02] }
+      "params": {
+        "bounce": -18,
+        "sway": 6,
+        "lean": 0.03,
+        "headTilt": -0.03,
+        "headTurn": 0.02,
+        "hairSwing": 5,
+        "armL": [
+          1.9,
+          0.2
+        ],
+        "armR": [
+          -1.2,
+          -0.1
+        ],
+        "legL": [
+          0.15,
+          0.1
+        ],
+        "legR": [
+          -0.1,
+          -0.05
+        ]
+      }
     },
     {
       "name": "duet-right",
-      "params": { "bounce": -24, "sway": -10, "lean": -0.05, "headTilt": 0.04, "headTurn": -0.05, "hairSwing": -7, "armL": [1.1, 0.1], "armR": [-1.9, -0.2], "legL": [0.07, 0.03], "legR": [-0.05, -0.02] }
+      "params": {
+        "bounce": -24,
+        "sway": -10,
+        "lean": -0.05,
+        "headTilt": 0.04,
+        "headTurn": -0.05,
+        "hairSwing": -7,
+        "armL": [
+          1.1,
+          0.1
+        ],
+        "armR": [
+          -1.9,
+          -0.2
+        ],
+        "legL": [
+          0.1,
+          0.05
+        ],
+        "legR": [
+          -0.15,
+          -0.1
+        ]
+      }
     },
     {
       "name": "bow",
-      "params": { "bounce": -6, "sway": 0, "lean": 0.16, "headTilt": 0.18, "headTurn": 0, "hairSwing": 2, "armL": [0.6, 0.2], "armR": [-0.6, -0.2], "legL": [0.05, 0.02], "legR": [-0.05, -0.02] }
+      "params": {
+        "bounce": -6,
+        "sway": 0,
+        "lean": 0.16,
+        "headTilt": 0.18,
+        "headTurn": 0,
+        "hairSwing": 2,
+        "armL": [
+          0.6,
+          0.2
+        ],
+        "armR": [
+          -0.6,
+          -0.2
+        ],
+        "legL": [
+          0.08,
+          0.03
+        ],
+        "legR": [
+          -0.08,
+          -0.03
+        ]
+      }
     }
   ],
   "expressions": [
-    { "name": "neutral", "params": { "open": 0.85, "brow": 0, "lookX": 0, "lookY": 0 } },
-    { "name": "smile", "params": { "open": 0.9, "brow": 0.2, "lookX": 0.1, "lookY": 0, "smile": 0.6 } },
-    { "name": "surprise", "params": { "open": 1.2, "brow": 0.9, "lookX": 0, "lookY": 0.1, "mouthOpen": 0.4 } },
-    { "name": "tender", "params": { "open": 0.7, "brow": 0.4, "lookX": 0.2, "lookY": 0.2, "smile": 0.5 } }
+    {
+      "name": "neutral",
+      "params": {
+        "open": 0.85,
+        "brow": 0,
+        "lookX": 0,
+        "lookY": 0
+      }
+    },
+    {
+      "name": "smile",
+      "params": {
+        "open": 0.9,
+        "brow": 0.2,
+        "lookX": 0.1,
+        "lookY": 0,
+        "smile": 0.6
+      }
+    },
+    {
+      "name": "surprise",
+      "params": {
+        "open": 1.2,
+        "brow": 0.9,
+        "lookX": 0,
+        "lookY": 0.1,
+        "mouthOpen": 0.4
+      }
+    },
+    {
+      "name": "tender",
+      "params": {
+        "open": 0.7,
+        "brow": 0.4,
+        "lookX": 0.2,
+        "lookY": 0.2,
+        "smile": 0.5
+      }
+    }
   ]
 }

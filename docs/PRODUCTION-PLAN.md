@@ -191,8 +191,11 @@ poses, hands, feet, wardrobe, anchors), set/prop sheets, rig test, asset list wi
 pinned hashes inside `score.assets[]`.
 
 **Gate 4:** seam gap 0; feet planted; contact shadow present; all poses and
-expressions on the sheet; badge reads MIRA; sheet approved at 1920. The 390 px
-check applies only to the title and caption in Gate 2, not to the sheet.
+expressions on the sheet; a joint/anchor map; hand, foot and wardrobe detail
+panels; badge reads MIRA; sheet approved at 1920. Paper K-pop is a front/three-
+quarter puppet style: those are the required views. Side and back views are
+required only for a rig that has them; do not fake them with a squash. The
+390 px check applies only to the title and caption in Gate 2, not to the sheet.
 
 ### Step 5 — Animation
 

@@ -10,6 +10,7 @@
     "film": "tsx scripts/film.ts",
     "board": "tsx scripts/board.ts",
     "audit": "tsx scripts/audit.ts",
+    "sheet": "tsx scripts/sheet.ts",
     "captions": "tsx scripts/captions.ts",
     "test": "node --import tsx --test test/*.test.ts",
     "typecheck": "tsc --noEmit",

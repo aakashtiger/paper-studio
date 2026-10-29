@@ -86,10 +86,11 @@ code-generated SFX, binary gates, seven critics. *The Understudy* is a fixture
 for contract tests, not the first film; the user will provide the idea.
 `films/understudy/score.json` validates, and the voice, transcript, SRT, brief,
 asset manifest and two pose libraries exist. The contract layer (brief, audio,
-assets, poses, score) and the derived **board** + score-level **audit** are
-implemented with 151 tests. Next: asset/rig/pose sheet generator, critic pack,
-animatic builder, painter and look pass. No film render before the core is
-fixed.
+assets, poses, score), derived **board**, score-level **audit** and the
+**character/pose sheet** generator are implemented with 156 tests. The sheet is
+signed **9/10 design**; the pose set is **6.5/10 motion** pending rig ankle IK,
+foot pitch and weight shift. Next: critic pack, animatic builder, painter and
+look pass, then rig IK. No film render before the core is fixed.
 
 **Reference research (done):** all 59 Lemo-Opuscar styles were read in detail —
 `docs/research/lemo-59-survey.md`. The result is the scored-film model in

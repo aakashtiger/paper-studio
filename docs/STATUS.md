@@ -4,12 +4,12 @@
 **Update:** `docs/PRODUCTION-PLAN.md` v1.4 is accepted. The contract layer and
 the first generators exist: film brief, audio resolver (recorded/TTS narration,
 library/generated music, generated SFX), asset manifest, pose library, film
-score, the **derived board** and the **score-level audit**. *The Understudy* is a
-fixture, not the first film; it has a validating score, a 29.5 s scratch voice,
-transcript, SRT, a brief and two 8-pose/4-expression libraries. **151 tests
-pass.** The board is currently a slate contact sheet; visual frames come from
-the painter. Next: asset/pose sheet generator, critic pack, animatic builder,
-painter. No film render before those.
+score, derived **board**, score-level **audit** and the **character/pose sheet**
+generator. **156 tests pass.** The sheet has a signed **9/10 design** review;
+the pose set is **6.5/10 motion** because the paper rig lacks ankle IK, foot
+pitch and weight shift. The board is a slate contact sheet; visual frames come
+from the painter. Next: critic pack, animatic builder, painter, rig IK/foot
+plant. No film render before those.
 
 **Purpose:** an honest inventory of what exists, what is weak, and what is
 missing, with a deliberately small build plan. No new architecture unless it

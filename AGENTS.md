@@ -55,6 +55,7 @@ npm run film -- films/understudy/score.json      # validate a scored film
 npm run captions -- films/understudy/score.json  # generate transcript + SRT
 npm run board -- films/understudy/score.json     # derive board + contact sheet
 npm run audit -- films/understudy/score.json     # score-level audit
+npm run sheet -- films/understudy/score.json     # character/pose sheet PNG
 npm run typecheck      # TypeScript check
 npm test               # unit and mutation tests
 ```
@@ -123,11 +124,14 @@ timing. The source rig is patched and `test/rig-drift.test.ts` guards it.
 
 The **contract layer and the first generators are implemented**: film brief,
 audio resolver (recorded/TTS narration, library/generated music, generated SFX),
-asset manifest, pose library, film score, the derived **board** and the
-score-level **audit**, with **151 tests**. Build next: asset/rig/pose sheet
-generator; critic pack; animatic builder; painter and look pass. Only then does
-the user's idea become a film. No film render before the core is fixed. No app,
-no asset library, no watercolor until the first film ships.
+asset manifest, pose library, film score, derived **board**, score-level
+**audit** and the **character/pose sheet** generator. **156 tests.** The sheet
+has a signed **9/10 design** review; the pose set is **6.5/10 motion** because
+the paper rig still lacks ankle IK, foot pitch and weight shift. Those are the
+next rig upgrades. Build next: critic pack; animatic builder; painter and look
+pass; rig IK/foot plant. Only then does the user's idea become a film. No film
+render before the core is fixed. No app, no asset library, no watercolor until
+the first film ships.
 
 Do not build: the renderer in this phase, a video, the web app, a second product
 style, or a conversion of the other 58 Lemo styles. `styles/paper-vows` remains

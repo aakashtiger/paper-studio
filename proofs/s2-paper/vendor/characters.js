@@ -579,7 +579,7 @@ function mira(ctx, x, y, s, o = {}) {
 
   ctx.save();
   ctx.translate(x, y + bounce);
-  shadowEllipse(ctx, 0, 0, 40 * s, 9 * s, .22);
+  if (o.shadow !== 0) shadowEllipse(ctx, 0, 0, 40 * s, 9 * s, .22);
   ctx.scale(flip * s, s);
 
   // far arm; must inherit the torso lean like the near arm

@@ -2,6 +2,7 @@
   "character": "Mira",
   "rig": "mira@0.1.0",
   "anchors": ["face", "hair", "hand-left", "hand-right", "foot-left", "foot-right", "chest", "waist"],
+  "colors": { "coatCol": "acid", "trouser": "ink", "hair": "ink", "skin": "#E8B98F" },
   "poses": [
     {
       "name": "idle",
@@ -21,7 +22,7 @@
     },
     {
       "name": "listen",
-      "params": { "bounce": -4, "sway": 2, "lean": 0.06, "headTilt": 0.08, "headTurn": 0.08, "hairSwing": 3, "armL": [0.4, 0.3], "armR": [-0.5, -0.1], "legL": [0.04, 0.02], "legR": [-0.04, -0.02] }
+      "params": { "bounce": -6, "sway": 2, "lean": 0.06, "headTilt": 0.15, "headTurn": 0.15, "hairSwing": 3, "armL": [0.9, 0.6], "armR": [-0.2, 0.1], "legL": [0.08, 0.06], "legR": [-0.04, -0.02] }
     },
     {
       "name": "duet-left",

@@ -220,7 +220,7 @@
     {
       "id": "character.lead",
       "version": "0.1.0",
-      "hash": "sha256:90b6481788004b7d34aa3ce387e3b48f2ab9e21bf0b4917ee9f3d296fe30e946",
+      "hash": "sha256:3b66cf31bbba50d7c48a110eee5ec96badbbf4a09113c1c5f946086c17419906",
       "source": "reused",
       "type": "character",
       "anchors": [
@@ -236,7 +236,7 @@
     {
       "id": "character.second",
       "version": "0.1.0",
-      "hash": "sha256:90b6481788004b7d34aa3ce387e3b48f2ab9e21bf0b4917ee9f3d296fe30e946",
+      "hash": "sha256:3b66cf31bbba50d7c48a110eee5ec96badbbf4a09113c1c5f946086c17419906",
       "source": "reused",
       "type": "character",
       "anchors": [
