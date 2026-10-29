@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { resolveChain, chainSeamGap, limbEnd } from "../src/engine/rig.js";
+import { resolveChain, chainSeamGap, limbEnd, solveLeg } from "../src/engine/rig.js";
 
 test("a limb at rest points down", () => {
   const end = limbEnd(0, 0, 100, 0);
@@ -35,4 +35,20 @@ test("a mirrored chain would be caught as a seam gap", () => {
 
 test("a chain rejects mismatched lengths and angles", () => {
   assert.throws(() => resolveChain({ x: 0, y: 0 }, [104, 88], [0.8]));
+});
+
+test("leg IK lands the ankle on a planted target", () => {
+  const hip = { x: -16, y: -300 };
+  const target = { x: -16, y: -24 };
+  const sol = solveLeg(hip, target, 158, 118, -1);
+  const knee = limbEnd(hip.x, hip.y, 158, sol.hipAngle);
+  const ankle = limbEnd(knee.x, knee.y, 118, sol.hipAngle + sol.kneeBend);
+  assert.ok(Math.hypot(ankle.x - target.x, ankle.y - target.y) < 0.001);
+  assert.ok(sol.knee.x < hip.x);
+});
+
+test("leg IK bends the knee outward on the right side", () => {
+  const sol = solveLeg({ x: 16, y: -300 }, { x: 16, y: -80 }, 158, 118, 1);
+  assert.ok(sol.knee.x > 16);
+  assert.ok(sol.knee.y > -300);
 });

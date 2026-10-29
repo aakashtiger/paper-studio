@@ -50,6 +50,23 @@ function limb(ctx, x, y, len, w1, w2, ang, col, edge = C.rgba(PAL.ink, .78), sha
   return [x - Math.sin(ang) * len, y + Math.cos(ang) * len];
 }
 
+/* Two-bone leg IK: hip + ankle target -> [hip angle, knee bend, shin angle].
+   Keeps a planted foot exactly where the pose asks for it. */
+function solveLeg(hipX, hipY, targetX, targetY, l1, l2, side) {
+  const dx = targetX - hipX, dy = targetY - hipY;
+  let d = Math.hypot(dx, dy);
+  d = Math.max(Math.abs(l1 - l2) + 0.001, Math.min(l1 + l2 - 0.001, d));
+  const base = Math.atan2(-dx, dy);
+  const cosA = (l1 * l1 + d * d - l2 * l2) / (2 * l1 * d);
+  const A = Math.acos(Math.max(-1, Math.min(1, cosA)));
+  const sign = side < 0 ? 1 : -1;
+  const hipAngle = base + sign * A;
+  const kneeX = hipX - Math.sin(hipAngle) * l1;
+  const kneeY = hipY + Math.cos(hipAngle) * l1;
+  const shinAngle = Math.atan2(-(targetX - kneeX), targetY - kneeY);
+  return { hipAngle, kneeBend: shinAngle - hipAngle, shinAngle, kneeX, kneeY };
+}
+
 /* platform boot, drawn around the ankle. angle matches the shin. */
 function boot(ctx, x, y, ang, col = PAL.blue, sole = PAL.cream, gold = PAL.gold) {
   ctx.save(); ctx.translate(x, y); ctx.rotate(ang * .55);
@@ -391,13 +408,13 @@ function idol(ctx, x, y, s, o = {}) {
   const showEyes = o.eyeGlow || .9;
 
   ctx.save();
-  ctx.translate(x, y + bounce);
+  ctx.translate(x, y);
   if (shadow) shadowEllipse(ctx, 0, 0, 46 * s, 10 * s, .22);
   ctx.scale(flip * s, s);
 
   // long hair behind everything
   ctx.save();
-  ctx.translate(0, HEAD); ctx.rotate(headTilt * .45 + headTurn * .1);
+  ctx.translate(0, HEAD + bounce); ctx.rotate(headTilt * .45 + headTurn * .1);
   for (let i = 0; i < 4; i++) {
     const sx = (i - 1.5) * 17;
     const len = 155 + C.hash(i * 3.3) * 40;
@@ -414,6 +431,7 @@ function idol(ctx, x, y, s, o = {}) {
 
   // far arm (behind torso); must inherit the torso lean like the near arm
   ctx.save();
+  ctx.translate(0, bounce);
   ctx.translate(0, -334); ctx.rotate(lean); ctx.translate(0, 334);
   drawArm(-1, armL, true);
   ctx.restore();
@@ -422,21 +440,28 @@ function idol(ctx, x, y, s, o = {}) {
   drawLeg(-1, legL, true);
   drawLeg(1, legR, false);
   function drawLeg(side, ang, far) {
-    const hx = side * 16, hy = HIP;
-    const knee = limb(ctx, hx, hy, 158, 30, 24, ang[0], far ? C.shade(skin, -18) : skin, C.rgba(PAL.ink, .5), true);
-    const ankle = limb(ctx, knee[0], knee[1], 118, 23, 18, ang[0] + ang[1], far ? C.shade(skin, -18) : skin, C.rgba(PAL.ink, .5), true);
+    const hx = side * 16, hy = HIP + bounce;
+    const target = side < 0 ? p.footL : p.footR;
+    const pitch = (side < 0 ? p.footPitchL : p.footPitchR) || 0;
+    let a1 = ang[0], a2 = ang[1], foot = ang[0] + ang[1] + pitch;
+    if (Array.isArray(target)) {
+      const sol = solveLeg(hx, hy, target[0], target[1], 158, 118, side);
+      a1 = sol.hipAngle; a2 = sol.kneeBend; foot = sol.shinAngle + pitch;
+    }
+    const knee = limb(ctx, hx, hy, 158, 30, 24, a1, far ? C.shade(skin, -18) : skin, C.rgba(PAL.ink, .5), true);
+    const ankle = limb(ctx, knee[0], knee[1], 118, 23, 18, a1 + a2, far ? C.shade(skin, -18) : skin, C.rgba(PAL.ink, .5), true);
     brad(ctx, hx, hy, 4.4);
     brad(ctx, knee[0], knee[1], 3.6);
-    boot(ctx, ankle[0], ankle[1] - 2, ang[0] + ang[1], far ? C.shade(bootCol, -18) : bootCol, PAL.cream, PAL.gold);
+    boot(ctx, ankle[0], ankle[1] - 2, foot, far ? C.shade(bootCol, -18) : bootCol, PAL.cream, PAL.gold);
   }
 
   // skirt
-  ctx.save(); ctx.translate(0, -334); ctx.rotate(lean * .25);
+  ctx.save(); ctx.translate(0, -334 + bounce); ctx.rotate(lean * .25);
   pleatedSkirt(ctx, 0, 0, sway, outfit === 'gym' ? PAL.mint : skirt, PAL.cream, outfit === 'gym' ? 120 : 148);
   ctx.restore();
 
   // torso group (leans from waist)
-  ctx.save(); ctx.translate(0, -334); ctx.rotate(lean); ctx.translate(0, 334);
+  ctx.save(); ctx.translate(0, -334 + bounce); ctx.rotate(lean); ctx.translate(0, 334);
 
   // neck
   ctx.fillStyle = C.shade(skin, -8);
@@ -578,12 +603,13 @@ function mira(ctx, x, y, s, o = {}) {
   const hairCol = o.hair || PAL.ink;
 
   ctx.save();
-  ctx.translate(x, y + bounce);
+  ctx.translate(x, y);
   if (o.shadow !== 0) shadowEllipse(ctx, 0, 0, 40 * s, 9 * s, .22);
   ctx.scale(flip * s, s);
 
   // far arm; must inherit the torso lean like the near arm
   ctx.save();
+  ctx.translate(0, bounce);
   ctx.translate(0, -270); ctx.rotate(lean); ctx.translate(0, 270);
   drawArm(-1, armL, true);
   ctx.restore();
@@ -592,19 +618,26 @@ function mira(ctx, x, y, s, o = {}) {
   drawLeg(-1, legL, true);
   drawLeg(1, legR, false);
   function drawLeg(side, ang, far) {
-    const hx = side * 14;
-    const knee = limb(ctx, hx, HIP, 140, 25, 20, ang[0], far ? C.shade(trouser, -12) : trouser, C.rgba(PAL.ink, .5), true);
-    const ankle = limb(ctx, knee[0], knee[1], 104, 20, 16, ang[0] + ang[1], far ? C.shade(trouser, -12) : trouser, C.rgba(PAL.ink, .5), true);
-    brad(ctx, hx, HIP, 3.4); brad(ctx, knee[0], knee[1], 2.8);
+    const hx = side * 14, hy = HIP + bounce;
+    const target = side < 0 ? p.footL : p.footR;
+    const pitch = (side < 0 ? p.footPitchL : p.footPitchR) || 0;
+    let a1 = ang[0], a2 = ang[1], foot = ang[0] + ang[1] + pitch;
+    if (Array.isArray(target)) {
+      const sol = solveLeg(hx, hy, target[0], target[1], 140, 104, side);
+      a1 = sol.hipAngle; a2 = sol.kneeBend; foot = sol.shinAngle + pitch;
+    }
+    const knee = limb(ctx, hx, hy, 140, 25, 20, a1, far ? C.shade(trouser, -12) : trouser, C.rgba(PAL.ink, .5), true);
+    const ankle = limb(ctx, knee[0], knee[1], 104, 20, 16, a1 + a2, far ? C.shade(trouser, -12) : trouser, C.rgba(PAL.ink, .5), true);
+    brad(ctx, hx, hy, 3.4); brad(ctx, knee[0], knee[1], 2.8);
     // sneaker
-    ctx.save(); ctx.translate(ankle[0] + 4, ankle[1] - 2); ctx.rotate((ang[0] + ang[1]) * .5);
+    ctx.save(); ctx.translate(ankle[0] + 4, ankle[1] - 2); ctx.rotate(foot * .5);
     paper(ctx, () => { ctx.beginPath(); ctx.moveTo(-14, -8); ctx.lineTo(10, -8); ctx.quadraticCurveTo(24, -2, 24, 10); ctx.lineTo(-14, 10); ctx.closePath(); }, { fill: far ? C.shade(PAL.cream, -10) : PAL.cream, edge: PAL.ink, edgeW: 1.8, shadow: C.rgba(PAL.ink, .16), sx: 2, sy: 3 });
     ctx.fillStyle = PAL.red; ctx.fillRect(-10, 4, 26, 3);
     ctx.restore();
   }
 
   // torso
-  ctx.save(); ctx.translate(0, -270); ctx.rotate(lean); ctx.translate(0, 270);
+  ctx.save(); ctx.translate(0, -270 + bounce); ctx.rotate(lean); ctx.translate(0, 270);
   // tee
   ctx.fillStyle = PAL.ink;
   ctx.beginPath(); ctx.moveTo(-35, -452); ctx.quadraticCurveTo(-42, -370, -30, -268); ctx.lineTo(30, -268); ctx.quadraticCurveTo(42, -370, 35, -452); ctx.closePath(); ctx.fill();
@@ -645,7 +678,10 @@ function mira(ctx, x, y, s, o = {}) {
     // badge
     ctx.save(); ctx.translate(-30, -426); ctx.rotate(-.08);
     paper(ctx, () => roundRectPath(ctx, -15, -10, 30, 20, 2), { fill: PAL.cream, edge: PAL.ink, edgeW: 1 });
+    ctx.save();
+    ctx.scale(flip, 1);
     TY.text(ctx, 'MIRA', 0, 3, 8, { family: 'Archivo Black', color: PAL.ink, align: 'center' });
+    ctx.restore();
     ctx.restore();
   }
   // neck

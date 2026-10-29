@@ -45,6 +45,48 @@ export function resolveChain(start: Point, lengths: number[], angles: number[]):
   return { start, joints, lengths, angles };
 }
 
+export type LegSolution = {
+  hipAngle: number;
+  kneeBend: number;
+  shinAngle: number;
+  knee: Point;
+  ankle: Point;
+};
+
+/**
+ * Two-bone leg IK. The hip and ankle are fixed; the knee bends outward on the
+ * character's side. The returned angles can be fed to the paper `limb` chain.
+ */
+export function solveLeg(
+  hip: Point,
+  target: Point,
+  thigh: number,
+  shin: number,
+  side: -1 | 1,
+): LegSolution {
+  const dx = target.x - hip.x;
+  const dy = target.y - hip.y;
+  let distance = Math.hypot(dx, dy);
+  distance = Math.max(
+    Math.abs(thigh - shin) + 0.001,
+    Math.min(thigh + shin - 0.001, distance),
+  );
+  const base = Math.atan2(-dx, dy);
+  const cosA = (thigh * thigh + distance * distance - shin * shin) / (2 * thigh * distance);
+  const bend = Math.acos(Math.max(-1, Math.min(1, cosA)));
+  const sign = side < 0 ? 1 : -1;
+  const hipAngle = base + sign * bend;
+  const knee = limbEnd(hip.x, hip.y, thigh, hipAngle);
+  const shinAngle = Math.atan2(-(target.x - knee.x), target.y - knee.y);
+  return {
+    hipAngle,
+    kneeBend: shinAngle - hipAngle,
+    shinAngle,
+    knee,
+    ankle: target,
+  };
+}
+
 /** The largest distance between a joint and the point the previous segment ends at. */
 export function chainSeamGap(chain: Chain): number {
   let previous = chain.start;

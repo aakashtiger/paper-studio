@@ -121,7 +121,16 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
       return { sx: root.x, sy: root.y, elbow: e, wrist: w };
     };
     const leg = (side, angles) => {
-      const hx = side * C.hx, hy = C.hy;
+      const hx = side * C.hx, hy = C.hy + (p.bounce || 0);
+      const target = side < 0 ? p.footL : p.footR;
+      if (Array.isArray(target)) {
+        const sol = solveLeg(hx, hy, target[0], target[1], C.thigh, C.shin, side);
+        return {
+          hip: { x: hx, y: hy },
+          knee: { x: sol.kneeX, y: sol.kneeY },
+          ankle: { x: target[0], y: target[1] },
+        };
+      }
       const a1 = (angles && angles[0]) || 0, a2 = (angles && angles[1]) || 0;
       const k = elbow(hx, hy, C.thigh, a1);
       const a = elbow(k.x, k.y, C.shin, a1 + a2);
@@ -148,7 +157,7 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
   function grounded(pose, x, ground, scale) {
     const ch = chain(pose);
     const support = ch.legL.ankle.y >= ch.legR.ankle.y ? ch.legL : ch.legR;
-    const sole = support.ankle.y + 22;
+    const sole = support.ankle.y + (KIND === "mira" ? 8 : 39);
     ctx.fillStyle = C.rgba(PAL.ink, 0.3);
     ctx.beginPath();
     ctx.ellipse(x + support.ankle.x * scale, ground + 2, 52 * scale, 8 * scale, 0, 0, TAU);
