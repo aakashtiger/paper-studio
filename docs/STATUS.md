@@ -1,10 +1,12 @@
 # Paper Studio — status audit
 
 **Date:** 2026-10-29
-**Update:** `docs/PRODUCTION-PLAN.md` v1.1 is accepted; the scored pilot
+**Update:** `docs/PRODUCTION-PLAN.md` v1.3 is accepted; the scored pilot
 *The Understudy* now has a validating `score.json`, a 29.5 s scratch voice, a
-transcript and an SRT. The renderer still does not read the score. The next
-slice is the painter + 0–10.6 s technical render + audit.
+transcript and an SRT. The plan is generic: the board is derived from the score,
+audio resolves from narration/music/SFX sources before shot timing, and SFX are
+generated in code. The renderer still does not read the score. The next slice is
+the painter + 0–10.6 s technical render + audit.
 
 **Purpose:** an honest inventory of what exists, what is weak, and what is
 missing, with a deliberately small build plan. No new architecture unless it
@@ -146,7 +148,7 @@ A 15-second film that:
 - is **rendered from the score**, with no hardcoded shot ids;
 - passes **`film-audit`**: cues on frame, no rig seam, no blank/clipped frame,
   palette and type checks, deterministic hash;
-- is signed by the **six critics** and the director;
+- is signed by the **seven critics** and the director;
 - ships with the score, audit report and stills.
 
 That is the S2 gate. The 45 s film comes after it, not before.

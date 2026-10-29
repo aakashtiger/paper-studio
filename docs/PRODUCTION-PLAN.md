@@ -1,14 +1,14 @@
 # Production plan — one 9/10 film, repeatable
 
-**Status:** v1.2, after a fourth review, 2026-10-29
+**Status:** v1.3, generic system pass, 2026-10-29
 **Goal:** one 30 s paper film at a 9/10 bar, then repeat without broken frames or
 timing drift.
 
-**v1.2 restores two things v1.1 under-specified:** a real **storyboard
-sequence** (one frame per shot plus key beats, reviewed as a contact sheet) and
-**code-generated SFX** (no sample library). It also adds **ASR, readcheck and
-motioncheck** to the audit, **contact-sheet reviews** during animation, and a
-**sound designer/mixer** as the seventh critic.
+**v1.3 makes the system generic.** The board is a **derived view** of the score,
+not a fixed frame count. Audio has a source resolver: narration is recorded or
+TTS; music is chosen from a library or generated; SFX are generated in code. The
+audio resolves **before** shot timing. The pilot is one instance of the system,
+not the system itself.
 
 This plan amends decision 0012. Where 0012 and this file disagree, this file wins
 and 0012 is updated in the same commit.
@@ -32,9 +32,9 @@ A failed gate sends the film back one step.
 1. **Film first, system second.** Build only what the pilot needs. Extract the
    library and the second style after the pilot ships.
 2. **Direction is prose plus a board.** The score's shot rows carry the
-   direction; the board is one frame per shot plus key beats, reviewed as a
-   sequence. A 30 s film needs about 13 frames, not three and not a hundred. The
-   board is not a storyboard farm.
+   direction; the board is generated from the score: one frame per shot plus any
+   key beat the director marks. The count is derived, never fixed. The board is
+   reviewed as a sequence, not as a frame count.
 3. **One clock.** The audio spine drives every cut, caption and event.
 4. **One score.** Shots, direction, events, captions, audio cues and assets live
    in one file the renderer reads. No second contract.
@@ -95,24 +95,25 @@ pilot.
   accent count;
 - **poster frame**: design shot 8 (the duet) first; shots 3 and 7 are crops or
   moves inside it;
-- **storyboard**: 9 shot frames plus 4 inserts (sticker slam, duet, iris, the
-  shot-6 lamp) = **13 frames**, each rendered from the score at its poster
-  moment, assembled as a contact sheet in order; 1920, plus a 390 px legibility
-  check of the title and caption;
+- **storyboard**: **one frame per shot plus any key beat the director marks**,
+  each rendered from the score at its poster moment, assembled as a contact
+  sheet in order. The count is derived from the shots and beats; there is no
+  fixed number. 1920, plus a 390 px legibility check of the title and caption;
 - **five hero frames** cut from the board: title, wings, sticker, duet-poster,
   close, for look approval at 1920;
 - reference board: `papercut-red`, `paper-popup`, `spy-titles`; steal/refuse notes.
 
 **Gate 2:** 9 shots; median 3.0 s ±25%; every recipe inside min/max (stage_wide
-is 3.4–5.5, not 1.2); every field present; **13-frame board reads in order**;
-five hero frames at 1920 plus the 390 check; look table complete; four roles max;
+is 3.4-5.5, not 1.2); every field present; **the board covers every shot and
+every marked key beat, and reads in order**; five hero frames at 1920 plus the
+390 check; look table complete; four roles max;
 one accent; one signature; no two shots share the same recipe + camera + event
 signature.
 
 ### Step 3 — Animatic
 
 **Output, two passes:**
-1. the 13-frame board cut to the voice/SFX/SRT at exact times, with camera moves
+1. the derived board cut to the voice/SFX/SRT at exact times, with camera moves
    and captions — a stills animatic;
 2. the same cut with blocked characters at 10 fps, live camera and scratch SFX —
    a stepped rough. Not a stills slideshow.
@@ -122,9 +123,9 @@ catches dead middles and pose-to-pose snapping.
 
 **Gate 3 (binary):**
 - every cue on its frame (±0);
-- **the stepped rough is rendered at each of the 13 board times and paired with
-  its board frame on one contact sheet**, so sequence, continuity and every cut
-  are judged before animation;
+- **the stepped rough is rendered at each board time and paired with its board
+  frame on one contact sheet**, so sequence, continuity and every cut are judged
+  before animation;
 - every shot has at least one character/action event, not camera only;
 - no undeclared hold over 0.4 s; a declared hold may reach 0.8 s only with a
   secondary moving layer;
@@ -267,6 +268,80 @@ drop `direction`. `ResolvedShot` carries `direction` and `events`. The base
 a **render window** of the 30 s film (`--from 0 --to 10.6`), not a separate film
 and not a separate score.
 
+## The audio resolver
+
+Audio resolves **before** shot timing, because the voice or song decides what
+happens when.
+
+```ts
+type AudioPlan = {
+  mode: "music" | "narration" | "sfx" | "hybrid";
+  narration?: {
+    source: "recorded" | "tts" | "none";
+    voice: string;          // file or voice id
+    transcript: string;     // word timings
+    srt: string;
+  };
+  music?: {
+    source: "library" | "generated" | "none";
+    track?: string;         // library id or file
+    license?: string;       // required for library tracks
+    bpm?: number;
+    offset?: number;
+    beatMap?: string;
+  };
+  sfx: { source: "generated"; cues: SoundCue[] };
+};
+```
+
+**Narration:** recorded or TTS. Either way it produces a voice file, a transcript
+with word timings and an SRT. The shot rows then take their phrase marks from
+that transcript.
+
+**Music:** library first, generated fallback. A library track carries an id, a
+licence, BPM, offset and a beat map. If no cleared track fits the style, mood and
+duration, `scripts/music.ts` generates a score. The film never ships with an
+unlicensed track.
+
+**SFX:** generated in code from the cue list. No sample library.
+
+**Pilot:** narration only, scratch voice now; final recorded or TTS later. No
+music. The schema and order already support the other modes.
+
+## Generic system vs the pilot
+
+| Layer | Generic contract | Pilot instance |
+|---|---|---|
+| Brief | topic, audience, format, style, audio mode, references, rights | *The Understudy*, 30 s, 16:9 |
+| Format | aspect, duration, fps, safe zones, delivery | 16:9, 30 s, 30 fps, MP4 + SRT |
+| Style | pack, tokens, recipes, duration envelope, clock modes, native moves | Paper K-pop 0.1.0 |
+| Audio | narration/music/SFX resolver, pinned hashes, licences | narration + SFX |
+| Score | shots, direction, events, captions, assets | 9 shots, 30 s |
+| Board | derived view of the score: one frame per shot + marked beats | derived, not fixed |
+| Animatic | board pass + stepped rough, cut to the clock | 30 s |
+| Assets | create or reuse per film; sheets; anchors; pinned versions | Nova, Mira, stage, card, sticker |
+| Animation | named poses, 10 fps characters, 30 fps camera, native moves | 9 shots |
+| Renderer | score-driven painter + style backend | paper backend |
+| Audit | cue, ASR, read, motion, frame, trace, determinism | seven gates |
+| Library | promote approved styles, assets, music, SFX, poses | after three films |
+
+## Still missing from the system
+
+These are real gaps, listed so they are not mistaken for done:
+
+| Gap | Why it matters | When |
+|---|---|---|
+| **Music library + licensing** | pick or generate a track; no unlicensed music | before the first music film |
+| **Voice pipeline** | recorded vs TTS, transcript, ASR; final voice quality | before the final pilot voice |
+| **Format contract 9:16 / 1:1** | re-stage, safe zones, delivery | after the 16:9 pilot |
+| **Asset library + provenance** | reuse at scale, versions, rights | after three films |
+| **Rights and licences** | fonts, music, voice, references; sellable output | before delivery |
+| **Versioning / change control** | style or asset changes must not silently alter a film | now, via hashes |
+| **Preview / render performance** | iteration speed on 900-frame renders | after the technical slice |
+| **Localisation** | captions and voice in other languages | later |
+| **Fallbacks** | missing voice, missing music, unsupported clock | now, as resolver errors |
+| **Library curation** | which assets are good enough to promote | after three films |
+
 ## The pilot
 
 ***The Understudy* — 30 s, 16:9, 30 fps, narration + SFX, no music**
@@ -323,7 +398,7 @@ All recipes are inside their limits (stage_wide min 3.4). No `proof: true`.
 | rig port | `src/characters.js` uses the same `limbEnd`; drift test | 1 |
 | audit | 900 frame pixel hashes, trace, cues, palette, type, audio | 1 |
 | audio spine | voice + transcript + SRT + cue list | 1 |
-| storyboard | 13 frames (9 shots + 4 inserts), contact sheet | 2 |
+| storyboard | derived from the score: one frame per shot + marked beats | 2 |
 | look pass | stage rebuild, poster, five hero frames | 2 |
 | animatic | board pass + stepped rough at 10 fps + camera + voice/SFX | 3 |
 | pose layer | named poses, tracks, interpolation, 10 fps stepping | 5 |
@@ -338,9 +413,9 @@ All recipes are inside their limits (stage_wide min 3.4). No `proof: true`.
 2. **Rig, backend registry, painter, audit skeleton.** Port the rig fix; add the
    paper registry; render shots 1–4 as a **0–10.6 s window** (not 12.5 s); run
    the audit from the first render.
-3. **Look pass and board.** Rebuild the stage; poster; 13-frame storyboard and
-   contact sheet; five hero frames at 1920 and the 390 legibility check; pass
-   Gate 2.
+3. **Look pass and board.** Rebuild the stage; poster; generate the derived
+   board and contact sheet; five hero frames at 1920 and the 390 legibility
+   check; pass Gate 2.
 4. **Asset sheets (Gate 4).** Character and prop sheets for the pilot; rig test;
    approve before animation.
 5. **Animatic, full 30 s.** Board pass, then stepped rough for all nine shots;
@@ -357,7 +432,8 @@ All recipes are inside their limits (stage_wide min 3.4). No `proof: true`.
 
 - A cue-sheet, shot-sheet or `assets.json` file; the score is the source.
 - A separate animatic CLI; ffmpeg concat is enough.
-- A storyboard image farm. A 13-frame board is the board; 100 frames is a farm.
+- A storyboard image farm. The board is derived from the score; it is not an
+  authored asset with a target count.
 - An asset library, watercolor backend, app, timeline editor, plugin system.
 - A sample library. SFX are generated in code.
 - `proof: true` in any deliverable.
@@ -371,7 +447,8 @@ All recipes are inside their limits (stage_wide min 3.4). No `proof: true`.
 - 30.000 s, 900 frames, 16:9, 30 fps.
 - 9 shots, median 3.0 s, all recipes legal.
 - 6 narration lines, 6 SRT cues, read-time holds met.
-- 13-frame board approved; five hero frames approved at 1920 and 390 text check.
+- The board covers every shot and marked beat; five hero frames approved at 1920
+  and 390 text check.
 - 10 SFX cues generated in code, layered, hashed and audible.
 - No seam, blank, clip, palette or type fault in any frame.
 - Every cue on its frame; ASR, readcheck and motioncheck pass; two renders

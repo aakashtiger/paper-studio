@@ -173,11 +173,11 @@ never reused.
 
 ## Amendment 2026-10-29
 
-Amended by `docs/PRODUCTION-PLAN.md` v1.2:
+Amended by `docs/PRODUCTION-PLAN.md` v1.3:
 
 - the film schema omits the `proof` flag; a deliverable cannot downgrade a recipe limit;
 - the clock includes `free`; the audio plan declares `music | narration | sfx | hybrid`;
 - `resolveFilm` preserves per-shot `direction` and `events`; it does not reuse the shot rebuilding in `resolveTreatment`;
 - a slice is a render window of a legal film, not a separate score;
-- the pilot is a 30 s, 9-shot narration/SFX film with no music, a 13-frame
-  storyboard, code-generated SFX and seven critics.
+- the pilot is a 30 s, 9-shot narration/SFX film with no music; the board is
+  derived from the score, SFX are generated in code, and seven critics review.
