@@ -1,8 +1,14 @@
 # Production plan — one 9/10 film, repeatable
 
-**Status:** v1.1 **accepted**, after three critic rounds, 2026-10-29
+**Status:** v1.2, after a fourth review, 2026-10-29
 **Goal:** one 30 s paper film at a 9/10 bar, then repeat without broken frames or
 timing drift.
+
+**v1.2 restores two things v1.1 under-specified:** a real **storyboard
+sequence** (one frame per shot plus key beats, reviewed as a contact sheet) and
+**code-generated SFX** (no sample library). It also adds **ASR, readcheck and
+motioncheck** to the audit, **contact-sheet reviews** during animation, and a
+**sound designer/mixer** as the seventh critic.
 
 This plan amends decision 0012. Where 0012 and this file disagree, this file wins
 and 0012 is updated in the same commit.
@@ -25,8 +31,10 @@ A failed gate sends the film back one step.
 
 1. **Film first, system second.** Build only what the pilot needs. Extract the
    library and the second style after the pilot ships.
-2. **Direction is prose plus a few hero frames, not a board.** The score's shot
-   rows carry the direction. No fixed storyboard count.
+2. **Direction is prose plus a board.** The score's shot rows carry the
+   direction; the board is one frame per shot plus key beats, reviewed as a
+   sequence. A 30 s film needs about 13 frames, not three and not a hundred. The
+   board is not a storyboard farm.
 3. **One clock.** The audio spine drives every cut, caption and event.
 4. **One score.** Shots, direction, events, captions, audio cues and assets live
    in one file the renderer reads. No second contract.
@@ -37,6 +45,21 @@ A failed gate sends the film back one step.
 7. **One accent, one signature.** Paper K-pop: paper, ink, red, blue; gold only
    on the title and sticker. Signature: the sticker slam. Transition: iris.
 8. **Determinism and audit are non-negotiable.**
+
+## The seven critics
+
+Fixed roster; the relevant subset reviews at each gate, the full panel at Gate 7.
+The director has the final call; no agent overrides taste.
+
+| Critic | Owns | Blocking authority |
+|---|---|---|
+| Architect | score contract, engine/backend boundary | structural violation |
+| Senior developer | rig, code, tests, determinism | broken implementation |
+| Designer / DOP | look, composition, light, palette, type | visual defect |
+| Motion director | performance, choreography, camera | broken or dead motion |
+| Editor | shot rhythm, transitions, sync | pacing or sync failure |
+| Sound designer / mixer | SFX design, layers, space, mix | bad or missing sound |
+| QA / UAT | every gate, audit, evidence, claims | any failed check |
 
 ## The process
 
@@ -72,23 +95,36 @@ pilot.
   accent count;
 - **poster frame**: design shot 8 (the duet) first; shots 3 and 7 are crops or
   moves inside it;
-- **five hero frames**: title, wings, sticker, duet-poster, close at 1920; one
-  390 px legibility check of the title and caption;
+- **storyboard**: 9 shot frames plus 4 inserts (sticker slam, duet, iris, the
+  shot-6 lamp) = **13 frames**, each rendered from the score at its poster
+  moment, assembled as a contact sheet in order; 1920, plus a 390 px legibility
+  check of the title and caption;
+- **five hero frames** cut from the board: title, wings, sticker, duet-poster,
+  close, for look approval at 1920;
 - reference board: `papercut-red`, `paper-popup`, `spy-titles`; steal/refuse notes.
 
 **Gate 2:** 9 shots; median 3.0 s ±25%; every recipe inside min/max (stage_wide
-is 3.4–5.5, not 1.2); every field present; five hero frames at 1920 plus the 390
-check; look table complete; four roles max; one accent; one signature; no two
-shots share the same recipe + camera + event signature.
+is 3.4–5.5, not 1.2); every field present; **13-frame board reads in order**;
+five hero frames at 1920 plus the 390 check; look table complete; four roles max;
+one accent; one signature; no two shots share the same recipe + camera + event
+signature.
 
-### Step 3 — Animatic (stepped rough)
+### Step 3 — Animatic
 
-**Output:** the score cut to the voice/SFX/SRT at exact times, with blocked
-characters at 10 fps, live camera, scratch SFX and captions. Not a stills
-slideshow.
+**Output, two passes:**
+1. the 13-frame board cut to the voice/SFX/SRT at exact times, with camera moves
+   and captions — a stills animatic;
+2. the same cut with blocked characters at 10 fps, live camera and scratch SFX —
+   a stepped rough. Not a stills slideshow.
+
+The board pass catches sequence and composition problems; the stepped pass
+catches dead middles and pose-to-pose snapping.
 
 **Gate 3 (binary):**
 - every cue on its frame (±0);
+- **the stepped rough is rendered at each of the 13 board times and paired with
+  its board frame on one contact sheet**, so sequence, continuity and every cut
+  are judged before animation;
 - every shot has at least one character/action event, not camera only;
 - no undeclared hold over 0.4 s; a declared hold may reach 0.8 s only with a
   secondary moving layer;
@@ -110,11 +146,12 @@ check applies only to the title and caption in Gate 2, not to the sheet.
 
 **Output:** each shot from the score, using named poses and events. Per pose:
 2-frame anticipation, 3-frame overshoot, 4–8-frame hair/skirt/hand lag. 10 fps
-character stepping, 30 fps camera. No 24–36-frame idle.
+character stepping, 30 fps camera. No 24–36-frame idle. **Contact sheet every
+0.5 s of each shot (3–5 per shot), reviewed before the shot passes.**
 
-**Gate 5:** entry/exit states match the score; at least three events; no
-undeclared hold; no floating part; no shot where camera or hair is the only
-motion. Numeric motion floor, per shot:
+**Gate 5:** the shot's contact sheet is reviewed; entry/exit states match the
+score; at least three events; no undeclared hold; no floating part; no shot where
+camera or hair is the only motion. Numeric motion floor, per shot:
 
 - mean frame difference (YAVG at 480 px) ≥ `max(1.2, 0.8 × the approved
   animatic's mean for that shot)`;
@@ -126,24 +163,48 @@ The animatic sets each shot's target; the final may not fall below 80% of it.
 
 ### Step 6 — Assembly and sound
 
-**Output:** picture lock, transitions, captions, SFX, voice, ducking, designed
-silence, −14 LUFS ±1.
+**Output:** picture lock, transitions, captions, voice, **SFX generated in code**,
+designed silence, −14 LUFS ±1.
 
-**Gate 6:** loudness; no clipped samples; captions inside safe zones and above
-read time; no caption covers a face or prop.
+**SFX:** `scripts/sfx.ts` reads `score.audio.sfx` and synthesises every cue to
+`films/<id>/sfx/<id>.wav` — paper snap, whoosh, lamp buzz, sticker slam, step,
+crowd, confetti, iris. Deterministic noise and envelopes; no sample library.
+Each cue has an id, type, start, duration, gain, pan and a hash. The mix is voice
++ SFX; ducking is added only when a music bed exists.
+
+**Gate 6 is a sound gate, not a file check:**
+- every cue file exists, its hash matches, and it is audible;
+- every cue declares **layers** (transient, body, tail), a band, a reverb send
+  and a duck depth; a snap, slam or whoosh has all three layers;
+- cues vary per shot; no machine-gun repetition of the same step or crowd cue;
+- a room-tone bed gives designed silence a floor;
+- SFX duck under narration by about 4 dB in the 1–4 kHz band;
+- true peak ≤ −1 dBTP; integrated −14 LUFS ±1; short-term/LRA inside bounds;
+- a **spectrogram sheet per cue** is reviewed by the sound designer/mixer;
+- captions inside safe zones and above read time; no caption covers a face or
+  prop.
 
 ### Step 7 — Audit and delivery
 
-**Output:** `gate-7.json`, `film-audit` report, six critic sign-offs, MP4 + SRT +
-score + stills + audit.
+**Output:** `gate-7.json`, `film-audit` report (ASR, readcheck, motioncheck,
+cuecheck), final contact sheet, **seven critic sign-offs**, MP4 + SRT + score +
+stills + audit.
 
 **Gate 7 (binary):**
-- 900/900 rendered frame pixel hashes match a second render;
-- no blank/black/error frame; no unintended edge clip;
-- trace checks: text boxes inside safe zones, palette roles ≤4, rig seam 0;
-- cues ±0; SRT hash matches the score; MP4 30.000 s, 900 frames, 30 fps;
-- determinism is not cleanliness: the pixel/trace checks run on every frame, not
+- **cuecheck:** every event and cue on its frame (±0); SRT hash matches the score;
+- **ASR:** the **mixed master** transcript matches `transcript.json` (line match;
+  word error rate ≤5%); not the voice stem alone;
+- **readcheck:** captions ≤8 words, ≤2 lines, hold at least
+  `max(1.8 s, speech + 0.6 s)`, contrast passes;
+- **motioncheck:** per-shot mean frame difference, longest still window and
+  silhouette/COM delta meet Gate 5;
+- **framecheck:** 900/900 rendered frame pixel hashes match a second render;
+  no blank/black/error frame; no unintended edge clip;
+- **trace:** text boxes inside safe zones, palette roles ≤4, rig seam 0;
+- **format:** MP4 30.000 s, 900 frames, 30 fps;
+- determinism is not cleanliness: pixel and trace checks run on every frame, not
   only the hash;
+- **contact sheet:** a final 0.5 s contact sheet is reviewed;
 - critics: no criterion below 8, mean at least 9, a written reason per score;
   director signs. A split panel goes to the director.
 
@@ -262,10 +323,12 @@ All recipes are inside their limits (stage_wide min 3.4). No `proof: true`.
 | rig port | `src/characters.js` uses the same `limbEnd`; drift test | 1 |
 | audit | 900 frame pixel hashes, trace, cues, palette, type, audio | 1 |
 | audio spine | voice + transcript + SRT + cue list | 1 |
-| animatic | stepped rough at 10 fps + camera + voice/SFX | 3 |
+| storyboard | 13 frames (9 shots + 4 inserts), contact sheet | 2 |
 | look pass | stage rebuild, poster, five hero frames | 2 |
+| animatic | board pass + stepped rough at 10 fps + camera + voice/SFX | 3 |
 | pose layer | named poses, tracks, interpolation, 10 fps stepping | 5 |
-| final + delivery | mix, six critics, MP4/SRT/score/stills/audit | 7 |
+| sfx | `scripts/sfx.ts` synthesises every cue; no sample library | 6 |
+| final + delivery | mix, seven critics, MP4/SRT/score/stills/audit | 7 |
 
 ## Build order
 
@@ -275,22 +338,28 @@ All recipes are inside their limits (stage_wide min 3.4). No `proof: true`.
 2. **Rig, backend registry, painter, audit skeleton.** Port the rig fix; add the
    paper registry; render shots 1–4 as a **0–10.6 s window** (not 12.5 s); run
    the audit from the first render.
-3. **Look pass.** Rebuild the stage; poster; five hero frames at 1920 and the
-   390 legibility check; pass Gate 2.
+3. **Look pass and board.** Rebuild the stage; poster; 13-frame storyboard and
+   contact sheet; five hero frames at 1920 and the 390 legibility check; pass
+   Gate 2.
 4. **Asset sheets (Gate 4).** Character and prop sheets for the pilot; rig test;
    approve before animation.
-5. **Animatic, full 30 s.** Stepped rough for all nine shots; pass Gate 3.
-6. **Pose layer and full pilot.** Animate all nine shots; pass Gate 5.
-7. **Mix, audit, critics, delivery.** Pass Gates 6–7.
-8. **Only then:** watercolor backend, asset library, second film.
+5. **Animatic, full 30 s.** Board pass, then stepped rough for all nine shots;
+   pass Gate 3.
+6. **Pose layer and full pilot.** Animate all nine shots; contact sheets every
+   0.5 s; pass Gate 5.
+7. **SFX and mix.** Synthesise the 10 cues with `scripts/sfx.ts`; mix voice + SFX
+   to −14 LUFS; pass Gate 6.
+8. **Audit, critics, delivery.** ASR, readcheck, motioncheck, cuecheck, frame
+   hashes, seven critics; pass Gate 7.
+9. **Only then:** watercolor backend, asset library, second film.
 
 ## What not to build
 
 - A cue-sheet, shot-sheet or `assets.json` file; the score is the source.
 - A separate animatic CLI; ffmpeg concat is enough.
-- A storyboard image farm or a fixed frame count.
+- A storyboard image farm. A 13-frame board is the board; 100 frames is a farm.
 - An asset library, watercolor backend, app, timeline editor, plugin system.
-- SFX synthesis; temp SFX from a small library.
+- A sample library. SFX are generated in code.
 - `proof: true` in any deliverable.
 - Per-shot native moves; one signature (slam) and one transition (iris).
 - 24–36-frame idles; a 0.4 s blanket that forces twitch.
@@ -302,7 +371,10 @@ All recipes are inside their limits (stage_wide min 3.4). No `proof: true`.
 - 30.000 s, 900 frames, 16:9, 30 fps.
 - 9 shots, median 3.0 s, all recipes legal.
 - 6 narration lines, 6 SRT cues, read-time holds met.
+- 13-frame board approved; five hero frames approved at 1920 and 390 text check.
+- 10 SFX cues generated in code, layered, hashed and audible.
 - No seam, blank, clip, palette or type fault in any frame.
-- Every cue on its frame; two renders pixel-identical on all 900 frames.
-- Six critics: no criterion below 8, mean at least 9, written reasons; director
+- Every cue on its frame; ASR, readcheck and motioncheck pass; two renders
+  pixel-identical on all 900 frames.
+- Seven critics: no criterion below 8, mean at least 9, written reasons; director
   signs.

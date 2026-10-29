@@ -113,14 +113,15 @@ critics and one final blind (*A Small Inventory*, 6/30/9:16, 9/9).
   390 px, 9:16 screen.
 - Critics: contract 9/10 GO, creative 9/10 GO, product 9/10 GO.
 
-**Next: the scored pilot.** `docs/PRODUCTION-PLAN.md` v1.1 is accepted after
-three critic rounds. The pilot is *The Understudy*, 30 s, 16:9, 30 fps, nine
-shots, narration + SFX, no music. `films/understudy/score.json` validates
-(`npm run film`), and the voice + transcript + SRT exist. The proof in
-`proofs/s2-paper/` remains the look reference, but it is authored scenes, not the
-scored renderer. Next: the technical slice — port the rig fix, make the painter
-read the score, render shots 1–4 as a 0–10.6 s window, and run the audit from the
-first render. No app, no asset library, no watercolor until the pilot ships.
+**Next: the scored pilot.** `docs/PRODUCTION-PLAN.md` v1.2 is accepted after
+four critic rounds. The pilot is *The Understudy*, 30 s, 16:9, 30 fps, nine
+shots, narration + SFX, no music, a 13-frame board and code-generated SFX.
+`films/understudy/score.json` validates (`npm run film`), and the voice +
+transcript + SRT exist. The proof in `proofs/s2-paper/` remains the look
+reference, but it is authored scenes, not the scored renderer. Next: the
+technical slice — port the rig fix, make the painter read the score, render
+shots 1–4 as a 0–10.6 s window, and run the audit from the first render. No app,
+no asset library, no watercolor until the pilot ships.
 
 Do not build: the renderer in this phase, a video, the web app, a second product
 style, or a conversion of the other 58 Lemo styles. `styles/paper-vows` remains
