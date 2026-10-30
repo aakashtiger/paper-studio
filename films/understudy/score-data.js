@@ -659,7 +659,7 @@ window.SCORE = {
       "id": "character.lead",
       "type": "character",
       "version": "0.1.0",
-      "hash": "sha256:5e88a8acf75b2a821a3f37d8a3f0f6b49d5a44aeea93338d29b9b9b47e4a1d52",
+      "hash": "sha256:0cab71a952294fe9110ebfcfd9f3730062b062354aded7c7e4f8b428f6cf58c4",
       "source": "reused",
       "anchors": [
         "face",
@@ -675,7 +675,7 @@ window.SCORE = {
       "id": "character.second",
       "type": "character",
       "version": "0.1.0",
-      "hash": "sha256:5e88a8acf75b2a821a3f37d8a3f0f6b49d5a44aeea93338d29b9b9b47e4a1d52",
+      "hash": "sha256:0cab71a952294fe9110ebfcfd9f3730062b062354aded7c7e4f8b428f6cf58c4",
       "source": "reused",
       "anchors": [
         "face",
@@ -812,18 +812,18 @@ window.POSES = {
           ],
           "footL": [
             -36,
-            -12
+            -39
           ],
           "footR": [
             36,
-            -12
+            -39
           ]
         }
       },
       {
         "name": "reach",
         "params": {
-          "bounce": -8,
+          "bounce": -4,
           "sway": 4,
           "lean": 0.02,
           "headTilt": -0.04,
@@ -847,18 +847,18 @@ window.POSES = {
           ],
           "footL": [
             -37,
-            -12
+            -39
           ],
           "footR": [
             38,
-            -12
+            -39
           ]
         }
       },
       {
         "name": "point",
         "params": {
-          "bounce": -14,
+          "bounce": -4,
           "sway": 10,
           "lean": 0.06,
           "headTilt": 0.06,
@@ -882,18 +882,18 @@ window.POSES = {
           ],
           "footL": [
             -39,
-            -12
+            -39
           ],
           "footR": [
             39,
-            -12
+            -39
           ]
         }
       },
       {
         "name": "turn",
         "params": {
-          "bounce": -10,
+          "bounce": -4,
           "sway": -8,
           "lean": -0.07,
           "headTilt": 0.05,
@@ -917,11 +917,11 @@ window.POSES = {
           ],
           "footL": [
             -36,
-            -12
+            -39
           ],
           "footR": [
             41,
-            -12
+            -39
           ]
         }
       },
@@ -952,11 +952,11 @@ window.POSES = {
           ],
           "footL": [
             -36,
-            -12
+            -75
           ],
           "footR": [
             32,
-            -36
+            -99
           ],
           "footPitchR": -0.35
         }
@@ -964,7 +964,7 @@ window.POSES = {
       {
         "name": "duet-left",
         "params": {
-          "bounce": -18,
+          "bounce": -5,
           "sway": 8,
           "lean": 0.04,
           "headTilt": -0.04,
@@ -988,18 +988,18 @@ window.POSES = {
           ],
           "footL": [
             -42,
-            -12
+            -39
           ],
           "footR": [
             39,
-            -12
+            -39
           ]
         }
       },
       {
         "name": "duet-right",
         "params": {
-          "bounce": -24,
+          "bounce": -5,
           "sway": -8,
           "lean": -0.04,
           "headTilt": 0.05,
@@ -1023,30 +1023,30 @@ window.POSES = {
           ],
           "footL": [
             -37,
-            -12
+            -39
           ],
           "footR": [
             44,
-            -12
+            -39
           ]
         }
       },
       {
         "name": "bow",
         "params": {
-          "bounce": -6,
+          "bounce": 4,
           "sway": 0,
-          "lean": 0.2,
+          "lean": 0.4,
           "headTilt": 0.22,
           "headTurn": 0,
           "hairSwing": 2,
           "armL": [
-            0.2,
-            0.15
+            0.15,
+            0.55
           ],
           "armR": [
-            -0.2,
-            -0.15
+            -0.15,
+            -0.55
           ],
           "legL": [
             0.08,
@@ -1058,11 +1058,11 @@ window.POSES = {
           ],
           "footL": [
             -33,
-            -12
+            -39
           ],
           "footR": [
             33,
-            -12
+            -39
           ]
         }
       }
@@ -1157,18 +1157,18 @@ window.POSES = {
           ],
           "footL": [
             -28,
-            -12
+            -8
           ],
           "footR": [
             29,
-            -12
+            -8
           ]
         }
       },
       {
         "name": "step",
         "params": {
-          "bounce": -10,
+          "bounce": -4,
           "sway": 6,
           "lean": 0.05,
           "headTilt": -0.03,
@@ -1192,7 +1192,7 @@ window.POSES = {
           ],
           "footL": [
             -28,
-            -12
+            -8
           ],
           "footR": [
             32,
@@ -1204,7 +1204,7 @@ window.POSES = {
       {
         "name": "point",
         "params": {
-          "bounce": -6,
+          "bounce": -4,
           "sway": 8,
           "lean": 0.04,
           "headTilt": 0.03,
@@ -1228,18 +1228,18 @@ window.POSES = {
           ],
           "footL": [
             -31,
-            -12
+            -8
           ],
           "footR": [
             33,
-            -12
+            -8
           ]
         }
       },
       {
         "name": "turn",
         "params": {
-          "bounce": -14,
+          "bounce": -4,
           "sway": -8,
           "lean": -0.04,
           "headTilt": 0.04,
@@ -1263,18 +1263,18 @@ window.POSES = {
           ],
           "footL": [
             -28,
-            -12
+            -8
           ],
           "footR": [
             35,
-            -12
+            -8
           ]
         }
       },
       {
         "name": "listen",
         "params": {
-          "bounce": -6,
+          "bounce": -3,
           "sway": 2,
           "lean": 0.06,
           "headTilt": 0.15,
@@ -1298,18 +1298,18 @@ window.POSES = {
           ],
           "footL": [
             -27,
-            -12
+            -8
           ],
           "footR": [
             30,
-            -12
+            -8
           ]
         }
       },
       {
         "name": "duet-left",
         "params": {
-          "bounce": -16,
+          "bounce": -4,
           "sway": 6,
           "lean": 0.03,
           "headTilt": -0.02,
@@ -1333,18 +1333,18 @@ window.POSES = {
           ],
           "footL": [
             -34,
-            -12
+            -8
           ],
           "footR": [
             33,
-            -12
+            -8
           ]
         }
       },
       {
         "name": "duet-right",
         "params": {
-          "bounce": -22,
+          "bounce": -4,
           "sway": -6,
           "lean": -0.03,
           "headTilt": 0.03,
@@ -1368,30 +1368,30 @@ window.POSES = {
           ],
           "footL": [
             -31,
-            -12
+            -8
           ],
           "footR": [
             36,
-            -12
+            -8
           ]
         }
       },
       {
         "name": "bow",
         "params": {
-          "bounce": -4,
+          "bounce": 3,
           "sway": 0,
-          "lean": 0.2,
+          "lean": 0.4,
           "headTilt": 0.2,
           "headTurn": 0,
           "hairSwing": 1,
           "armL": [
-            0.2,
-            0.15
+            0.15,
+            0.55
           ],
           "armR": [
-            -0.2,
-            -0.15
+            -0.15,
+            -0.55
           ],
           "legL": [
             0.04,
@@ -1403,11 +1403,11 @@ window.POSES = {
           ],
           "footL": [
             -28,
-            -12
+            -8
           ],
           "footR": [
             29,
-            -12
+            -8
           ]
         }
       }

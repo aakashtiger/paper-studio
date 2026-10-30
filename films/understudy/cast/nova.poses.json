@@ -47,18 +47,18 @@
         ],
         "footL": [
           -36,
-          -12
+          -39
         ],
         "footR": [
           36,
-          -12
+          -39
         ]
       }
     },
     {
       "name": "reach",
       "params": {
-        "bounce": -8,
+        "bounce": -4,
         "sway": 4,
         "lean": 0.02,
         "headTilt": -0.04,
@@ -82,18 +82,18 @@
         ],
         "footL": [
           -37,
-          -12
+          -39
         ],
         "footR": [
           38,
-          -12
+          -39
         ]
       }
     },
     {
       "name": "point",
       "params": {
-        "bounce": -14,
+        "bounce": -4,
         "sway": 10,
         "lean": 0.06,
         "headTilt": 0.06,
@@ -117,18 +117,18 @@
         ],
         "footL": [
           -39,
-          -12
+          -39
         ],
         "footR": [
           39,
-          -12
+          -39
         ]
       }
     },
     {
       "name": "turn",
       "params": {
-        "bounce": -10,
+        "bounce": -4,
         "sway": -8,
         "lean": -0.07,
         "headTilt": 0.05,
@@ -152,11 +152,11 @@
         ],
         "footL": [
           -36,
-          -12
+          -39
         ],
         "footR": [
           41,
-          -12
+          -39
         ]
       }
     },
@@ -187,11 +187,11 @@
         ],
         "footL": [
           -36,
-          -12
+          -75
         ],
         "footR": [
           32,
-          -36
+          -99
         ],
         "footPitchR": -0.35
       }
@@ -199,7 +199,7 @@
     {
       "name": "duet-left",
       "params": {
-        "bounce": -18,
+        "bounce": -5,
         "sway": 8,
         "lean": 0.04,
         "headTilt": -0.04,
@@ -223,18 +223,18 @@
         ],
         "footL": [
           -42,
-          -12
+          -39
         ],
         "footR": [
           39,
-          -12
+          -39
         ]
       }
     },
     {
       "name": "duet-right",
       "params": {
-        "bounce": -24,
+        "bounce": -5,
         "sway": -8,
         "lean": -0.04,
         "headTilt": 0.05,
@@ -258,30 +258,30 @@
         ],
         "footL": [
           -37,
-          -12
+          -39
         ],
         "footR": [
           44,
-          -12
+          -39
         ]
       }
     },
     {
       "name": "bow",
       "params": {
-        "bounce": -6,
+        "bounce": 4,
         "sway": 0,
-        "lean": 0.2,
+        "lean": 0.4,
         "headTilt": 0.22,
         "headTurn": 0,
         "hairSwing": 2,
         "armL": [
-          0.2,
-          0.15
+          0.15,
+          0.55
         ],
         "armR": [
-          -0.2,
-          -0.15
+          -0.15,
+          -0.55
         ],
         "legL": [
           0.08,
@@ -293,11 +293,11 @@
         ],
         "footL": [
           -33,
-          -12
+          -39
         ],
         "footR": [
           33,
-          -12
+          -39
         ]
       }
     }

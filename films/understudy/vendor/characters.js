@@ -404,7 +404,7 @@ function idol(ctx, x, y, s, o = {}) {
   const headTilt = p.headTilt || 0, headTurn = p.headTurn || 0;
   const flip = o.flip || 1;
   const shadow = o.shadow ?? 1;
-  const HIP = -300, SHOULDER = -500, HEAD = -604;
+  const HIP = -306, SHOULDER = -500, HEAD = -604;
   const showEyes = o.eyeGlow || .9;
 
   ctx.save();
@@ -603,7 +603,7 @@ function mira(ctx, x, y, s, o = {}) {
   const armL = p.armL || [.16, .08], armR = p.armR || [-.16, -.08];
   const legL = p.legL || [.03, .01], legR = p.legR || [-.03, -.01];
   const headTilt = p.headTilt || 0;
-  const HIP = -270, SHOULDER = -452, HEAD = -518;
+  const HIP = -272, SHOULDER = -452, HEAD = -518;
   const coat = o.coat === false ? null : (o.coatCol || PAL.cream);
   const skin = o.skin || SKIN;
   const trouser = o.trouser || PAL.blueD;
@@ -630,11 +630,11 @@ function mira(ctx, x, y, s, o = {}) {
     const pitch = (side < 0 ? p.footPitchL : p.footPitchR) || 0;
     let a1 = ang[0], a2 = ang[1], foot = ang[0] + ang[1] + pitch;
     if (Array.isArray(target)) {
-      const sol = solveLeg(hx, hy, target[0], target[1], 140, 104, side);
+      const sol = solveLeg(hx, hy, target[0], target[1], 156, 117, side);
       a1 = sol.hipAngle; a2 = sol.kneeBend; foot = sol.shinAngle + pitch;
     }
-    const knee = limb(ctx, hx, hy, 140, 25, 20, a1, far ? C.shade(trouser, -12) : trouser, C.rgba(PAL.ink, .5), true);
-    const ankle = limb(ctx, knee[0], knee[1], 104, 20, 16, a1 + a2, far ? C.shade(trouser, -12) : trouser, C.rgba(PAL.ink, .5), true);
+    const knee = limb(ctx, hx, hy, 156, 25, 20, a1, far ? C.shade(trouser, -12) : trouser, C.rgba(PAL.ink, .5), true);
+    const ankle = limb(ctx, knee[0], knee[1], 117, 20, 16, a1 + a2, far ? C.shade(trouser, -12) : trouser, C.rgba(PAL.ink, .5), true);
     brad(ctx, hx, hy, 3.4); brad(ctx, knee[0], knee[1], 2.8);
     // sneaker
     ctx.save(); ctx.translate(ankle[0] + 4, ankle[1] - 2); ctx.rotate(foot * .5);
