@@ -37,6 +37,7 @@ const manifest = read<{ videoHash: string; inputs: { backend: string | null; pai
 const determinism = read<{ pass: boolean; mismatches: number }>("determinism.json");
 const mix = read<{ passes: boolean; measured: { lufs: number; truePeak: number }; files: { hash: string } }>("mix/mix-report.json");
 const palette = read<{ pass: boolean; maxOutlierFraction: number }>("palette-audit.json");
+const paint = read<{ pass: boolean; sampled: number; worst: { time: number; psnr: number }; videoHash: string | null }>("paint-match.json");
 
 const frozenHash = frames?.hash ?? manifest?.videoHash ?? null;
 const checks: Record<string, { ok: boolean; detail: string }> = {
@@ -45,6 +46,12 @@ const checks: Record<string, { ok: boolean; detail: string }> = {
   oneHash: {
     ok: Boolean(frozenHash) && frames?.hash === manifest?.videoHash,
     detail: frozenHash ? `${frozenHash.slice(0, 18)}…` : "no hash",
+  },
+  paintMatch: {
+    ok: paint?.pass === true && Boolean(frozenHash) && paint?.videoHash === frozenHash,
+    detail: paint
+      ? `${paint.sampled} frames, worst ${paint.worst.psnr.toFixed(1)} dB at ${paint.worst.time}s`
+      : "no paint-match report",
   },
   inputsHashed: {
     ok: Boolean(manifest?.inputs?.backend && manifest?.inputs?.painter),

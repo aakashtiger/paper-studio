@@ -13,11 +13,22 @@ function libFor(name) {
   return key ? window.POSES[key] : null;
 }
 
+function clonePose(params) {
+  const out = {};
+  for (const [key, value] of Object.entries(params || {})) {
+    out[key] = Array.isArray(value) ? value.slice() : value;
+  }
+  return out;
+}
+
 function poseFor(name, poseName) {
   const lib = libFor(name);
   if (!lib) return {};
   const pose = lib.poses.find((p) => p.name === poseName) || lib.poses[0];
-  return pose ? pose.params : {};
+  // Always a copy: callers adjust poses (headTurn, sway). Returning the live
+  // library object let those adjustments accumulate across frames, so the same
+  // time painted differently depending on how many frames came before it.
+  return pose ? clonePose(pose.params) : {};
 }
 
 function colorsFor(name) {
@@ -564,12 +575,10 @@ function pullback(shot, lt, t) {
   }
   endCam(ctx);
   if (lt > 3.6) {
+    // Close the iris into paper. It already pinches to ~1 px by the last frame,
+    // so no extra fill: a hard fill here flashed the frame beige.
     const iris = Math.max(1, (1 - C.inv(3.6, d, lt)) * 1400);
     irisOverlay(ctx, W / 2, 470, iris, PAL.paper, 70);
-  }
-  if (lt > d - 0.2) {
-    ctx.fillStyle = PAL.paper;
-    ctx.fillRect(0, 0, W, H);
   }
 }
 

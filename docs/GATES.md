@@ -13,7 +13,16 @@ warning.
 | G4 assets | `build/<id>/sheets/*.png` | `npm run sheet -- <score>` | seam gap 0; feet planted; contact shadow; 8 poses + 4 expressions; joint map; hand/foot/coat panels | designer, developer, QA | ready |
 | G5 shots | animated shots, contact sheets | pending painter | entry/exit match; ≥3 events; no floating part; motion floor met | motion, editor | **pending** |
 | G6 mix | master + SFX | `npm run mix -- <score>` | 13 cues generated; voice highpassed at 75 Hz; the 1–4 kHz band ducked against the voice; one shared reverb return; tail faded; master −14.0 LUFS / ≤ −1.5 dBTP | sound, editor, QA | **master ready** |
-| G7 final | MP4 + SRT + score + stills + `gate-7.json` | `npm run gate:7 -- <score>` | one frozen MP4 hash; score audit, frames, one-hash, hashed inputs, determinism, mix and palette all pass; type-safe-area, rig-seam, ASR and motioncheck are still judged by hand | all seven + director | **partial** |
+| G7 final | MP4 + SRT + score + stills + `gate-7.json` | `npm run gate:7 -- <score>` | one frozen MP4 hash; score audit, frames, **paint-match**, one-hash, hashed inputs, determinism, mix and palette all pass; type-safe-area, rig-seam, ASR and motioncheck are still judged by hand | all seven + director | **partial** |
+
+## Paint match
+
+`npm run audit:paint -- <score> [--video <mp4>] [--step 1] [--min 30]` paints a
+sample of times through the same path as the renderer's `--stills`, extracts the
+MP4 frame at the same time and compares them with PSNR. A correct frame survives
+H.264 at about 40 dB; a frame that does not match the painter lands near
+10–20 dB. Luma and cut audits cannot see this class of defect — a video can be
+well-formed and still contain frames the current code would never draw.
 
 ## Current audit
 
