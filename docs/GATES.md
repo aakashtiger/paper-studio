@@ -12,8 +12,8 @@ warning.
 | G3 animatic | board pass + stepped rough | `npm run animatic -- <score>` | board pass signed 9/10; stepped rough requires the painter; every cue on frame; no camera-only shot; no undeclared hold >0.4 s; ≥2 breakdowns per transition | motion, editor, QA | **board pass signed; rough pending** |
 | G4 assets | `build/<id>/sheets/*.png` | `npm run sheet -- <score>` | seam gap 0; feet planted; contact shadow; 8 poses + 4 expressions; joint map; hand/foot/coat panels | designer, developer, QA | ready |
 | G5 shots | animated shots, contact sheets | pending painter | entry/exit match; ≥3 events; no floating part; motion floor met | motion, editor | **pending** |
-| G6 mix | master + SFX | `npm run sfx -- <score>` | 13 cues generated; board mix −15.0 LUFS / −1.6 dBTP; final master still needs ducking and stepped-rough sound | sound, editor, QA | **SFX ready; master pending** |
-| G7 final | MP4 + SRT + score + stills + audit | `npm run audit -- <score>` | score-level checks pass; frame checks pending the painter; seven critics sign | all seven + director | **partial** |
+| G6 mix | master + SFX | `npm run mix -- <score>` | 13 cues generated; voice highpassed at 75 Hz; the 1–4 kHz band ducked against the voice; one shared reverb return; tail faded; master −14.0 LUFS / ≤ −1.5 dBTP | sound, editor, QA | **master ready** |
+| G7 final | MP4 + SRT + score + stills + `gate-7.json` | `npm run gate:7 -- <score>` | one frozen MP4 hash; score audit, frames, one-hash, hashed inputs, determinism, mix and palette all pass; type-safe-area, rig-seam, ASR and motioncheck are still judged by hand | all seven + director | **partial** |
 
 ## Current audit
 

@@ -11,6 +11,12 @@ export const SfxCueSchema = z.object({
   gain: z.number().min(0).max(2).optional(),
   pan: z.number().min(-1).max(1).optional(),
   layers: z.array(z.string()).optional(),
+  /** Frequency band the cue is designed to occupy, in hertz [lo, hi]. */
+  band: z.tuple([z.number().positive(), z.number().positive()]).optional(),
+  /** Reverb send level for this cue, 0–1. Defaults by kind. */
+  send: z.number().min(0).max(1).optional(),
+  /** Sidechain duck depth in dB against the voice, keyed in the 1–4 kHz band. */
+  duckDb: z.number().min(0).max(12).optional(),
 });
 
 export const NarrationPlanSchema = z.object({
@@ -138,6 +144,12 @@ export function resolveAudio(
       ids.add(cue.id);
       if (cue.at >= duration) {
         errors.push({ code: "sfx_outside_film", message: `sfx "${cue.id}" at ${cue.at}s is outside the film` });
+      }
+      if (cue.band && cue.band[0] >= cue.band[1]) {
+        errors.push({
+          code: "sfx_band",
+          message: `sfx "${cue.id}" band ${cue.band[0]}–${cue.band[1]} Hz is not low-to-high`,
+        });
       }
     }
   } else if (plan.mode === "sfx") {
