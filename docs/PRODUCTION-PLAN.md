@@ -83,7 +83,7 @@ The director has the final call; no agent overrides taste.
 | Animatic | `build/<id>/animatic.mp4` | Generated artifact |
 | Cast / set / prop sheets | `build/<id>/sheets/` | Generated artifacts |
 | Rig / pose data | `src/engine/backends/<style>/` + `films/<id>/cast/` | Code + data |
-| Renderer / painter | `src/engine/` + `styles/<style>/backend.js` | Code |
+| Renderer / painter | `src/engine/` + `styles/<style>/canvas/` | Code |
 | Audit | `src/engine/audit/` | Code |
 | Critics | `critics/<role>.md` + `docs/GATES.md` | Process, not runtime |
 | Gates | `build/<id>/gates/` | Output + process |
@@ -452,7 +452,7 @@ All recipes are inside their limits (stage_wide min 3.4). No `proof: true`.
 |---|---|---|
 | `film` score + validator | extend `treatment.ts`; one CLI; no `proof: true` | 0 |
 | fixture `score.json` | 9 legal shots, narration/SFX, captions, assets | 0 |
-| backend registry | `styles/paper-kpop/backend.js` maps recipe ids to draw functions | 1 |
+| backend registry | `styles/paper-kpop/canvas/recipes.js` maps recipe ids to draw functions | 1 |
 | painter | `renderShot(shot, t)`; engine has no shot ids | 1 |
 | rig port | `src/characters.js` uses the same `limbEnd`; drift test | 1 |
 | audit | 900 frame pixel hashes, trace, cues, palette, type, audio | 1 |

@@ -14,9 +14,11 @@ import { join, resolve } from "node:path";
 
 type Score = {
   id: string;
+  style?: string;
   duration: number;
   fps?: number;
   shots: { id: string; start?: number; duration: number }[];
+  cast?: { character: string; poses?: string; rig?: string }[];
 };
 
 function arg(name: string): string | undefined {
@@ -208,20 +210,33 @@ async function main(): Promise<void> {
     return `sha256:${createHash("sha256").update(await readFile(path)).digest("hex")}`;
   };
   const filmDir = resolve(root, "films", score.id);
+  const style = score.style ?? "";
   const vendorFiles = ["characters.js", "core.js", "props.js", "scene_kit.js", "type.js", "gsap.min.js"];
   const vendor = Object.fromEntries(
     await Promise.all(
       vendorFiles.map(async (name) => [name, await hashFile(join(filmDir, "vendor", name))] as const),
     ),
   );
+  // The pose libraries are cast data, not engine data: a pose edit changes the
+  // frames without touching the code, so each file is hashed here too.
+  const cast = score.cast ?? [];
+  const poses = Object.fromEntries(
+    await Promise.all(
+      cast.map(async (entry) => {
+        const path = entry.poses ? resolve(root, entry.poses) : null;
+        return [entry.character, path ? await hashFile(path) : null] as const;
+      }),
+    ),
+  );
   const inputs = {
     score: await hashFile(resolve(root, scorePath)),
     scoreData: await hashFile(join(filmDir, "score-data.js")),
-    backend: await hashFile(join(filmDir, "backend.js")),
+    backend: await hashFile(join(root, "styles", style, "canvas", "recipes.js")),
     painter: await hashFile(join(filmDir, "painter.js")),
     index: await hashFile(join(filmDir, "index.html")),
     captions: await hashFile(join(filmDir, "captions.srt")),
     vendor,
+    poses,
   };
   const audioPath = arg("audio");
   const audioHash = audioPath ? await hashFile(resolve(root, audioPath)) : null;

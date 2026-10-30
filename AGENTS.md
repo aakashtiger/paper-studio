@@ -55,6 +55,9 @@ npm run film -- films/understudy/score.json      # validate a scored film
 npm run captions -- films/understudy/score.json  # generate transcript + SRT
 npm run board -- films/understudy/score.json     # derive board + contact sheet
 npm run audit -- films/understudy/score.json     # score-level audit
+npm run audit:motion -- films/understudy/score.json   # per-shot motion floor
+npm run audit:type -- films/understudy/score.json      # text inside the safe area
+npm run audit:rig -- films/understudy/score.json       # leg solve + contact seam
 npm run sheet -- films/understudy/score.json     # character/pose sheet PNG
 npm run sfx -- films/understudy/score.json       # code-generated SFX + mix
 npm run animatic -- films/understudy/score.json  # board animatic + voice/SFX/SRT
@@ -128,14 +131,18 @@ The **contract layer and the first generators are implemented**: film brief,
 audio resolver (recorded/TTS narration, library/generated music, generated SFX),
 asset manifest, pose library, film score, derived **board**, score-level
 **audit**, the **character/pose sheet** generator and the **board animatic**
-builder. **158 tests.** The sheet has a signed **9/10 design** review. The paper
-rig has two-bone leg IK, ankle targets, foot pitch and a hip-based bounce; the
-pose set is still **7/10 motion** pending a better weight shift. The board
-animatic is **9/10 signed** (editor + QA) with voice, captions and 13 generated
-SFX cues; it is a board pass, not a stepped rough. The seven critics and gate
-checklist are in `critics/` and `docs/GATES.md`. Carry-forward: the board mix is -15.0 LUFS /
--1.6 dBTP; the stepped rough and final master are still pending. Build next:
-stepped rough and painter; look pass. Only then does the user's idea become a film. No
+builder. **169 tests.** The sheet has a signed **9/10 design** review. The paper
+rig has two-bone leg IK, ankle targets, foot pitch and a knee-driven bounce; the
+leg targets are now reachable, so a planted foot bends its knee and lands on its
+shadow (`test/cast-rig.test.ts`). The board animatic is **9/10 signed** (editor +
+QA) with voice, captions and 13 generated SFX cues; it is a board pass, not a
+stepped rough. The seven critics and gate checklist are in `critics/` and
+`docs/GATES.md`. Carry-forward: the board mix is -15.0 LUFS / -1.6 dBTP; the
+stepped rough and final master are still pending. The painter now lives in the
+style pack (`styles/paper-kpop/canvas/recipes.js`, decision 0015); the film
+renderer and three mechanical G7 audits are built (`audit:motion`, `audit:type`,
+`audit:rig`). Build next: the stepped rough and the look pass; ASR waits for the
+voice pipeline (decision 0016). Only then does the user's idea become a film. No
 film render before the core is fixed. No app, no asset library, no watercolor
 until the first film ships.
 

@@ -14,7 +14,7 @@ import { spawn, spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { extname, join, resolve, sep } from "node:path";
+import { extname, join, resolve, sep, dirname } from "node:path";
 import type { AddressInfo } from "node:net";
 
 const MIME: Record<string, string> = {
@@ -197,17 +197,28 @@ async function quietly(task: () => Promise<unknown>): Promise<void> {
   }
 }
 
-async function drawFrame(cdp: Cdp, time: number): Promise<{ data: string; drawnAt: number }> {
+type TextBox = { text: string; x: number; y: number; w: number; h: number };
+type RigRecord = Record<string, unknown>;
+
+async function drawFrame(
+  cdp: Cdp,
+  time: number,
+): Promise<{ data: string; drawnAt: number; textBoxes?: TextBox[]; rigRecords?: RigRecord[] }> {
   const probe = await cdp.send<{
-    result: { value?: { data?: string; error?: string; drawnAt?: number } };
+    result: {
+      value?: { data?: string; error?: string; drawnAt?: number; textBoxes?: TextBox[]; rigRecords?: RigRecord[] };
+    };
     exceptionDetails?: { text?: string };
   }>("Runtime.evaluate", {
     expression: `(() => {
+      if (window.__paintProbe) { window.__textBoxes = []; window.__rigRecords = []; }
       window.__draw(${time});
       if (window.__lastDrawError) return { error: String(window.__lastDrawError) };
       return {
         data: document.getElementById("out").toDataURL("image/png"),
         drawnAt: window.__drawnAt,
+        textBoxes: window.__paintProbe ? window.__textBoxes.slice() : undefined,
+        rigRecords: window.__paintProbe ? window.__rigRecords.slice() : undefined,
       };
     })()`,
     returnByValue: true,
@@ -220,7 +231,12 @@ async function drawFrame(cdp: Cdp, time: number): Promise<{ data: string; drawnA
   if (Math.abs(Number(value.drawnAt) - time) > 1e-6) {
     throw new Error(`frame ${time}s: drew ${String(value.drawnAt)}s instead`);
   }
-  return { data: value.data, drawnAt: Number(value.drawnAt) };
+  return {
+    data: value.data,
+    drawnAt: Number(value.drawnAt),
+    textBoxes: value.textBoxes,
+    rigRecords: value.rigRecords,
+  };
 }
 
 async function encode(input: {
@@ -372,16 +388,55 @@ async function main(): Promise<void> {
       returnByValue: true,
     });
 
+    const probePath = arg("probe");
+    if (probePath) {
+      // Instrument the page's text and rig helpers, then read what each still
+      // actually drew. The probe is engine-owned so every film gets the same one.
+      const probeSource = await readFile(resolve(cwd, "src/engine/paint-probe.js"), "utf8");
+      const injected = await cdp.send<{
+        result: { value?: unknown };
+        exceptionDetails?: { text?: string };
+      }>("Runtime.evaluate", { expression: probeSource, returnByValue: true });
+      if (injected.exceptionDetails) {
+        throw new Error(`paint probe failed: ${injected.exceptionDetails.text ?? "evaluate failed"}`);
+      }
+      const check = await cdp.send<{ result: { value?: unknown } }>("Runtime.evaluate", {
+        expression: "Boolean(window.__paintProbe)",
+        returnByValue: true,
+      });
+      if (check.result.value !== true) {
+        throw new Error("paint probe did not attach (no TY text helpers on the page)");
+      }
+    }
+
     if (stills) {
       await mkdir(stillsDir, { recursive: true });
+      const probeFrames: { time: number; textBoxes: TextBox[]; rigRecords: RigRecord[] }[] = [];
       for (const time of stills) {
         const frame = await drawFrame(cdp, time);
         const base64 = frame.data.slice(frame.data.indexOf(",") + 1);
         const name = `t-${time.toFixed(2).padStart(5, "0")}.png`;
         await writeFile(join(stillsDir, name), Buffer.from(base64, "base64"));
+        if (frame.textBoxes || frame.rigRecords) {
+          probeFrames.push({
+            time,
+            textBoxes: frame.textBoxes ?? [],
+            rigRecords: frame.rigRecords ?? [],
+          });
+        }
         console.log(`still ${name}`);
       }
       console.log(`stills: ${stillsDir}`);
+      if (probePath) {
+        const probeFile = resolve(cwd, probePath);
+        await mkdir(dirname(probeFile), { recursive: true });
+        await writeFile(probeFile, JSON.stringify({ frames: probeFrames }, null, 2) + "\n", "utf8");
+        const boxes = probeFrames.reduce((sum, frame) => sum + frame.textBoxes.length, 0);
+        const joints = probeFrames.reduce((sum, frame) => sum + frame.rigRecords.length, 0);
+        console.log(
+          `probe: ${boxes} text boxes, ${joints} rig records across ${probeFrames.length} frames · ${probeFile}`,
+        );
+      }
       return;
     }
 

@@ -1,6 +1,23 @@
 # Paper Studio — status audit
 
 **Date:** 2026-10-29
+**Update 2026-10-31:** The core system is now real. The contract layer, audio
+resolver, asset manifest, pose library, film score, derived **board**,
+score-level **audit**, character/pose **sheet** and board **animatic** all exist.
+The paper rig has two-bone leg IK with ankle targets, foot pitch and a
+knee-driven bounce; every foot target is reachable, so a planted foot bends its
+knee and lands on its shadow. The film renderer paints from the score and the
+painter now lives in the style pack (`styles/paper-kpop/canvas/recipes.js`,
+decision 0015). Four mechanical G7 audits are built — `audit:motion`,
+`audit:type`, `audit:rig`, plus `audit:paint` — and `gate:7` ties the score
+audit, frames, one-hash, paint-match, motion floor, type safe area, rig seam,
+hashed inputs, determinism, mix and palette to a single frozen MP4. **169 tests
+pass**, typecheck is clean, and `gate:7` passes 12 checks; ASR is the one
+remaining manual check (deferred to the voice pipeline, decision 0016). The
+fixture film *The Understudy* is the test artifact; the user's own film is next,
+after the stepped rough and look pass. See `docs/PRODUCTION-PLAN.md` v1.4 and
+`docs/decisions/0014`–`0016`.
+
 **Update:** `docs/PRODUCTION-PLAN.md` v1.4 is accepted. The contract layer and
 the first generators exist: film brief, audio resolver (recorded/TTS narration,
 library/generated music, generated SFX), asset manifest, pose library, film

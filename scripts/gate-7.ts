@@ -33,11 +33,17 @@ function read<T>(name: string): T | null {
 
 const scoreAudit = read<{ ok: boolean }>("audit.json");
 const frames = read<{ pass: boolean; hash: string; frameCount: number }>("frame-audit.json");
-const manifest = read<{ videoHash: string; inputs: { backend: string | null; painter: string | null } }>("render-manifest.json");
-const determinism = read<{ pass: boolean; mismatches: number }>("determinism.json");
+const manifest = read<{
+  videoHash: string;
+  inputs: { backend: string | null; painter: string | null; poses?: Record<string, string | null> };
+}>("render-manifest.json");
+const determinism = read<{ pass: boolean; mismatches: number; frameSetHash: string }>("determinism.json");
 const mix = read<{ passes: boolean; measured: { lufs: number; truePeak: number }; files: { hash: string } }>("mix/mix-report.json");
 const palette = read<{ pass: boolean; maxOutlierFraction: number }>("palette-audit.json");
 const paint = read<{ pass: boolean; sampled: number; worst: { time: number; psnr: number }; videoHash: string | null }>("paint-match.json");
+const motion = read<{ pass: boolean; videoHash: string | null; weak: string[]; shots: { id: string; median: number }[] }>("motion-audit.json");
+const type = read<{ pass: boolean; sampled: number; boxes: number; outside: unknown[] }>("type-audit.json");
+const rig = read<{ pass: boolean; legs: number; unpairedSolves: number; worstAnkleJump: { distance: number } }>("rig-audit.json");
 
 const frozenHash = frames?.hash ?? manifest?.videoHash ?? null;
 const checks: Record<string, { ok: boolean; detail: string }> = {
@@ -57,9 +63,23 @@ const checks: Record<string, { ok: boolean; detail: string }> = {
     ok: Boolean(manifest?.inputs?.backend && manifest?.inputs?.painter),
     detail: "backend + painter hashed into the manifest",
   },
+  poseHashes: {
+    ok:
+      Boolean(manifest?.inputs?.poses) &&
+      Object.keys(manifest?.inputs?.poses ?? {}).length > 0 &&
+      Object.values(manifest?.inputs?.poses ?? {}).every((value) => typeof value === "string"),
+    detail: manifest?.inputs?.poses
+      ? `${Object.keys(manifest.inputs.poses).length} pose libraries hashed`
+      : "no pose hashes in the manifest",
+  },
   determinism: {
-    ok: determinism?.pass === true,
-    detail: `${determinism?.mismatches ?? "?"} mismatched frames between two runs`,
+    ok:
+      determinism?.pass === true &&
+      Boolean(frozenHash) &&
+      determinism?.frameSetHash === frozenHash,
+    detail: determinism
+      ? `${determinism.mismatches} mismatched frames between two runs`
+      : "no determinism report",
   },
   mix: {
     ok: mix?.passes === true,
@@ -69,13 +89,26 @@ const checks: Record<string, { ok: boolean; detail: string }> = {
     ok: palette?.pass === true,
     detail: palette ? `worst outlier ${(palette.maxOutlierFraction * 100).toFixed(2)}%` : "no palette report",
   },
+  motionFloor: {
+    ok: motion?.pass === true && Boolean(frozenHash) && motion?.videoHash === frozenHash,
+    detail: motion
+      ? `${motion.shots.length} shots, weakest median ${Math.min(...motion.shots.map((shot) => shot.median)).toFixed(2)}`
+      : "no motion-audit report",
+  },
+  typeSafeArea: {
+    ok: type?.pass === true,
+    detail: type ? `${type.boxes} boxes in ${type.sampled} frames, ${type.outside.length} outside` : "no type-audit report",
+  },
+  rigSeam: {
+    ok: rig?.pass === true,
+    detail: rig
+      ? `${rig.legs} legs, ${rig.unpairedSolves} unpaired, worst ankle jump ${rig.worstAnkleJump.distance}px`
+      : "no rig-audit report",
+  },
 };
 
 const pending = [
-  "type-safe-area: not mechanical yet (needs text boxes from the board)",
-  "rig-seam: not mechanical on the delivered frames yet",
   "ASR of the mixed master: no offline recogniser wired in",
-  "motioncheck: the motion floor is judged by the critics, not measured",
 ];
 
 const failed = Object.entries(checks).filter(([, value]) => !value.ok).map(([name]) => name);
