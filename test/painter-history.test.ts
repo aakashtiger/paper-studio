@@ -17,8 +17,18 @@ import vm from "node:vm";
 
 const root = process.cwd();
 const film = resolve(root, "films/understudy");
-const sources = ["vendor/core.js", "vendor/type.js", "vendor/characters.js", "vendor/props.js", "vendor/scene_kit.js", "score-data.js", "backend.js"]
-  .map((file) => readFileSync(resolve(film, file), "utf8"))
+// The painter is style-owned (docs/decisions/0015-painter-in-the-pack.md); the
+// film loads it from the pack just as index.html does.
+const painter = resolve(root, "styles/paper-kpop/canvas/recipes.js");
+const sources = [
+  "vendor/core.js",
+  "vendor/type.js",
+  "vendor/characters.js",
+  "vendor/props.js",
+  "vendor/scene_kit.js",
+  "score-data.js",
+].map((file) => readFileSync(resolve(film, file), "utf8"))
+  .concat(readFileSync(painter, "utf8"))
   .join("\n;\n");
 
 const noop = () => {};

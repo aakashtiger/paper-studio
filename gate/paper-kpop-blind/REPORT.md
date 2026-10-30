@@ -3,7 +3,8 @@
 **Style:** `styles/paper-kpop` 0.1.0
 **Date:** 2026-10-28
 **Final run:** live `work/` — *Last Cue* (run-18), after 17 archived runs
-**Pack hash:** `sha256:6c5765be435bbf494bceaee6b770828c4bdd2c33d5c795287cf96435f8c211ba`
+**Pack hash:** `sha256:a2089bd7af2d5c2e08615b9783fd431fb3e8edd7bb596b4ffaf003483be7eb27` (pack carries its painter; see **Pack revision** below)
+**Pack hash at the run:** `sha256:6c5765be435bbf494bceaee6b770828c4bdd2c33d5c795287cf96435f8c211ba`
 **Result:** 6 shots · 30 s · 9:16 · 9/9 assertions · final pack and input/used copies matched · **post-build critics contract 9/10 GO · creative 9/10 GO · product 9/10 GO**
 **Author:** a fresh sub-agent given only the sealed `inputs/` copy.
 **Audit:** `AUDIT.md` — the current-hash geometry re-audit and the batch that fixed it.
@@ -62,7 +63,31 @@ After the batch:
 
 ## Post-run changes
 
-None to the pack. The treatment’s close duration was corrected from 5.199 to 5.198 to match the resolver; the plan and the 30.000 s total are unchanged. The author’s format carries `palette: "day-stage"` and `loudness: "-14 LUFS"`, both passthrough metadata; the resolver ignores them. The final pack hash is `6c5765be…`; the live plan re-resolves 9/9 on it.
+One, deliberate: the pack gained its painter (`canvas/recipes.js`); nothing the author read changed — see **Pack revision** below. The treatment’s close duration was corrected from 5.199 to 5.198 to match the resolver; the plan and the 30.000 s total are unchanged. The author’s format carries `palette: "day-stage"` and `loudness: "-14 LUFS"`, both passthrough metadata; the resolver ignores them. The final pack hash is `6c5765be…`; the live plan re-resolves 9/9 on both the run hash and the shipped hash.
+
+## Pack revision
+
+The S1c pack (0008) shipped “with no renderer and no video”. The core system then
+needed one, so `films/understudy/backend.js` moved into the pack as
+`styles/paper-kpop/canvas/recipes.js` — a painter is style code (rule 7: the
+engine never hardcodes a palette or a recipe id). See
+`docs/decisions/0015-painter-in-the-pack.md`.
+
+The authoring surface is **byte-identical**: `BRIEF.md`, `STYLE.md`,
+`tokens.json`, `capabilities.json`, `recipes/*.json`, `card.html`,
+`APPLICATION.md`, `SOURCES.md`, the bundled fonts and the six reference frames
+are unchanged. The pack only **gains** one file. So *Last Cue* (run-18) is still
+the live blind answer; there is no run-19 and no invented author.
+
+The seal was refreshed with `gate/paper-kpop-blind/make-inputs.ts`, the repo’s own
+tool: `inputs/pack` and `used-inputs/pack` now mirror the shipped pack, and
+`PACK-HASH.txt` records `a2089bd7...`. The identity version stays 0.1.0 — the
+style *contract* did not move, only the backend that draws it.
+
+Since the painter lives inside the pack, the revision hash moves with every
+painter edit (`55e994e8...` at the move, `a2089bd7...` after the duet and
+bow-pose passes). `make-inputs.ts` re-seals it each time; the frozen
+`6c5765be...` hash and the `work/` *Last Cue* authoring surface are unchanged.
 
 ## The discovery loop
 
@@ -118,9 +143,9 @@ Runs 1–17 are archived under `archive/run-*`. The final author is the live `wo
 ## Files
 
 - `AUDIT.md` — geometry re-audit, findings and fixes.
-- `PACK-HASH.txt` — `6c5765be…`.
+- `PACK-HASH.txt` — `a2089bd7…`.
 - `resolve.txt` — UTF-8, no BOM.
-- `inputs/` and `used-inputs/` — pack copy, application, prompt, manifest (32 files).
+- `inputs/` and `used-inputs/` — pack copy, application, prompt, manifest (33 files).
 - `critics/contract.md`, `critics/creative.md`, `critics/product.md` — scorecards.
 - `work/` — *Last Cue* (run-18, live).
 - `archive/run-17/` — *Rooftop Soundcheck* on `719e0582…`, historical.

@@ -1,4 +1,9 @@
-/* Score-driven Paper K-pop backend for The Understudy (technical slice). */
+/* Paper K-pop canvas recipes — owned by the style pack, not by a film.
+ *
+ * Each entry draws one recipe from the score: the shot supplies the slots, the
+ * style supplies the look. `painter.js` in the film maps `shot.recipe` here, so
+ * a second paper film reuses this file unchanged.
+ */
 
 
 
@@ -317,8 +322,11 @@ function stage(shot, lt, t) {
       const count = Math.floor((lt - duetStart) / 0.55);
       const phase = C.frac((lt - duetStart) / 0.55);
       const ease = C.smooth(phase);
+      // Nova carries the call. Mira answers rather than mirrors: a listen, a
+      // weight shift, then her half of the phrase. The two silhouettes then
+      // stack on a shared eyeline instead of cancelling as a mirror.
       const seqA = ["duet-left", "duet-right", "duet-left", "duet-right"];
-      const seqB = ["duet-right", "duet-left", "duet-right", "duet-left"];
+      const seqB = ["listen", "step", "duet-right", "duet-left"];
       const a0 = seqA[((count % 4) + 4) % 4];
       const a1 = seqA[(((count + 1) % 4) + 4) % 4];
       const b0 = seqB[((count % 4) + 4) % 4];
@@ -347,16 +355,22 @@ function stage(shot, lt, t) {
     const phase = (lt - 0.3) / 0.34;
     const swing = Math.sin(phase * Math.PI);
     const base = poseFor("Nova", "idle");
+    // A step: the planted foot stays on the ground line (-39 for Nova's boot),
+    // the other lifts. The bob is a knee-driven sink, never a body lift, so the
+    // planted foot never leaves its shadow.
     poseA = {
       ...base,
-      footL: [-31, -12 - 26 * Math.max(0, swing)],
-      footR: [33, -12 - 26 * Math.max(0, -swing)],
-      bounce: -6 * Math.abs(swing),
+      footL: [-31, -39 - 30 * Math.max(0, swing)],
+      footR: [33, -39 - 30 * Math.max(0, -swing)],
+      bounce: 4 * Math.abs(swing),
       armL: [0.2 + 0.18 * swing, 0.05],
       armR: [-0.2 - 0.18 * swing, -0.05],
     };
   }
-  const bob = -Math.abs(Math.sin(C.frac(C.beat(t)) * Math.PI)) * 12;
+  // The beat pulse is a knee-driven sink, not a body lift. Translating the
+  // character up would float the feet off their own shadows on every beat;
+  // adding it to `bounce` makes the legs take the weight with the feet planted.
+  const bob = Math.abs(Math.sin(C.frac(C.beat(t)) * Math.PI)) * 10;
   const formation = duet ? C.smooth(C.clamp((lt - 3.0) / 0.5)) : 0;
   const novaX = duet ? 60 + 740 * C.smooth(C.clamp((lt - 0.3) / 0.9)) + formation * 35 : 700;
   const miraX = duet ? 1100 - formation * 35 : 1180;
@@ -366,9 +380,9 @@ function stage(shot, lt, t) {
   ctx.beginPath(); ctx.ellipse(novaX, 966, 70, 12, 0, 0, TAU); ctx.fill();
   ctx.beginPath(); ctx.ellipse(miraX, 991, 52, 10, 0, 0, TAU); ctx.fill();
   ctx.restore();
-  ctx.save(); ctx.translate(0, bob);
-  drawCharacter("Nova", novaX, 960, 1.12, "point", 1, poseA, t);
-  drawCharacter("Mira", miraX, 985, 0.98, "listen", -1, poseB, t);
+  ctx.save();
+  drawCharacter("Nova", novaX, 960, 1.12, "point", 1, { ...poseA, bounce: (poseA.bounce || 0) + bob }, t);
+  drawCharacter("Mira", miraX, 985, 0.98, "listen", -1, { ...poseB, bounce: (poseB.bounce || 0) + bob }, t);
   ctx.restore();
 
   if (shot.slots["content.body"] && d >= 3.2) {
@@ -514,14 +528,17 @@ function macro(shot, lt, t) {
     paperShards(ctx, 1050, 460, lt, 18, [PAL.cream, PAL.red, PAL.gold], 460, C.clamp(1 - (lt - 1.5) / 0.6), 6);
   }
 
-  TY.type(ctx, shot.slots["content.caption"] || "THE CUE LAMP", 120, 856, 46, {
+  // The title is a screen-space layer: drawn after the camera closes so the
+  // zoom cannot push it toward the frame edge, and it holds still while the
+  // lamp breathes.
+  endCam(ctx);
+  TY.type(ctx, shot.slots["content.caption"] || "THE CUE LAMP", 140, 856, 46, {
     align: "left", color: PAL.ink, edge: PAL.cream, edgeW: 7,
     shadow: C.rgba(PAL.ink, 0.2), shadowOff: 5, time: t, seed: 9,
   });
-  TY.text(ctx, "NOVA  /  THE LAST CUE", 132, 890, 17, {
+  TY.text(ctx, "NOVA  /  THE LAST CUE", 152, 890, 17, {
     family: "DMMono", color: C.rgba(PAL.ink, 0.62), letter: 2,
   });
-  endCam(ctx);
   if (lt > d - 0.3) paperShards(ctx, W / 2, 500, lt, 16, [PAL.cream, PAL.gold], 420, C.clamp(1 - (lt - (d - 0.3)) / 0.3), 4);
 }
 
@@ -530,7 +547,9 @@ function bowPose(name, lt = 0) {
   const pose = { ...poseFor(name, "bow") };
   pose.lean = 0.02;
   pose.headTilt = 0.25;
-  pose.bounce = -6 - 12 * k;
+  // A bow settles the weight down, it does not lift the body off the floor:
+  // the hip sinks and the knees take it, so the feet stay planted.
+  pose.bounce = -4 + 10 * k;
   pose.armL = [0.6 - 0.45 * k, 0.2];
   pose.armR = [-0.6 + 0.45 * k, -0.2];
   return pose;

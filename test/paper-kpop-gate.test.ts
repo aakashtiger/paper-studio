@@ -52,7 +52,7 @@ function walk(directory: string): string[] {
 }
 
 function textFiles(directory: string): string[] {
-  const allowed = new Set([".md", ".json", ".html", ".txt"]);
+  const allowed = new Set([".md", ".json", ".html", ".txt", ".js"]);
   return walk(directory).filter((file) => allowed.has(extname(file).toLowerCase()));
 }
 
@@ -111,7 +111,7 @@ test("paper-kpop gate: shorts resolves 8 shots / 30 s / 9:16 and uses all eight 
   assert.ok(vertical?.includes("second-figure"));
 });
 
-test("paper-kpop gate: sealed blind run resolves 6 shots / 30 s / 9:16 and the pack is unchanged", () => {
+test("paper-kpop gate: sealed blind run resolves 6 shots / 30 s / 9:16 on the shipped pack", () => {
   const pack = loadStylePack(PACK);
   const format = readFormat("gate/paper-kpop-blind/work/format.json");
   const blind = readBrief("gate/paper-kpop-blind/work/brief.json");
@@ -519,6 +519,10 @@ test("paper-kpop gate: the pack is self-contained", () => {
   assert.equal(existsSync(join(PACK, "signoff.json")), false);
   assert.equal(existsSync(join(PACK, "style.json")), false);
   assert.equal(existsSync(join(PACK, "APPLICATION.md")), true);
+  // The pack carries its own painter (docs/decisions/0015-painter-in-the-pack.md).
+  const painter = join(PACK, "canvas", "recipes.js");
+  assert.ok(existsSync(painter), "the pack must ship its painter at canvas/recipes.js");
+  assert.ok(readFileSync(painter, "utf8").includes("function poseFor"), "the painter looks empty");
 });
 
 test("paper-kpop gate: the card is visual, short and leaves paper-shadow open", () => {
