@@ -9,7 +9,7 @@ warning.
 | G0 brief | `brief.json` | `npm run film -- <score>` | fields complete; style, aspect, duration, fps and audio mode match the score | architect, editor | ready |
 | G1 audio | voice, `transcript.json`, `captions.srt`, cue list | `npm run captions -- <score>` | files exist and hash; transcript covers the script; SRT cues match; read-time holds | editor, sound, QA | ready |
 | G2 direction + look | score, `build/<id>/board/`, hero frames | `npm run board -- <score>` | all shots inside the envelope; median in band; board covers every shot and marked beat; look table complete | designer, editor | ready |
-| G3 animatic | board pass + stepped rough | `npm run animatic -- <score>` | board pass signed 9/10; stepped rough requires the painter; every cue on frame; no camera-only shot; no undeclared hold >0.4 s; ≥2 breakdowns per transition | motion, editor, QA | **board pass signed; rough pending** |
+| G3 animatic | board pass + stepped rough | `npm run animatic -- <score>` + `npm run rough -- <score>` | board pass signed 9/10; stepped rough paints the score at 10 fps; every board time paired to its frame; every shot's median frame-to-frame change ≥ 0.6 and no hold >0.4 s; no camera-only shot; ≥2 breakdowns per transition | motion, editor, QA | **board pass signed; stepped rough measures pass** |
 | G4 assets | `build/<id>/sheets/*.png` | `npm run sheet -- <score>` | seam gap 0; feet planted; contact shadow; 8 poses + 4 expressions; joint map; hand/foot/coat panels | designer, developer, QA | ready |
 | G5 shots | animated shots, contact sheets | `npm run render:film -- <score>` + `npm run audit:motion -- <score>` | entry/exit match; ≥3 events; no floating part; every shot's median frame-to-frame change ≥ 0.6 and no dead stretch > 0.1 s | motion, editor | **measured** |
 | G6 mix | master + SFX | `npm run mix -- <score>` | 13 cues generated; voice highpassed at 75 Hz; the 1–4 kHz band ducked against the voice; one shared reverb return; tail faded; master −14.0 LUFS / ≤ −1.5 dBTP | sound, editor, QA | **master ready** |
@@ -32,6 +32,19 @@ absolute difference between consecutive frames inside each shot with
 well above the floor. It reports a median and the longest dead stretch per shot
 and writes `motion-audit.json`, tied to the video hash it measured. This is the
 number behind "no dead middles".
+
+## Stepped rough
+
+`npm run rough -- <score> [--fps 10] [--floor 0.6]` is G3's second pass, after the
+board pass. It paints the score through the same painter as the final render
+(three-frame holds at 10 fps), then pairs every board time with its rough frame, so
+a card and its acted frame sit side by side on one contact sheet
+(`build/<id>/rough/contact-sheet.png`). It burns the captions from the score, muxes
+the mix, and measures each shot's frame-to-frame change the same way
+`audit:motion` does. `build/<id>/rough/rough.json` fails if any board time is
+unpaired, any shot's median change is below the floor, any hold runs past 0.4 s, or
+a shot carries no event except a camera move. This is a board pass with the cast on
+screen; the look pass is still to come.
 
 ## Type safe area
 

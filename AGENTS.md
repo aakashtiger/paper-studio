@@ -61,6 +61,7 @@ npm run audit:rig -- films/understudy/score.json       # leg solve + contact sea
 npm run sheet -- films/understudy/score.json     # character/pose sheet PNG
 npm run sfx -- films/understudy/score.json       # code-generated SFX + mix
 npm run animatic -- films/understudy/score.json  # board animatic + voice/SFX/SRT
+npm run rough -- films/understudy/score.json     # stepped rough at 10 fps + board contact sheet
 npm run typecheck      # TypeScript check
 npm test               # unit and mutation tests
 ```
@@ -138,10 +139,13 @@ shadow (`test/cast-rig.test.ts`). The board animatic is **9/10 signed** (editor 
 QA) with voice, captions and 13 generated SFX cues; it is a board pass, not a
 stepped rough. The seven critics and gate checklist are in `critics/` and
 `docs/GATES.md`. Carry-forward: the board mix is -15.0 LUFS / -1.6 dBTP; the
-stepped rough and final master are still pending. The painter now lives in the
+final master is still pending. The painter now lives in the
 style pack (`styles/paper-kpop/canvas/recipes.js`, decision 0015); the film
 renderer and three mechanical G7 audits are built (`audit:motion`, `audit:type`,
-`audit:rig`). Build next: the stepped rough and the look pass; ASR waits for the
+`audit:rig`). The **stepped rough** is built (`npm run rough`): the score painted
+at 10 fps through the pack painter, every board time paired to its frame on one
+contact sheet, every shot measured — all nine shots pass the motion floor with no
+hold over 0.4 s. Build next: the look pass and the final master; ASR waits for the
 voice pipeline (decision 0016). Only then does the user's idea become a film. No
 film render before the core is fixed. No app, no asset library, no watercolor
 until the first film ships.

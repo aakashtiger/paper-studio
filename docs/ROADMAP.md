@@ -92,8 +92,9 @@ signed **9/10 design**. The paper rig now has two-bone leg IK, ankle targets,
 foot pitch and a hip-based bounce; the pose set is still **7/10 motion** pending
 a better weight shift. The board animatic is **9/10 signed** (editor + QA) with
 voice, burned captions and 13 generated SFX cues. The seven critics and gate
-checklist are in `critics/` and `docs/GATES.md`. Next: stepped rough/painter,
-look pass, final mix. No film render before the core is fixed.
+checklist are in `critics/` and `docs/GATES.md`. The **stepped rough** is built
+(`npm run rough`) and all nine shots pass the motion floor. Next: look pass, final
+mix. No film render before the core is fixed.
 
 **Reference research (done):** all 59 Lemo-Opuscar styles were read in detail —
 `docs/research/lemo-59-survey.md`. The result is the scored-film model in

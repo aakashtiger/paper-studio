@@ -14,8 +14,11 @@ audit, frames, one-hash, paint-match, motion floor, type safe area, rig seam,
 hashed inputs, determinism, mix and palette to a single frozen MP4. **169 tests
 pass**, typecheck is clean, and `gate:7` passes 12 checks; ASR is the one
 remaining manual check (deferred to the voice pipeline, decision 0016). The
-fixture film *The Understudy* is the test artifact; the user's own film is next,
-after the stepped rough and look pass. See `docs/PRODUCTION-PLAN.md` v1.4 and
+**stepped rough** is built (`npm run rough`): the score painted at 10 fps through
+the same painter, every board time paired to its frame on one contact sheet, every
+shot measured for motion — all nine shots pass the 0.6 floor with no hold over
+0.4 s. The fixture film *The Understudy* is the test artifact; the user's own film
+is next, after the look pass. See `docs/PRODUCTION-PLAN.md` v1.4 and
 `docs/decisions/0014`–`0016`.
 
 **Update:** `docs/PRODUCTION-PLAN.md` v1.4 is accepted. The contract layer and

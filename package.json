@@ -12,6 +12,7 @@
     "audit": "tsx scripts/audit.ts",
     "sheet": "tsx scripts/sheet.ts",
     "animatic": "tsx scripts/animatic.ts",
+    "rough": "tsx scripts/rough.ts",
     "embed": "tsx scripts/embed.ts",
     "assets:hash": "tsx scripts/assets-hash.ts",
     "render:film": "tsx scripts/render-film.ts",
