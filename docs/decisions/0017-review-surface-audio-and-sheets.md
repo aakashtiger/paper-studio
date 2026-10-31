@@ -187,4 +187,56 @@ pending (ASR), `film:review --gate` PASS, 242 tests, clean typecheck. A probe
 the mix refusing the stale WAVs; a probe that changed a cue's gain after the
 render made `npm run mix` stop with "changed after it was rendered".
 
+### The sound pass — what the sound critic found, and what changed
+
+The sound critic scored the film **6/10, no sign**, with ten defects. The ones
+that were engine faults are fixed here; the ones that are the fixture's or the
+missing tooling's are named below rather than papered over.
+
+Fixed in the engine:
+
+- **The tail fade was inverted.** `0.5 - 0.5*cos` muted the start of the fade
+  window and swelled the last breath, a 42 dB hole at 29.5 s. It is now
+  `0.5 + 0.5*cos`, with a test that walks the window and fails if the level ever
+  rises again.
+- **No level design.** Cues were peak-normalised, so a 30 ms snap and a 900 ms
+  sweep both touched ±1 and the film's softest cue (the glass iris) was 13 dB
+  louder than its footstep. Every cue is now normalised to `CUE_RMS = 0.12` and
+  peak-limited after that, so `gain` is the only level. The iris and the step now
+  sit 3 dB apart.
+- **Sub-bass materials.** Paper, wood and stone rang at 85–190 Hz, which a phone
+  cannot move. Every mode is above ~180 Hz, the hum tone starts at the second
+  mode, the room bed is banded 200–4000 Hz, and a cue now fails if less than 60%
+  of its energy is at or above 200 Hz.
+- **The crowd machine-gun.** Three `crowd` cues in eight seconds read as a
+  stutter. `checkCueSet` fails a repeat inside 0.3 s of the previous one ending,
+  and the fixture's cue sheet was re-bound to picture events (17 cues) so its
+  foley lands where the thing on screen happens.
+- **The master was a normaliser, not a master.** `loudnorm` in linear mode can
+  only reach −14 LUFS when the programme's crest allows it, so the earlier
+  "−14.3 LUFS" was luck of the cue levels. The master is now **one measured gain
+  and a true-peak limiter**, both recorded in the report (gain +6.3 dB, ceiling
+  −2.0 dBFS); the film measures −14.2 LUFS / −1.9 dBTP. The gain is a symptom
+  worth reading: a 30 s film with 15 s of speech and five Foley hits has to be
+  lifted that far because it is sparse, not because the mix is quiet.
+- **The spectrogram sheet could not be read for level.** Each tile's label now
+  carries the cue's measured dBFS.
+
+Not fixed here, and why:
+
+- **The delivered MP4 still carries the earlier audio cut.** It is re-cut with
+  the look pass, not in an audio change; the score-level master is the current
+  artifact and `gate:7` ties to it.
+- **No music, and the narration stops at 19.5 s.** The fixture's script ends
+  there — the brief's copy is the contract and inventing a seventh line to fill
+  ten seconds would be inventing a fact. Music is staged (§7). The last third is
+  carried by Foley alone, and that is a creative gap in the fixture, not an
+  engine one.
+- **The field is mono.** `pan` exists per cue and the mix uses it, but the
+  fixture's events carry no screen position, so panning them would be invented
+  staging. A film whose events name a position can pan; this one is centre.
+- **The transcript's word times say `source: "guess"`.** They are estimates
+  until `npm run voice` can run Whisper on this machine; the file says so.
+- **ASR is still pending.** Same missing model.
+
 Music (ACE-Step) stays staged until the first film that uses it.

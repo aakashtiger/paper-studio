@@ -14,7 +14,7 @@
  *
  * usage: npm run sfx -- <score.json> [--no-sheet]
  */
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { join, resolve } from "node:path";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
@@ -22,12 +22,14 @@ import { packFontPath } from "../src/engine/plan.js";
 import { findFfmpeg, renderGrid, runBinary } from "../src/engine/grid.js";
 import {
   checkCue,
+  checkCueSet,
   cueSpec,
   effectiveLayers,
   kindBand,
   kindGain,
   kindLength,
   renderSfx,
+  rms,
   SFX_GENERATOR,
   SFX_SAMPLE_RATE,
 } from "../src/engine/sfx.js";
@@ -58,6 +60,12 @@ async function main(scorePath: string): Promise<void> {
 
   const outDir = resolve(root, "build", score.id, "sfx");
   mkdirSync(outDir, { recursive: true });
+  // The directory must describe the current cue set, not a history of it: a
+  // stale WAV next to today's would be mixed by an older report and read as
+  // today's sound.
+  for (const name of readdirSync(outDir)) {
+    if (name.endsWith(".wav")) rmSync(join(outDir, name), { force: true });
+  }
   const total = Math.ceil((plan.duration + 0.5) * sr);
   const mix = new Float32Array(total * 2);
   const aligned = (value: number): boolean => Math.abs(value * plan.fps - Math.round(value * plan.fps)) <= 0.001;
@@ -69,6 +77,8 @@ async function main(scorePath: string): Promise<void> {
     event: ResolvedCue["event"] | null;
     seconds: number;
     gain: number;
+    /** The cue's level after its gain: what the tile's spectrogram cannot show. */
+    levelDb: number;
     layers: string[];
     band: [number, number];
     /** What the WAV was rendered from, so the mix can refuse a stale file. */
@@ -105,6 +115,7 @@ async function main(scorePath: string): Promise<void> {
       event: cue.event ?? null,
       seconds: Number((samples.length / sr).toFixed(3)),
       gain,
+      levelDb: Number((20 * Math.log10(rms(samples) * gain + 1e-9)).toFixed(1)),
       layers: effectiveLayers(cue.kind, cue.layers),
       band: cue.band ?? kindBand(cue.kind),
       spec: sha256(cueSpec(cue)),
@@ -121,6 +132,7 @@ async function main(scorePath: string): Promise<void> {
   writeWav(join(outDir, "mix.wav"), mix, 1, 0, true);
 
   const failed = checks.filter((check) => !check.ok);
+  const setIssues = checkCueSet(cues.map((cue) => ({ id: cue.id, kind: cue.kind, at: cue.at, duration: cue.duration })));
   writeFileSync(
     join(outDir, "sfx.json"),
     `${JSON.stringify(
@@ -130,7 +142,8 @@ async function main(scorePath: string): Promise<void> {
         sampleRate: sr,
         inputs: { score: `sha256:${sha256(readFileSync(resolve(root, scorePath)))}` },
         cues: checks,
-        pass: failed.length === 0,
+        set: setIssues,
+        pass: failed.length === 0 && setIssues.length === 0,
         files: {
           mix: `build/${score.id}/sfx/mix.wav`,
           cues: cues.map((cue) => `build/${score.id}/sfx/${cue.id}.wav`),
@@ -149,18 +162,22 @@ async function main(scorePath: string): Promise<void> {
   }
   if (failed.length > 0) {
     console.error(`sfx: ${failed.length} cue${failed.length === 1 ? "" : "s"} failed the kit checks`);
-    process.exit(1);
   }
+  for (const issue of setIssues) console.error(`  FAIL ${issue.code}  ${issue.message}`);
+  if (failed.length > 0 || setIssues.length > 0) process.exit(1);
 
   if (!args.includes("--no-sheet")) {
-    await spectrogramSheet(root, score.id, score.style, outDir, cues);
+    const levels = new Map(checks.map((check) => [check.id, check.levelDb]));
+    await spectrogramSheet(root, score.id, score.style, outDir, cues, levels);
   }
 }
 
 /**
  * G6 asks for a spectrogram per cue on one image. ffmpeg's `showspectrumpic`
  * turns each generated cue into a time x frequency picture; the one grid helper
- * tiles them, labelled with the cue and where its time came from.
+ * tiles them, labelled with the cue, where its time came from, and **its
+ * measured level** — a spectrogram normalises its own colour scale, so the
+ * picture alone can never tell you whether a cue is loud or quiet.
  */
 async function spectrogramSheet(
   root: string,
@@ -168,6 +185,7 @@ async function spectrogramSheet(
   style: string,
   outDir: string,
   cues: ResolvedCue[],
+  levels: Map<string, number>,
 ): Promise<void> {
   const framesDir = join(outDir, "spectrograms");
   rmSync(framesDir, { recursive: true, force: true });
@@ -187,7 +205,11 @@ async function spectrogramSheet(
     );
     if (!existsSync(image)) throw new Error(`no spectrogram for cue ${cue.id}`);
     const where = cue.from === "event" && cue.event ? ` · ${cue.event.shot}#${cue.event.index}` : "";
-    tiles.push({ image, label: `${cue.id} · ${cue.kind} @ ${cue.at.toFixed(2)}s${where}` });
+    const level = levels.get(cue.id);
+    tiles.push({
+      image,
+      label: `${cue.id} · ${cue.kind} @ ${cue.at.toFixed(2)}s${where}${level === undefined ? "" : ` · ${level} dBFS`}`,
+    });
   }
   if (tiles.length === 0) return;
 

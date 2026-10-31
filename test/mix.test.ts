@@ -58,6 +58,27 @@ test("a cue with a send leaves a reverb tail after it ends", () => {
   assert.ok(rms(tail) > 1e-4, "the shared reverb return should still be ringing");
 });
 
+test("the tail fades out to silence and never swells back", () => {
+  // A sustained cue filling the whole film: with the fade inside the last
+  // 0.5 s, block level must fall to zero and never rise again. A sign error
+  // here muted the start of the window and swelled the last breath — a 42 dB
+  // hole at 29.5 s in the first film that used it.
+  const cue = { id: "bed", kind: "room", at: 0, samples: sine(500, 2, 0.4), send: 0, duckDb: 0 };
+  const mix = mixFilm({ sampleRate: SR, duration: 2, voice: null, cues: [cue], tailFade: 0.5 });
+  const block = Math.round(0.05 * SR);
+  const lastSample = mix.left[mix.left.length - 1] ?? 1;
+  assert.ok(Math.abs(lastSample) < 1e-6, `the last sample must be silent, got ${lastSample}`);
+  const mid = rms(mix.left.subarray(Math.round(0.75 * SR), Math.round(0.8 * SR)));
+  const windowStart = mix.left.length - Math.round(0.5 * SR);
+  let previous = Number.POSITIVE_INFINITY;
+  for (let start = windowStart; start + block <= mix.left.length; start += block) {
+    const level = rms(mix.left.subarray(start, start + block));
+    assert.ok(level <= previous + 1e-6, `the fade must not rise again at ${((start / SR)).toFixed(2)}s`);
+    previous = level;
+  }
+  assert.ok(previous < mid * 0.02, "the fade reaches near silence");
+});
+
 test("the freeverb return and the highpass coefficients are stable shapes", () => {
   const return_ = freeverb(sine(300, 0.2, 0.5), SR, { room: 0.8, damp: 0.2, wet: 0.3 });
   assert.equal(return_.left.length, 0.2 * SR);

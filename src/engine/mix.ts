@@ -244,7 +244,10 @@ export function mixFilm(options: MixOptions): { left: Float32Array; right: Float
   const fadeSamples = Math.min(total, Math.round((options.tailFade ?? 0.5) * sr));
   for (let i = 0; i < fadeSamples; i++) {
     const index = total - fadeSamples + i;
-    const g = 0.5 - 0.5 * Math.cos((Math.PI * i) / fadeSamples);
+    // 1 at the start of the window, 0 at the last sample: the film ends in
+    // silence. The cosine half-wave is the shape; the sign is what makes it a
+    // fade out instead of a swell.
+    const g = 0.5 + 0.5 * Math.cos((Math.PI * i) / fadeSamples);
     left[index] = (left[index] ?? 0) * g;
     right[index] = (right[index] ?? 0) * g;
   }

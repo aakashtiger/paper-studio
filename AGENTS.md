@@ -141,7 +141,7 @@ The **contract layer and the first generators are implemented**: film brief,
 audio resolver (recorded/TTS narration, library/generated music, generated SFX),
 asset manifest, pose library, film score, derived **board**, score-level
 **audit**, the **character/pose sheet** generator and the **board animatic**
-builder. **242 tests.** The sheet has a signed **9/10 design** review. The paper
+builder. **246 tests.** The sheet has a signed **9/10 design** review. The paper
 rig has two-bone leg IK, ankle targets, foot pitch and a knee-driven bounce; the
 leg targets are now reachable, so a planted foot bends its knee and lands on its
 shadow (`test/cast-rig.test.ts`). The board animatic is **9/10 signed** (editor +
@@ -190,9 +190,22 @@ clock has no second cue list, the mix refuses a stale cue by spec fingerprint an
 WAV hash, review chrome is one neutral `REVIEW_CHROME`, every sheet takes its
 faces from the pack's `tokens.json`, and `film:review` never prints a report it
 did not write this run. `film:review --gate` is **PASS**: audit 32 events /
-13 cues, 13/13 SFX, mix -14.3 LUFS / -1.5 dBTP, `gate:7` 13 checks with **ASR the
-one pending row**, 242 tests, clean typecheck. `docs/decisions/0017` §Landed has
+17 cues, 17/17 SFX, mix -14.2 LUFS / -1.9 dBTP, `gate:7` 13 checks with **ASR the
+one pending row**, 246 tests, clean typecheck. `docs/decisions/0017` §Landed has
 the detail.
+
+The **sound pass** followed the sound critic's 6/10: the master's tail fade was
+inverted, cues were peak-normalised (so the softest was the loudest), materials
+rang under 200 Hz where a phone cannot move air, a `crowd` repeat machine-gunned,
+the fixture's cues were typed near their events instead of bound to them, and the
+master was a normaliser rather than one gain and a true-peak limiter. All six are
+fixed and each has a command or a test behind it: `CUE_RMS`, `phoneAudible` /
+`PHONE_FLOOR`, `checkCueSet`, `event`-bound cues, and a mix report that records
+`master.gainDb` and `master.limiterCeiling`. Still open and named in
+`docs/STATUS.md`: the MP4's earlier audio cut (the look pass re-cuts it), no music
+and narration that ends at 19.5 s (the brief's copy ends there), a mono field,
+transcript word times that say `source: "guess"` until Whisper is installed, and
+ASR pending.
 
 Do not build: the renderer in this phase, a video, the web app, a second product
 style, or a conversion of the other 58 Lemo styles. `styles/paper-vows` remains

@@ -71,142 +71,157 @@
       "cues": [
         {
           "id": "sfx-lamp",
-          "at": 0.2,
           "kind": "lamp",
-          "note": "paper lamp buzz",
-          "layers": [
-            "transient",
-            "body",
-            "tail"
-          ]
+          "event": {
+            "shot": "s01",
+            "index": 1
+          },
+          "note": "the cue lamp glows"
         },
         {
           "id": "sfx-snap",
-          "at": 2.2,
           "kind": "snap",
-          "note": "paper snap into iris",
-          "layers": [
-            "transient",
-            "body",
-            "tail"
-          ]
+          "event": {
+            "shot": "s01",
+            "index": 2
+          },
+          "note": "the red iris closes"
+        },
+        {
+          "id": "sfx-pulse",
+          "kind": "lamp",
+          "event": {
+            "shot": "s02",
+            "index": 2
+          },
+          "note": "the lamp pulses"
         },
         {
           "id": "sfx-build",
-          "at": 5.5,
           "kind": "whoosh",
-          "note": "stage build",
-          "layers": [
-            "body",
-            "tail"
-          ]
-        },
-        {
-          "id": "sfx-slam",
-          "at": 8.9,
-          "kind": "slam",
-          "note": "sticker slam",
-          "layers": [
-            "transient",
-            "body",
-            "tail"
-          ]
-        },
-        {
-          "id": "sfx-step",
-          "at": 10.5,
-          "kind": "step",
-          "note": "Mira's step",
-          "layers": [
-            "transient",
-            "body"
-          ]
-        },
-        {
-          "id": "sfx-swing",
-          "at": 13.3,
-          "kind": "swing",
-          "note": "cue lamp swings",
-          "layers": [
-            "body",
-            "tail"
-          ]
+          "event": {
+            "shot": "s03",
+            "index": 0
+          },
+          "note": "the floor wipes up"
         },
         {
           "id": "sfx-crowd",
-          "at": 15.4,
           "kind": "crowd",
-          "note": "crowd rises",
-          "layers": [
-            "body",
-            "tail"
-          ]
+          "event": {
+            "shot": "s03",
+            "index": 2
+          },
+          "note": "the crowd rises"
+        },
+        {
+          "id": "sfx-slam",
+          "kind": "slam",
+          "event": {
+            "shot": "s04",
+            "index": 0
+          },
+          "note": "the sticker hits"
+        },
+        {
+          "id": "sfx-shards",
+          "kind": "paper",
+          "event": {
+            "shot": "s04",
+            "index": 1
+          },
+          "note": "paper shards"
+        },
+        {
+          "id": "sfx-step",
+          "kind": "step",
+          "event": {
+            "shot": "s05",
+            "index": 0
+          },
+          "note": "Mira's foot lands"
+        },
+        {
+          "id": "sfx-swing",
+          "kind": "swing",
+          "event": {
+            "shot": "s06",
+            "index": 0
+          },
+          "note": "the cue lamp swings"
+        },
+        {
+          "id": "sfx-tear",
+          "kind": "paper",
+          "event": {
+            "shot": "s06",
+            "index": 2
+          },
+          "note": "the paper tears"
         },
         {
           "id": "sfx-cheer",
-          "at": 19.5,
           "kind": "crowd",
-          "note": "crowd answers",
-          "layers": [
-            "body",
-            "tail"
-          ]
+          "event": {
+            "shot": "s07",
+            "index": 1
+          },
+          "note": "the crowd answers"
         },
         {
           "id": "sfx-confetti",
-          "at": 24.6,
           "kind": "confetti",
-          "note": "paper confetti",
-          "layers": [
-            "transient",
-            "body"
-          ]
+          "event": {
+            "shot": "s07",
+            "index": 2
+          },
+          "note": "confetti hits"
+        },
+        {
+          "id": "sfx-entrance",
+          "kind": "step",
+          "event": {
+            "shot": "s08",
+            "index": 0
+          },
+          "note": "Nova walks on"
+        },
+        {
+          "id": "sfx-bow",
+          "kind": "cloth",
+          "event": {
+            "shot": "s09",
+            "index": 0
+          },
+          "note": "they bow"
         },
         {
           "id": "sfx-iris",
-          "at": 27,
           "kind": "iris",
-          "note": "cream iris",
-          "layers": [
-            "body",
-            "tail"
-          ]
-        },
-        {
-          "id": "sfx-room",
-          "at": 0,
-          "kind": "room",
-          "note": "low paper room tone",
-          "duration": 30,
-          "gain": 0.1,
-          "layers": [
-            "body",
-            "tail"
-          ]
-        },
-        {
-          "id": "sfx-crowd2",
-          "at": 20.5,
-          "kind": "crowd",
-          "note": "crowd settles",
-          "duration": 1.8,
-          "gain": 0.5,
-          "layers": [
-            "body",
-            "tail"
-          ]
+          "event": {
+            "shot": "s09",
+            "index": 2
+          },
+          "note": "the cream iris closes",
+          "gain": 0.45
         },
         {
           "id": "sfx-paper",
-          "at": 28.5,
-          "kind": "whoosh",
-          "note": "paper settle",
-          "duration": 0.8,
-          "gain": 0.4,
-          "layers": [
-            "body",
-            "tail"
-          ]
+          "kind": "paper",
+          "event": {
+            "shot": "s09",
+            "index": 3
+          },
+          "note": "the paper settles",
+          "gain": 0.4
+        },
+        {
+          "id": "sfx-room",
+          "kind": "room",
+          "at": 0,
+          "duration": 30,
+          "gain": 0.1,
+          "note": "room tone under the whole film"
         }
       ]
     }

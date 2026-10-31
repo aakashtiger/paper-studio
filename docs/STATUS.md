@@ -58,6 +58,28 @@ after the render made `npm run mix` stop with "changed after it was rendered".
 Still open: the delivered MP4 carries the earlier audio cut (the re-cut is the
 look pass), and `npm run asr` waits on the local speech models.
 
+**Update 2026-11-01 — the sound pass.** The sound critic then scored the film
+**6/10, no sign**, with ten defects. Every engine fault it named is fixed: the
+master tail fade was inverted (`0.5 − 0.5cos` muted the start of the fade and
+swelled the last breath — a 42 dB hole at 29.5 s); cues were peak-normalised, so
+the film's softest cue was its loudest, and every cue is now normalised to one
+RMS (`CUE_RMS = 0.12`) with `gain` as the only level; the materials rang at
+85–190 Hz where a phone speaker cannot move, and every mode is now above ~180 Hz
+with a `≥60% at or above 200 Hz` check behind it; three `crowd` cues in eight
+seconds read as a stutter, and `checkCueSet` now fails a repeat within 0.3 s of
+the previous one ending; the fixture's cue sheet was re-bound to picture events
+(17 cues), so its foley lands on the gesture it belongs to instead of 1.8 s
+beside it; and the master is no longer a normaliser — it is **one measured gain
+and a true-peak limiter**, both recorded (gain +6.3 dB, ceiling −2.0 dBFS). The
+spectrogram tiles now carry each cue's measured dBFS, because a spectrogram
+normalises its own colour scale. Evidence: `sfx` **17/17 ok**, `audit` 32 events
+/ 17 cues, `mix` **−14.2 LUFS / −1.9 dBTP** with tied inputs, `gate:7` **PASS 13
+checks / 1 pending (ASR)**, `film:review --gate` **PASS**, **246 tests**,
+typecheck clean. Not fixed, and named: the MP4's earlier audio cut (look pass),
+no music and narration that stops at 19.5 s (the brief's copy ends there; music
+is staged), a mono field (the fixture's events carry no screen position), and
+transcript word times that still say `source: "guess"` until Whisper is installed.
+
 **Update:** `docs/PRODUCTION-PLAN.md` v1.4 is accepted. The contract layer and
 the first generators exist: film brief, audio resolver (recorded/TTS narration,
 library/generated music, generated SFX), asset manifest, pose library, film

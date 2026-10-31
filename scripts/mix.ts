@@ -3,8 +3,8 @@
  *
  * Reads the recorded voice and the per-cue SFX written by `npm run sfx`, runs
  * them through the mix bus in `src/engine/mix.ts`, then masters the result to
- * -14.0 LUFS / -1.5 dBTP with ffmpeg's two-pass loudnorm. Writes a report with
- * the measured loudness and the input hashes.
+ * -14.0 LUFS / -1.5 dBTP. Writes a report with the measured loudness, the gain
+ * and limiter the master used, and the input hashes.
  *
  * usage: npm run mix -- films/understudy/score.json
  */
@@ -18,6 +18,16 @@ import { cueSetText, cueSpec } from "../src/engine/sfx.js";
 
 const TARGET_LUFS = -14;
 const TARGET_TP = -1.5;
+/** The most the master may add or take away. A mix needing more is a mix to fix. */
+const MASTER_MAX_GAIN = 8;
+/**
+ * The limiter's sample ceiling, in linear full scale. -2 dBFS leaves room for
+ * the inter-sample peaks that `ebur128` measures as true peak, so the limit
+ * lands under -1.5 dBTP rather than pinning at it.
+ */
+const LIMITER_CEILING = 0.794;
+/** How many gain/limit passes the master may take to land on the target. */
+const MASTER_PASSES = 6;
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
@@ -101,14 +111,20 @@ const premaster = resolve(outDir, "premaster48.wav");
 writeWavFloat32(premaster, mixed.left, mixed.right, sr);
 
 const master = resolve(outDir, "master.wav");
-masterWithLoudnorm(ffmpeg, premaster, master);
-const measured = measure(ffmpeg, master);
+const mastered = masterToTarget(ffmpeg, premaster, master);
+const measured = mastered.measured;
 
 const pass = Math.abs(measured.lufs - TARGET_LUFS) <= 0.5 && measured.truePeak <= TARGET_TP + 0.1;
 const report = {
   film: score.id,
   target: { lufs: TARGET_LUFS, truePeak: TARGET_TP },
   measured: { lufs: measured.lufs, truePeak: measured.truePeak, lra: measured.lra },
+  master: {
+    gainDb: mastered.gainDb,
+    limiterCeiling: Number((20 * Math.log10(mastered.ceiling)).toFixed(2)),
+    passes: mastered.passes,
+    converged: Math.abs(measured.lufs - TARGET_LUFS) <= 0.25,
+  },
   cues: cues.length,
   voice: voicePath ? relative(voicePath) : null,
   duckDb: average(cues.map((cue) => cue.duckDb)),
@@ -129,7 +145,11 @@ const report = {
 writeFileSync(resolve(outDir, "mix-report.json"), JSON.stringify(report, null, 2) + "\n", "utf8");
 
 console.log(`mix: ${cues.length} cues + ${voice ? "voice" : "no voice"} → build/${score.id}/mix/master.wav`);
-console.log(`master: ${measured.lufs.toFixed(1)} LUFS · ${measured.truePeak.toFixed(1)} dBTP (target ${TARGET_LUFS} / ${TARGET_TP})`);
+console.log(
+  `master: ${measured.lufs.toFixed(1)} LUFS · ${measured.truePeak.toFixed(1)} dBTP ` +
+    `(target ${TARGET_LUFS} / ${TARGET_TP} · gain ${mastered.gainDb >= 0 ? "+" : ""}${mastered.gainDb.toFixed(1)} dB · ` +
+    `limiter ${(20 * Math.log10(mastered.ceiling)).toFixed(1)} dBFS)`,
+);
 if (!pass) process.exit(1);
 
 function mono(path: string): Float32Array {
@@ -217,24 +237,47 @@ function writeWavFloat32(path: string, left: Float32Array, right: Float32Array, 
   writeFileSync(path, buffer);
 }
 
-function masterWithLoudnorm(ffmpeg: string, input: string, output: string): void {
-  const first = run(ffmpeg, [
-    "-hide_banner", "-i", input,
-    "-af", `loudnorm=I=${TARGET_LUFS}:TP=${TARGET_TP}:LRA=11:print_format=json`,
-    "-f", "null", "-",
-  ]);
-  const json = first.slice(first.lastIndexOf("{"));
-  const measured = JSON.parse(json) as Record<string, string>;
-  const filter = [
-    `loudnorm=I=${TARGET_LUFS}:TP=${TARGET_TP}:LRA=11`,
-    `measured_I=${measured.input_i}`,
-    `measured_TP=${measured.input_tp}`,
-    `measured_LRA=${measured.input_lra}`,
-    `measured_thresh=${measured.input_thresh}`,
-    `offset=${measured.target_offset}`,
-    "linear=true",
-  ].join(":");
-  run(ffmpeg, ["-y", "-hide_banner", "-loglevel", "error", "-i", input, "-af", filter, "-ar", "48000", output]);
+/**
+ * The master chain: one gain, then a true-peak limiter.
+ *
+ * The mix decides how the film sounds; the master only sets its level. It adds
+ * one constant gain towards -14 LUFS and holds the true peak under -1.5 dBTP
+ * with a limiter, and the report records both numbers, so nothing is hidden
+ * behind a normaliser. The gain is measured, not guessed: each pass measures
+ * what the last render actually reached and adds the residual, because the
+ * limiter takes back some of every gain increase. `MASTER_MAX_GAIN` bounds it —
+ * a film that would need more than that to reach -14 is a quiet mix, and a
+ * quiet mix is fixed in the mix, not squashed on the master.
+ */
+type Mastered = { gainDb: number; ceiling: number; passes: number; measured: ReturnType<typeof measure> };
+
+function masterToTarget(ffmpeg: string, input: string, output: string): Mastered {
+  let gainDb = 0;
+  let ceiling = LIMITER_CEILING;
+  let measured = measure(ffmpeg, input);
+  let passes = 0;
+
+  for (let pass = 0; pass < MASTER_PASSES; pass += 1) {
+    const needed = TARGET_LUFS - measured.lufs;
+    const tooPeaky = measured.truePeak > TARGET_TP;
+    if (pass > 0 && Math.abs(needed) < 0.15 && !tooPeaky) break;
+
+    gainDb = clamp(gainDb + needed, -MASTER_MAX_GAIN, MASTER_MAX_GAIN);
+    if (pass > 0 && tooPeaky) ceiling = Math.max(0.5, ceiling * 0.94);
+    run(ffmpeg, [
+      "-y", "-hide_banner", "-loglevel", "error", "-i", input,
+      "-af", `volume=${gainDb.toFixed(2)}dB,alimiter=limit=${ceiling.toFixed(3)}:attack=5:release=50:level=disabled`,
+      "-ar", "48000", output,
+    ]);
+    measured = measure(ffmpeg, output);
+    passes = pass + 1;
+  }
+
+  return { gainDb: Number(gainDb.toFixed(2)), ceiling, passes, measured };
+}
+
+function clamp(value: number, low: number, high: number): number {
+  return Math.min(high, Math.max(low, value));
 }
 
 function measure(ffmpeg: string, input: string): { lufs: number; truePeak: number; lra: number } {

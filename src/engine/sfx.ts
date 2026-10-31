@@ -38,16 +38,24 @@ export function seeded(seedText: string): Rng {
 export type SfxLayerName = "transient" | "body" | "tail";
 export const SFX_LAYERS: SfxLayerName[] = ["transient", "body", "tail"];
 
-/** A material is a bank of modes: where a struck object rings, and how fast it dies. */
+/**
+ * A material is a bank of modes: where a struck object rings, and how fast it
+ * dies.
+ *
+ * Every mode sits above ~180 Hz on purpose: below that a phone speaker simply
+ * cannot move, and the film is mixed for a phone. A stone that only rings at
+ * 85 Hz is a thud nobody hears, so it rings at 190 Hz and up and reads as heavy
+ * from the spectrum above it, not from sub-bass the device cannot play.
+ */
 export type Material = { modes: number[]; decay: number; bright: number };
 
 export const MATERIALS = {
-  paper: { modes: [190, 430, 880, 1650], decay: 26, bright: 0.5 },
-  wood: { modes: [110, 240, 520, 1090], decay: 16, bright: 0.35 },
+  paper: { modes: [210, 430, 880, 1650], decay: 26, bright: 0.5 },
+  wood: { modes: [185, 350, 720, 1480], decay: 16, bright: 0.35 },
   glass: { modes: [880, 1850, 3300, 5200], decay: 30, bright: 0.8 },
   metal: { modes: [320, 860, 1480, 2700], decay: 22, bright: 0.7 },
-  stone: { modes: [85, 190, 390, 780], decay: 12, bright: 0.15 },
-  cloth: { modes: [140, 320, 700, 1400], decay: 40, bright: 0.2 },
+  stone: { modes: [190, 390, 790, 1580], decay: 12, bright: 0.15 },
+  cloth: { modes: [195, 360, 760, 1500], decay: 40, bright: 0.2 },
 } as const;
 
 export type MaterialName = keyof typeof MATERIALS;
@@ -82,7 +90,7 @@ export const SFX_KINDS: Record<string, SfxKindSpec> = {
   crowd: { shape: "ambience", material: "cloth", length: 1.4, gain: 0.55, band: [120, 7000], layers: ["body", "tail"], send: 0.22, duckDb: 4 },
   confetti: { shape: "sparkle", material: "paper", length: 0.8, gain: 0.6, band: [500, 9000], layers: ["transient", "tail"], send: 0.16, duckDb: 3 },
   iris: { shape: "sweep", material: "glass", length: 0.9, gain: 0.55, band: [200, 5000], layers: ["body", "tail"], send: 0.28, duckDb: 2 },
-  room: { shape: "ambience", material: "stone", length: 30, gain: 0.1, band: [40, 2000], layers: ["tail"], send: 0, duckDb: 0 },
+  room: { shape: "ambience", material: "stone", length: 30, gain: 0.1, band: [200, 4000], layers: ["tail"], send: 0, duckDb: 0 },
   // The kit's own material kinds.
   knock: { shape: "impact", material: "wood", length: 0.28, gain: 0.65, band: [90, 3500], layers: ["transient", "body", "tail"], send: 0.1, duckDb: 3 },
   door: { shape: "impact", material: "wood", length: 0.9, gain: 0.8, band: [60, 2500], layers: ["transient", "body", "tail"], send: 0.2, duckDb: 4 },
@@ -292,7 +300,9 @@ function settle(len: number, sr: number, rng: Rng, material: MaterialName): Floa
 /** A low tone with its harmonics and a slow tremble: a lamp, a motor, mains hum. */
 function humTone(len: number, sr: number, rng: Rng, material: MaterialName): Float32Array {
   const { modes } = MATERIALS[material];
-  const base = (modes[0] ?? 120) * 0.9;
+  // The second mode, not the first: a hum whose fundamental sits under 200 Hz is
+  // inaudible on the device this film is watched on.
+  const base = (modes[1] ?? 380) * 0.9;
   const out = new Float32Array(len);
   for (let i = 0; i < len; i++) {
     const t = i / sr;
@@ -348,8 +358,14 @@ export function effectiveLayers(kind: string, layers?: string[]): SfxLayerName[]
 }
 
 /**
- * Render one cue: a pure function of kind, length and seed text. Normalised to
- * ±1 so the caller's gain is the only level that matters, then faded clean.
+ * Render one cue: a pure function of kind, length and seed text.
+ *
+ * Normalised to a fixed **root mean square**, then peak-limited below 1. Peak
+ * normalisation made a 30 ms snap and a 900 ms sweep both touch ±1, which is how
+ * the softest cue in the film (a glass iris) ended up 13 dB louder than the
+ * footstep it shares a gain with. With a fixed RMS, the cue's `gain` — the only
+ * level a score sets — is the only level that matters, and two cues at the same
+ * gain are within a few dB of each other however long they are.
  */
 export function renderSfx(kind: string, len: number, sr: number, seedText: string, layers?: string[]): Float32Array {
   const spec = kindSpec(kind);
@@ -376,7 +392,7 @@ export function renderSfx(kind: string, len: number, sr: number, seedText: strin
       case "impact": add(out, modalBody(len, sr, spec.material, rng), 1); break;
       case "whoosh": add(out, whoosh(len, sr, rng), 1); break;
       case "hum": add(out, humTone(len, sr, rng, spec.material), 1); break;
-      case "ambience": add(out, air(len, sr, rng, { lp: 0.03, env: 0.4, colour: spec.material === "stone" ? 0.01 : 0.04 }), 1); break;
+      case "ambience": add(out, air(len, sr, rng, { lp: 0.03, env: 0.4, colour: spec.material === "stone" ? 0.12 : 0.09 }), 1); break;
       case "creak": add(out, friction(len, sr, rng, { rate: 26, decay: 1.4 }), 1); break;
       case "sweep": add(out, sweep(len, sr, rng, spec.material), 1); break;
       case "sparkle": add(out, sparkle(len, sr, rng, spec.material), 1); break;
@@ -397,7 +413,7 @@ export function renderSfx(kind: string, len: number, sr: number, seedText: strin
         break;
       case "ambience":
       case "hum":
-        add(out, air(len, sr, rng, { lp: 0.02, env: 0.8, colour: 0.02 }), 0.4);
+        add(out, air(len, sr, rng, { lp: 0.02, env: 0.8, colour: 0.08 }), 0.4);
         break;
       case "creak":
         add(out, air(len, sr, rng, { lp: 0.05, env: 0.4, colour: 0.05 }), 0.15);
@@ -405,13 +421,24 @@ export function renderSfx(kind: string, len: number, sr: number, seedText: strin
     }
   }
 
+  // One loudness rule for every cue, then a peak limit that keeps the loudest
+  // transient sample under 1 without the low end of the mix clipping.
+  const level = rms(out);
+  let scale = level > 0 ? CUE_RMS / level : 1;
   let peak = 0;
-  for (const value of out) peak = Math.max(peak, Math.abs(value));
-  const normalise = peak > 0 ? 1 / peak : 1;
-  for (let i = 0; i < out.length; i++) out[i] = (out[i] ?? 0) * normalise;
+  for (const value of out) peak = Math.max(peak, Math.abs(value * scale));
+  if (peak > 0.98) scale *= 0.98 / peak;
+  for (let i = 0; i < out.length; i++) out[i] = (out[i] ?? 0) * scale;
   fadeOut(out, sr);
   return out;
 }
+
+/**
+ * The RMS every rendered cue is normalised to before the score's gain. Chosen
+ * so a cue at gain 1 sits under the narration without the mix having to rescue
+ * it.
+ */
+export const CUE_RMS = 0.12;
 
 /* ------------------------------------------------------------------- review */
 
@@ -458,6 +485,44 @@ export function isBannedKind(kind: string): boolean {
   return BANNED_KINDS.includes(kind.toLowerCase());
 }
 
+/**
+ * Where a phone speaker actually lives. Below this a cue can carry the whole
+ * film on a pair of headphones and nothing on the device it is watched on, so a
+ * rendered cue must keep most of its energy above it.
+ */
+export const PHONE_FLOOR: [number, number] = [200, 9000];
+
+/**
+ * The share of a cue's energy a phone speaker can move.
+ *
+ * A single one-pole highpass is too gentle to answer this: at 200 Hz it still
+ * passes most of an 80 Hz tone, which would let a sub-bass thud through the one
+ * check written to stop it. Four stages in series is a real 24 dB/octave slope.
+ */
+export function phoneAudible(samples: Float32Array, sr: number): number {
+  const kLow = 1 - Math.exp((-2 * Math.PI * PHONE_FLOOR[0]) / sr);
+  const kHigh = 1 - Math.exp((-2 * Math.PI * PHONE_FLOOR[1]) / sr);
+  let sum = 0;
+  let total = 0;
+  let x1 = 0, x2 = 0, x3 = 0, x4 = 0;
+  let high = 0;
+  for (const value of samples) {
+    x1 += kLow * (value - x1);
+    const a1 = value - x1;
+    x2 += kLow * (a1 - x2);
+    const a2 = a1 - x2;
+    x3 += kLow * (a2 - x3);
+    const a3 = a2 - x3;
+    x4 += kLow * (a3 - x4);
+    const a4 = a3 - x4;
+    high += kHigh * (a4 - high);
+    sum += high * high;
+    total += value * value;
+  }
+  if (total === 0) return 1;
+  return Number(Math.min(1, Math.sqrt(sum / total)).toFixed(3));
+}
+
 export type CueCheck = { id: string; kind: string; ok: boolean; detail: string };
 
 /** The part of a cue the mechanical checks read. */
@@ -472,8 +537,8 @@ export type CueLike = {
 /**
  * The mechanical checks a generated cue must pass. They are the part of G6 that
  * does not need an ear: the cue is on a frame, its energy is where the kind says,
- * it fades out clean, it is long enough to be a sound rather than a click, and
- * its kind is not banned.
+ * most of it above the phone floor, it fades out clean, it is long enough to be a
+ * sound rather than a click, and its kind is neither banned nor unknown.
  */
 export function checkCue(
   cue: CueLike,
@@ -494,18 +559,62 @@ export function checkCue(
   const layers = effectiveLayers(cue.kind, cue.layers);
   const band = cue.band ?? spec.band;
   const fraction = bandFraction(samples, sr, band);
+  const audible = phoneAudible(samples, sr);
+  const level = 20 * Math.log10(rms(samples) + 1e-9);
   if (band[1] > 9000) reasons.push(`band top ${band[1]} Hz is above the 9 kHz phone limit`);
   if (seconds < 0.05) reasons.push(`only ${seconds.toFixed(3)}s long`);
   if (!fadesClean(samples, sr)) reasons.push("does not fade out clean");
   if (layers.length === 0) reasons.push("no layers");
   if (fraction < 0.5) reasons.push(`only ${(fraction * 100).toFixed(0)}% of its energy is in ${band.join("–")} Hz`);
+  if (audible < 0.6) {
+    reasons.push(
+      `only ${(audible * 100).toFixed(0)}% of its energy is at or above ${PHONE_FLOOR[0]} Hz, where a phone speaker lives`,
+    );
+  }
   return {
     id: cue.id,
     kind: cue.kind,
     ok: reasons.length === 0,
     detail:
       reasons.length === 0
-        ? `${Math.round(seconds * 1000)}ms · ${layers.join("+")} · ${(fraction * 100).toFixed(0)}% in band`
+        ? `${Math.round(seconds * 1000)}ms · ${layers.join("+")} · ${(fraction * 100).toFixed(0)}% in band · ${audible >= 0.99 ? 100 : (audible * 100).toFixed(0)}% audible · ${level.toFixed(0)} dBFS`
         : reasons.join("; "),
   };
+}
+
+/**
+ * The cue **set** check: one kind may not machine-gun.
+ *
+ * Two cues of the same kind that overlap, or that start within 300 ms of each
+ * other ending, read as a stutter on the third repeat — the G6 row that asked
+ * for it had no command behind it. This is that command's rule.
+ */
+export type CueSetIssue = { code: string; message: string };
+
+export function checkCueSet(
+  cues: Array<{ id: string; kind: string; at: number; duration?: number }>,
+): CueSetIssue[] {
+  const issues: CueSetIssue[] = [];
+  const spans = cues
+    .map((cue) => ({
+      id: cue.id,
+      kind: cue.kind,
+      start: cue.at,
+      end: cue.at + (cue.duration ?? kindLength(cue.kind)),
+    }))
+    .sort((a, b) => a.start - b.start);
+
+  for (let i = 1; i < spans.length; i += 1) {
+    const previous = spans[i - 1];
+    const current = spans[i];
+    if (!previous || !current || previous.kind !== current.kind) continue;
+    const gap = current.start - previous.end;
+    if (gap < 0.3) {
+      issues.push({
+        code: "sfx_repeat",
+        message: `"${current.id}" repeats "${previous.id}" (${current.kind}) ${gap <= 0 ? "overlapping" : `${gap.toFixed(2)}s later`} at ${current.start.toFixed(2)}s`,
+      });
+    }
+  }
+  return issues;
 }

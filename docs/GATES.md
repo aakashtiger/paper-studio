@@ -12,7 +12,7 @@ warning.
 | G3 animatic | board pass + stepped rough | `npm run animatic -- <score>` + `npm run rough -- <score>` | board pass signed 9/10; stepped rough paints the score at 10 fps; every board time paired to its frame; every shot's median frame-to-frame change ≥ 0.6 and no hold >0.4 s; no camera-only shot; ≥2 breakdowns per transition | motion, editor, QA | **board pass signed; stepped rough measures pass** |
 | G4 assets | `build/<id>/sheets/*.png` | `npm run sheet -- <score>` | seam gap 0; feet planted; contact shadow; 8 poses + 4 expressions; joint map; hand/foot/coat panels | designer, developer, QA | ready |
 | G5 shots | animated shots, `build/<id>/strips/` | `npm run render:film -- <score>` + `npm run audit:motion -- <score>` + `npm run strips -- <score>` | entry/exit match; ≥3 events; no floating part; every shot's median frame-to-frame change ≥ 0.6 and no dead stretch > 0.1 s; one strip per shot every 0.5 s on one image (from the delivered MP4) | motion, editor | **measured + strips sheet** |
-| G6 mix | master + `build/<id>/sfx/sfx.json` + `build/<id>/sfx/spectrogram-sheet.png` | `npm run sfx -- <score>` + `npm run mix -- <score>` | every cue generated in code from the kit and layered (transient, body, tail) over a material; a cue names its time once (typed `at`, or bound to its picture `event`, which derives it); **each cue passes the kit checks** — on a frame, ≥50% of its energy in its declared band, clean fade, longer than a click, band top ≤9 kHz, kind not on the banned list; no machine-gun repetition; voice highpassed at 75 Hz; the 1–4 kHz band ducked against the voice; one shared reverb return; tail faded; **no ticks, clicks, hats, glitches or beeps (phone-speaker rule)**; a spectrogram sheet per cue on one image; master −14.0 LUFS / ≤ −1.5 dBTP | sound, editor, QA | **master ready** |
+| G6 mix | master + `build/<id>/sfx/sfx.json` + `build/<id>/sfx/spectrogram-sheet.png` | `npm run sfx -- <score>` + `npm run mix -- <score>` | every cue generated in code from the kit and layered (transient, body, tail) over a material; a cue names its time once (typed `at`, or bound to its picture `event`, which derives it, snapped to the frame); **each cue passes the kit checks** - on a frame, ≥50% of its energy in its declared band, ≥60% at or above 200 Hz where a phone speaker lives, clean fade, longer than a click, band top ≤9 kHz, kind not on the banned list; no machine-gun repetition (one kind may not overlap or restart within 0.3 s); every cue normalised to one RMS, so its `gain` is the only level; voice highpassed at 75 Hz; the 1-4 kHz band ducked against the voice; one shared reverb return; tail faded to silence; **no ticks, clicks, hats, glitches or beeps (phone-speaker rule)**; a spectrogram sheet per cue on one image, each tile labelled with its measured level; master -14.0 LUFS / ≤ -1.5 dBTP from one gain and a true-peak limiter, both recorded | sound, editor, QA | **master ready** |
 | G7 final | MP4 + SRT + score + stills + `asr.json` + `gate-7.json` | `npm run asr -- <score>` + `npm run gate:7 -- <score>` | one frozen MP4 hash; score audit, frames, paint-match, motion floor, type safe area, rig seam, one-hash, hashed inputs, determinism, mix, palette and the final 0.5 s contact sheet all pass; ASR of the master is a hard check once its report exists, and is named as pending (with the command) until then | all seven + director | **partial** |
 
 ## Paint match
@@ -177,12 +177,27 @@ falling back to a generic paper thud: a sound you did not ask for is a worse
 failure than a red row.
 
 Every cue is checked mechanically and the command exits non-zero if one fails:
-it is on a frame, at least half its energy is in its declared band, the top of
-the band is ≤9 kHz (the phone-speaker rule), it lasts longer than a click, it
-fades out clean, and its kind is neither banned (`tick`, `click`, `hat`,
-`glitch`, `beep`, `blip`, `buzz`) nor unknown. The results are in
-`build/<id>/sfx/sfx.json`; the one-image review is
-`build/<id>/sfx/spectrogram-sheet.png`.
+it is on a frame, at least half its energy is in its declared band, at least 60%
+of its energy is at or above 200 Hz (where a phone speaker lives — measured with
+a four-stage highpass, because a one-pole filter passes most of an 80 Hz thud and
+would let the one check written to stop it through), the top of the band is
+≤9 kHz, it lasts longer than a click, it fades out clean, and its kind is neither
+banned (`tick`, `click`, `hat`, `glitch`, `beep`, `blip`, `buzz`) nor unknown.
+
+Two rules beyond the single cue:
+
+- **One loudness rule.** Every cue is normalised to `CUE_RMS` (0.12) and then
+  peak-limited under 1, so a cue's `gain` in the score is the only level that
+  matters and a 900 ms sweep is not 13 dB louder than a 180 ms step. Before this,
+  peak normalisation made the softest cue in the film the loudest.
+- **No machine-gun.** `checkCueSet` fails when two cues of one kind overlap or
+  start within 0.3 s of the previous one ending (`sfx_repeat`). Three crowd
+  cues in eight seconds read as a stutter, not as a crowd.
+
+The results are in `build/<id>/sfx/sfx.json`; the one-image review is
+`build/<id>/sfx/spectrogram-sheet.png`. A spectrogram normalises its own colour
+scale, so each tile's label carries the cue's **measured level**: the picture
+shows the footprint, the label shows how loud it is.
 
 Each record in `sfx.json` carries a **spec** fingerprint (kind, time, length,
 layers, gain, pan, band) and the **sha256 of its WAV**. `npm run mix` recomputes
@@ -192,6 +207,26 @@ sfx, instead of mixing yesterday's take. The mix report records `inputs.score`,
 `inputs.sfx` (a fingerprint of the whole cue set) and `inputs.voice`, and
 `gate:7` refuses a mix whose inputs do not describe the current score, cue set
 and master.
+
+## The mix and the master
+
+`npm run mix -- <score>` sums the cue WAVs and the voice on one bus and masters
+the result. The bus does four things, all fixed:
+
+- the voice is highpassed at 75 Hz (a phone cannot reproduce a rumble, and the
+  headroom it eats is what clips the mix);
+- cue energy in the 1–4 kHz band is ducked against the voice, by the cue's own
+  `duckDb`, so a hit does not sit on top of a word;
+- one shared reverb return (`send`) takes every cue that asks for a room;
+- the last 0.5 s fades to silence, so the film ends rather than stops.
+
+The master is **one gain and a true-peak limiter**, and the report records both:
+`master.gainDb`, `master.limiterCeiling` and the measured result. It does not run
+a normaliser over the programme: the gain is measured (each pass adds the
+residual the last render missed, because the limiter takes back part of every
+increase), the limiter holds the sample ceiling at −2 dBFS so the true peak lands
+under −1.5 dBTP, and `MASTER_MAX_GAIN` (8 dB) bounds the lift. A film that needs
+more than that to reach −14 is a quiet mix, and a quiet mix is fixed in the mix.
 
 ## Sheets (one look)
 
