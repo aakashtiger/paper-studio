@@ -37,15 +37,13 @@ export function auditFilm(plan: ResolvedFilm, options: { root: string }): AuditR
     }
   }
 
-  if (plan.audio.sfx) {
-    for (const cue of plan.audio.sfx.cues) {
-      cues += 1;
-      if (!aligned(cue.at)) {
-        errors.push({
-          code: "sfx_frame",
-          message: `sfx "${cue.id}" at ${cue.at}s is not on a frame`,
-        });
-      }
+  for (const cue of plan.cues) {
+    cues += 1;
+    if (!aligned(cue.at)) {
+      errors.push({
+        code: "sfx_frame",
+        message: `sfx "${cue.id}" at ${cue.at}s is not on a frame`,
+      });
     }
   }
 

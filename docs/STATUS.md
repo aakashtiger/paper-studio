@@ -15,7 +15,14 @@ hashed inputs, determinism, mix, palette and the one-image final contact sheet t
 a single frozen MP4. The review surface is one look per artifact: a board sheet,
 a derived style sheet, a stills sheet, the storyboard (one frame per shot), a
 per-shot strips sheet from the delivered MP4, and a spectrogram sheet per cue.
-**219 tests pass**, typecheck is clean, and `gate:7` passes 13 checks. The voice
+**237 tests pass**, typecheck is clean, and `gate:7` passes 13 checks. The SFX
+kit is built (`src/engine/sfx.ts`): six materials, layered shapes, one
+`send`/`duckDb`/`band` table shared with the mix, and a cue that can bind its
+time to its picture event; `npm run sfx` writes one WAV per cue, a stem mix and
+`sfx.json`, and fails on a click, a banned kind or a cue outside its band
+(`test/sfx.test.ts`). The score-level master measures **-14.3 LUFS / -1.5 dBTP**;
+the delivered MP4 still carries the earlier audio cut, and the final master
+re-cut belongs to the look pass. The voice
 pipeline is built (`npm run voice`, `npm run asr`): capture is a recording or
 Kokoro TTS, word times come from local Whisper re-attached to the script's
 spelling (`src/engine/words.ts`), the clock is derived and the shot boundaries a

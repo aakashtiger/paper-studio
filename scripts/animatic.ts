@@ -140,7 +140,7 @@ const needsVoice =
   plan.audio.mode === "narration" ||
   plan.audio.mode === "hybrid" ||
   (plan.audio.narration?.source !== undefined && plan.audio.narration.source !== "none");
-const hasSfx = (plan.audio.sfx?.cues.length ?? 0) > 0;
+const hasSfx = plan.cues.length > 0;
 if (needsVoice && !hasVoice) {
   console.error("error: narration is declared but the voice file is missing");
   process.exit(1);
@@ -189,7 +189,7 @@ if (result.status !== 0) {
   process.exit(1);
 }
 
-const cueCount = plan.audio.sfx?.cues.length ?? 0;
+const cueCount = plan.cues.length;
 const probe = findFfprobe();
 if (probe) {
   const result = spawnSync(probe, ["-v", "error", "-show_entries", "format=duration", "-of", "default=nw=1:nk=1", output], { encoding: "utf8" });

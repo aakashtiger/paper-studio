@@ -1,16 +1,43 @@
+/**
+ * SFX — render the score's foley through the kit, one WAV per cue plus a mix.
+ *
+ * Every cue is generated in code from its kind and its id (`src/engine/sfx.ts`):
+ * no sample library, no randomness, no network. The command also writes the
+ * mechanical part of G6 that does not need an ear — the cue is on a frame, its
+ * energy is in the band its kind declares, it fades out clean, it is longer than
+ * a click and its kind is allowed on a phone speaker — and tiles one spectrogram
+ * per cue into a single sheet.
+ *
+ * A cue names its time once: typed (`at`) or bound to a picture event
+ * (`event`). `plan.cues` already has the derived times, so this command and the
+ * mix can never disagree about when a cue happens.
+ *
+ * usage: npm run sfx -- <score.json> [--no-sheet]
+ */
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
 import { findFfmpeg, renderGrid, runBinary } from "../src/engine/grid.js";
+import {
+  checkCue,
+  effectiveLayers,
+  kindBand,
+  kindGain,
+  kindLength,
+  renderSfx,
+  SFX_GENERATOR,
+  SFX_SAMPLE_RATE,
+} from "../src/engine/sfx.js";
+import type { ResolvedCue } from "../src/engine/audio.js";
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
 if (!file) {
-  console.error("usage: npm run sfx -- <score.json>");
+  console.error("usage: npm run sfx -- <score.json> [--no-sheet]");
   process.exit(2);
 }
 
-const sr = 48_000;
+const sr = SFX_SAMPLE_RATE;
 
 async function main(scorePath: string): Promise<void> {
   const root = process.cwd();
@@ -20,7 +47,7 @@ async function main(scorePath: string): Promise<void> {
     for (const error of errors) console.error(`error: ${error.message}`);
     process.exit(1);
   }
-  const cues = plan.audio.sfx?.cues ?? [];
+  const cues = plan.cues;
   if (cues.length === 0) {
     console.log("sfx: no cues");
     return;
@@ -30,37 +57,91 @@ async function main(scorePath: string): Promise<void> {
   mkdirSync(outDir, { recursive: true });
   const total = Math.ceil((plan.duration + 0.5) * sr);
   const mix = new Float32Array(total * 2);
+  const aligned = (value: number): boolean => Math.abs(value * plan.fps - Math.round(value * plan.fps)) <= 0.001;
+  const checks: Array<{
+    id: string;
+    kind: string;
+    at: number;
+    from: string;
+    event: ResolvedCue["event"] | null;
+    seconds: number;
+    gain: number;
+    layers: string[];
+    band: [number, number];
+    ok: boolean;
+    detail: string;
+  }> = [];
 
   for (const cue of cues) {
-    const len = Math.ceil((cue.duration ?? defaultLength(cue.kind)) * sr);
-    const samples = synth(cue.kind, len, cue.id);
-    let samplePeak = 0;
-    for (const value of samples) samplePeak = Math.max(samplePeak, Math.abs(value));
-    const normalize = samplePeak > 0 ? 1 / samplePeak : 1;
-    for (let i = 0; i < samples.length; i++) samples[i] = (samples[i] ?? 0) * normalize;
+    const len = Math.max(1, Math.ceil((cue.duration ?? kindLength(cue.kind)) * sr));
+    const samples = renderSfx(cue.kind, len, sr, cue.id, cue.layers);
     const gain = cue.gain ?? kindGain(cue.kind);
-    const start = Math.round(cue.at * sr);
     const pan = cue.pan ?? 0;
+    const start = Math.round(cue.at * sr);
+    const gainL = Math.sqrt(0.5 * (1 - pan));
+    const gainR = Math.sqrt(0.5 * (1 + pan));
     for (let i = 0; i < samples.length; i++) {
-      const s = (samples[i] ?? 0) * gain;
-      const l = s * Math.sqrt(0.5 * (1 - pan));
-      const r = s * Math.sqrt(0.5 * (1 + pan));
+      const value = (samples[i] ?? 0) * gain;
       const at = (start + i) * 2;
       if (at + 1 < mix.length) {
-        mix[at] = (mix[at] ?? 0) + l;
-        mix[at + 1] = (mix[at + 1] ?? 0) + r;
+        mix[at] = (mix[at] ?? 0) + value * gainL;
+        mix[at + 1] = (mix[at + 1] ?? 0) + value * gainR;
       }
     }
-    writeWav(resolve(outDir, `${cue.id}.wav`), samples, gain, pan);
+    writeWav(join(outDir, `${cue.id}.wav`), samples, gain, pan);
+
+    const check = checkCue(cue, samples, sr, aligned);
+    checks.push({
+      id: cue.id,
+      kind: cue.kind,
+      at: cue.at,
+      from: cue.from,
+      event: cue.event ?? null,
+      seconds: Number((samples.length / sr).toFixed(3)),
+      gain,
+      layers: effectiveLayers(cue.kind, cue.layers),
+      band: cue.band ?? kindBand(cue.kind),
+      ok: check.ok,
+      detail: check.detail,
+    });
   }
 
   let peak = 0;
   for (const value of mix) peak = Math.max(peak, Math.abs(value));
   const norm = peak > 0.9 ? 0.9 / peak : 1;
   for (let i = 0; i < mix.length; i++) mix[i] = (mix[i] ?? 0) * norm;
-  writeWav(resolve(outDir, "mix.wav"), mix, 1, 0, true);
+  writeWav(join(outDir, "mix.wav"), mix, 1, 0, true);
+
+  const failed = checks.filter((check) => !check.ok);
+  writeFileSync(
+    join(outDir, "sfx.json"),
+    `${JSON.stringify(
+      {
+        film: score.id,
+        generator: SFX_GENERATOR,
+        sampleRate: sr,
+        cues: checks,
+        pass: failed.length === 0,
+        files: {
+          mix: `build/${score.id}/sfx/mix.wav`,
+          cues: cues.map((cue) => `build/${score.id}/sfx/${cue.id}.wav`),
+        },
+        generatedAt: new Date().toISOString(),
+      },
+      null,
+      2,
+    )}\n`,
+    "utf8",
+  );
 
   console.log(`sfx: ${cues.length} cues → build/${score.id}/sfx/mix.wav`);
+  for (const check of checks) {
+    console.log(`  ${check.ok ? "ok  " : "FAIL"} ${check.id.padEnd(14)} ${check.detail}${check.from === "event" ? ` · ${check.event?.shot} event ${check.event?.index}` : ""}`);
+  }
+  if (failed.length > 0) {
+    console.error(`sfx: ${failed.length} cue${failed.length === 1 ? "" : "s"} failed the kit checks`);
+    process.exit(1);
+  }
 
   if (!args.includes("--no-sheet")) {
     await spectrogramSheet(root, score.id, outDir, cues);
@@ -70,13 +151,13 @@ async function main(scorePath: string): Promise<void> {
 /**
  * G6 asks for a spectrogram per cue on one image. ffmpeg's `showspectrumpic`
  * turns each generated cue into a time x frequency picture; the one grid helper
- * tiles them, labelled with the cue and the picture event it sits on.
+ * tiles them, labelled with the cue and where its time came from.
  */
 async function spectrogramSheet(
   root: string,
   filmId: string,
   outDir: string,
-  cues: Array<{ id: string; kind: string; at: number }>,
+  cues: ResolvedCue[],
 ): Promise<void> {
   const framesDir = join(outDir, "spectrograms");
   rmSync(framesDir, { recursive: true, force: true });
@@ -95,7 +176,8 @@ async function spectrogramSheet(
       { cwd: root },
     );
     if (!existsSync(image)) throw new Error(`no spectrogram for cue ${cue.id}`);
-    tiles.push({ image, label: `${cue.id} · ${cue.kind} @ ${cue.at.toFixed(2)}s` });
+    const where = cue.from === "event" && cue.event ? ` · ${cue.event.shot}#${cue.event.index}` : "";
+    tiles.push({ image, label: `${cue.id} · ${cue.kind} @ ${cue.at.toFixed(2)}s${where}` });
   }
   if (tiles.length === 0) return;
 
@@ -132,97 +214,6 @@ main(file).catch((error) => {
   process.exit(1);
 });
 
-function kindGain(kind: string): number {
-  switch (kind) {
-    case "slam": return 0.9;
-    case "snap": return 0.7;
-    case "step": return 0.55;
-    case "lamp": return 0.5;
-    case "whoosh": return 0.6;
-    case "crowd": return 0.55;
-    case "confetti": return 0.6;
-    case "iris": return 0.55;
-    case "room": return 0.1;
-    default: return 0.5;
-  }
-}
-
-function defaultLength(kind: string): number {
-  switch (kind) {
-    case "lamp": return 0.6;
-    case "snap": return 0.14;
-    case "whoosh": return 0.5;
-    case "slam": return 0.4;
-    case "step": return 0.18;
-    case "crowd": return 1.4;
-    case "confetti": return 0.8;
-    case "iris": return 0.9;
-    case "room": return 30;
-    default: return 0.35;
-  }
-}
-
-function synth(kind: string, len: number, seedText: string): Float32Array {
-  const out = new Float32Array(len);
-  const rng = mulberry32(hash(seedText));
-  let lp = 0;
-  for (let i = 0; i < len; i++) {
-    const t = i / sr;
-    const noise = rng() * 2 - 1;
-    let value = 0;
-    switch (kind) {
-      case "snap":
-        value = noise * Math.exp(-t * 70) * 0.9 + Math.sin(2 * Math.PI * 2200 * t) * Math.exp(-t * 120) * 0.3;
-        break;
-      case "slam":
-        value = Math.sin(2 * Math.PI * 72 * t) * Math.exp(-t * 11) * 0.8
-          + noise * Math.exp(-t * 45) * 0.5;
-        break;
-      case "lamp":
-        value = (Math.sin(2 * Math.PI * 118 * t) * 0.35 + Math.sin(2 * Math.PI * 236 * t) * 0.12)
-          * (0.55 + 0.45 * Math.sin(2 * Math.PI * 7 * t))
-          * Math.min(1, t * 12) * Math.exp(-t * 1.6);
-        break;
-      case "whoosh": {
-        lp = lp + 0.08 * (noise - lp);
-        const env = Math.sin(Math.PI * Math.min(1, t / (len / sr)));
-        value = lp * env * 1.1;
-        break;
-      }
-      case "step":
-        value = Math.sin(2 * Math.PI * 92 * t) * Math.exp(-t * 26) * 0.7
-          + noise * Math.exp(-t * 80) * 0.25;
-        break;
-      case "crowd": {
-        lp = lp + 0.02 * (noise - lp);
-        const env = Math.min(1, t * 2.2) * Math.max(0, 1 - t / (len / sr));
-        value = (lp * 1.6 + noise * 0.08) * env;
-        break;
-      }
-      case "confetti": {
-        const tick = Math.exp(-((t * 9) % 1) * 18);
-        value = noise * tick * Math.exp(-t * 2.2) * 0.8;
-        break;
-      }
-      case "room": {
-        lp = lp + 0.003 * (noise - lp);
-        value = lp * 0.55 * (0.7 + 0.3 * Math.sin(2 * Math.PI * 0.17 * t));
-        break;
-      }
-      case "iris": {
-        const f = 420 - 220 * Math.min(1, t / (len / sr));
-        value = Math.sin(2 * Math.PI * f * t) * 0.22 * Math.exp(-t * 2)
-          + noise * 0.08 * Math.exp(-t * 3);
-        break;
-      }
-      default:
-        value = noise * Math.exp(-t * 20) * 0.5;
-    }
-    out[i] = value;
-  }
-  return out;
-}
-
 function writeWav(path: string, samples: Float32Array, gain: number, pan: number, stereo = false): void {
   const channels = stereo ? 2 : 1;
   const length = samples.length * 2;
@@ -256,24 +247,4 @@ function writeWav(path: string, samples: Float32Array, gain: number, pan: number
     }
   }
   writeFileSync(path, buffer);
-}
-
-function hash(value: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < value.length; i++) {
-    h ^= value.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
-
-function mulberry32(seed: number): () => number {
-  let a = seed >>> 0;
-  return () => {
-    a = (a + 0x6d2b79f5) >>> 0;
-    let t = a;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
 }

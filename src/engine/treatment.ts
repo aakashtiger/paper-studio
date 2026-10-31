@@ -6,6 +6,8 @@ import {
   AudioPlanSchema,
   type AudioPlan,
   resolveAudio,
+  resolveCueTimes,
+  type ResolvedCue,
   type SfxCue,
   SfxCueSchema,
 } from "./audio.js";
@@ -192,6 +194,8 @@ export type ResolvedFilm = Omit<ResolvedTreatment, "shots"> & {
   brief: string;
   clock: Clock;
   audio: AudioPlan;
+  /** Every SFX cue on the film's clock, with event-bound times already derived. */
+  cues: ResolvedCue[];
   captions: FilmScore["captions"];
   assets: AssetRef[];
   cast: FilmScore["cast"];
@@ -467,6 +471,13 @@ export function resolveFilm(
     });
   }
 
+  const cueResult = resolveCueTimes(
+    film.audio.sfx?.cues ?? [],
+    shots.map((shot) => ({ id: shot.id, start: shot.start, events: shot.direction.events })),
+    film.duration,
+  );
+  errors.push(...cueResult.errors.map((issue) => ({ code: issue.code, message: issue.message })));
+
   checkClock(film, errors);
   checkCaptions(film, capabilities, errors);
 
@@ -484,6 +495,7 @@ export function resolveFilm(
     brief: film.brief,
     clock: film.clock,
     audio: film.audio,
+    cues: cueResult.cues,
     captions: film.captions,
     assets: film.assets,
     cast: film.cast,
@@ -557,6 +569,13 @@ function checkClock(film: FilmScore, errors: TreatmentIssue[]) {
   }
   if (film.clock.mode === "sfx") {
     for (const cue of film.clock.cues) {
+      if (cue.at === undefined) {
+        errors.push({
+          code: "cue_no_time",
+          message: `sfx cue "${cue.id}" drives the clock, so it needs an explicit at`,
+        });
+        continue;
+      }
       if (cue.at >= film.duration) {
         errors.push({
           code: "cue_outside_film",

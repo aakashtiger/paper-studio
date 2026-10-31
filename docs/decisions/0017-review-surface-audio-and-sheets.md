@@ -133,9 +133,22 @@ generator, not the sourcing, was the problem:
 
 ## Landed
 
-Steps `0`–`10` are built and each ships a command: `style:sheet`, `stills`,
+Steps `0`–`10e` are built and each ships a command: `style:sheet`, `stills`,
 `strips` (G5), the spectrogram sheet written by `sfx` (G6), the final sheet
-written by `gate:7` (G7), `film:new`, `film:review`, `voice` and `asr`. `gate:7`
-is 13 checks and names ASR as the one pending check until its report exists.
-Step `10e` (the SFX kit and cue→event binding) is next; music (ACE-Step) stays
-staged until the first film that uses it.
+written by `gate:7` (G7), `film:new`, `film:review`, `voice`, `asr` and the SFX
+kit. `gate:7` is 13 checks and names ASR as the one pending check until its
+report exists.
+
+Step `10e` landed as §8 describes: `src/engine/sfx.ts` is the kit (six
+materials, named layers, modal resonators, friction, a synthetic room, ambience)
+and every kind carries its own `send`, `duckDb` and `band` — the mix reads the
+same table. A cue names its time once: `at`, or `event { shot, index }` resolved
+by `resolveCueTimes` against the shot's direction events; the resolved list is
+`plan.cues`, so the SFX renderer and the mix can never disagree. `npm run sfx`
+writes one WAV per cue, a stem mix, `build/<id>/sfx/sfx.json` and the
+spectrogram sheet, and exits non-zero if any cue fails a mechanical check
+(on a frame, half its energy in its declared band, top ≤9 kHz, longer than a
+click, clean fade, kind not banned). `library` and `recorded` SFX are in the
+contract and rejected as unbuilt until a film needs them.
+
+Music (ACE-Step) stays staged until the first film that uses it.

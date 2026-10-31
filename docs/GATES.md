@@ -12,7 +12,7 @@ warning.
 | G3 animatic | board pass + stepped rough | `npm run animatic -- <score>` + `npm run rough -- <score>` | board pass signed 9/10; stepped rough paints the score at 10 fps; every board time paired to its frame; every shot's median frame-to-frame change ≥ 0.6 and no hold >0.4 s; no camera-only shot; ≥2 breakdowns per transition | motion, editor, QA | **board pass signed; stepped rough measures pass** |
 | G4 assets | `build/<id>/sheets/*.png` | `npm run sheet -- <score>` | seam gap 0; feet planted; contact shadow; 8 poses + 4 expressions; joint map; hand/foot/coat panels | designer, developer, QA | ready |
 | G5 shots | animated shots, `build/<id>/strips/` | `npm run render:film -- <score>` + `npm run audit:motion -- <score>` + `npm run strips -- <score>` | entry/exit match; ≥3 events; no floating part; every shot's median frame-to-frame change ≥ 0.6 and no dead stretch > 0.1 s; one strip per shot every 0.5 s on one image (from the delivered MP4) | motion, editor | **measured + strips sheet** |
-| G6 mix | master + SFX + `build/<id>/sfx/spectrogram-sheet.png` | `npm run mix -- <score>` | every cue generated in code and layered (transient, body, tail); no machine-gun repetition; voice highpassed at 75 Hz; the 1–4 kHz band ducked against the voice; one shared reverb return; tail faded; **no ticks, clicks, hats, glitches or beeps (phone-speaker rule)**; a spectrogram sheet per cue on one image; master −14.0 LUFS / ≤ −1.5 dBTP | sound, editor, QA | **master ready** |
+| G6 mix | master + `build/<id>/sfx/sfx.json` + `build/<id>/sfx/spectrogram-sheet.png` | `npm run sfx -- <score>` + `npm run mix -- <score>` | every cue generated in code from the kit and layered (transient, body, tail) over a material; a cue names its time once (typed `at`, or bound to its picture `event`, which derives it); **each cue passes the kit checks** — on a frame, ≥50% of its energy in its declared band, clean fade, longer than a click, band top ≤9 kHz, kind not on the banned list; no machine-gun repetition; voice highpassed at 75 Hz; the 1–4 kHz band ducked against the voice; one shared reverb return; tail faded; **no ticks, clicks, hats, glitches or beeps (phone-speaker rule)**; a spectrogram sheet per cue on one image; master −14.0 LUFS / ≤ −1.5 dBTP | sound, editor, QA | **master ready** |
 | G7 final | MP4 + SRT + score + stills + `asr.json` + `gate-7.json` | `npm run asr -- <score>` + `npm run gate:7 -- <score>` | one frozen MP4 hash; score audit, frames, paint-match, motion floor, type safe area, rig seam, one-hash, hashed inputs, determinism, mix, palette and the final 0.5 s contact sheet all pass; ASR of the master is a hard check once its report exists, and is named as pending (with the command) until then | all seven + director | **partial** |
 
 ## Paint match
@@ -133,6 +133,40 @@ compares what it heard to the script and writes `build/<id>/asr.json` with the
 coverage and every word it did not hear. `gate:7` reads that report: it is a
 **hard check** when the report exists and is **named as pending**, with the
 command, until it does.
+
+## SFX kit
+
+`npm run sfx -- <score>` renders every cue from `src/engine/sfx.ts`. A cue is a
+shape over a **material** (paper, wood, glass, metal, stone, cloth), built from
+layers:
+
+- `transient` — the first 20 ms of a hit;
+- `body` — the material's modal bank, a whoosh, a hum, friction, a sweep, a
+  sparkle or a settle;
+- `tail` — the decay and the air around it.
+
+The render is **dry** and deterministic: same kind + same id = same samples. The
+mix owns the one shared reverb return (`send`) and the duck (`duckDb`). The kit
+is also the single source for a kind's `send`, `duckDb` and **band** — `mix.ts`
+reads the same table, so a cue cannot be placed differently by the two commands.
+
+A cue names its time **once**:
+
+```json
+{ "id": "sfx-iris", "kind": "iris", "event": { "shot": "s03", "index": 2 } }
+```
+
+The time is the shot's start plus the event's offset, so re-timing a shot moves
+its foley with it. `at` is still valid for a cue that is not tied to a picture
+event; naming both, or neither, is a contract error.
+
+Every cue is checked mechanically and the command exits non-zero if one fails:
+it is on a frame, at least half its energy is in its declared band, the top of
+the band is ≤9 kHz (the phone-speaker rule), it lasts longer than a click, it
+fades out clean, and its kind is not one of the banned ones (`tick`, `click`,
+`hat`, `glitch`, `beep`, `blip`, `buzz`). The results are in
+`build/<id>/sfx/sfx.json`; the one-image review is
+`build/<id>/sfx/spectrogram-sheet.png`.
 
 ## Sheets (one look)
 

@@ -10,7 +10,12 @@
  *   - ducks the 1-4 kHz band of every cue against the voice envelope;
  *   - sends each cue to one shared reverb return (Freeverb tuning);
  *   - fades the tail so the film ends on silence.
+ *
+ * The cue defaults are the SFX kit's own (`src/engine/sfx.ts`): one table for
+ * how a kind sounds, how loud it is, where it sits and how much of it reaches
+ * the room.
  */
+import { kindSpec } from "./sfx.js";
 
 export type MixCueInput = {
   id: string;
@@ -34,32 +39,20 @@ export type MixOptions = {
   reverb?: { room?: number; damp?: number; wet?: number };
 };
 
-export type SfxKindDefault = { send: number; duckDb: number; band?: [number, number] };
-
-/** Kind defaults used when a cue leaves send, duckDb or band unset. */
-export const SFX_KIND_DEFAULTS: Record<string, SfxKindDefault> = {
-  slam: { send: 0.06, duckDb: 4 },
-  snap: { send: 0.08, duckDb: 4 },
-  step: { send: 0.05, duckDb: 3 },
-  lamp: { send: 0.12, duckDb: 2, band: [80, 6000] },
-  whoosh: { send: 0.18, duckDb: 3 },
-  crowd: { send: 0.22, duckDb: 4, band: [120, 7000] },
-  confetti: { send: 0.16, duckDb: 3, band: [800, 9000] },
-  swing: { send: 0.14, duckDb: 2 },
-  iris: { send: 0.28, duckDb: 2, band: [200, 5000] },
-  room: { send: 0, duckDb: 0, band: [40, 2000] },
-};
-
+/**
+ * Send, duck and band come from the SFX kit — one table, not two. A cue that
+ * sets them explicitly still wins; everything else is the kind's own design.
+ */
 export function cueSend(cue: { kind: string; send?: number }): number {
-  return cue.send ?? SFX_KIND_DEFAULTS[cue.kind]?.send ?? 0.12;
+  return cue.send ?? kindSpec(cue.kind).send;
 }
 
 export function cueDuckDb(cue: { kind: string; duckDb?: number }): number {
-  return cue.duckDb ?? SFX_KIND_DEFAULTS[cue.kind]?.duckDb ?? 4;
+  return cue.duckDb ?? kindSpec(cue.kind).duckDb;
 }
 
 export function cueBand(cue: { kind: string; band?: [number, number] }): [number, number] | undefined {
-  return cue.band ?? SFX_KIND_DEFAULTS[cue.kind]?.band;
+  return cue.band ?? kindSpec(cue.kind).band;
 }
 
 type Biquad = { b0: number; b1: number; b2: number; a1: number; a2: number };

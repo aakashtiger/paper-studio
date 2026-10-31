@@ -42,7 +42,7 @@ mkdirSync(outDir, { recursive: true });
 const voicePath = plan.audio.narration?.voice ? resolve(root, plan.audio.narration.voice) : null;
 const voice = voicePath && existsSync(voicePath) ? mono(voicePath) : null;
 
-const cues = (plan.audio.sfx?.cues ?? []).map((cue) => {
+const cues = plan.cues.map((cue) => {
   const path = resolve(root, "build", score.id, "sfx", `${cue.id}.wav`);
   if (!existsSync(path)) {
     console.error(`error: cue "${cue.id}" has no audio at build/${score.id}/sfx/${cue.id}.wav`);

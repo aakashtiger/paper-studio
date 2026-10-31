@@ -2,9 +2,22 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { z } from "zod";
 
+/** The picture event a cue is bound to, so its time is never typed twice. */
+export const SfxCueEventSchema = z.object({
+  /** The shot this cue belongs to, e.g. "s03". */
+  shot: z.string().min(1),
+  /** Which of that shot's direction events, 0-based. */
+  index: z.number().int().nonnegative(),
+});
+
 export const SfxCueSchema = z.object({
   id: z.string().min(1),
-  at: z.number().nonnegative(),
+  /**
+   * The cue's time in the film, in seconds. A cue names its time **once**: typed
+   * here, or derived from the picture event it belongs to with `event`.
+   */
+  at: z.number().nonnegative().optional(),
+  event: SfxCueEventSchema.optional(),
   kind: z.string().min(1),
   note: z.string().optional(),
   duration: z.number().positive().optional(),
@@ -41,7 +54,12 @@ export const MusicPlanSchema = z.object({
 });
 
 export const SfxPlanSchema = z.object({
-  source: z.literal("generated"),
+  /**
+   * Where the foley comes from. Only `generated` is built: `library` (a licensed
+   * pack) and `recorded` (a supplied file) are in the contract so a later film
+   * can use them, and the resolver rejects them until that path exists.
+   */
+  source: z.enum(["generated", "library", "recorded"]),
   cues: z.array(SfxCueSchema).default([]),
 });
 
@@ -54,6 +72,22 @@ export const AudioPlanSchema = z.object({
 
 export type AudioPlan = z.infer<typeof AudioPlanSchema>;
 export type SfxCue = z.infer<typeof SfxCueSchema>;
+
+/** A shot as the cue resolver needs it: where it starts, and what happens in it. */
+export type CueShot = {
+  id: string;
+  start: number;
+  events: Array<{ t: number; kind: string; note: string }>;
+};
+
+/** A cue that is on the film's clock: `at` is always a real number here. */
+export type ResolvedCue = Omit<SfxCue, "at" | "event"> & {
+  at: number;
+  /** Whether the time was typed, or derived from a picture event. */
+  from: "at" | "event";
+  /** The event a bound cue sits on: the picture, named. */
+  event?: { shot: string; index: number; t: number; kind: string; note: string };
+};
 
 export type AudioIssue = { code: string; message: string };
 
@@ -143,6 +177,13 @@ export function resolveAudio(
     }
   }
 
+  if (plan.sfx && plan.sfx.source !== "generated") {
+    errors.push({
+      code: "sfx_source_unbuilt",
+      message: `sfx source "${plan.sfx.source}" is defined but not built; generate the cues in code (source: "generated")`,
+    });
+  }
+
   if (plan.sfx && plan.sfx.cues.length > 0) {
     const ids = new Set<string>();
     for (const cue of plan.sfx.cues) {
@@ -150,7 +191,17 @@ export function resolveAudio(
         errors.push({ code: "sfx_duplicate", message: `sfx cue "${cue.id}" is duplicated` });
       }
       ids.add(cue.id);
-      if (cue.at >= duration) {
+      const hasAt = cue.at !== undefined;
+      const hasEvent = cue.event !== undefined;
+      if (hasAt === hasEvent) {
+        errors.push({
+          code: hasAt ? "sfx_time_conflict" : "sfx_no_time",
+          message: hasAt
+            ? `sfx "${cue.id}" names both at ${cue.at}s and an event; name its time once`
+            : `sfx "${cue.id}" has no time: give it at, or bind it to a shot event`,
+        });
+      }
+      if (cue.at !== undefined && cue.at >= duration) {
         errors.push({ code: "sfx_outside_film", message: `sfx "${cue.id}" at ${cue.at}s is outside the film` });
       }
       if (cue.band && cue.band[0] >= cue.band[1]) {
@@ -172,4 +223,67 @@ export function resolveAudio(
   }
 
   return { errors, warnings };
+}
+
+/**
+ * Put every cue on the film's clock.
+ *
+ * A cue names its time once. Typed (`at`), it is already on the clock. Bound
+ * (`event`), the time is the shot's start plus the event's offset inside it — so
+ * re-timing a shot moves its foley with it and the time is never typed twice.
+ *
+ * The plan must already be well-formed (`resolveAudio` owns the at/event choice,
+ * a duplicate id and a typed time outside the film); this only finds the time and
+ * rejects an event that is not there. A cue that names no time at all is skipped:
+ * its error is already on the resolver's list.
+ */
+export function resolveCueTimes(
+  cues: SfxCue[],
+  shots: CueShot[],
+  duration: number,
+): { cues: ResolvedCue[]; errors: AudioIssue[] } {
+  const errors: AudioIssue[] = [];
+  const byId = new Map(shots.map((shot) => [shot.id, shot]));
+  const resolved: ResolvedCue[] = [];
+
+  for (const cue of cues) {
+    if (cue.at !== undefined) {
+      const { event: _ignored, ...rest } = cue;
+      resolved.push({ ...rest, at: cue.at, from: "at" });
+      continue;
+    }
+    if (!cue.event) continue;
+
+    const shot = byId.get(cue.event.shot);
+    if (!shot) {
+      errors.push({
+        code: "sfx_event_shot",
+        message: `sfx "${cue.id}" is bound to shot "${cue.event.shot}", which is not in the film`,
+      });
+      continue;
+    }
+    const event = shot.events[cue.event.index];
+    if (!event) {
+      errors.push({
+        code: "sfx_event_index",
+        message: `sfx "${cue.id}" is bound to event ${cue.event.index} of ${shot.id}, which has ${shot.events.length}`,
+      });
+      continue;
+    }
+    const at = Number((shot.start + event.t).toFixed(3));
+    if (at >= duration) {
+      errors.push({
+        code: "sfx_outside_film",
+        message: `sfx "${cue.id}" lands at ${at}s (${shot.id} event ${cue.event.index}), outside the ${duration}s film`,
+      });
+    }
+    resolved.push({
+      ...cue,
+      at,
+      from: "event",
+      event: { shot: shot.id, index: cue.event.index, t: event.t, kind: event.kind, note: event.note },
+    });
+  }
+
+  return { cues: resolved, errors };
 }

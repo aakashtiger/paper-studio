@@ -141,23 +141,27 @@ The **contract layer and the first generators are implemented**: film brief,
 audio resolver (recorded/TTS narration, library/generated music, generated SFX),
 asset manifest, pose library, film score, derived **board**, score-level
 **audit**, the **character/pose sheet** generator and the **board animatic**
-builder. **169 tests.** The sheet has a signed **9/10 design** review. The paper
+builder. **237 tests.** The sheet has a signed **9/10 design** review. The paper
 rig has two-bone leg IK, ankle targets, foot pitch and a knee-driven bounce; the
 leg targets are now reachable, so a planted foot bends its knee and lands on its
 shadow (`test/cast-rig.test.ts`). The board animatic is **9/10 signed** (editor +
 QA) with voice, captions and 13 generated SFX cues; it is a board pass, not a
 stepped rough. The seven critics and gate checklist are in `critics/` and
-`docs/GATES.md`. Carry-forward: the board mix is -15.0 LUFS / -1.6 dBTP; the
-final master is still pending. The painter now lives in the
+`docs/GATES.md`. The SFX cues are now rendered by the kit
+(`src/engine/sfx.ts`): six materials, named layers, modal resonators, friction,
+a synthetic room, and a cue that can bind to its picture event. The score-level
+mix master is **-14.3 LUFS / -1.5 dBTP** and `gate:7` reads it; the delivered
+MP4 still carries the earlier audio cut — the look pass and the final master
+re-cut are next. The painter now lives in the
 style pack (`styles/paper-kpop/canvas/recipes.js`, decision 0015); the film
 renderer and three mechanical G7 audits are built (`audit:motion`, `audit:type`,
 `audit:rig`). The **stepped rough** is built (`npm run rough`): the score painted
 at 10 fps through the pack painter, every board time paired to its frame on one
 contact sheet, every shot measured — all nine shots pass the motion floor with no
-hold over 0.4 s. Build next: the look pass and the final master; ASR waits for the
-voice pipeline (decision 0016). Only then does the user's idea become a film. No
-film render before the core is fixed. No app, no asset library, no watercolor
-until the first film ships.
+hold over 0.4 s. The voice pipeline is built (`npm run voice`, `npm run asr`);
+ASR waits only for the local speech model install (decisions 0016, 0017). Only
+then does the user's idea become a film. No film render before the core is fixed.
+No app, no asset library, no watercolor until the first film ships.
 
 **The review surface is being closed (decision 0017).** Two creator workflows and
 a survey found three gate rows that required a review sheet with no command, and
@@ -169,9 +173,11 @@ spectrogram sheet and the G7 final sheet, each a command → `8` `film:new`
 (scaffolds, never invents) → `9` `film:review` → `10` voice-as-clock (**built**:
 `npm run voice` captures a recording or Kokoro TTS and derives the clock from
 local Whisper word times re-attached to the script's spelling; `npm run asr`
-listens to the master and is the G7 gate) → `10e` the SFX kit (layers, modal
-resonators, friction, synthetic IR reverb, ambience) with a cue bound to its
-picture event, still generated in code. Music (ACE-Step) is **staged** until the
+listens to the master and is the G7 gate) → `10e` the SFX kit (**built**:
+`src/engine/sfx.ts` renders layers over a material, one `send`/`duckDb`/`band`
+table shared with the mix; a cue can name its time once by binding to its picture
+event, and `npm run sfx` fails on a click, a banned kind or a cue outside its
+band) — still generated in code. Music (ACE-Step) is **staged** until the
 first film that uses it. Banned: generative **images or video** in the render
 path, and per-film LLM-written animation code. Allowed: local models for voice,
 word timing and music, because the picture stays entirely code-drawn.
