@@ -8,6 +8,7 @@
     "plan": "tsx scripts/plan.ts",
     "treatment": "tsx scripts/treatment.ts",
     "film": "tsx scripts/film.ts",
+    "film:new": "tsx scripts/film-new.ts",
     "board": "tsx scripts/board.ts",
     "storyboard": "tsx scripts/storyboard.ts",
     "stills": "tsx scripts/stills.ts",
