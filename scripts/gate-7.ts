@@ -27,6 +27,15 @@ if (!file) {
 const scorePath: string = file;
 
 const root = process.cwd();
+
+/**
+ * The bounds the mix contract sets on the master, restated here so the gate
+ * reads the report against them. `MASTER_MAX_GAIN` and `LIMITER_MAX_REDUCTION`
+ * in `scripts/mix.ts` are the same numbers: the mix refuses a film past them, and
+ * the gate refuses a report that claims to be inside them.
+ */
+const MASTER_MAX_GAIN = 8;
+const MASTER_MAX_LIMITING = 8;
 const score = JSON.parse(readFileSync(resolve(root, file), "utf8")) as {
   id: string;
   style: string;
@@ -54,8 +63,7 @@ function sha256(text: string): string {
 }
 
 /** "16:9" -> 16/9. */
-function aspectRatio(aspect: string): number {
-  const [w, h] = aspect.split(":").map(Number);
+function aspectRatio(aspect: string): number {  const [w, h] = aspect.split(":").map(Number);
   return w && h ? w / h : 16 / 9;
 }
 
@@ -130,6 +138,14 @@ async function main(): Promise<void> {
   const mix = read<{
     passes: boolean;
     measured: { lufs: number; truePeak: number };
+    master?: {
+      gainDb: number;
+      limiterCeiling: number;
+      limiterGainReductionDb: number;
+      limiterWindows?: { p50: number; p90: number; max: number; over3Db: number; windows: number };
+      converged: boolean;
+      usedAllPasses: boolean;
+    };
     inputs?: { score: string | null; sfx: string | null; voice: string | null };
     files: { hash: string };
   }>("mix/mix-report.json");
@@ -193,6 +209,21 @@ async function main(): Promise<void> {
       detail: mix
         ? `${mix.measured.lufs.toFixed(1)} LUFS / ${mix.measured.truePeak.toFixed(1)} dBTP · inputs tied`
         : "no mix report",
+    },
+    // The master's level is not a number to trust, it is a number to read: the
+    // reported gain, the true-peak reduction and how that reduction is spread
+    // over the film all have to agree with each other and sit inside the bounds
+    // the mix contract sets.
+    master: {
+      ok:
+        mix?.master !== undefined &&
+        mix.master.gainDb <= MASTER_MAX_GAIN &&
+        mix.master.limiterGainReductionDb <= MASTER_MAX_LIMITING &&
+        (mix.master.limiterWindows?.p50 ?? 1) <= 1 &&
+        mix.master.converged === true,
+      detail: mix?.master
+        ? `gain ${mix.master.gainDb >= 0 ? "+" : ""}${mix.master.gainDb.toFixed(1)} dB · limiter up to ${mix.master.limiterGainReductionDb.toFixed(1)} dB, median window ${(mix.master.limiterWindows?.p50 ?? 0).toFixed(2)} dB · ${mix.master.usedAllPasses ? "used every pass" : "converged early"}`
+        : "no master section in the mix report",
     },
     palette: {
       ok: palette?.pass === true,

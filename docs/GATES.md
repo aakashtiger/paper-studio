@@ -12,7 +12,7 @@ warning.
 | G3 animatic | board pass + stepped rough | `npm run animatic -- <score>` + `npm run rough -- <score>` | board pass signed 9/10; stepped rough paints the score at 10 fps; every board time paired to its frame; every shot's median frame-to-frame change ≥ 0.6 and no hold >0.4 s; no camera-only shot; ≥2 breakdowns per transition | motion, editor, QA | **board pass signed; stepped rough measures pass** |
 | G4 assets | `build/<id>/sheets/*.png` | `npm run sheet -- <score>` | seam gap 0; feet planted; contact shadow; 8 poses + 4 expressions; joint map; hand/foot/coat panels | designer, developer, QA | ready |
 | G5 shots | animated shots, `build/<id>/strips/` | `npm run render:film -- <score>` + `npm run audit:motion -- <score>` + `npm run strips -- <score>` | entry/exit match; ≥3 events; no floating part; every shot's median frame-to-frame change ≥ 0.6 and no dead stretch > 0.1 s; one strip per shot every 0.5 s on one image (from the delivered MP4) | motion, editor | **measured + strips sheet** |
-| G6 mix | master + `build/<id>/sfx/sfx.json` + `build/<id>/sfx/spectrogram-sheet.png` | `npm run sfx -- <score>` + `npm run mix -- <score>` | every cue generated in code from the kit and layered (transient, body, tail) over a material; a cue names its time once (typed `at`, or bound to its picture `event`, which derives it, snapped to the frame); **each cue passes the kit checks** - on a frame, ≥50% of its energy in its declared band, ≥60% at or above 200 Hz where a phone speaker lives, clean fade, longer than a click, band top ≤9 kHz, kind not on the banned list; no machine-gun repetition (one kind may not overlap or restart within 0.3 s); every cue normalised to one RMS, so its `gain` is the only level; voice highpassed at 75 Hz; the 1-4 kHz band ducked against the voice; one shared reverb return; tail faded to silence; **no ticks, clicks, hats, glitches or beeps (phone-speaker rule)**; a spectrogram sheet per cue on one image, each tile labelled with its measured level; master -14.0 LUFS / ≤ -1.5 dBTP from one gain and a true-peak limiter, both recorded | sound, editor, QA | **master ready** |
+| G6 mix | master + `build/<id>/sfx/sfx.json` + `build/<id>/sfx/spectrogram-sheet.png` | `npm run sfx -- <score>` + `npm run mix -- <score>` | every cue generated in code from the kit and layered (transient, body, tail) over a material; a cue names its time once (typed `at`, or bound to its picture `event`, which derives it, snapped to the frame); **each cue passes the kit checks** - on a frame, ≥50% of its energy in its declared band, ≥60% at or above 200 Hz where a phone speaker lives, clean fade, longer than a click, band top ≤9 kHz, kind not on the banned list, and **its loudest 50 ms at the kit's level** (a cue whose gain is not its only level fails); no machine-gun repetition (any two cues of one kind may not overlap or restart within 0.3 s); **every picture event is scored or sits in a declared silence** (`silences: [{from, to, why}]` — an event with neither, a cue starting inside a silence, a hole over 2.5 s with no reason, a cue inside the master's tail fade, or a cue under narration with no duck is an error); the mix bus is highpassed at 75 Hz and peaks at ≤ -1 dBFS; the 1-4 kHz band is ducked against the voice; one shared reverb return; tail faded to silence; **no ticks, clicks, hats, glitches or beeps (phone-speaker rule)**; a spectrogram sheet per cue on one image, each tile labelled with its measured level; master -14.0 LUFS / ≤ -1.5 dBTP from one gain and a true-peak limiter, **and the report says what the limiter took** (`limiterGainReductionDb` at the loudest sample, plus the same reduction as a distribution over 100 ms windows) | sound, editor, QA | **master ready** |
 | G7 final | MP4 + SRT + score + stills + `asr.json` + `gate-7.json` | `npm run asr -- <score>` + `npm run gate:7 -- <score>` | one frozen MP4 hash; score audit, frames, paint-match, motion floor, type safe area, rig seam, one-hash, hashed inputs, determinism, mix, palette and the final 0.5 s contact sheet all pass; ASR of the master is a hard check once its report exists, and is named as pending (with the command) until then | all seven + director | **partial** |
 
 ## Paint match
@@ -186,13 +186,49 @@ banned (`tick`, `click`, `hat`, `glitch`, `beep`, `blip`, `buzz`) nor unknown.
 
 Two rules beyond the single cue:
 
-- **One loudness rule.** Every cue is normalised to `CUE_RMS` (0.12) and then
-  peak-limited under 1, so a cue's `gain` in the score is the only level that
-  matters and a 900 ms sweep is not 13 dB louder than a 180 ms step. Before this,
-  peak normalisation made the softest cue in the film the loudest.
-- **No machine-gun.** `checkCueSet` fails when two cues of one kind overlap or
-  start within 0.3 s of the previous one ending (`sfx_repeat`). Three crowd
-  cues in eight seconds read as a stutter, not as a crowd.
+- **One loudness rule, on the loudest moment.** Every cue's loudest 50 ms is set
+  to `CUE_LOUD` (0.2, −14 dBFS), then a soft knee (0.8) and a hard peak limit
+  under 1 keep the strike under the ceiling. A cue's `gain` in the score is then
+  the only level that matters: a 900 ms sweep and a 140 ms snap hit at the same
+  level, and a 30 ms hit is not 13 dB quieter than the bed beside it. Whole-cue
+  RMS was the first attempt and it was wrong for sparse cues — a hit that decays
+  in a third of its length reads quiet, the peak limit ate up to 11 dB of it, and
+  the cue's `gain` stopped being its level. `checkCue` therefore also fails a cue
+  whose loudest moment sits more than 2 dB under the kit's level: a gain is not
+  the only level if the renderer made it quieter.
+- **No machine-gun.** `checkCueSet` fails when **any two** cues of one kind
+  overlap or start within 0.3 s of the previous one ending (`sfx_repeat`). It
+  compares all pairs of a kind, not adjacent rows in a sorted list: a third kind
+  between two `crowd` cues used to hide the repeat. Three crowd cues in eight
+  seconds read as a stutter, not as a crowd.
+
+## Silence is contract surface
+
+A hole in the foley is either a decision or a defect, so the score has to say
+which:
+
+```json
+"silences": [{ "from": 10, "to": 10.65, "why": "the sticker settles; the room drops out before Mira's step" }]
+```
+
+`npm run audit` reads them against the picture and the cue sheet, and each of
+these is an **error**, not a warning:
+
+| code | what it catches |
+|---|---|
+| `sfx_unscored` | a picture event with no cue and no declared silence under it |
+| `sfx_in_silence` | a cue that starts inside a declared silence |
+| `sfx_gap` | more than `MAX_GAP` (2.5 s) with no foley and no silence to explain it |
+| `sfx_tail_fade` | a cue that starts inside the master's 0.5 s tail fade |
+| `sfx_no_duck` | a cue that plays under a spoken line and carries no `duckDb` |
+
+The resolver checks the shape of a silence as well: it must end after it starts,
+stay inside the film, last at least 0.3 s (shorter reads as a mistake, not a
+beat) and not overlap the one before it (`silence_order`, `silence_outside`,
+`silence_short`, `silence_overlap`). The report says how the film is covered:
+`events`, `scored`, `bare` (deliberately quiet), `silences`, `longestHole`. The
+Understudy fixture is 32 events, 27 scored, 5 bare, 5 silences, longest hole
+1.07 s.
 
 The results are in `build/<id>/sfx/sfx.json`; the one-image review is
 `build/<id>/sfx/spectrogram-sheet.png`. A spectrogram normalises its own colour
@@ -211,22 +247,53 @@ and master.
 ## The mix and the master
 
 `npm run mix -- <score>` sums the cue WAVs and the voice on one bus and masters
-the result. The bus does four things, all fixed:
+the result. The bus does five things, all fixed:
 
 - the voice is highpassed at 75 Hz (a phone cannot reproduce a rumble, and the
   headroom it eats is what clips the mix);
 - cue energy in the 1–4 kHz band is ducked against the voice, by the cue's own
   `duckDb`, so a hit does not sit on top of a word;
 - one shared reverb return (`send`) takes every cue that asks for a room;
-- the last 0.5 s fades to silence, so the film ends rather than stops.
+- the last 0.5 s fades to silence, so the film ends rather than stops;
+- **the bus is turned down if it peaks over −1 dBFS** (`PREMASTER_CEILING`,
+  reported as `bus.headroomDb`). A premaster over full scale is a badly staged
+  mix whatever float arithmetic allows: the master's gain would be a repair, and
+  the file would not survive being written as 16-bit. The stage only ever turns
+  the bus down — a quiet mix is not rescued here, it is a mix to fix.
 
-The master is **one gain and a true-peak limiter**, and the report records both:
-`master.gainDb`, `master.limiterCeiling` and the measured result. It does not run
-a normaliser over the programme: the gain is measured (each pass adds the
-residual the last render missed, because the limiter takes back part of every
-increase), the limiter holds the sample ceiling at −2 dBFS so the true peak lands
-under −1.5 dBTP, and `MASTER_MAX_GAIN` (8 dB) bounds the lift. A film that needs
-more than that to reach −14 is a quiet mix, and a quiet mix is fixed in the mix.
+The master is **one measured gain and a true-peak limiter**. It runs no
+normaliser over the programme. The gain is measured, not chosen: each pass adds
+the residual the last render missed, because the limiter takes back part of every
+increase. The limiter holds the sample ceiling at −2 dBFS so the true peak lands
+under −1.5 dBTP. Two bounds keep the master honest and the mix is where a film
+past them gets fixed:
+
+| bound | value | why |
+|---|---|---|
+| `MASTER_MAX_GAIN` | 8 dB | a film needing more to reach −14 is a quiet mix |
+| `LIMITER_MAX_REDUCTION` | 8 dB | past this the master is squashing the film, not mastering it |
+
+**The report says what the limiter took, twice.** `limiterGainReductionDb` is the
+reduction at the loudest sample; `limiterWindows` is the same measurement
+distributed over 100 ms windows (`p50`, `p90`, `p99`, `max`, `over3Db`,
+`windows`). One number alone cannot be read: a single clamped hit and a squashed
+programme look identical. Understudy reads −14.1 LUFS / −1.7 dBTP, gain +7.5 dB,
+7.5 dB off the loudest sample — and a **median window of 0.03 dB**, with 47 of
+293 active windows over 3 dB. The peak is the top ~1% of the film, not the film.
+
+That distribution is arithmetic, not a defect. A −14 LUFS delivery leaves 12.5 dB
+between the programme's loudness and the −1.5 dBTP ceiling. Understudy's hits
+reach ~16 dB over its loudness, so something has to give: the top ~16% of active
+windows hand back up to ~6 dB, and the median window is untouched. Reading the
+median next to the peak is how the report distinguishes that from damage.
+
+Both peaks come from `ebur128=peak=true`. `volumedetect` clamps its samples to
+16-bit and reports a signal lifted over 0 dBFS as 0 dB, so a reduction measured
+with it reads as a fraction of what it is — the earlier "+2.0 dB off the loudest
+sample" was that clamp, not the limiter.
+
+`gate:7` reads the master's row against the same bounds and refuses a report that
+claims to be inside them while a window median says otherwise.
 
 ## Sheets (one look)
 

@@ -5,7 +5,7 @@ import {
   BANNED_KINDS,
   checkCue,
   checkCueSet,
-  CUE_RMS,
+  CUE_LOUD,
   cueSpec,
   effectiveLayers,
   fadesClean,
@@ -15,12 +15,14 @@ import {
   kindGain,
   kindLength,
   kindLayers,
+  loudMoment,
   phoneAudible,
   renderSfx,
   rms,
   SFX_GENERATOR,
   SFX_KINDS,
   SFX_SAMPLE_RATE,
+  softKnee,
 } from "../src/engine/sfx.js";
 import { AudioPlanSchema, resolveAudio, resolveCueTimes } from "../src/engine/audio.js";
 import { cueBand, cueDuckDb, cueSend } from "../src/engine/mix.js";
@@ -47,7 +49,7 @@ test("the kit's take on a kind is pinned by a golden hash", () => {
   const samples = renderSfx("snap", Math.round(0.14 * sr), sr, "sfx-snap");
   const bytes = Buffer.from(samples.buffer, samples.byteOffset, samples.byteLength);
   const hash = createHash("sha256").update(bytes).digest("hex");
-  assert.equal(hash, "5c29f722a99debfb127ce5e8a526596c5a0410bf0baba3705ed8fd5445a99f98");
+  assert.equal(hash, "473ad575c21d3989e0c2998eb7c5d9badfd11d8ca8a49d0a348bba19ef5959b7");
 });
 
 test("two cues of the same kind are not the same take", () => {
@@ -260,21 +262,45 @@ test("a cue's spec changes when anything that decides its sound changes", () => 
   assert.equal(cueSpec(base), cueSpec({ ...base }));
 });
 
-test("the kit has one loudness rule: beds share an RMS, hits share a peak", () => {
-  const level = (samples: Float32Array) => 20 * Math.log10(rms(samples) + 1e-9);
+test("the kit has one loudness rule: every cue hits at one level", () => {
+  // Whole-cue RMS was the old rule and it never held: a hit that decays in a
+  // third of its length reads quiet, a bed reads loud, and the peak limit ate
+  // up to 11 dB off the sparse cues, so a cue's `gain` was not its level at
+  // all. The loudest 50 ms is the level a listener hears, so that is the level
+  // the kit sets, and every kind in the kit must land on it.
+  const target = 20 * Math.log10(CUE_LOUD);
   for (const kind of Object.keys(SFX_KINDS)) {
     const samples = renderSfx(kind, Math.round(kindLength(kind) * sr), sr, `level-${kind}`);
     const peak = samples.reduce((max, value) => Math.max(max, Math.abs(value)), 0);
+    const level = 20 * Math.log10(loudMoment(samples, sr) + 1e-9);
     assert.ok(peak <= 0.9801, `${kind} peaks at ${peak}, which clips`);
-    assert.ok(level(samples) <= -18.3, `${kind} is louder than the cue target`);
-    assert.ok(level(samples) >= -30.1, `${kind} is ${level(samples).toFixed(1)} dBFS, far under the target`);
+    assert.ok(
+      Math.abs(level - target) <= 1,
+      `${kind} hits at ${level.toFixed(1)} dBFS, target ${target.toFixed(1)}`,
+    );
   }
-  // A sustained bed is exactly on the target; a hit is held down by its peak.
+  // A sparse hit and a bed at the same gain are the same loudness: this is the
+  // bug that made the confetti 9 dB quieter than the build it shares a gain
+  // with, and the bow the film's second-quietest cue.
+  const hit = renderSfx("confetti", Math.round(kindLength("confetti") * sr), sr, "level-hit");
   const bed = renderSfx("room", Math.round(0.5 * sr), sr, "level-bed");
-  const hit = renderSfx("slam", Math.round(0.4 * sr), sr, "level-hit");
-  const target = 20 * Math.log10(CUE_RMS);
-  assert.ok(Math.abs(level(bed) - target) < 1.5, `the bed is ${level(bed).toFixed(1)} dBFS, target ${target.toFixed(1)}`);
-  assert.ok(level(hit) < level(bed), "a transient is quieter in RMS than a bed at the same loudness");
+  const hitLevel = 20 * Math.log10(loudMoment(hit, sr) + 1e-9);
+  const bedLevel = 20 * Math.log10(loudMoment(bed, sr) + 1e-9);
+  assert.ok(Math.abs(hitLevel - bedLevel) < 0.5, `a hit at ${hitLevel.toFixed(1)} and a bed at ${bedLevel.toFixed(1)}`);
+});
+
+test("the soft knee only touches the loudest samples of a cue", () => {
+  // The knee is a safety net under the peak limit, not a compressor over the
+  // whole cue: a bed at the kit's level has nothing above the knee at all.
+  const bed = renderSfx("room", Math.round(2 * sr), sr, "knee-bed");
+  assert.equal(softKnee(bed), 0, "a bed should not be squashed at all");
+  const quiet = new Float32Array(1000).fill(0.4);
+  assert.equal(softKnee(quiet), 0);
+  const spike = new Float32Array(1000).fill(0.2);
+  spike[500] = 1.6;
+  assert.equal(softKnee(spike), 1);
+  assert.ok(Math.abs(spike[500] ?? 0) < 0.98);
+  assert.ok(Math.abs((spike[400] ?? 0) - 0.2) < 1e-6, "a sample under the knee is untouched");
 });
 
 test("a cue that lives under the phone floor fails the speaker check", () => {
@@ -296,6 +322,16 @@ test("two cues of one kind cannot machine-gun", () => {
   assert.equal(issues[0]?.code, "sfx_repeat");
   assert.match(issues[0]?.message ?? "", /"b" repeats "a"/);
   assert.equal(checkCueSet([{ id: "a", kind: "crowd", at: 1 }, { id: "d", kind: "crowd", at: 9 }]).length, 0);
+
+  // A third kind between two of the same used to hide the repeat, because only
+  // adjacent rows in the sorted list were compared.
+  const hidden = checkCueSet([
+    { id: "a", kind: "crowd", at: 1 },
+    { id: "b", kind: "snap", at: 1.05 },
+    { id: "c", kind: "crowd", at: 1.1 },
+  ]);
+  assert.equal(hidden.length, 1);
+  assert.match(hidden[0]?.message ?? "", /"c" repeats "a"/);
 });
 
 test("send, duck and band have one source: the kit", () => {

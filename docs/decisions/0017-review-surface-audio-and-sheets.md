@@ -240,3 +240,64 @@ Not fixed here, and why:
 - **ASR is still pending.** Same missing model.
 
 Music (ACE-Step) stays staged until the first film that uses it.
+
+### The second sound pass — measuring instead of listening twice
+
+The first pass fixed what the critic named. The second read the artifacts with
+meters and found that several of the fixes were true statements about the wrong
+quantity. Nothing in this list was prose: each one has a command or a test.
+
+**The cue level rule was on the wrong statistic.** Whole-cue RMS
+(`CUE_RMS = 0.12`) treats a 140 ms hit and a 900 ms bed as the same thing. A hit
+that decays inside a third of its length measures quiet, so normalising its RMS
+drove its peak into the limiter, which then ate up to 11 dB of it — the cue's
+`gain` in the score stopped being its level, which is exactly what the rule was
+there to prevent. Every cue is now normalised on its **loudest 50 ms** to
+`CUE_LOUD` (0.2, −14 dBFS), under a soft knee (0.8) and a hard peak limit (0.98).
+`checkCue` now fails a cue whose loud moment sits more than 2 dB under the kit's
+level, and every one of the fixture's 30 cues reports `-14 dBFS loud`.
+
+**The cue set comparison was adjacent-only.** `checkCueSet` sorted a kind's cues
+and looked at neighbours, so a third kind between two `crowd` cues hid the
+repeat. It compares **all pairs** of a kind now.
+
+**The generator clicked.** Several materials opened on a hard edge from zero,
+which a one-sample jump makes audible as a tick — the precise thing the
+phone-speaker rule bans. Each layer now has a `rise()` attack and its transient is
+scaled to the body it sits on, so the strike arrives rather than snaps. Every
+material's modes sit at or above 200 Hz, and the room bed carries `duckDb: 6`.
+
+**Silence had no contract.** A hole in the foley was indistinguishable from a
+missing cue, and the audit could only say "few cues". Silences are now declared
+surface — `audio.sfx.silences: [{ from, to, why }]` — validated for order, inside
+the film, minimum length and overlap, and read by the audit: an unscored event, a
+cue inside a declared silence, a hole over 2.5 s with no reason, a cue inside the
+tail fade, or a cue under narration with no duck is an **error**. The fixture is
+30 cues (27 event-bound foley + 3 room beds) and 5 silences.
+
+**The limiter's number was a measurement artefact.** `volumedetect` clamps its
+samples to 16-bit, so a premaster lifted over 0 dBFS reported `max_volume: 0.0`
+and the reduction read as +2.0 dB when it was +7.5. Both peaks now come from
+`ebur128=peak=true`. The report also carries `limiterWindows` — the same reduction
+as a distribution over 100 ms windows — because one sample cannot distinguish a
+single clamped hit from a squashed programme. Understudy: −14.1 LUFS / −1.7 dBTP,
+gain +7.5 dB, 7.5 dB off the loudest sample, **median window 0.03 dB**, 47 of 293
+active windows over 3 dB. `LIMITER_MAX_REDUCTION` (8 dB) fails `mix` past that, and
+`gate:7` has a `master` row that reads gain, reduction, window median and
+`converged` against the same bounds.
+
+**The bus wrote a premaster over full scale.** It peaks at ≤ −1 dBFS now
+(`PREMASTER_CEILING`), through one downward headroom gain reported as
+`bus.headroomDb`. Only ever down: a quiet mix is fixed in the mix.
+
+**A narration leveller was built, measured, and reverted.** The theory was sound —
+the voice peaks ~14 dB over its own loudness, so lift the words around it and the
+master's limiter stops deciding how loud the film is. Measured on the fixture, at
+2:1 over −18 dBFS the premaster's integrated loudness fell from −18.3 to −21.4
+LUFS, and at 3:1 over −24 dBFS the master's limiter reduction went **up** (7.0 →
+8.9 dB) because the makeup restored the peak it had just taken down. Peak-restoring
+makeup cannot beat crest physics: the film has the same peak-to-loudness ratio
+after compression as before, with its quiet passages quieter. The code, the report
+field and the tests are gone; the measurement stays here so the next person does
+not rebuild it. Crest is handled by the gain and the limiter, and disclosed by the
+window distribution.

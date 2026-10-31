@@ -80,6 +80,35 @@ no music and narration that stops at 19.5 s (the brief's copy ends there; music
 is staged), a mono field (the fixture's events carry no screen position), and
 transcript word times that still say `source: "guess"` until Whisper is installed.
 
+**Update 2026-11-01 — the second sound pass.** The first pass fixed what the
+critic named; a second pass read the artifacts with meters and found several
+fixes were true statements about the wrong quantity. The cue level rule moved
+from whole-cue RMS to the **loudest 50 ms** (`CUE_LOUD = 0.2`, −14 dBFS) under a
+soft knee: RMS normalisation made a decaying hit measure quiet, drove its peak
+into the limiter and cost up to 11 dB, so `gain` stopped being the only level.
+`checkCue` fails a cue more than 2 dB under the kit's level; `checkCueSet`
+compares **all pairs** of a kind, not adjacent rows. Silences became contract
+surface (`audio.sfx.silences` with a `why`, validated and read by the audit):
+an unscored event, a cue in a silence, a hole over 2.5 s, a cue inside the tail
+fade or an unducked cue under narration is an error. The generator stopped
+clicking (a `rise()` attack per layer, transients scaled to their body). The
+master's reported reduction was an artefact of `volumedetect` clamping to 16-bit;
+both peaks now come from `ebur128=peak=true`, and the report carries the same
+reduction as a **100 ms window distribution** so one sample cannot be read as the
+whole film. The bus gained a `PREMASTER_CEILING` (−1 dBFS) headroom stage, and
+`gate:7` gained a `master` row that reads gain, reduction, window median and
+`converged` against the mix contract's bounds. A narration leveller was built,
+measured and **reverted**: at 2:1 over −18 dBFS the premaster fell from −18.3 to
+−21.4 LUFS, and at 3:1 over −24 dBFS the limiter's reduction rose from 7.0 to
+8.9 dB, because peak-restoring makeup cannot beat crest physics. Evidence: `sfx`
+**30/30 ok, all −14 dBFS loud**, `audit` 32 events / 27 scored / 5 bare / 30 cues
+/ 5 silences / longest hole 1.07 s, `mix` **−14.1 LUFS / −1.7 dBTP**, gain
++7.5 dB, limiter 7.5 dB at the peak but a **median window of 0.03 dB** (47/293
+over 3 dB), `gate:7` **PASS 14 checks / 1 manual (ASR)**, `film:review --gate`
+**PASS**, **254 tests**, typecheck clean. Still open: the MP4's earlier audio cut
+(look pass), no music, narration ending at 19.5 s, a mono field, guessed word
+times, and ASR pending.
+
 **Update:** `docs/PRODUCTION-PLAN.md` v1.4 is accepted. The contract layer and
 the first generators exist: film brief, audio resolver (recorded/TTS narration,
 library/generated music, generated SFX), asset manifest, pose library, film

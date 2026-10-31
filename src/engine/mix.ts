@@ -55,6 +55,13 @@ export function cueBand(cue: { kind: string; band?: [number, number] }): [number
   return cue.band ?? kindSpec(cue.kind).band;
 }
 
+/**
+ * Where a mix bus may peak. Below full scale, so the master's gain is a gain and
+ * not a repair, and so the premaster would still be legal if it were written as
+ * 16-bit.
+ */
+export const PREMASTER_CEILING = 0.891; // -1 dBFS
+
 type Biquad = { b0: number; b1: number; b2: number; a1: number; a2: number };
 
 export function highpassCoeffs(fc: number, sampleRate: number, q = 0.707): Biquad {
@@ -196,7 +203,7 @@ export function freeverb(
   return { left: run(0), right: run(spread) };
 }
 
-export function mixFilm(options: MixOptions): { left: Float32Array; right: Float32Array } {
+export function mixFilm(options: MixOptions): { left: Float32Array; right: Float32Array; busGainDb: number } {
   const sr = options.sampleRate;
   const total = Math.max(1, Math.ceil(options.duration * sr));
   const dryL = new Float32Array(total);
@@ -204,7 +211,8 @@ export function mixFilm(options: MixOptions): { left: Float32Array; right: Float
   const sendBus = new Float32Array(total);
 
   const voice = options.voice ?? null;
-  const key = voice ? envelope(applyBiquad(voice, bandpassCoeffs(1000, 4000, sr)), sr) : null;
+  const voiced = voice ? applyBiquad(voice, highpassCoeffs(options.voiceHpfHz ?? 75, sr)) : null;
+  const key = voiced ? envelope(applyBiquad(voiced, bandpassCoeffs(1000, 4000, sr)), sr) : null;
 
   for (const cue of options.cues) {
     let signal = cue.samples;
@@ -231,7 +239,6 @@ export function mixFilm(options: MixOptions): { left: Float32Array; right: Float
   }
 
   const reverb = freeverb(sendBus, sr, options.reverb);
-  const voiced = voice ? applyBiquad(voice, highpassCoeffs(options.voiceHpfHz ?? 75, sr)) : null;
 
   const left = new Float32Array(total);
   const right = new Float32Array(total);
@@ -239,6 +246,20 @@ export function mixFilm(options: MixOptions): { left: Float32Array; right: Float
     const v = voiced ? (voiced[i] ?? 0) : 0;
     left[i] = v + (dryL[i] ?? 0) + (reverb.left[i] ?? 0);
     right[i] = v + (dryR[i] ?? 0) + (reverb.right[i] ?? 0);
+  }
+
+  // The mix leaves the master a file that is in range. A bus that peaks over
+  // full scale is a badly staged mix whatever the float arithmetic allows, and
+  // the gain the master then needs would be a lie about the mix's level. Only
+  // ever turned down: a quiet mix is not rescued here.
+  let busPeak = 0;
+  for (let i = 0; i < total; i++) busPeak = Math.max(busPeak, Math.abs(left[i] ?? 0), Math.abs(right[i] ?? 0));
+  const headroom = busPeak > PREMASTER_CEILING ? PREMASTER_CEILING / busPeak : 1;
+  if (headroom < 1) {
+    for (let i = 0; i < total; i++) {
+      left[i] = (left[i] ?? 0) * headroom;
+      right[i] = (right[i] ?? 0) * headroom;
+    }
   }
 
   const fadeSamples = Math.min(total, Math.round((options.tailFade ?? 0.5) * sr));
@@ -252,5 +273,5 @@ export function mixFilm(options: MixOptions): { left: Float32Array; right: Float
     right[index] = (right[index] ?? 0) * g;
   }
 
-  return { left, right };
+  return { left, right, busGainDb: Number((20 * Math.log10(headroom)).toFixed(2)) };
 }

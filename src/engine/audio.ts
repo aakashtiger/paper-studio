@@ -44,6 +44,19 @@ export const NarrationPlanSchema = z.object({
   srt: z.string().min(1).optional(),
 });
 
+/**
+ * A stretch of film that is deliberately bare of foley. `from` is inclusive,
+ * `to` exclusive, and both are film seconds. The `why` is required: a hole with
+ * a reason is a decision, a hole without one is a gap.
+ */
+export const SilenceSchema = z.object({
+  from: z.number().nonnegative(),
+  to: z.number().positive(),
+  why: z.string().min(1),
+});
+
+export type Silence = z.infer<typeof SilenceSchema>;
+
 export const MusicPlanSchema = z.object({
   source: z.enum(["library", "generated", "none"]),
   track: z.string().min(1).optional(),
@@ -62,6 +75,12 @@ export const SfxPlanSchema = z.object({
    */
   source: z.enum(["generated", "library", "recorded"]),
   cues: z.array(SfxCueSchema).default([]),
+  /**
+   * Stretches of the film that are deliberately bare of foley, and why. A hole
+   * with no reason is a hole; a hole with a reason is sound design. The audit
+   * fails if a hole is unaccounted for, and refuses a cue that starts inside one.
+   */
+  silences: z.array(SilenceSchema).default([]),
 });
 
 export const AudioPlanSchema = z.object({
@@ -220,6 +239,28 @@ export function resolveAudio(
     }
   } else if (plan.mode === "sfx") {
     errors.push({ code: "audio_sfx_cues", message: "sfx film has no cues" });
+  }
+
+  if (plan.sfx && plan.sfx.silences.length > 0) {
+    const silences = plan.sfx.silences;
+    let previousEnd = 0;
+    for (const [index, silence] of silences.entries()) {
+      const label = `q${index + 1} ${silence.from.toFixed(2)}–${silence.to.toFixed(2)}s`;
+      if (silence.to <= silence.from) {
+        errors.push({ code: "silence_order", message: `silence ${label} ends before it starts` });
+      } else if (silence.to > duration) {
+        errors.push({ code: "silence_outside", message: `silence ${label} runs past the film's ${duration}s` });
+      } else if (silence.to - silence.from < 0.3) {
+        errors.push({
+          code: "silence_short",
+          message: `silence ${label} is only ${(silence.to - silence.from).toFixed(2)}s; a hole this short reads as a mistake, not a beat`,
+        });
+      }
+      if (silence.from < previousEnd) {
+        errors.push({ code: "silence_overlap", message: `silence ${label} overlaps the one before it` });
+      }
+      previousEnd = Math.max(previousEnd, silence.to);
+    }
   }
 
   if (plan.mode !== "hybrid" && clockMode !== plan.mode) {

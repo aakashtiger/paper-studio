@@ -51,11 +51,11 @@ export type Material = { modes: number[]; decay: number; bright: number };
 
 export const MATERIALS = {
   paper: { modes: [210, 430, 880, 1650], decay: 26, bright: 0.5 },
-  wood: { modes: [185, 350, 720, 1480], decay: 16, bright: 0.35 },
+  wood: { modes: [230, 400, 760, 1500], decay: 16, bright: 0.35 },
   glass: { modes: [880, 1850, 3300, 5200], decay: 30, bright: 0.8 },
   metal: { modes: [320, 860, 1480, 2700], decay: 22, bright: 0.7 },
-  stone: { modes: [190, 390, 790, 1580], decay: 12, bright: 0.15 },
-  cloth: { modes: [195, 360, 760, 1500], decay: 40, bright: 0.2 },
+  stone: { modes: [240, 420, 800, 1600], decay: 12, bright: 0.15 },
+  cloth: { modes: [215, 380, 780, 1520], decay: 40, bright: 0.2 },
 } as const;
 
 export type MaterialName = keyof typeof MATERIALS;
@@ -90,7 +90,7 @@ export const SFX_KINDS: Record<string, SfxKindSpec> = {
   crowd: { shape: "ambience", material: "cloth", length: 1.4, gain: 0.55, band: [120, 7000], layers: ["body", "tail"], send: 0.22, duckDb: 4 },
   confetti: { shape: "sparkle", material: "paper", length: 0.8, gain: 0.6, band: [500, 9000], layers: ["transient", "tail"], send: 0.16, duckDb: 3 },
   iris: { shape: "sweep", material: "glass", length: 0.9, gain: 0.55, band: [200, 5000], layers: ["body", "tail"], send: 0.28, duckDb: 2 },
-  room: { shape: "ambience", material: "stone", length: 30, gain: 0.1, band: [200, 4000], layers: ["tail"], send: 0, duckDb: 0 },
+  room: { shape: "ambience", material: "stone", length: 30, gain: 0.1, band: [200, 4000], layers: ["tail"], send: 0, duckDb: 6 },
   // The kit's own material kinds.
   knock: { shape: "impact", material: "wood", length: 0.28, gain: 0.65, band: [90, 3500], layers: ["transient", "body", "tail"], send: 0.1, duckDb: 3 },
   door: { shape: "impact", material: "wood", length: 0.9, gain: 0.8, band: [60, 2500], layers: ["transient", "body", "tail"], send: 0.2, duckDb: 4 },
@@ -180,11 +180,23 @@ export function cueSetText(records: SfxRecordLike[]): string {
 
 /* --------------------------------------------------------------- primitives */
 
+/**
+ * A struck object starts at nothing and reaches its level in a few
+ * milliseconds. A cue that starts at full amplitude is a **click**: the step
+ * from zero to peak on sample one is a broadband edge, and it is also what made
+ * a hit peak 25 dB over its own body, which no level rule can normalise around.
+ * A smoothstep rise over 4 ms (about two cycles of the lowest mode) is the
+ * attack of a real hit.
+ */
+function rise(t: number, seconds = 0.004): number {
+  const u = Math.min(1, t / seconds);
+  return u * u * (3 - 2 * u);
+}
+
 /** A bank of decaying sinusoids at a material's modes, struck by a short burst. */
 function modalBody(len: number, sr: number, material: MaterialName, rng: Rng, strike = 0.006): Float32Array {
   const { modes, decay, bright } = MATERIALS[material];
   const out = new Float32Array(len);
-  const strikeLen = Math.max(2, Math.round(strike * sr));
   const detune = modes.map(() => 1 + (rng() - 0.5) * 0.012);
   for (let i = 0; i < len; i++) {
     const t = i / sr;
@@ -193,8 +205,7 @@ function modalBody(len: number, sr: number, material: MaterialName, rng: Rng, st
       const freq = (modes[m] ?? 200) * (detune[m] ?? 1);
       value += Math.sin(2 * Math.PI * freq * t) * Math.exp(-t * decay * (1 + m * 0.4));
     }
-    const excite = i < strikeLen ? 1 - i / strikeLen : 0.35 * Math.exp(-t * decay * 0.6);
-    out[i] = (value / modes.length) * (excite + (1 - bright) * 0.15);
+    out[i] = (value / modes.length) * rise(t, strike) * (0.75 + 0.25 * (1 - bright));
   }
   return out;
 }
@@ -208,7 +219,7 @@ function noiseTransient(len: number, sr: number, rng: Rng, decay = 90, tone = 1)
     const t = i / sr;
     const noise = rng() * 2 - 1;
     lp += k * (noise - lp);
-    out[i] = lp * Math.exp(-t * decay);
+    out[i] = lp * Math.exp(-t * decay) * rise(t, 0.0015);
   }
   return out;
 }
@@ -236,16 +247,19 @@ function friction(len: number, sr: number, rng: Rng, options: { rate: number; de
   const out = new Float32Array(len);
   let lp = 0;
   let slip = 0;
+  let edge = 0;
   for (let i = 0; i < len; i++) {
     const t = i / sr;
     const noise = rng() * 2 - 1;
     // A stick-slip sawtooth whose rate wanders: the creak of a hinge.
     const rate = options.rate * (1 + 0.25 * Math.sin(2 * Math.PI * 0.7 * t));
     slip = (slip + rate / sr) % 1;
-    const edge = Math.pow(1 - slip, 6);
+    // Smoothed, because a raw sawtooth edge is a click every cycle, and its
+    // peaks then set the cue's level instead of the creak.
+    edge += 0.02 * (Math.pow(1 - slip, 4) - edge);
     lp += 0.12 * (noise * edge - lp);
     const tension = Math.sin(Math.PI * Math.min(1, t / (len / sr))) * Math.exp(-t * options.decay);
-    out[i] = (lp * 2.2 + edge * 0.15) * tension;
+    out[i] = (lp * 2.2 + edge * 0.08) * tension;
   }
   return out;
 }
@@ -339,6 +353,19 @@ const add = (into: Float32Array, layer: Float32Array, gain = 1): void => {
   for (let i = 0; i < into.length && i < layer.length; i++) into[i] = (into[i] ?? 0) + (layer[i] ?? 0) * gain;
 };
 
+const peakOf = (samples: Float32Array): number => {
+  let peak = 0;
+  for (const value of samples) peak = Math.max(peak, Math.abs(value));
+  return peak;
+};
+
+/**
+ * How far the sharp edge of a hit may sit over the resonances it excites. A
+ * transient 3 dB over its body is the strike; 20 dB over it is a click with a
+ * sound after it, and it makes the cue's loudness the click's, not the hit's.
+ */
+export const TRANSIENT_OVER_BODY = 1.25;
+
 /** Fade the last `seconds` on a raised cosine, so a cue never ends on a click. */
 export function fadeOut(samples: Float32Array, sr: number, seconds = 0.02): void {
   const count = Math.min(samples.length, Math.round(seconds * sr));
@@ -360,12 +387,14 @@ export function effectiveLayers(kind: string, layers?: string[]): SfxLayerName[]
 /**
  * Render one cue: a pure function of kind, length and seed text.
  *
- * Normalised to a fixed **root mean square**, then peak-limited below 1. Peak
+ * Normalised on its **loudest moment**, then peak-limited below 1. Peak
  * normalisation made a 30 ms snap and a 900 ms sweep both touch ±1, which is how
  * the softest cue in the film (a glass iris) ended up 13 dB louder than the
- * footstep it shares a gain with. With a fixed RMS, the cue's `gain` — the only
- * level a score sets — is the only level that matters, and two cues at the same
- * gain are within a few dB of each other however long they are.
+ * footstep it shares a gain with. Whole-cue RMS is the other failure: it calls a
+ * hit that decays in a third of its length quiet, so a sparse cue had to be
+ * rescued by the mix. The loudest 50 ms makes a hit and a bed land on the same
+ * level, and then the cue's `gain` — the only level a score sets — is the only
+ * level that matters.
  */
 export function renderSfx(kind: string, len: number, sr: number, seedText: string, layers?: string[]): Float32Array {
   const spec = kindSpec(kind);
@@ -373,20 +402,10 @@ export function renderSfx(kind: string, len: number, sr: number, seedText: strin
   const out = new Float32Array(Math.max(1, len));
   const wanted = effectiveLayers(kind, layers);
 
-  if (wanted.includes("transient")) {
-    switch (spec.shape) {
-      case "impact":
-      case "settle":
-      case "sparkle":
-        add(out, noiseTransient(len, sr, rng, spec.shape === "impact" ? 90 : 140, spec.material === "paper" ? 1.4 : 1), 0.7);
-        break;
-      case "creak":
-        add(out, noiseTransient(len, sr, rng, 60, 0.6), 0.3);
-        break;
-      default:
-        break;
-    }
-  }
+  // The body and the tail are assembled first. The sharp edge of the hit goes on
+  // last, because it has to be scaled to the resonances it excites: a transient
+  // that towers 10 dB over its own body is a click with a sound after it, and it
+  // makes the cue's level depend on the click instead of on the hit.
   if (wanted.includes("body")) {
     switch (spec.shape) {
       case "impact": add(out, modalBody(len, sr, spec.material, rng), 1); break;
@@ -421,24 +440,94 @@ export function renderSfx(kind: string, len: number, sr: number, seedText: strin
     }
   }
 
-  // One loudness rule for every cue, then a peak limit that keeps the loudest
-  // transient sample under 1 without the low end of the mix clipping.
-  const level = rms(out);
-  let scale = level > 0 ? CUE_RMS / level : 1;
-  let peak = 0;
-  for (const value of out) peak = Math.max(peak, Math.abs(value * scale));
-  if (peak > 0.98) scale *= 0.98 / peak;
+  if (wanted.includes("transient")) {
+    const edge = new Float32Array(out.length);
+    switch (spec.shape) {
+      case "impact":
+      case "settle":
+      case "sparkle":
+        add(edge, noiseTransient(len, sr, rng, spec.shape === "impact" ? 90 : 140, spec.material === "paper" ? 1.4 : 1), 0.7);
+        break;
+      case "creak":
+        add(edge, noiseTransient(len, sr, rng, 60, 0.6), 0.3);
+        break;
+      default:
+        break;
+    }
+    const body = peakOf(out);
+    const edgePeak = peakOf(edge);
+    add(out, edge, body > 0 && edgePeak > 0 ? Math.min(1, (body * TRANSIENT_OVER_BODY) / edgePeak) : 1);
+  }
+
+  // One loudness rule for every cue: its **loudest 50 ms** is set to CUE_LOUD,
+  // then a peak limit keeps the loudest sample under 1 without the low end of
+  // the mix clipping. A hit and a bed then hit at the same level, so the score's
+  // `gain` is the only level that matters.
+  const moment = loudMoment(out, sr);
+  const scale = moment > 0 ? CUE_LOUD / moment : 1;
   for (let i = 0; i < out.length; i++) out[i] = (out[i] ?? 0) * scale;
+  softKnee(out);
+  const peak = peakOf(out);
+  if (peak > 0.98) {
+    const drop = 0.98 / peak;
+    for (let i = 0; i < out.length; i++) out[i] = (out[i] ?? 0) * drop;
+  }
   fadeOut(out, sr);
   return out;
 }
 
 /**
- * The RMS every rendered cue is normalised to before the score's gain. Chosen
- * so a cue at gain 1 sits under the narration without the mix having to rescue
- * it.
+ * A last-stage soft knee over the loudest samples only.
+ *
+ * The peak limit above is a hard rescale: when one sample decides it, the whole
+ * cue gets quieter and the cue's level is set by a spike instead of by its
+ * body. This rounds the top few dB of the loudest samples instead, so a strike
+ * keeps its level and the sample still sits under the ceiling. Everything under
+ * the knee is untouched, which is every sample of a bed.
  */
-export const CUE_RMS = 0.12;
+export function softKnee(samples: Float32Array, knee = 0.8, ceiling = 0.98): number {
+  let touched = 0;
+  for (let i = 0; i < samples.length; i++) {
+    const value = samples[i] ?? 0;
+    const size = Math.abs(value);
+    if (size <= knee) continue;
+    touched += 1;
+    samples[i] = Math.sign(value) * (knee + (ceiling - knee) * Math.tanh((size - knee) / (ceiling - knee)));
+  }
+  return touched;
+}
+
+/**
+ * The RMS of a cue's loudest `window` seconds.
+ *
+ * This is the level a cue is normalised on, and the reason is that RMS over a
+ * whole cue is not what a listener hears. A 900 ms door that dies after 300 ms
+ * spends most of its samples in near-silence, so whole-cue RMS calls it quiet
+ * and the mix has to rescue it; a sustained bed has no such tail, so the same
+ * RMS calls it loud. Normalising on the loudest moment instead means every cue
+ * hits at the same level whatever its length or decay, and the score's gain is
+ * the only thing that sets how loud a cue is in the film.
+ */
+export function loudMoment(samples: Float32Array, sr: number, window = 0.05): number {
+  const span = Math.max(1, Math.round(window * sr));
+  if (samples.length <= span) return rms(samples);
+  const prefix = new Float64Array(samples.length + 1);
+  for (let i = 0; i < samples.length; i++) prefix[i + 1] = (prefix[i] ?? 0) + (samples[i] ?? 0) ** 2;
+  let best = 0;
+  for (let i = 0; i + span <= samples.length; i++) {
+    const sum = (prefix[i + span] ?? 0) - (prefix[i] ?? 0);
+    if (sum > best) best = sum;
+  }
+  return Math.sqrt(best / span);
+}
+
+/**
+ * The level of every cue's loudest 50 ms, before the score's gain. Chosen so a
+ * cue at gain 1 sits under the narration without the mix having to rescue it,
+ * and low enough that the peak limit is a safety net rather than the thing that
+ * decides the level.
+ */
+export const CUE_LOUD = 0.2;
 
 /* ------------------------------------------------------------------- review */
 
@@ -560,11 +649,17 @@ export function checkCue(
   const band = cue.band ?? spec.band;
   const fraction = bandFraction(samples, sr, band);
   const audible = phoneAudible(samples, sr);
-  const level = 20 * Math.log10(rms(samples) + 1e-9);
+  const level = 20 * Math.log10(loudMoment(samples, sr) + 1e-9);
+  const shortfall = 20 * Math.log10(CUE_LOUD) - level;
   if (band[1] > 9000) reasons.push(`band top ${band[1]} Hz is above the 9 kHz phone limit`);
   if (seconds < 0.05) reasons.push(`only ${seconds.toFixed(3)}s long`);
   if (!fadesClean(samples, sr)) reasons.push("does not fade out clean");
   if (layers.length === 0) reasons.push("no layers");
+  if (shortfall > 2) {
+    reasons.push(
+      `its loudest moment is ${shortfall.toFixed(1)} dB under the kit's level, so its gain is not its only level`,
+    );
+  }
   if (fraction < 0.5) reasons.push(`only ${(fraction * 100).toFixed(0)}% of its energy is in ${band.join("–")} Hz`);
   if (audible < 0.6) {
     reasons.push(
@@ -577,7 +672,7 @@ export function checkCue(
     ok: reasons.length === 0,
     detail:
       reasons.length === 0
-        ? `${Math.round(seconds * 1000)}ms · ${layers.join("+")} · ${(fraction * 100).toFixed(0)}% in band · ${audible >= 0.99 ? 100 : (audible * 100).toFixed(0)}% audible · ${level.toFixed(0)} dBFS`
+        ? `${Math.round(seconds * 1000)}ms · ${layers.join("+")} · ${(fraction * 100).toFixed(0)}% in band · ${audible >= 0.99 ? 100 : (audible * 100).toFixed(0)}% audible · ${level.toFixed(0)} dBFS loud`
         : reasons.join("; "),
   };
 }
@@ -595,25 +690,30 @@ export function checkCueSet(
   cues: Array<{ id: string; kind: string; at: number; duration?: number }>,
 ): CueSetIssue[] {
   const issues: CueSetIssue[] = [];
-  const spans = cues
-    .map((cue) => ({
-      id: cue.id,
-      kind: cue.kind,
-      start: cue.at,
-      end: cue.at + (cue.duration ?? kindLength(cue.kind)),
-    }))
-    .sort((a, b) => a.start - b.start);
+  const byKind = new Map<string, Array<{ id: string; start: number; end: number }>>();
+  for (const cue of cues) {
+    const span = { id: cue.id, start: cue.at, end: cue.at + (cue.duration ?? kindLength(cue.kind)) };
+    byKind.set(cue.kind, [...(byKind.get(cue.kind) ?? []), span]);
+  }
 
-  for (let i = 1; i < spans.length; i += 1) {
-    const previous = spans[i - 1];
-    const current = spans[i];
-    if (!previous || !current || previous.kind !== current.kind) continue;
-    const gap = current.start - previous.end;
-    if (gap < 0.3) {
-      issues.push({
-        code: "sfx_repeat",
-        message: `"${current.id}" repeats "${previous.id}" (${current.kind}) ${gap <= 0 ? "overlapping" : `${gap.toFixed(2)}s later`} at ${current.start.toFixed(2)}s`,
-      });
+  // Every pair of one kind, not just neighbours in a sorted list: a third kind
+  // between two `crowd` cues used to hide the repeat, because only adjacent rows
+  // were compared.
+  for (const [kind, group] of byKind) {
+    const spans = group.sort((a, b) => a.start - b.start);
+    for (let i = 0; i < spans.length; i += 1) {
+      const previous = spans[i];
+      if (!previous) continue;
+      for (let j = i + 1; j < spans.length; j += 1) {
+        const current = spans[j];
+        if (!current) continue;
+        const gap = current.start - previous.end;
+        if (gap >= 0.3) break;
+        issues.push({
+          code: "sfx_repeat",
+          message: `"${current.id}" repeats "${previous.id}" (${kind}) ${gap <= 0 ? "overlapping" : `${gap.toFixed(2)}s later`} at ${current.start.toFixed(2)}s`,
+        });
+      }
     }
   }
   return issues;

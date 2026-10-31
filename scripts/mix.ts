@@ -28,6 +28,19 @@ const MASTER_MAX_GAIN = 8;
 const LIMITER_CEILING = 0.794;
 /** How many gain/limit passes the master may take to land on the target. */
 const MASTER_PASSES = 6;
+/**
+ * The most the limiter may take off the loudest sample.
+ *
+ * A -14 LUFS delivery gives a programme 12.5 dB between its loudness and its
+ * true-peak ceiling. A hit that sits 16 dB over the film's loudness has to give
+ * that difference back somewhere, and the limiter is where it goes — on the
+ * loudest few milliseconds, not on the film. The bound is what separates that
+ * from a mix that is simply broken: past this the film is being squashed rather
+ * than mastered, and the fix belongs in the mix. `master.limiterWindows` in the
+ * report says how the reduction is spread over the film, so the single number
+ * can be read in context.
+ */
+const LIMITER_MAX_REDUCTION = 8;
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
@@ -114,7 +127,10 @@ const master = resolve(outDir, "master.wav");
 const mastered = masterToTarget(ffmpeg, premaster, master);
 const measured = mastered.measured;
 
-const pass = Math.abs(measured.lufs - TARGET_LUFS) <= 0.5 && measured.truePeak <= TARGET_TP + 0.1;
+const pass =
+  Math.abs(measured.lufs - TARGET_LUFS) <= 0.5 &&
+  measured.truePeak <= TARGET_TP + 0.1 &&
+  mastered.gainReductionDb <= LIMITER_MAX_REDUCTION;
 const report = {
   film: score.id,
   target: { lufs: TARGET_LUFS, truePeak: TARGET_TP },
@@ -122,9 +138,21 @@ const report = {
   master: {
     gainDb: mastered.gainDb,
     limiterCeiling: Number((20 * Math.log10(mastered.ceiling)).toFixed(2)),
+    /** What the limiter took off the loudest sample, so the gain is not a fiction. */
+    limiterGainReductionDb: mastered.gainReductionDb,
+    /**
+     * The same reduction read as a distribution over the film, in 100 ms
+     * windows. The peak number alone reads as if the master squashed the whole
+     * programme; this says how much of it was actually touched.
+     */
+    limiterWindows: limiterWindows(premaster, master, mastered.gainDb),
     passes: mastered.passes,
-    converged: Math.abs(measured.lufs - TARGET_LUFS) <= 0.25,
+    usedAllPasses: mastered.passes >= MASTER_PASSES,
+    /** The render reached the target; it is not "close enough on the last pass". */
+    converged: Math.abs(measured.lufs - TARGET_LUFS) <= 0.2 && measured.truePeak <= TARGET_TP + 0.2,
   },
+  /** What the mix bus did to its own headroom before the master saw it. */
+  bus: { headroomDb: mixed.busGainDb },
   cues: cues.length,
   voice: voicePath ? relative(voicePath) : null,
   duckDb: average(cues.map((cue) => cue.duckDb)),
@@ -145,11 +173,25 @@ const report = {
 writeFileSync(resolve(outDir, "mix-report.json"), JSON.stringify(report, null, 2) + "\n", "utf8");
 
 console.log(`mix: ${cues.length} cues + ${voice ? "voice" : "no voice"} → build/${score.id}/mix/master.wav`);
+if (mixed.busGainDb !== 0) {
+  console.log(`bus: ${mixed.busGainDb.toFixed(1)} dB of headroom taken so the premaster peaks at -1 dBFS`);
+}
 console.log(
   `master: ${measured.lufs.toFixed(1)} LUFS · ${measured.truePeak.toFixed(1)} dBTP ` +
     `(target ${TARGET_LUFS} / ${TARGET_TP} · gain ${mastered.gainDb >= 0 ? "+" : ""}${mastered.gainDb.toFixed(1)} dB · ` +
-    `limiter ${(20 * Math.log10(mastered.ceiling)).toFixed(1)} dBFS)`,
+    `limiter ${(20 * Math.log10(mastered.ceiling)).toFixed(1)} dBFS, taking ${mastered.gainReductionDb.toFixed(1)} dB off the loudest sample`,
 );
+const windows = report.master.limiterWindows;
+console.log(
+  `       limiter over the film: median window ${windows.p50.toFixed(2)} dB · p90 ${windows.p90.toFixed(2)} · ` +
+    `p99 ${windows.p99.toFixed(2)} · ${windows.over3Db}/${windows.windows} windows over 3 dB)`,
+);
+if (mastered.gainReductionDb > LIMITER_MAX_REDUCTION) {
+  console.error(
+    `error: the limiter took ${mastered.gainReductionDb.toFixed(1)} dB off the loudest sample; ` +
+      `more than ${LIMITER_MAX_REDUCTION} dB is the master compressing the film, so fix the mix`,
+  );
+}
 if (!pass) process.exit(1);
 
 function mono(path: string): Float32Array {
@@ -249,7 +291,14 @@ function writeWavFloat32(path: string, left: Float32Array, right: Float32Array, 
  * a film that would need more than that to reach -14 is a quiet mix, and a
  * quiet mix is fixed in the mix, not squashed on the master.
  */
-type Mastered = { gainDb: number; ceiling: number; passes: number; measured: ReturnType<typeof measure> };
+type Mastered = {
+  gainDb: number;
+  ceiling: number;
+  passes: number;
+  /** dB the limiter took off the loudest sample, at the master's final gain. */
+  gainReductionDb: number;
+  measured: ReturnType<typeof measure>;
+};
 
 function masterToTarget(ffmpeg: string, input: string, output: string): Mastered {
   let gainDb = 0;
@@ -273,7 +322,77 @@ function masterToTarget(ffmpeg: string, input: string, output: string): Mastered
     passes = pass + 1;
   }
 
-  return { gainDb: Number(gainDb.toFixed(2)), ceiling, passes, measured };
+  // The gain is measured, so the report has to say what the limiter did with it:
+  // a master that adds 6 dB and takes 3 of them back off the voice is a
+  // different master from one that does not, and the difference is audible.
+  // Both peaks come from the same true-peak meter that sets the delivery target;
+  // `volumedetect` reads its samples as 16-bit, so a signal lifted over 0 dBFS
+  // reports as 0 dB and the reduction reads as a fifth of what it is.
+  const peakIn = truePeakAfterGain(ffmpeg, input, gainDb);
+  const peakOut = measured.truePeak;
+  return {
+    gainDb: Number(gainDb.toFixed(2)),
+    ceiling,
+    passes,
+    gainReductionDb: Number((peakIn - peakOut).toFixed(2)),
+    measured,
+  };
+}
+
+/** The true peak of `input` after `gainDb`, in dBTP, from the same meter as the target. */
+function truePeakAfterGain(ffmpeg: string, input: string, gainDb: number): number {
+  const output = run(ffmpeg, [
+    "-hide_banner", "-i", input,
+    "-af", `volume=${gainDb.toFixed(2)}dB,ebur128=peak=true`,
+    "-f", "null", "-",
+  ]);
+  const summary = output.slice(output.lastIndexOf("Summary:"));
+  return Number(summary.match(/Peak:\s*(-?[\d.]+)\s*dBFS/)?.[1] ?? "0");
+}
+
+/**
+ * How the limiter's reduction is spread over the film: the level lost per 100 ms
+ * window, between the premaster raised by the master's gain and the master.
+ *
+ * One sample number cannot be judged — a single clamped hit and a squashed
+ * programme look the same in `limiterGainReductionDb`. This is the same
+ * measurement as a distribution, so the report can say "the median window lost
+ * 0.03 dB" next to "the loudest sample lost 7.5".
+ */
+function limiterWindows(
+  premaster: string,
+  master: string,
+  gainDb: number,
+): { p50: number; p90: number; p99: number; max: number; over3Db: number; windows: number } {
+  const before = readWav(premaster);
+  const after = readWav(master);
+  const sr = before.sampleRate;
+  const span = Math.max(1, Math.round(0.1 * sr));
+  const scale = 10 ** (gainDb / 20);
+  const frames = Math.min(before.channels[0]?.length ?? 0, after.channels[0]?.length ?? 0);
+  const drops: number[] = [];
+  for (let start = 0; start + span <= frames; start += span) {
+    let inEnergy = 0;
+    let outEnergy = 0;
+    for (let i = start; i < start + span; i++) {
+      const x = (((before.channels[0]?.[i] ?? 0) + (before.channels[1]?.[i] ?? 0)) / 2) * scale;
+      const y = ((after.channels[0]?.[i] ?? 0) + (after.channels[1]?.[i] ?? 0)) / 2;
+      inEnergy += x * x;
+      outEnergy += y * y;
+    }
+    if (inEnergy < 1e-6) continue;
+    drops.push(10 * Math.log10(inEnergy / Math.max(outEnergy, 1e-12)));
+  }
+  drops.sort((a, b) => a - b);
+  const pick = (percent: number) => Number((drops[Math.min(drops.length - 1, Math.floor((percent / 100) * drops.length))] ?? 0).toFixed(2));
+  return {
+    p50: pick(50),
+    p90: pick(90),
+    p99: pick(99),
+    max: Number((drops[drops.length - 1] ?? 0).toFixed(2)),
+    over3Db: drops.filter((drop) => drop > 3).length,
+    windows: drops.length,
+  };
 }
 
 function clamp(value: number, low: number, high: number): number {

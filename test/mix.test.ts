@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { freeverb, highpassCoeffs, applyBiquad, mixFilm } from "../src/engine/mix.js";
+import { freeverb, highpassCoeffs, applyBiquad, mixFilm, PREMASTER_CEILING } from "../src/engine/mix.js";
 
 const SR = 48_000;
 
@@ -21,6 +21,24 @@ function difference(a: Float32Array, b: Float32Array): Float32Array {
   for (let i = 0; i < a.length; i++) out[i] = (a[i] ?? 0) - (b[i] ?? 0);
   return out;
 }
+
+test("the mix never writes a premaster above full scale", () => {
+  // A bus that peaks over 0 dBFS is a badly staged mix whatever the float
+  // arithmetic allows: the master's gain would then be a repair, and the file
+  // would not survive being written as 16-bit. Three cues stacked on the same
+  // frame is what actually pushes it there.
+  const hot = { id: "hot", kind: "slam", at: 0, samples: sine(300, 1, 1.4), send: 0, duckDb: 0 };
+  const mix = mixFilm({ sampleRate: SR, duration: 1, voice: null, cues: [hot, { ...hot, id: "hot2" }, { ...hot, id: "hot3" }] });
+  const peak = Math.max(...Array.from(mix.left, Math.abs), ...Array.from(mix.right, Math.abs));
+  assert.ok(peak <= PREMASTER_CEILING + 1e-6, `the premaster peaks at ${peak}, over ${PREMASTER_CEILING}`);
+  assert.ok(mix.busGainDb < 0, "the headroom stage should report the gain it took");
+});
+
+test("a mix inside the ceiling is not touched by the headroom stage", () => {
+  const quiet = { id: "q", kind: "lamp", at: 0, samples: sine(300, 1, 0.2), send: 0, duckDb: 0 };
+  const mix = mixFilm({ sampleRate: SR, duration: 1, voice: sine(220, 1, 0.2), cues: [quiet] });
+  assert.equal(mix.busGainDb, 0);
+});
 
 test("the mix is deterministic", () => {
   const voice = sine(220, 1);

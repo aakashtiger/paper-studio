@@ -28,8 +28,8 @@ import {
   kindBand,
   kindGain,
   kindLength,
+  loudMoment,
   renderSfx,
-  rms,
   SFX_GENERATOR,
   SFX_SAMPLE_RATE,
 } from "../src/engine/sfx.js";
@@ -115,7 +115,7 @@ async function main(scorePath: string): Promise<void> {
       event: cue.event ?? null,
       seconds: Number((samples.length / sr).toFixed(3)),
       gain,
-      levelDb: Number((20 * Math.log10(rms(samples) * gain + 1e-9)).toFixed(1)),
+      levelDb: Number((20 * Math.log10(loudMoment(samples, sr) * gain + 1e-9)).toFixed(1)),
       layers: effectiveLayers(cue.kind, cue.layers),
       band: cue.band ?? kindBand(cue.kind),
       spec: sha256(cueSpec(cue)),
