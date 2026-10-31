@@ -8,7 +8,7 @@
  *
  * usage: npm run film:review -- <score.json> [--gate] [--from <step>]
  */
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import { spawn } from "node:child_process";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
@@ -36,7 +36,10 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-const video = resolve(root, "films", score.id, `${score.id}.mp4`);
+const id = score.id;
+/** When this review started. A file older than this was not written by it. */
+const startedAt = Date.now();
+const video = resolve(root, "films", id, `${id}.mp4`);
 const hasVideo = existsSync(video);
 const wantGate = args.includes("--gate");
 
@@ -58,7 +61,55 @@ if (wantGate) {
   steps.push({ name: "gate:7", script: "scripts/gate-7.ts", detail: "the final gate" });
 }
 
+/**
+ * The artifact a step writes. `film:review` reads a step's own report to
+ * summarise it — but only a report *this* run wrote. A report on disk from last
+ * week is not evidence that this run passed.
+ */
+function artifact(name: string): string | null {
+  switch (name) {
+    case "audit":
+      return `build/${id}/audit.json`;
+    case "board":
+      return `build/${id}/board/board.json`;
+    case "storyboard":
+      return `build/${id}/storyboard/storyboard.json`;
+    case "sheet":
+      return `build/${id}/sheets`;
+    case "sfx":
+      return `build/${id}/sfx/sfx.json`;
+    case "strips":
+      return `build/${id}/strips/strips.json`;
+    case "gate:7":
+      return `build/${id}/gate-7.json`;
+    default:
+      return name.endsWith("-audit") || name === "paint-match" ? `build/${id}/${name}.json` : null;
+  }
+}
+
+/** When the step's artifact was last touched, or null if it is not there. */
+function stamp(name: string): number | null {
+  const rel = artifact(name);
+  if (!rel) return null;
+  const path = resolve(root, rel);
+  if (!existsSync(path)) return null;
+  try {
+    if (statSync(path).isDirectory()) {
+      let newest = 0;
+      for (const entry of readdirSync(path)) {
+        const file = resolve(path, entry);
+        if (entry.endsWith(".png")) newest = Math.max(newest, statSync(file).mtimeMs);
+      }
+      return newest || null;
+    }
+    return statSync(path).mtimeMs;
+  } catch {
+    return null;
+  }
+}
+
 async function runStep(step: Step): Promise<StepResult> {
+  const before = stamp(step.name);
   return new Promise((done) => {
     const child = spawn(process.execPath, ["--import", "tsx", step.script, scorePath], {
       cwd: root,
@@ -68,7 +119,16 @@ async function runStep(step: Step): Promise<StepResult> {
     child.stdout.on("data", (chunk: Buffer) => (output += chunk.toString()));
     child.stderr.on("data", (chunk: Buffer) => (output += chunk.toString()));
     child.on("close", (code) => {
-      done({ name: step.name, ok: code === 0, detail: describe(step.name) ?? (lastLine(output) || step.detail), output });
+      const ok = code === 0;
+      const after = stamp(step.name);
+      const fresh = after !== null && after !== before;
+      // A failed step is described by its own output. Never by a report on disk:
+      // that report is from an earlier run, and printing it beside FAIL is a lie.
+      const described = fresh ? describe(step.name) : null;
+      const detail = ok
+        ? described ?? (lastLine(output) || step.detail)
+        : (described?.startsWith("FAIL") ? described : null) ?? (failureLine(output) || "failed");
+      done({ name: step.name, ok, detail, output });
     });
   });
 }
@@ -80,11 +140,13 @@ async function main(): Promise<void> {
     results.push(await runStep(step));
   }
 
-  const page = readGatePage();
+  const failed = results.filter((result) => !result.ok);
+  const gateRan = results.some((result) => result.name === "gate:7");
+  const page = gateRan ? readGatePage() : [`G7 gate-7     not run in this review${wantGate ? "" : " (pass --gate)"}`];
   const sheetPath = pickSheet();
 
   console.log("");
-  console.log(`film:review — ${score.id} · ${score.style}@${score.styleVersion} · ${score.duration}s · ${score.aspect} · ${plan.shots.length} shots`);
+  console.log(`film:review — ${id} · ${score.style}@${score.styleVersion} · ${score.duration}s · ${score.aspect} · ${plan.shots.length} shots`);
   console.log("");
   for (const result of results) {
     const mark = result.ok ? "ok  " : "FAIL";
@@ -92,9 +154,9 @@ async function main(): Promise<void> {
   }
   for (const line of page) console.log(`  ${line}`);
   console.log("");
-  console.log(`  one sheet: ${sheetPath ?? "none yet"}`);
+  for (const line of notRun()) console.log(`  skipped ${line}`);
+  console.log(`  one sheet: ${sheetPath ?? "none from this run"}`);
 
-  const failed = results.filter((result) => !result.ok);
   if (failed.length > 0) {
     for (const result of failed) {
       console.error("");
@@ -108,14 +170,36 @@ async function main(): Promise<void> {
   if (failed.length > 0) process.exit(1);
 }
 
+/** What this review did not do, named so nobody reads silence as a pass. */
+function notRun(): string[] {
+  const lines: string[] = [];
+  if (!hasVideo) lines.push("strips     no delivered MP4 at films/" + id + "/" + id + ".mp4");
+  if (!wantGate) lines.push("G7 audits  five mechanical audits and gate:7 (pass --gate)");
+  return lines;
+}
+
 /** The last line that is prose, not JSON punctuation. */
 function lastLine(output: string): string {
   const lines = output.trim().split("\n").map((line) => line.trim()).filter(Boolean);
   for (let index = lines.length - 1; index >= 0; index -= 1) {
     const line = lines[index] ?? "";
-    if (!/^[{}[\],]+$/.test(line)) return line;
+    if (!/^[{}[\],]+$/.test(line) && !/^"[^"]+":/.test(line)) return line;
   }
   return "";
+}
+
+/** The line that says what went wrong: an explicit error, else the last failure. */
+function failureLine(output: string): string {
+  const lines = output.trim().split("\n").map((line) => line.trim()).filter(Boolean);
+  for (let index = lines.length - 1; index >= 0; index -= 1) {
+    const line = lines[index] ?? "";
+    if (/^error[:\s]/i.test(line)) return line;
+  }
+  for (let index = lines.length - 1; index >= 0; index -= 1) {
+    const line = lines[index] ?? "";
+    if (/fail/i.test(line) && !/^[{}[\],]+$/.test(line)) return line;
+  }
+  return lastLine(output);
 }
 
 function readJson<T>(rel: string): T | null {
@@ -133,11 +217,18 @@ function describe(name: string): string | null {
   const id = score.id;
   switch (name) {
     case "audit": {
-      const report = readJson<{ ok: boolean; shots: number; cues: number; captions: number; warnings: unknown[] }>(
-        `build/${id}/audit.json`,
-      );
+      const report = readJson<{
+        ok: boolean;
+        shots: number;
+        events: number;
+        cues: number;
+        captions: number;
+        warnings: unknown[];
+        errors: Array<{ message: string }>;
+      }>(`build/${id}/audit.json`);
       if (!report) return null;
-      return `${report.ok ? "ok" : "FAIL"} · ${report.shots} shots · ${report.cues} cues · ${report.captions} captions${report.warnings.length ? ` · ${report.warnings.length} warnings` : ""}`;
+      if (!report.ok) return `FAIL · ${report.errors[0]?.message ?? "the score audit failed"}`;
+      return `ok · ${report.shots} shots · ${report.events} events · ${report.cues} cues · ${report.captions} captions${report.warnings.length ? ` · ${report.warnings.length} warnings` : ""}`;
     }
     case "board": {
       const report = readJson<{ entries: number; sheet: { width: number; height: number } | null }>(
@@ -165,15 +256,45 @@ function describe(name: string): string | null {
       const report = readJson<{ strips: unknown[]; grid: { cols: number; rows: number } }>(`build/${id}/strips/strips.json`);
       return report ? `one strip per shot · ${report.strips.length} shots · ${report.grid.cols}×${report.grid.rows}` : null;
     }
+    case "frame-audit": {
+      const report = readJson<{ frameCount: number; blankCount: number }>(`build/${id}/frame-audit.json`);
+      return report ? `${report.frameCount} frames · ${report.blankCount} blank` : null;
+    }
+    case "paint-match": {
+      const report = readJson<{ sampled: number; worst: { time: number; psnr: number } }>(`build/${id}/paint-match.json`);
+      return report
+        ? `${report.sampled} frames · worst ${report.worst.psnr.toFixed(1)} dB at ${report.worst.time}s`
+        : null;
+    }
+    case "motion-audit": {
+      const report = readJson<{ sampled: number; shots: Array<{ median: number }> }>(`build/${id}/motion-audit.json`);
+      if (!report) return null;
+      const weakest = report.shots.reduce((min, shot) => Math.min(min, shot.median), Number.POSITIVE_INFINITY);
+      return `${report.shots.length} shots · weakest median ${weakest}`;
+    }
+    case "type-audit": {
+      const report = readJson<{ sampled: number; boxes: number; outside: unknown[] }>(`build/${id}/type-audit.json`);
+      return report ? `${report.boxes} boxes in ${report.sampled} frames · ${report.outside.length} outside` : null;
+    }
+    case "rig-audit": {
+      const report = readJson<{ legs: number; unpairedSolves: number; worstAnkleJump: { distance: number } }>(
+        `build/${id}/rig-audit.json`,
+      );
+      return report
+        ? `${report.legs} legs · ${report.unpairedSolves} unpaired · worst ankle jump ${report.worstAnkleJump.distance}px`
+        : null;
+    }
     default:
       return null;
   }
 }
 
-/** The gate-7 page, read not re-run. */
+/** The gate-7 page, read not re-run — and only when this run wrote it. */
 function readGatePage(): string[] {
-  const path = resolve(root, "build", score.id, "gate-7.json");
-  if (!existsSync(path)) return ["G7 gate-7     not run"];
+  const path = resolve(root, "build", id, "gate-7.json");
+  if (!existsSync(path) || statSync(path).mtimeMs < startedAt) {
+    return ["G7 gate-7     no fresh gate-7 report from this run"];
+  }
   try {
     const report = JSON.parse(readFileSync(path, "utf8")) as {
       pass: boolean;
@@ -194,17 +315,19 @@ function readGatePage(): string[] {
   }
 }
 
-/** One sheet, the best the film has right now. */
+/** One sheet, the best this run made. A sheet from an older run is not evidence. */
 function pickSheet(): string | null {
   const candidates = [
-    `build/${score.id}/final-sheet.png`,
-    `build/${score.id}/strips/strips.png`,
-    `build/${score.id}/stills/stills.png`,
-    `build/${score.id}/storyboard/storyboard.png`,
-    `build/${score.id}/board/board-sheet.png`,
+    `build/${id}/final-sheet.png`,
+    `build/${id}/strips/strips.png`,
+    `build/${id}/stills/stills.png`,
+    `build/${id}/storyboard/storyboard.png`,
+    `build/${id}/board/board-sheet.png`,
+    `build/${id}/sfx/spectrogram-sheet.png`,
   ];
   for (const candidate of candidates) {
-    if (existsSync(resolve(root, candidate))) return candidate;
+    const path = resolve(root, candidate);
+    if (existsSync(path) && statSync(path).mtimeMs >= startedAt) return candidate;
   }
   return null;
 }

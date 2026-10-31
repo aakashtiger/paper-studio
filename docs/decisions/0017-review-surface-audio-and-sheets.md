@@ -151,4 +151,40 @@ spectrogram sheet, and exits non-zero if any cue fails a mechanical check
 click, clean fade, kind not banned). `library` and `recorded` SFX are in the
 contract and rejected as unbuilt until a film needs them.
 
+### The critic-fix pass on steps `10`/`10e`
+
+Two critics (architect, developer) returned before the other five hit a usage
+limit; both withheld a sign and named concrete blockers. The fixes are part of
+this decision, not a follow-up:
+
+- **A typo is not a sound.** `kindSpec` threw nothing and fell back to a generic
+  impact; an unknown kind now fails at resolve (`sfx_kind_unknown`) and the
+  renderer refuses it. `isKnownKind` is the one test.
+- **A derived cue lands on a frame.** `toFixed(3)` cannot express 1/30 s;
+  `resolveCueTimes` snaps the sum to the frame grid (`Math.round(t*fps)/fps`),
+  so a bound cue is always on a frame.
+- **The clock is one list.** The `sfx` clock mode carried a second cue list;
+  it now reads `audio.sfx.cues` and requires an explicit `at` for a cue that
+  drives the cut. One time, authored once.
+- **The mix cannot mix yesterday's take.** `sfx.json` records each cue's
+  `spec` fingerprint and WAV hash; `npm run mix` recomputes both and stops with
+  the command to re-run. The mix report records `inputs.score`, `inputs.sfx` and
+  `inputs.voice`, and `gate:7` ties them to the current score, cue set and
+  master.
+- **One neutral chrome.** `REVIEW_CHROME` (`grid.ts`) is the only page palette;
+  the style sheet and the board no longer paint paper-kpop's hex, and the sheet
+  and every grid take their faces from the pack's `tokens.json`
+  (`packFontPath`), never from `proofs/`.
+- **The review page cannot lie.** `film:review` summarises a step only from a
+  report this run wrote; a failed step prints its own error line, and skipped
+  work is printed as skipped.
+- **Events and cues are counted apart** in `audit.json`.
+
+Evidence after the pass: `sfx` 13/13 ok, `audit` 32 events / 13 cues,
+`mix` -14.3 LUFS / -1.5 dBTP with tied inputs, `gate:7` PASS 13 checks / 1
+pending (ASR), `film:review --gate` PASS, 242 tests, clean typecheck. A probe
+(one cue moved to 1.01 s) showed `audit` and `sfx` failing on the real error and
+the mix refusing the stale WAVs; a probe that changed a cue's gain after the
+render made `npm run mix` stop with "changed after it was rendered".
+
 Music (ACE-Step) stays staged until the first film that uses it.

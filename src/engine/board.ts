@@ -1,4 +1,5 @@
 import type { Direction, ResolvedFilm } from "./treatment.js";
+import { REVIEW_CHROME } from "./grid.js";
 
 export type BoardEntry = {
   id: string;
@@ -92,15 +93,15 @@ export function boardSheet(film: string, entries: BoardEntry[]): string {
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>${esc(film)} — board</title>
 <style>
-  body { margin: 32px; background: #171310; color: #f2e8d5; font: 14px/1.4 system-ui, sans-serif; }
+  body { margin: 32px; background: ${REVIEW_CHROME.bg}; color: ${REVIEW_CHROME.text}; font: 14px/1.4 system-ui, sans-serif; }
   h1 { font-size: 20px; letter-spacing: .08em; text-transform: uppercase; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
-  .card { background: #f2e8d5; color: #171310; border-radius: 2px; padding: 16px; }
-  header { display: flex; justify-content: space-between; font: 11px/1.2 ui-monospace, monospace; opacity: .7; }
+  .card { background: ${REVIEW_CHROME.panel}; border: 1px solid ${REVIEW_CHROME.line}; color: ${REVIEW_CHROME.text}; border-radius: 2px; padding: 16px; }
+  header { display: flex; justify-content: space-between; font: 11px/1.2 ui-monospace, monospace; color: ${REVIEW_CHROME.muted}; }
   h2 { font-size: 18px; margin: 12px 0 8px; }
   .slot { font: 12px/1.5 ui-monospace, monospace; }
   .spine { margin-top: 12px; font-weight: 600; }
-  .state { font-size: 12px; opacity: .65; }
+  .state { font-size: 12px; color: ${REVIEW_CHROME.muted}; }
 </style></head>
 <body><h1>${esc(film)} — board · ${entries.length} frames</h1><div class="grid">
 ${cards}

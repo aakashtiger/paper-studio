@@ -1,11 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import {
   BANNED_KINDS,
   checkCue,
+  cueSpec,
   effectiveLayers,
   fadesClean,
   isBannedKind,
+  isKnownKind,
   kindBand,
   kindGain,
   kindLength,
@@ -34,6 +37,15 @@ test("the same cue renders byte-identical samples twice", () => {
   assert.deepEqual(Array.from(first), Array.from(second));
 });
 
+test("the kit's take on a kind is pinned by a golden hash", () => {
+  // A generator change must be a deliberate change to this number, not a
+  // silent drift in the delivered sound.
+  const samples = renderSfx("snap", Math.round(0.14 * sr), sr, "sfx-snap");
+  const bytes = Buffer.from(samples.buffer, samples.byteOffset, samples.byteLength);
+  const hash = createHash("sha256").update(bytes).digest("hex");
+  assert.equal(hash, "db953ed785d874986b3bec8375f7281cef085715c7cee7dce5b5942069c5b6b1");
+});
+
 test("two cues of the same kind are not the same take", () => {
   const a = renderSfx("crowd", Math.round(0.4 * sr), sr, "sfx-crowd");
   const b = renderSfx("crowd", Math.round(0.4 * sr), sr, "sfx-cheer");
@@ -49,6 +61,15 @@ test("every kind in the kit is allowed on a phone speaker and stays under 9 kHz"
     assert.ok(kindLayers(kind).length > 0);
   }
   for (const kind of BANNED_KINDS) assert.equal(isBannedKind(kind), true);
+});
+
+test("an unknown kind is not a kind, and is never rendered", () => {
+  assert.equal(isKnownKind("thunder"), false);
+  assert.equal(isKnownKind("snap"), true);
+  assert.throws(() => renderSfx("thunder", Math.round(0.14 * sr), sr, "sfx-thunder"), /unknown sfx kind/);
+  const check = checkCue({ id: "x", kind: "thunder", at: 1 }, tone(200, 0.2), sr, aligned30);
+  assert.equal(check.ok, false);
+  assert.match(check.detail, /not a kind in the kit/);
 });
 
 test("the kit version is on the report, not a date", () => {
@@ -69,9 +90,8 @@ test("a cue off the frame grid fails and says why", () => {
   assert.match(check.detail, /not on a frame/);
 });
 
-test("a banned kind fails even when it renders", () => {
-  const samples = renderSfx("click", Math.round(0.14 * sr), sr, "sfx-click");
-  const check = checkCue({ id: "sfx-click", kind: "click", at: 1 }, samples, sr, aligned30);
+test("a banned kind fails before anything is rendered", () => {
+  const check = checkCue({ id: "sfx-click", kind: "click", at: 1 }, tone(800, 0.2), sr, aligned30);
   assert.equal(check.ok, false);
   assert.match(check.detail, /banned/);
 });
@@ -126,6 +146,7 @@ test("a cue can name its time once, bound to the picture event it sits on", () =
     ],
     shots,
     30,
+    30,
   );
   assert.deepEqual(errors, []);
   assert.equal(cues[0]?.at, 3.2);
@@ -135,23 +156,56 @@ test("a cue can name its time once, bound to the picture event it sits on", () =
   assert.equal(cues[1]?.from, "at");
 });
 
+test("a derived time lands on a frame, even when the event does not", () => {
+  // 1/30 s is 0.0333...: it cannot be written at 3 decimal places, so the
+  // resolver must snap the sum to the frame grid, not round the decimals.
+  const shots = [
+    { id: "s02", start: 1, events: [{ t: 1 / 30, kind: "move", note: "one frame in" }] },
+  ];
+  const { cues, errors } = resolveCueTimes(
+    [{ id: "bound", kind: "snap", event: { shot: "s02", index: 0 } }],
+    shots,
+    30,
+    30,
+  );
+  assert.deepEqual(errors, []);
+  const at = cues[0]?.at ?? -1;
+  assert.equal(Math.round(at * 30), 31);
+  assert.ok(aligned30(at), `${at}s is off the frame grid`);
+});
+
 test("a bound cue names a shot and an event that are really there", () => {
   const shots = [{ id: "s01", start: 0, events: [{ t: 0.2, kind: "type", note: "title" }] }];
-  const unknownShot = resolveCueTimes([{ id: "a", kind: "snap", event: { shot: "s09", index: 0 } }], shots, 30);
+  const unknownShot = resolveCueTimes(
+    [{ id: "a", kind: "snap", event: { shot: "s09", index: 0 } }],
+    shots,
+    30,
+    30,
+  );
   assert.ok(unknownShot.errors.some((issue) => issue.code === "sfx_event_shot"));
   assert.deepEqual(unknownShot.cues, []);
 
-  const unknownIndex = resolveCueTimes([{ id: "b", kind: "snap", event: { shot: "s01", index: 4 } }], shots, 30);
+  const unknownIndex = resolveCueTimes(
+    [{ id: "b", kind: "snap", event: { shot: "s01", index: 4 } }],
+    shots,
+    30,
+    30,
+  );
   assert.ok(unknownIndex.errors.some((issue) => issue.code === "sfx_event_index"));
 });
 
 test("a bound cue that lands outside the film fails", () => {
   const shots = [{ id: "s01", start: 29.5, events: [{ t: 1, kind: "type", note: "title" }] }];
-  const { errors } = resolveCueTimes([{ id: "late", kind: "snap", event: { shot: "s01", index: 0 } }], shots, 30);
+  const { errors } = resolveCueTimes(
+    [{ id: "late", kind: "snap", event: { shot: "s01", index: 0 } }],
+    shots,
+    30,
+    30,
+  );
   assert.ok(errors.some((issue) => issue.code === "sfx_outside_film"));
 });
 
-test("a cue with no time, or two times, is a contract error", () => {
+test("a cue with no time, or two times, or an unknown kind is a contract error", () => {
   const none = AudioPlanSchema.parse({
     mode: "sfx",
     sfx: { source: "generated", cues: [{ id: "a", kind: "snap" }] },
@@ -174,6 +228,13 @@ test("a cue with no time, or two times, is a contract error", () => {
       (issue) => issue.code === "sfx_time_conflict",
     ),
   );
+
+  const unknown = AudioPlanSchema.parse({
+    mode: "sfx",
+    sfx: { source: "generated", cues: [{ id: "c", kind: "thunder", at: 1 }] },
+  });
+  const unknownErrors = resolveAudio(unknown, { duration: 30, clockMode: "sfx", root }).errors;
+  assert.ok(unknownErrors.some((issue) => issue.code === "sfx_kind_unknown"));
 });
 
 test("library and recorded sfx are in the contract but not built", () => {
@@ -184,10 +245,22 @@ test("library and recorded sfx are in the contract but not built", () => {
   }
 });
 
+test("a cue's spec changes when anything that decides its sound changes", () => {
+  const base = { kind: "snap", at: 2.2 };
+  const spec = cueSpec(base);
+  assert.notEqual(cueSpec({ ...base, kind: "step" }), spec);
+  assert.notEqual(cueSpec({ ...base, at: 2.233333 }), spec);
+  assert.notEqual(cueSpec({ ...base, layers: ["body"] }), spec);
+  assert.notEqual(cueSpec({ ...base, gain: 0.3 }), spec);
+  assert.notEqual(cueSpec({ ...base, band: [100, 2000] }), spec);
+  assert.equal(cueSpec(base), cueSpec({ ...base }));
+});
+
 test("send, duck and band have one source: the kit", () => {
-  assert.equal(cueSend({ kind: "lamp" }), SFX_KINDS.lamp?.send);
-  assert.equal(cueDuckDb({ kind: "lamp" }), SFX_KINDS.lamp?.duckDb);
-  assert.deepEqual(cueBand({ kind: "lamp" }), kindBand("lamp"));
+  assert.equal(cueSend({ kind: "lamp" }), 0.12);
+  assert.equal(cueDuckDb({ kind: "lamp" }), 2);
+  assert.deepEqual(cueBand({ kind: "lamp" }), [80, 6000]);
   assert.equal(cueSend({ kind: "lamp", send: 0.5 }), 0.5);
+  assert.equal(cueDuckDb({ kind: "lamp", duckDb: 6 }), 6);
   assert.deepEqual(cueBand({ kind: "lamp", band: [100, 2000] }), [100, 2000]);
 });

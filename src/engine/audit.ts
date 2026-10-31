@@ -9,6 +9,9 @@ export type AuditReport = {
   ok: boolean;
   shots: number;
   frames: number;
+  /** Picture events the shots declare. */
+  events: number;
+  /** SFX cues in the audio plan. */
   cues: number;
   captions: number;
   errors: AuditIssue[];
@@ -18,6 +21,7 @@ export type AuditReport = {
 export function auditFilm(plan: ResolvedFilm, options: { root: string }): AuditReport {
   const errors: AuditIssue[] = [];
   const warnings: AuditIssue[] = [];
+  let events = 0;
   let cues = 0;
 
   const frame = (value: number) => Math.round(value * plan.fps);
@@ -25,7 +29,7 @@ export function auditFilm(plan: ResolvedFilm, options: { root: string }): AuditR
 
   for (const shot of plan.shots) {
     for (const event of shot.direction.events) {
-      cues += 1;
+      events += 1;
       const at = shot.start + event.t;
       if (!aligned(at)) {
         errors.push({
@@ -124,6 +128,7 @@ export function auditFilm(plan: ResolvedFilm, options: { root: string }): AuditR
     ok: errors.length === 0,
     shots: plan.shots.length,
     frames: plan.frames,
+    events,
     cues,
     captions: plan.captions.lines.length,
     errors,

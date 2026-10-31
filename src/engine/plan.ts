@@ -55,6 +55,24 @@ export type RenderPlan = {
 
 const FPS = 30;
 
+/**
+ * The pack's own font for a role, as a repo-relative path with forward slashes.
+ *
+ * A review sheet may only use a font the style owns (`styles/<style>/fonts/`),
+ * named in `tokens.json`. The engine does not pick a font and does not borrow
+ * one from a sealed proof: the pack is the only source of a typeface.
+ */
+export function packFontPath(root: string, style: string, role = "caption"): string {
+  const tokensPath = resolve(root, "styles", style, "tokens.json");
+  const tokens = JSON.parse(readFileSync(tokensPath, "utf8")) as {
+    type?: { families?: Array<{ role?: string; file?: string }> };
+  };
+  const families = tokens.type?.families ?? [];
+  const family = families.find((entry) => entry.role === role) ?? families[0];
+  if (!family?.file) throw new Error(`style "${style}" has no font for role "${role}"`);
+  return `styles/${style}/${family.file}`.replace(/\\/g, "/");
+}
+
 export function loadStyle(styleDir: string): {
   capabilities: StyleCapabilities;
   recipes: Map<string, Recipe>;

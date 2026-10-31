@@ -1,4 +1,13 @@
 import type { PoseLibrary } from "./pose.js";
+import { REVIEW_CHROME } from "./grid.js";
+
+export type SheetFont = { family: string; file: string };
+
+/**
+ * The three faces the sheet draws with, taken from the pack's `tokens.json`.
+ * The sheet never hardcodes a typeface: a watercolor pack draws in its own.
+ */
+export type SheetFonts = { dir: string; display: SheetFont; body: SheetFont; mono: SheetFont };
 
 export type SheetOptions = {
   character: string;
@@ -6,7 +15,7 @@ export type SheetOptions = {
   anchors: string[];
   library: PoseLibrary;
   vendor: string;
-  fonts: string;
+  fonts: SheetFonts;
 };
 
 const FACE: Record<string, Record<string, unknown>> = {
@@ -60,10 +69,10 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
     html: `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>${escapeHtml(options.character)} — pose sheet</title>
 <style>
-  @font-face { font-family: "Anton"; src: url("${options.fonts}/Anton-Regular.ttf"); font-display: block; }
-  @font-face { font-family: "Archivo Black"; src: url("${options.fonts}/ArchivoBlack-Regular.ttf"); font-display: block; }
-  @font-face { font-family: "DMMono"; src: url("${options.fonts}/DMMono-Regular.ttf"); font-display: block; }
-  html, body { margin: 0; width: 1920px; height: ${height}px; overflow: hidden; background: #171310; }
+  @font-face { font-family: "${options.fonts.display.family}"; src: url("${options.fonts.dir}/${options.fonts.display.file}"); font-display: block; }
+  @font-face { font-family: "${options.fonts.body.family}"; src: url("${options.fonts.dir}/${options.fonts.body.file}"); font-display: block; }
+  @font-face { font-family: "${options.fonts.mono.family}"; src: url("${options.fonts.dir}/${options.fonts.mono.file}"); font-display: block; }
+  html, body { margin: 0; width: 1920px; height: ${height}px; overflow: hidden; background: ${REVIEW_CHROME.bg}; }
   canvas { display: block; }
 </style></head>
 <body>
@@ -84,6 +93,9 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
   const RIG = ${JSON.stringify(options.rig)};
   const HEIGHT = ${height};
   const LAYOUT = ${safeJson({ HEADER, POSE_W, POSE_H, GAP, RIG_H, VIEW_H, DETAIL_H, EXPR_H, X0, COLS })};
+  const FONT_DISPLAY = ${JSON.stringify(options.fonts.display.family)};
+  const FONT_BODY = ${JSON.stringify(options.fonts.body.family)};
+  const FONT_MONO = ${JSON.stringify(options.fonts.mono.family)};
   const { HEADER, POSE_W, POSE_H, GAP, RIG_H, VIEW_H, DETAIL_H, EXPR_H, X0, COLS } = LAYOUT;
   const c = document.getElementById("sheet");
   const ctx = c.getContext("2d", { alpha: false });
@@ -173,7 +185,7 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
   }
 
   function label(text, x, y, color) {
-    TY.text(ctx, text, x, y, 17, { family: "DMMono", color: color || C.rgba(PAL.ink, 0.75), letter: 1.5 });
+    TY.text(ctx, text, x, y, 17, { family: FONT_MONO, color: color || C.rgba(PAL.ink, 0.75), letter: 1.5 });
   }
 
   function poseCard(x, y, labelText, pose) {
@@ -218,10 +230,10 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
     for (const p of [ch.armL.elbow, ch.armL.wrist, ch.armR.elbow, ch.armR.wrist, ch.legL.knee, ch.legL.ankle, ch.legR.knee, ch.legR.ankle]) dot(p, PAL.red);
     for (const p of [{ x: 0, y: -604 }, { x: 0, y: -450 }, { x: 0, y: -334 }]) dot(p, PAL.blue);
     const tx = x + 460;
-    TY.text(ctx, "ANCHORS", tx, y + 78, 14, { family: "DMMono", color: PAL.ink, letter: 2 });
-    TY.text(ctx, ANCHORS.join("  ·  "), tx, y + 104, 15, { family: "DMMono", color: C.rgba(PAL.ink, 0.7) });
-    TY.text(ctx, "11 joints  ·  brass brads  ·  seam gap 0 (rig test)", tx, y + 140, 15, { family: "DMMono", color: C.rgba(PAL.ink, 0.7) });
-    TY.text(ctx, "red: limb joints    blue: face / chest / waist", tx, y + 166, 13, { family: "DMMono", color: C.rgba(PAL.ink, 0.55) });
+    TY.text(ctx, "ANCHORS", tx, y + 78, 14, { family: FONT_MONO, color: PAL.ink, letter: 2 });
+    TY.text(ctx, ANCHORS.join("  ·  "), tx, y + 104, 15, { family: FONT_MONO, color: C.rgba(PAL.ink, 0.7) });
+    TY.text(ctx, "11 joints  ·  brass brads  ·  seam gap 0 (rig test)", tx, y + 140, 15, { family: FONT_MONO, color: C.rgba(PAL.ink, 0.7) });
+    TY.text(ctx, "red: limb joints    blue: face / chest / waist", tx, y + 166, 13, { family: FONT_MONO, color: C.rgba(PAL.ink, 0.55) });
   }
 
   function viewCard(x, y, w, h, labelText, turn) {
@@ -267,10 +279,10 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
     try {
     initTextures();
     ctx.fillStyle = PAL.ink; ctx.fillRect(0, 0, 1920, HEIGHT);
-    TY.text(ctx, "PAPER ASSET SHEET", 64, 62, 22, { family: "DMMono", color: PAL.acid, letter: 4 });
-    TY.text(ctx, CHARACTER, 64, 112, 52, { family: "Anton", color: PAL.paper });
-    TY.text(ctx, RIG + "  /  " + POSES.length + " poses  /  " + EXPRS.length + " expressions", 66, 146, 18, { family: "DMMono", color: C.rgba(PAL.paper, 0.7), letter: 2 });
-    TY.text(ctx, "GATE 4  /  contact shadow  /  joint map  /  seam gap 0 (rig test)", 66, 174, 14, { family: "DMMono", color: C.rgba(PAL.paper, 0.45), letter: 1 });
+    TY.text(ctx, "PAPER ASSET SHEET", 64, 62, 22, { family: FONT_MONO, color: PAL.acid, letter: 4 });
+    TY.text(ctx, CHARACTER, 64, 112, 52, { family: FONT_DISPLAY, color: PAL.paper });
+    TY.text(ctx, RIG + "  /  " + POSES.length + " poses  /  " + EXPRS.length + " expressions", 66, 146, 18, { family: FONT_MONO, color: C.rgba(PAL.paper, 0.7), letter: 2 });
+    TY.text(ctx, "GATE 4  /  contact shadow  /  joint map  /  seam gap 0 (rig test)", 66, 174, 14, { family: FONT_MONO, color: C.rgba(PAL.paper, 0.45), letter: 1 });
 
     let y = HEADER;
     POSES.forEach((pose, i) => {
@@ -296,7 +308,7 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
     detailCard(X0 + 3 * (POSE_W + GAP), y, "COAT / TORSO", idle, { x: 0, y: -430 });
     y += DETAIL_H + GAP;
 
-    TY.text(ctx, "EXPRESSIONS", X0, y - 8, 18, { family: "DMMono", color: PAL.acid, letter: 3 });
+    TY.text(ctx, "EXPRESSIONS", X0, y - 8, 18, { family: FONT_MONO, color: PAL.acid, letter: 3 });
     EXPRS.forEach((expr, i) => {
       const col = i % COLS, row = Math.floor(i / COLS);
       expressionCard(X0 + col * (POSE_W + GAP), y + row * (EXPR_H + GAP), expr.name.toUpperCase(), expr);
@@ -304,7 +316,7 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
 
     window.__sheetReady = true;
     } catch (error) {
-      ctx.fillStyle = "#ff3b30";
+      ctx.fillStyle = ${JSON.stringify(REVIEW_CHROME.error)};
       ctx.font = "26px monospace";
       const text = String(error && error.stack ? error.stack : error);
       text.split("\\n").slice(0, 8).forEach((line, i) => ctx.fillText(line, 64, 300 + i * 34));
@@ -312,9 +324,9 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
   }
 
   Promise.all([
-    document.fonts.load("52px Anton"),
-    document.fonts.load("17px DMMono"),
-    document.fonts.load("52px 'Archivo Black'"),
+    document.fonts.load("52px '" + FONT_DISPLAY + "'"),
+    document.fonts.load("17px '" + FONT_MONO + "'"),
+    document.fonts.load("52px '" + FONT_BODY + "'"),
   ]).then(() => document.fonts.ready).then(draw);
 </script>
 </body></html>`,

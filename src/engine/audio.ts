@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { z } from "zod";
+import { isKnownKind, SFX_KINDS } from "./sfx.js";
 
 /** The picture event a cue is bound to, so its time is never typed twice. */
 export const SfxCueEventSchema = z.object({
@@ -191,6 +192,12 @@ export function resolveAudio(
         errors.push({ code: "sfx_duplicate", message: `sfx cue "${cue.id}" is duplicated` });
       }
       ids.add(cue.id);
+      if (!isKnownKind(cue.kind)) {
+        errors.push({
+          code: "sfx_kind_unknown",
+          message: `sfx "${cue.id}" kind "${cue.kind}" is not in the kit; known kinds: ${Object.keys(SFX_KINDS).join(", ")}`,
+        });
+      }
       const hasAt = cue.at !== undefined;
       const hasEvent = cue.event !== undefined;
       if (hasAt === hasEvent) {
@@ -229,8 +236,10 @@ export function resolveAudio(
  * Put every cue on the film's clock.
  *
  * A cue names its time once. Typed (`at`), it is already on the clock. Bound
- * (`event`), the time is the shot's start plus the event's offset inside it — so
- * re-timing a shot moves its foley with it and the time is never typed twice.
+ * (`event`), the time is the shot's start plus the event's offset inside it,
+ * **snapped to the film's frame grid** — a cue can only start on a frame, and
+ * `toFixed(3)` cannot express 1/30 s. So re-timing a shot moves its foley with
+ * it and the time is never typed twice.
  *
  * The plan must already be well-formed (`resolveAudio` owns the at/event choice,
  * a duplicate id and a typed time outside the film); this only finds the time and
@@ -241,10 +250,12 @@ export function resolveCueTimes(
   cues: SfxCue[],
   shots: CueShot[],
   duration: number,
+  fps: number,
 ): { cues: ResolvedCue[]; errors: AudioIssue[] } {
   const errors: AudioIssue[] = [];
   const byId = new Map(shots.map((shot) => [shot.id, shot]));
   const resolved: ResolvedCue[] = [];
+  const toFrame = (seconds: number): number => Math.round(seconds * fps) / fps;
 
   for (const cue of cues) {
     if (cue.at !== undefined) {
@@ -270,7 +281,7 @@ export function resolveCueTimes(
       });
       continue;
     }
-    const at = Number((shot.start + event.t).toFixed(3));
+    const at = toFrame(shot.start + event.t);
     if (at >= duration) {
       errors.push({
         code: "sfx_outside_film",

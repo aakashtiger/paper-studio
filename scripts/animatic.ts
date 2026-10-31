@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
+import { packFontPath } from "../src/engine/plan.js";
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
@@ -31,8 +32,8 @@ const segRel = `build/${score.id}/animatic/segments`;
 rmSync(segDir, { recursive: true, force: true });
 mkdirSync(segDir, { recursive: true });
 
-const fontDisplay = "proofs/s2-paper/assets/fonts/Anton-Regular.ttf";
-const fontMono = "proofs/s2-paper/assets/fonts/DMMono-Regular.ttf";
+const fontDisplay = packFontPath(root, score.style, "display");
+const fontMono = packFontPath(root, score.style, "caption");
 const segments: string[] = [];
 
 plan.shots.forEach((shot, index) => {

@@ -14,6 +14,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
 import { cueBand, cueDuckDb, cueSend, mixFilm } from "../src/engine/mix.js";
+import { cueSetText, cueSpec } from "../src/engine/sfx.js";
 
 const TARGET_LUFS = -14;
 const TARGET_TP = -1.5;
@@ -42,10 +43,38 @@ mkdirSync(outDir, { recursive: true });
 const voicePath = plan.audio.narration?.voice ? resolve(root, plan.audio.narration.voice) : null;
 const voice = voicePath && existsSync(voicePath) ? mono(voicePath) : null;
 
+/**
+ * The per-cue WAVs are only trusted when `sfx.json` says this exact cue
+ * rendered them. A kind, a length or a time that changed after `npm run sfx`
+ * must fail the mix, not be mixed from yesterday's file.
+ */
+type SfxRecord = { id: string; spec: string; wav: string; ok: boolean };
+const sfxPath = resolve(root, "build", score.id, "sfx", "sfx.json");
+const sfxReport = existsSync(sfxPath)
+  ? (JSON.parse(readFileSync(sfxPath, "utf8")) as { cues: SfxRecord[] })
+  : null;
+const records = new Map((sfxReport?.cues ?? []).map((record) => [record.id, record]));
+
 const cues = plan.cues.map((cue) => {
   const path = resolve(root, "build", score.id, "sfx", `${cue.id}.wav`);
   if (!existsSync(path)) {
     console.error(`error: cue "${cue.id}" has no audio at build/${score.id}/sfx/${cue.id}.wav`);
+    console.error("       run: npm run sfx -- " + file);
+    process.exit(1);
+  }
+  const record = records.get(cue.id);
+  if (!record) {
+    console.error(`error: cue "${cue.id}" is not in build/${score.id}/sfx/sfx.json`);
+    console.error("       the WAVs and the score disagree; run: npm run sfx -- " + file);
+    process.exit(1);
+  }
+  if (record.spec !== sha256(cueSpec(cue))) {
+    console.error(`error: cue "${cue.id}" changed after it was rendered (kind, time, length, layers, gain, pan or band)`);
+    console.error("       run: npm run sfx -- " + file);
+    process.exit(1);
+  }
+  if (record.wav !== `sha256:${hashFile(path)}`) {
+    console.error(`error: cue "${cue.id}" WAV was written by a different run than its record`);
     console.error("       run: npm run sfx -- " + file);
     process.exit(1);
   }
@@ -85,6 +114,11 @@ const report = {
   duckDb: average(cues.map((cue) => cue.duckDb)),
   reverb: { room: 0.82, damp: 0.2, wet: 0.32 },
   passes: pass,
+  inputs: {
+    score: `sha256:${hashFile(resolve(root, file))}`,
+    sfx: sfxReport ? `sha256:${sha256(cueSetText(sfxReport.cues))}` : null,
+    voice: voicePath && existsSync(voicePath) ? `sha256:${hashFile(voicePath)}` : null,
+  },
   files: {
     master: relative(master),
     hash: `sha256:${hashFile(master)}`,
@@ -223,6 +257,10 @@ function run(binary: string, args: string[]): string {
 
 function hashFile(path: string): string {
   return createHash("sha256").update(readFileSync(path)).digest("hex");
+}
+
+function sha256(text: string): string {
+  return createHash("sha256").update(text).digest("hex");
 }
 
 function relative(path: string): string {

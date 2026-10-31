@@ -95,10 +95,20 @@ without a browser, so bad pose data fails before a render.
 - caption count, read-time holds and SRT cue count;
 - the score-level contracts (brief, audio, assets, poses, shots).
 
+The report counts **events** (what the picture declares) and **cues** (what the
+audio plan asks for) separately: one event usually has a cue, but not every
+event does, and a number that conflates them hides the gap.
+
 It does **not** check rendered frames, ASR or mix. Those are G5–G7. The
 mechanical parts of G7 that are not score-level are their own commands:
 `audit:motion` (motion floor), `audit:type` (safe area) and `audit:rig` (rig
 seam). ASR is `npm run asr`, a hard check once its report exists.
+
+`npm run film:review` chains the whole set for one film and prints one page. It
+hides no failure: every step runs even after one fails, and a row is only
+summarised from a report **this run wrote**. A failed step shows its own error
+line, never last week's "ok" next to today's FAIL, and what was not run is
+printed as skipped.
 
 The render manifest hashes the score, the generated score data, the style
 backend (`styles/<style>/canvas/recipes.js`), the film page, the captions, the
@@ -156,17 +166,32 @@ A cue names its time **once**:
 { "id": "sfx-iris", "kind": "iris", "event": { "shot": "s03", "index": 2 } }
 ```
 
-The time is the shot's start plus the event's offset, so re-timing a shot moves
-its foley with it. `at` is still valid for a cue that is not tied to a picture
-event; naming both, or neither, is a contract error.
+The time is the shot's start plus the event's offset, **snapped to the frame
+grid**, so re-timing a shot moves its foley with it and the cue still starts on a
+frame. `at` is still valid for a cue that is not tied to a picture event; naming
+both, or neither, is a contract error.
+
+A kind must exist in the kit. A typo (`"thunder"`, `"smap"`) is a contract error
+at resolve time (`sfx_kind_unknown`), and the renderer refuses it rather than
+falling back to a generic paper thud: a sound you did not ask for is a worse
+failure than a red row.
 
 Every cue is checked mechanically and the command exits non-zero if one fails:
 it is on a frame, at least half its energy is in its declared band, the top of
 the band is ≤9 kHz (the phone-speaker rule), it lasts longer than a click, it
-fades out clean, and its kind is not one of the banned ones (`tick`, `click`,
-`hat`, `glitch`, `beep`, `blip`, `buzz`). The results are in
+fades out clean, and its kind is neither banned (`tick`, `click`, `hat`,
+`glitch`, `beep`, `blip`, `buzz`) nor unknown. The results are in
 `build/<id>/sfx/sfx.json`; the one-image review is
 `build/<id>/sfx/spectrogram-sheet.png`.
+
+Each record in `sfx.json` carries a **spec** fingerprint (kind, time, length,
+layers, gain, pan, band) and the **sha256 of its WAV**. `npm run mix` recomputes
+the fingerprint and hashes the file it is about to mix: if the score moved after
+`npm run sfx` — a different kind, gain or time — the mix stops and says to re-run
+sfx, instead of mixing yesterday's take. The mix report records `inputs.score`,
+`inputs.sfx` (a fingerprint of the whole cue set) and `inputs.voice`, and
+`gate:7` refuses a mix whose inputs do not describe the current score, cue set
+and master.
 
 ## Sheets (one look)
 
@@ -174,6 +199,16 @@ Every batch of pictures is reviewed **on one image**, never file by file. One
 helper, `src/engine/grid.ts`, tiles labelled images; every command that produces
 N pictures uses it. A sheet is a **review artifact**: it lives under `build/`, is
 gitignored, and **never enters a render manifest or a frame hash**.
+
+Two rules keep a sheet honest:
+
+- **Chrome is neutral.** A sheet's page, panel, border and label colours come
+  from `REVIEW_CHROME` in `grid.ts`, never from a pack's palette. The pack's
+  colours appear only where the pack's own value is being shown — a swatch, a
+  font specimen — so two packs are told apart by the work, not the furniture.
+- **Type comes from the pack.** A label font is named by the caller from the
+  pack's `tokens.json` (`packFontPath`); the engine hardcodes no face and no
+  script borrows one from a sealed `proofs/` directory.
 
 | Sheet | Command | Gate |
 |---|---|---|
@@ -195,11 +230,12 @@ sheet (written by `npm run sfx`) and the final contact sheet (written by
 A failed gate writes the failure and sends the film back one step. “Almost” is a
 no. The director signs only after the full panel at G7.
 
-ASR is the one G7 item with no command yet. It is deferred to the voice pipeline
-(the fixture voice is scratch), not skipped; see
-`docs/decisions/0016-voice-and-asr.md` and `docs/decisions/0017-review-surface-audio-and-sheets.md`.
-The tooling is now known — local **Whisper** (`faster-whisper small.en`), the same
-tool that produces the word timings — so the gate becomes a command with step 10.
+ASR is no longer a missing command: step 10 built it (`npm run asr`), and it is
+the only G7 row that is still **pending** on this machine, because the local
+speech model is not installed yet. The gate reads the report when it exists and
+names the command when it does not; it never passes the row by silence. See
+`docs/decisions/0016-voice-and-asr.md` and
+`docs/decisions/0017-review-surface-audio-and-sheets.md`.
 
 **Banned vs allowed, stated once.** Banned: generative **images or video** in the
 render path, and per-film LLM-written animation code. Allowed: local models for

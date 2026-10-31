@@ -15,6 +15,34 @@ import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, extname, join } from "node:path";
 import { spawn } from "node:child_process";
 
+/**
+ * Review chrome: the neutral frame every review artifact draws around its
+ * pictures. It is deliberately *not* a style palette. A sheet shows what the
+ * film is; the film's own colours belong inside the pictures, not in the page
+ * around them. Review artifacts take these values so that two packs cannot be
+ * told apart by the furniture — only by the work.
+ */
+export const REVIEW_CHROME = {
+  /** Page background. */
+  bg: "#101010",
+  /** Raised panel or card fill. */
+  panel: "#1a1a1a",
+  /** Hairline border. */
+  line: "#2e2e2e",
+  /** Primary text. */
+  text: "#f5f5f5",
+  /** Secondary text and metadata. */
+  muted: "#a3a3a3",
+  /** Emphasis bars and guides. */
+  accent: "#8a8a8a",
+  /** Text drawn on a light swatch. */
+  onLight: "#000000",
+  /** Text drawn on a dark swatch. */
+  onDark: "#ffffff",
+  /** A failure drawn onto a review canvas. */
+  error: "#ff3b30",
+} as const;
+
 export type GridTile = {
   /** Absolute path to the source image. */
   image: string;
@@ -177,6 +205,11 @@ export function gridGraph(
   return { graph: chains.join(";"), map: [] };
 }
 
+/** A `#rrggbb` or `#rgb` colour as ffmpeg's `0xrrggbb`. */
+export function ffColor(hex: string): string {
+  return `0x${hex.replace("#", "")}`;
+}
+
 /**
  * Tile images into one labelled sheet.
  *
@@ -193,8 +226,8 @@ export async function renderGrid(options: GridOptions): Promise<GridPlan & { pat
     tileHeight,
     font,
     maxCols = 3,
-    background = "0x101010",
-    fontColor = "0xF5F5F5",
+    background = ffColor(REVIEW_CHROME.bg),
+    fontColor = ffColor(REVIEW_CHROME.text),
     labelDir = "build/grid/labels",
   } = options;
   if (tiles.length === 0) throw new Error("renderGrid: no tiles");

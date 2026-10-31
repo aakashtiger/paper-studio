@@ -9,7 +9,6 @@ import {
   resolveCueTimes,
   type ResolvedCue,
   type SfxCue,
-  SfxCueSchema,
 } from "./audio.js";
 import { AssetRefSchema, type AssetRef, resolveAssets } from "./assets.js";
 import { FilmBriefSchema, resolveBrief } from "./film-brief.js";
@@ -121,7 +120,12 @@ export const ClockSchema = z.discriminatedUnion("mode", [
     mode: z.literal("narration"),
     lines: z.array(NarrationLineSchema).min(1),
   }),
-  z.object({ mode: z.literal("sfx"), cues: z.array(SfxCueSchema).min(1) }),
+  /**
+   * The foley drives the cut. Like the other modes this is a clock, not a
+   * second cue list: the cues themselves live in `audio.sfx.cues`, so a time is
+   * still authored once.
+   */
+  z.object({ mode: z.literal("sfx") }),
   z.object({
     mode: z.literal("realtime"),
     start: z.number(),
@@ -475,6 +479,7 @@ export function resolveFilm(
     film.audio.sfx?.cues ?? [],
     shots.map((shot) => ({ id: shot.id, start: shot.start, events: shot.direction.events })),
     film.duration,
+    film.fps,
   );
   errors.push(...cueResult.errors.map((issue) => ({ code: issue.code, message: issue.message })));
 
@@ -568,7 +573,14 @@ function checkClock(film: FilmScore, errors: TreatmentIssue[]) {
     }
   }
   if (film.clock.mode === "sfx") {
-    for (const cue of film.clock.cues) {
+    const cues = film.audio.sfx?.cues ?? [];
+    if (cues.length === 0) {
+      errors.push({
+        code: "clock_sfx_no_cues",
+        message: "the sfx clock is driven by the foley, but the audio plan has no cues",
+      });
+    }
+    for (const cue of cues) {
       if (cue.at === undefined) {
         errors.push({
           code: "cue_no_time",

@@ -16,6 +16,7 @@ import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSyn
 import { join, resolve } from "node:path";
 import { spawn } from "node:child_process";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
+import { packFontPath } from "../src/engine/plan.js";
 import { buildBoard } from "../src/engine/board.js";
 import { findFfmpeg, renderGrid, runBinary } from "../src/engine/grid.js";
 
@@ -43,7 +44,7 @@ async function main(): Promise<void> {
 
   const fps = Number(arg("fps") ?? 10);
   const floor = Number(arg("floor") ?? 0.6);
-  const font = "proofs/s2-paper/assets/fonts/DMMono-Regular.ttf";
+  const font = packFontPath(root, score.style, "caption");
   const ffmpeg = findFfmpeg();
   const entries = buildBoard(plan);
 

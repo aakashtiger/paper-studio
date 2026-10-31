@@ -11,9 +11,12 @@
  *
  * usage: npm run gate:7 -- films/understudy/score.json
  */
+import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { findFfmpeg, renderGrid, runBinary } from "../src/engine/grid.js";
+import { packFontPath } from "../src/engine/plan.js";
+import { cueSetText, type SfxRecordLike } from "../src/engine/sfx.js";
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
@@ -21,10 +24,12 @@ if (!file) {
   console.error("usage: npm run gate:7 -- <score.json>");
   process.exit(2);
 }
+const scorePath: string = file;
 
 const root = process.cwd();
 const score = JSON.parse(readFileSync(resolve(root, file), "utf8")) as {
   id: string;
+  style: string;
   duration: number;
   aspect: string;
 };
@@ -38,6 +43,14 @@ function read<T>(name: string): T | null {
   } catch {
     return null;
   }
+}
+
+function hashFile(path: string): string {
+  return createHash("sha256").update(readFileSync(path)).digest("hex");
+}
+
+function sha256(text: string): string {
+  return createHash("sha256").update(text).digest("hex");
 }
 
 /** "16:9" -> 16/9. */
@@ -82,7 +95,7 @@ async function finalSheet(videoHash: string | null): Promise<{ ok: boolean; deta
     tileWidth: tileW,
     tileHeight: tileH,
     cols,
-    font: "proofs/s2-paper/assets/fonts/DMMono-Regular.ttf",
+    font: packFontPath(root, score.style, "caption"),
     labelDir: `build/${score.id}/final-labels`,
   });
   writeFileSync(
@@ -114,7 +127,13 @@ async function main(): Promise<void> {
     inputs: { backend: string | null; painter: string | null; poses?: Record<string, string | null> };
   }>("render-manifest.json");
   const determinism = read<{ pass: boolean; mismatches: number; frameSetHash: string }>("determinism.json");
-  const mix = read<{ passes: boolean; measured: { lufs: number; truePeak: number }; files: { hash: string } }>("mix/mix-report.json");
+  const mix = read<{
+    passes: boolean;
+    measured: { lufs: number; truePeak: number };
+    inputs?: { score: string | null; sfx: string | null; voice: string | null };
+    files: { hash: string };
+  }>("mix/mix-report.json");
+  const sfx = read<{ cues: SfxRecordLike[] }>("sfx/sfx.json");
   const palette = read<{ pass: boolean; maxOutlierFraction: number }>("palette-audit.json");
   const paint = read<{ pass: boolean; sampled: number; worst: { time: number; psnr: number }; videoHash: string | null }>("paint-match.json");
   const motion = read<{ pass: boolean; videoHash: string | null; weak: string[]; shots: { id: string; median: number }[] }>("motion-audit.json");
@@ -165,8 +184,15 @@ async function main(): Promise<void> {
         : "no determinism report",
     },
     mix: {
-      ok: mix?.passes === true,
-      detail: mix ? `${mix.measured.lufs.toFixed(1)} LUFS / ${mix.measured.truePeak.toFixed(1)} dBTP` : "no mix report",
+      ok:
+        mix?.passes === true &&
+        Boolean(mix.inputs?.sfx) &&
+        mix.inputs?.sfx === (sfx ? `sha256:${sha256(cueSetText(sfx.cues))}` : "missing") &&
+        mix.inputs?.score === `sha256:${hashFile(resolve(root, scorePath))}` &&
+        mix.files.hash === `sha256:${hashFile(resolve(dir, "mix", "master.wav"))}`,
+      detail: mix
+        ? `${mix.measured.lufs.toFixed(1)} LUFS / ${mix.measured.truePeak.toFixed(1)} dBTP · inputs tied`
+        : "no mix report",
     },
     palette: {
       ok: palette?.pass === true,

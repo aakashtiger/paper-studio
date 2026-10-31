@@ -9,6 +9,7 @@
  * Pure string builder; the CLI measures the page and screenshots it.
  */
 import type { LoadedStylePack } from "../core/style.js";
+import { REVIEW_CHROME } from "./grid.js";
 
 /** The subset of a loaded pack this sheet reads. Loose on purpose. */
 type PackView = {
@@ -118,8 +119,8 @@ export function styleSheetHtml(pack: LoadedStylePack, options: StyleSheetOptions
     .map(([name, palette]) => {
       const swatches = color.roles
         .map((role) => {
-          const hex = palette[role] ?? "#000000";
-          const ink = luminance(hex) > 0.55 ? "#171310" : "#F2E8D5";
+          const hex = palette[role] ?? REVIEW_CHROME.line;
+          const ink = luminance(hex) > 0.55 ? REVIEW_CHROME.onLight : REVIEW_CHROME.onDark;
           return `<div class="swatch" style="background:${esc(hex)};color:${ink}"><b>${esc(role)}</b><span>${esc(hex)}</span></div>`;
         })
         .join("");
@@ -198,36 +199,36 @@ export function styleSheetHtml(pack: LoadedStylePack, options: StyleSheetOptions
 <style>
 ${faces}
   * { box-sizing: border-box; }
-  body { margin: 0; background: #14120f; color: #f2e8d5; font: 15px/1.5 system-ui, sans-serif; padding: 40px; }
+  body { margin: 0; background: ${REVIEW_CHROME.bg}; color: ${REVIEW_CHROME.text}; font: 15px/1.5 system-ui, sans-serif; padding: 40px; }
   h1 { font-size: 30px; margin: 0; letter-spacing: .06em; }
-  h2 { font-size: 15px; letter-spacing: .18em; text-transform: uppercase; color: #d9f24b; margin: 44px 0 14px; }
-  .sub { color: #b9ae98; font: 12px/1.5 ui-monospace, monospace; margin-top: 6px; }
+  h2 { font-size: 15px; letter-spacing: .18em; text-transform: uppercase; color: ${REVIEW_CHROME.accent}; margin: 44px 0 14px; }
+  .sub { color: ${REVIEW_CHROME.muted}; font: 12px/1.5 ui-monospace, monospace; margin-top: 6px; }
   .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
-  .panel { background: #1d1a16; border: 1px solid #2c2822; padding: 18px; }
-  .fontrow { border-bottom: 1px solid #2c2822; padding: 12px 0; }
+  .panel { background: ${REVIEW_CHROME.panel}; border: 1px solid ${REVIEW_CHROME.line}; padding: 18px; }
+  .fontrow { border-bottom: 1px solid ${REVIEW_CHROME.line}; padding: 12px 0; }
   .fontrow:last-child { border-bottom: 0; }
-  .fontmeta { display: flex; gap: 16px; font: 11px/1.4 ui-monospace, monospace; color: #b9ae98; }
-  .fontmeta b { color: #f2e8d5; min-width: 78px; }
+  .fontmeta { display: flex; gap: 16px; font: 11px/1.4 ui-monospace, monospace; color: ${REVIEW_CHROME.muted}; }
+  .fontmeta b { color: ${REVIEW_CHROME.text}; min-width: 78px; }
   .specimen { margin-top: 8px; }
   .swatches { display: flex; flex-wrap: wrap; gap: 8px; }
   .swatch { width: 116px; height: 78px; padding: 8px; display: flex; flex-direction: column; justify-content: space-between; font: 11px/1.3 ui-monospace, monospace; }
-  .palettelabel { font: 12px/1.4 ui-monospace, monospace; margin-bottom: 8px; color: #b9ae98; }
+  .palettelabel { font: 12px/1.4 ui-monospace, monospace; margin-bottom: 8px; color: ${REVIEW_CHROME.muted}; }
   .palette { margin-bottom: 16px; }
-  .frame16 { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #0e0d0b; border: 1px solid #3a352d; }
-  .frame16 .safe { position: absolute; border: 1px dashed #d9f24b; opacity: .8; }
-  .frame16 .lyric { position: absolute; left: 0; right: 0; bottom: 0; height: 14%; background: rgba(242,232,213,.08); border-top: 1px dashed #e8452a; }
-  .frame16 .meter { position: absolute; right: 0; top: 0; width: 26%; height: 14%; background: rgba(217,242,75,.08); }
-  .frame916 { position: relative; width: 260px; aspect-ratio: 9 / 16; background: #0e0d0b; border: 1px solid #3a352d; margin: 0 auto; }
-  .frame916 i { position: absolute; border: 1px solid rgba(217,242,75,.5); display: flex; align-items: flex-start; justify-content: flex-end; padding: 1px 2px; font: 9px/1 ui-monospace, monospace; font-style: normal; }
+  .frame16 { position: relative; width: 100%; aspect-ratio: 16 / 9; background: ${REVIEW_CHROME.bg}; border: 1px solid ${REVIEW_CHROME.line}; }
+  .frame16 .safe { position: absolute; border: 1px dashed ${REVIEW_CHROME.accent}; opacity: .8; }
+  .frame16 .lyric { position: absolute; left: 0; right: 0; bottom: 0; height: 14%; background: rgba(255,255,255,.06); border-top: 1px dashed ${REVIEW_CHROME.accent}; }
+  .frame16 .meter { position: absolute; right: 0; top: 0; width: 26%; height: 14%; background: rgba(255,255,255,.06); }
+  .frame916 { position: relative; width: 260px; aspect-ratio: 9 / 16; background: ${REVIEW_CHROME.bg}; border: 1px solid ${REVIEW_CHROME.line}; margin: 0 auto; }
+  .frame916 i { position: absolute; border: 1px solid ${REVIEW_CHROME.accent}; display: flex; align-items: flex-start; justify-content: flex-end; padding: 1px 2px; font: 9px/1 ui-monospace, monospace; font-style: normal; }
   .anchors { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
-  .anchors span { font: 10px/1 ui-monospace, monospace; color: #b9ae98; border: 1px solid #2c2822; padding: 3px 5px; }
+  .anchors span { font: 10px/1 ui-monospace, monospace; color: ${REVIEW_CHROME.muted}; border: 1px solid ${REVIEW_CHROME.line}; padding: 3px 5px; }
   table { width: 100%; border-collapse: collapse; font: 12px/1.4 ui-monospace, monospace; }
-  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #2c2822; vertical-align: top; }
-  th { color: #b9ae98; font-weight: 600; }
-  ul { margin: 0; padding-left: 18px; font: 12px/1.6 ui-monospace, monospace; color: #d8cfbb; }
-  .hero { display: block; width: 100%; border: 1px solid #2c2822; }
-  .hero.empty { aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; color: #7d7463; font: 12px/1.5 ui-monospace, monospace; text-align: center; padding: 24px; }
-  .mono { font: 12px/1.6 ui-monospace, monospace; color: #b9ae98; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid ${REVIEW_CHROME.line}; vertical-align: top; }
+  th { color: ${REVIEW_CHROME.muted}; font-weight: 600; }
+  ul { margin: 0; padding-left: 18px; font: 12px/1.6 ui-monospace, monospace; color: ${REVIEW_CHROME.text}; }
+  .hero { display: block; width: 100%; border: 1px solid ${REVIEW_CHROME.line}; }
+  .hero.empty { aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; color: ${REVIEW_CHROME.muted}; font: 12px/1.5 ui-monospace, monospace; text-align: center; padding: 24px; }
+  .mono { font: 12px/1.6 ui-monospace, monospace; color: ${REVIEW_CHROME.muted}; }
 </style></head>
 <body>
   <h1>${esc(identity.name)} <span class="sub">${esc(id)} · ${esc(identity.version)} · ${esc(identity.status)}</span></h1>

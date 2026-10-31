@@ -15,8 +15,13 @@ const options = {
   rig: nova.rig,
   anchors: nova.anchors,
   library: nova,
-  vendor: "../../../proofs/s2-paper/vendor",
-  fonts: "../../../proofs/s2-paper/assets/fonts",
+  vendor: "../../../films/understudy/vendor",
+  fonts: {
+    dir: "../../../styles/test",
+    display: { family: "Display Face", file: "fonts/display.ttf" },
+    body: { family: "Body Face", file: "fonts/body.ttf" },
+    mono: { family: "Mono Face", file: "fonts/mono.ttf" },
+  },
 };
 
 test("the sheet slug is stable and rejects empty names", () => {
@@ -34,6 +39,14 @@ test("the sheet contains the ready marker and the character", () => {
   assert.ok(html.includes("__sheetReady"));
   assert.ok(html.includes("PAPER ASSET SHEET"));
   assert.ok(html.includes(nova.character));
+});
+
+test("the sheet takes its faces from the caller, not from the engine", () => {
+  const { html } = sheetHtml(nova, options);
+  assert.ok(html.includes('font-family: "Mono Face"'));
+  assert.ok(html.includes("fonts/mono.ttf"));
+  assert.equal(html.includes('"DMMono"'), false);
+  assert.equal(html.includes('"Anton"'), false);
 });
 
 test("script-breaking pose names are escaped out of the JSON block", () => {

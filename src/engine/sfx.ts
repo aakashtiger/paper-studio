@@ -108,14 +108,67 @@ export const SFX_GENERATOR = "paper-studio/sfx 2.0";
 /** The sample rate every generated cue is written at. */
 export const SFX_SAMPLE_RATE = 48_000;
 
+/** True when the kit knows this kind. An unknown kind is never rendered. */
+export function isKnownKind(kind: string): boolean {
+  return Object.hasOwn(SFX_KINDS, kind);
+}
+
+/**
+ * The kind's spec. A kind that is not in the kit is a contract error, not a
+ * fallback: a typo must fail loudly instead of quietly sounding like paper.
+ */
 export function kindSpec(kind: string): SfxKindSpec {
-  return SFX_KINDS[kind] ?? { shape: "impact", material: "paper", length: 0.35, gain: 0.5, band: [100, 8000], layers: ["transient", "body", "tail"], send: 0.12, duckDb: 3 };
+  const spec = SFX_KINDS[kind];
+  if (!spec) throw new Error(`unknown sfx kind "${kind}"; known: ${Object.keys(SFX_KINDS).join(", ")}`);
+  return spec;
 }
 
 export const kindLength = (kind: string): number => kindSpec(kind).length;
 export const kindGain = (kind: string): number => kindSpec(kind).gain;
 export const kindBand = (kind: string): [number, number] => kindSpec(kind).band;
 export const kindLayers = (kind: string): SfxLayerName[] => kindSpec(kind).layers;
+
+/**
+ * The canonical description of what a cue renders from: kind, time, length,
+ * layers, gain, pan and band after the kit's defaults are applied. The rendered
+ * cue records it; the mix recomputes it. If they differ, the WAV on disk was
+ * made from something else and the mix refuses it.
+ */
+export function cueSpec(cue: {
+  kind: string;
+  at: number;
+  duration?: number;
+  layers?: string[];
+  gain?: number;
+  pan?: number;
+  band?: [number, number];
+}): string {
+  return JSON.stringify({
+    kind: cue.kind,
+    at: Number(cue.at.toFixed(6)),
+    seconds: Number((cue.duration ?? kindLength(cue.kind)).toFixed(3)),
+    layers: effectiveLayers(cue.kind, cue.layers),
+    gain: cue.gain ?? kindGain(cue.kind),
+    pan: cue.pan ?? 0,
+    band: cue.band ?? kindBand(cue.kind),
+  });
+}
+
+/** The part of a rendered-cue record that decides what the mix is listening to. */
+export type SfxRecordLike = { id: string; spec: string; wav: string; ok: boolean };
+
+/**
+ * A stable text for a whole rendered cue set: ids sorted, no timestamps. Two
+ * runs that produced the same WAVs from the same specs have the same text, and
+ * a mix that names this fingerprint can be checked against the current set.
+ */
+export function cueSetText(records: SfxRecordLike[]): string {
+  return JSON.stringify(
+    [...records]
+      .sort((a, b) => a.id.localeCompare(b.id))
+      .map((record) => ({ id: record.id, spec: record.spec, wav: record.wav, ok: record.ok })),
+  );
+}
 
 /* --------------------------------------------------------------- primitives */
 
@@ -428,14 +481,19 @@ export function checkCue(
   sr: number,
   aligned: (time: number) => boolean,
 ): CueCheck {
-  const spec = kindSpec(cue.kind);
-  const layers = effectiveLayers(cue.kind, cue.layers);
-  const band = cue.band ?? spec.band;
-  const fraction = bandFraction(samples, sr, band);
   const seconds = samples.length / sr;
   const reasons: string[] = [];
   if (!aligned(cue.at)) reasons.push(`at ${cue.at}s is not on a frame`);
   if (isBannedKind(cue.kind)) reasons.push(`"${cue.kind}" is banned on phone speakers`);
+  if (!isKnownKind(cue.kind)) {
+    reasons.push(`"${cue.kind}" is not a kind in the kit`);
+    return { id: cue.id, kind: cue.kind, ok: false, detail: reasons.join("; ") };
+  }
+
+  const spec = kindSpec(cue.kind);
+  const layers = effectiveLayers(cue.kind, cue.layers);
+  const band = cue.band ?? spec.band;
+  const fraction = bandFraction(samples, sr, band);
   if (band[1] > 9000) reasons.push(`band top ${band[1]} Hz is above the 9 kHz phone limit`);
   if (seconds < 0.05) reasons.push(`only ${seconds.toFixed(3)}s long`);
   if (!fadesClean(samples, sr)) reasons.push("does not fade out clean");

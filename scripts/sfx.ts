@@ -15,11 +15,14 @@
  * usage: npm run sfx -- <score.json> [--no-sheet]
  */
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { join, resolve } from "node:path";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
+import { packFontPath } from "../src/engine/plan.js";
 import { findFfmpeg, renderGrid, runBinary } from "../src/engine/grid.js";
 import {
   checkCue,
+  cueSpec,
   effectiveLayers,
   kindBand,
   kindGain,
@@ -68,6 +71,9 @@ async function main(scorePath: string): Promise<void> {
     gain: number;
     layers: string[];
     band: [number, number];
+    /** What the WAV was rendered from, so the mix can refuse a stale file. */
+    spec: string;
+    wav: string;
     ok: boolean;
     detail: string;
   }> = [];
@@ -101,6 +107,8 @@ async function main(scorePath: string): Promise<void> {
       gain,
       layers: effectiveLayers(cue.kind, cue.layers),
       band: cue.band ?? kindBand(cue.kind),
+      spec: sha256(cueSpec(cue)),
+      wav: `sha256:${sha256(readFileSync(join(outDir, `${cue.id}.wav`)))}`,
       ok: check.ok,
       detail: check.detail,
     });
@@ -120,6 +128,7 @@ async function main(scorePath: string): Promise<void> {
         film: score.id,
         generator: SFX_GENERATOR,
         sampleRate: sr,
+        inputs: { score: `sha256:${sha256(readFileSync(resolve(root, scorePath)))}` },
         cues: checks,
         pass: failed.length === 0,
         files: {
@@ -144,7 +153,7 @@ async function main(scorePath: string): Promise<void> {
   }
 
   if (!args.includes("--no-sheet")) {
-    await spectrogramSheet(root, score.id, outDir, cues);
+    await spectrogramSheet(root, score.id, score.style, outDir, cues);
   }
 }
 
@@ -156,6 +165,7 @@ async function main(scorePath: string): Promise<void> {
 async function spectrogramSheet(
   root: string,
   filmId: string,
+  style: string,
   outDir: string,
   cues: ResolvedCue[],
 ): Promise<void> {
@@ -188,7 +198,7 @@ async function spectrogramSheet(
     tiles,
     tileWidth: tileW,
     tileHeight: tileH,
-    font: "proofs/s2-paper/assets/fonts/DMMono-Regular.ttf",
+    font: packFontPath(root, style, "caption"),
     labelDir: `build/${filmId}/sfx/labels`,
   });
   writeFileSync(
@@ -247,4 +257,9 @@ function writeWav(path: string, samples: Float32Array, gain: number, pan: number
     }
   }
   writeFileSync(path, buffer);
+}
+
+/** sha256 of a buffer or of a string (hex digest). */
+function sha256(data: Buffer | string): string {
+  return createHash("sha256").update(data).digest("hex");
 }

@@ -141,7 +141,7 @@ The **contract layer and the first generators are implemented**: film brief,
 audio resolver (recorded/TTS narration, library/generated music, generated SFX),
 asset manifest, pose library, film score, derived **board**, score-level
 **audit**, the **character/pose sheet** generator and the **board animatic**
-builder. **237 tests.** The sheet has a signed **9/10 design** review. The paper
+builder. **242 tests.** The sheet has a signed **9/10 design** review. The paper
 rig has two-bone leg IK, ankle targets, foot pitch and a knee-driven bounce; the
 leg targets are now reachable, so a planted foot bends its knee and lands on its
 shadow (`test/cast-rig.test.ts`). The board animatic is **9/10 signed** (editor +
@@ -176,11 +176,23 @@ local Whisper word times re-attached to the script's spelling; `npm run asr`
 listens to the master and is the G7 gate) → `10e` the SFX kit (**built**:
 `src/engine/sfx.ts` renders layers over a material, one `send`/`duckDb`/`band`
 table shared with the mix; a cue can name its time once by binding to its picture
-event, and `npm run sfx` fails on a click, a banned kind or a cue outside its
-band) — still generated in code. Music (ACE-Step) is **staged** until the
-first film that uses it. Banned: generative **images or video** in the render
-path, and per-film LLM-written animation code. Allowed: local models for voice,
-word timing and music, because the picture stays entirely code-drawn.
+event, and `npm run sfx` fails on a click, a banned kind, an unknown kind or a
+cue outside its band) — still generated in code. Music (ACE-Step) is **staged**
+until the first film that uses it. Banned: generative **images or video** in the
+render path, and per-film LLM-written animation code. Allowed: local models for
+voice, word timing and music, because the picture stays entirely code-drawn.
+
+The change set is **complete and reviewed once**. The two critics that answered
+(architect, developer) named real blockers; the other five could not answer, and
+that gap is recorded rather than papered over. The blockers are fixed: an unknown
+SFX kind is a contract error, a derived cue snaps to the frame grid, the `sfx`
+clock has no second cue list, the mix refuses a stale cue by spec fingerprint and
+WAV hash, review chrome is one neutral `REVIEW_CHROME`, every sheet takes its
+faces from the pack's `tokens.json`, and `film:review` never prints a report it
+did not write this run. `film:review --gate` is **PASS**: audit 32 events /
+13 cues, 13/13 SFX, mix -14.3 LUFS / -1.5 dBTP, `gate:7` 13 checks with **ASR the
+one pending row**, 242 tests, clean typecheck. `docs/decisions/0017` §Landed has
+the detail.
 
 Do not build: the renderer in this phase, a video, the web app, a second product
 style, or a conversion of the other 58 Lemo styles. `styles/paper-vows` remains

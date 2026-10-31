@@ -37,6 +37,27 @@ shot measured for motion — all nine shots pass the 0.6 floor with no hold over
 is next, after the look pass. See `docs/PRODUCTION-PLAN.md` v1.4 and
 `docs/decisions/0014`–`0016`.
 
+**Update 2026-11-01 — the critic-fix pass on steps 10/10e.** Two critics
+(architect 6/10, developer 7.5/10) withheld a sign and named blockers; the other
+five hit a usage limit before they could answer, so this pass is the two returned
+reviews plus my own, recorded honestly as such. Fixed: an unknown SFX kind is a
+contract error instead of a silent paper thud; a cue derived from a picture event
+is snapped to the frame grid (`toFixed(3)` cannot express 1/30 s); the `sfx` clock
+mode no longer carries a second cue list; `sfx.json` records a spec fingerprint
+and WAV hash per cue, `npm run mix` recomputes both and refuses a stale take, and
+`gate:7` ties the mix report's `inputs` to the current score, cue set and master;
+review chrome is one neutral `REVIEW_CHROME` and every sheet takes its faces from
+the pack's `tokens.json` (`packFontPath`), never from `proofs/`; `film:review`
+summarises a step only from a report this run wrote, so a failure can no longer
+print last week's "ok"; `audit.json` counts `events` and `cues` apart. Evidence:
+`sfx` 13/13 ok, `audit` 32 events / 13 cues, `mix` **-14.3 LUFS / -1.5 dBTP** with
+tied inputs, `gate:7` **PASS 13 checks / 1 pending (ASR)**, `film:review --gate`
+**PASS**, **242 tests**, typecheck clean. Two probes proved the failure paths: a
+cue moved to 1.01 s made `audit`/`sfx` fail on the real error, and a gain changed
+after the render made `npm run mix` stop with "changed after it was rendered".
+Still open: the delivered MP4 carries the earlier audio cut (the re-cut is the
+look pass), and `npm run asr` waits on the local speech models.
+
 **Update:** `docs/PRODUCTION-PLAN.md` v1.4 is accepted. The contract layer and
 the first generators exist: film brief, audio resolver (recorded/TTS narration,
 library/generated music, generated SFX), asset manifest, pose library, film

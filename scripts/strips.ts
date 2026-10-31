@@ -15,6 +15,7 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
+import { packFontPath } from "../src/engine/plan.js";
 import { findFfmpeg, planGridRows, renderGrid, runBinary } from "../src/engine/grid.js";
 import { hashFile } from "../src/core/style.js";
 
@@ -112,7 +113,7 @@ async function main(): Promise<void> {
     tileWidth: tileW,
     tileHeight: tileH,
     rows,
-    font: "proofs/s2-paper/assets/fonts/DMMono-Regular.ttf",
+    font: packFontPath(root, score.style, "caption"),
     labelDir: `build/${score.id}/strips/labels`,
   });
 

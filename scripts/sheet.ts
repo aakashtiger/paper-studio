@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node
 import { resolve } from "node:path";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
 import { PoseLibrarySchema, resolvePoseLibrary } from "../src/engine/pose.js";
-import { sheetHtml, sheetSlug } from "../src/engine/sheet.js";
+import { sheetHtml, sheetSlug, type SheetFonts } from "../src/engine/sheet.js";
 import { findChrome, fileUrl, shootHtml } from "../src/engine/chrome.js";
 
 const args = process.argv.slice(2);
@@ -26,6 +26,28 @@ mkdirSync(outDir, { recursive: true });
 const usedSlugs = new Set<string>();
 const chrome = findChrome();
 const render = !args.includes("--no-render") && Boolean(chrome);
+
+const tokens = JSON.parse(readFileSync(resolve(styleDir, "tokens.json"), "utf8")) as {
+  type?: { families?: Array<{ role?: string; name?: string; file?: string }> };
+};
+const families = tokens.type?.families ?? [];
+const face = (role: string) => {
+  const family = families.find((entry) => entry.role === role) ?? families[0];
+  if (!family?.name || !family?.file) throw new Error(`style "${score.style}" has no font for role "${role}"`);
+  return { family: family.name, file: family.file };
+};
+// The sheet is written to build/<id>/sheets/, so repo-relative paths climb three.
+const fonts: SheetFonts = {
+  dir: `../../../styles/${score.style}`,
+  display: face("display"),
+  body: face("body"),
+  mono: face("caption"),
+};
+const vendor = `../../../films/${score.id}/vendor`;
+if (!existsSync(resolve(root, "films", score.id, "vendor"))) {
+  console.error(`error: films/${score.id}/vendor is missing; the sheet draws with the film's pinned renderer`);
+  process.exit(1);
+}
 
 if (!render && !args.includes("--no-render")) {
   console.error("warning: Chrome not found; writing HTML sheets only");
@@ -60,8 +82,8 @@ for (const entry of plan.cast) {
       rig: library.rig,
       anchors: library.anchors,
       library,
-      vendor: "../../../proofs/s2-paper/vendor",
-      fonts: "../../../proofs/s2-paper/assets/fonts",
+      vendor,
+      fonts,
     });
     html = sheet.html;
     height = sheet.height;
