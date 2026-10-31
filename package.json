@@ -34,6 +34,8 @@
     "sfx": "tsx scripts/sfx.ts",
     "mix": "tsx scripts/mix.ts",
     "captions": "tsx scripts/captions.ts",
+    "voice": "tsx scripts/voice.ts",
+    "asr": "tsx scripts/asr.ts",
     "test": "node --import tsx --test test/*.test.ts",
     "typecheck": "tsc --noEmit",
     "style:new": "tsx scripts/style.ts new",

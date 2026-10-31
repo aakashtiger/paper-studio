@@ -21,6 +21,8 @@ export const SfxCueSchema = z.object({
 
 export const NarrationPlanSchema = z.object({
   source: z.enum(["recorded", "tts", "none"]),
+  /** Source of a tts voice: local (Apache-2.0) or a one-time cloud fetch. */
+  provider: z.enum(["kokoro", "elevenlabs"]).optional(),
   voice: z.string().min(1).optional(),
   voiceId: z.string().min(1).optional(),
   speed: z.number().positive().optional(),
@@ -93,6 +95,12 @@ export function resolveAudio(
     }
     if (narration.source === "tts" && !narration.voiceId) {
       errors.push({ code: "audio_voice_id", message: "tts narration needs a voice id" });
+    }
+    if (narration.source === "tts" && !narration.provider) {
+      errors.push({
+        code: "audio_provider_missing",
+        message: "tts narration needs a provider (kokoro local, or elevenlabs fetched once)",
+      });
     }
     if (!narration.transcript) {
       errors.push({ code: "audio_transcript_missing", message: "narration needs a transcript" });

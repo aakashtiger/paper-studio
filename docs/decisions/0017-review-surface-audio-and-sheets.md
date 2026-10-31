@@ -130,3 +130,12 @@ generator, not the sourcing, was the problem:
 - Three gate rows move from aspirational to provable.
 - `films/understudy/score.json` is **not** touched by this decision; any score
   edit is a separate, versioned change.
+
+## Landed
+
+Steps `0`–`10` are built and each ships a command: `style:sheet`, `stills`,
+`strips` (G5), the spectrogram sheet written by `sfx` (G6), the final sheet
+written by `gate:7` (G7), `film:new`, `film:review`, `voice` and `asr`. `gate:7`
+is 13 checks and names ASR as the one pending check until its report exists.
+Step `10e` (the SFX kit and cue→event binding) is next; music (ACE-Step) stays
+staged until the first film that uses it.

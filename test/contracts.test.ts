@@ -34,12 +34,21 @@ test("a brief with an unsupported duration fails", () => {
 test("narration needs a transcript and an srt", () => {
   const plan = AudioPlanSchema.parse({
     mode: "narration",
-    narration: { source: "tts", voiceId: "voice-1" },
+    narration: { source: "tts", provider: "kokoro", voiceId: "voice-1" },
     sfx: { source: "generated", cues: [] },
   });
   const { errors } = resolveAudio(plan, { duration: 30, clockMode: "narration", root });
   assert.ok(errors.some((issue) => issue.code === "audio_transcript_missing"));
   assert.ok(errors.some((issue) => issue.code === "audio_srt_missing"));
+});
+
+test("a tts narration must name its provider", () => {
+  const plan = AudioPlanSchema.parse({
+    mode: "narration",
+    narration: { source: "tts", voiceId: "voice-1" },
+  });
+  const { errors } = resolveAudio(plan, { duration: 30, clockMode: "narration", root });
+  assert.ok(errors.some((issue) => issue.code === "audio_provider_missing"));
 });
 
 test("library music without a licence fails", () => {

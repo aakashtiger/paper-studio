@@ -120,6 +120,13 @@ async function main(): Promise<void> {
   const motion = read<{ pass: boolean; videoHash: string | null; weak: string[]; shots: { id: string; median: number }[] }>("motion-audit.json");
   const type = read<{ pass: boolean; sampled: number; boxes: number; outside: unknown[] }>("type-audit.json");
   const rig = read<{ pass: boolean; legs: number; unpairedSolves: number; worstAnkleJump: { distance: number } }>("rig-audit.json");
+  const asr = read<{
+    pass: boolean;
+    coverage: number;
+    audio: string;
+    videoHash: string | null;
+    missing: string[];
+  }>("asr.json");
 
   const frozenHash = frames?.hash ?? manifest?.videoHash ?? null;
   const checks: Record<string, { ok: boolean; detail: string }> = {
@@ -187,9 +194,20 @@ async function main(): Promise<void> {
   const sheet = await finalSheet(manifest?.videoHash ?? frozenHash);
   checks["finalSheet"] = sheet;
 
-  const pending = [
-    "ASR of the mixed master: no offline recogniser wired in",
-  ];
+  // ASR is a hard check the moment its report exists. Until the local
+  // recogniser is installed it is named as the one remaining manual check, with
+  // the exact command — never silently skipped.
+  const pending: string[] = [];
+  if (asr) {
+    checks["asr"] = {
+      ok: asr.pass === true && (asr.videoHash === null || asr.videoHash === frozenHash),
+      detail: `${(asr.coverage * 100).toFixed(1)}% of the script heard in ${asr.audio}${
+        asr.missing.length ? `, ${asr.missing.length} words missing` : ""
+      }`,
+    };
+  } else {
+    pending.push("ASR of the mixed master: run `npm run asr -- <score>` (needs faster-whisper — tools/README.md)");
+  }
 
   const failed = Object.entries(checks).filter(([, value]) => !value.ok).map(([name]) => name);
   const pass = failed.length === 0;

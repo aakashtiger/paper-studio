@@ -7,13 +7,13 @@ warning.
 | Gate | Artifact | Command | Pass condition | Critics | Status |
 |---|---|---|---|---|---|
 | G0 brief | `brief.json` | `npm run film -- <score>` | fields complete; style, aspect, duration, fps and audio mode match the score | architect, editor | ready |
-| G1 audio | voice, `transcript.json`, `captions.srt`, cue list | `npm run captions -- <score>` | files exist and hash; transcript covers the script; SRT cues match; read-time holds | editor, sound, QA | ready |
+| G1 audio | voice, `transcript.json`, `captions.srt`, cue list | `npm run voice -- <score>` + `npm run captions -- <score>` | files exist and hash; word times come from the actual read (`words.json`), not a guess from word length; transcript covers the script; SRT cues match; read-time holds | editor, sound, QA | ready |
 | G2 direction + look | score, `build/<id>/board/`, `build/<id>/board/board-sheet.png`, `build/<id>/storyboard/storyboard.png`, hero frames | `npm run board -- <score>` + `npm run storyboard -- <score>` | all shots inside the envelope; median in band; board covers every shot and marked beat; the board sheet shows every card on one image; the storyboard shows one code-drawn frame per shot, in order, on one sheet; look table complete | designer, editor | ready |
 | G3 animatic | board pass + stepped rough | `npm run animatic -- <score>` + `npm run rough -- <score>` | board pass signed 9/10; stepped rough paints the score at 10 fps; every board time paired to its frame; every shot's median frame-to-frame change ≥ 0.6 and no hold >0.4 s; no camera-only shot; ≥2 breakdowns per transition | motion, editor, QA | **board pass signed; stepped rough measures pass** |
 | G4 assets | `build/<id>/sheets/*.png` | `npm run sheet -- <score>` | seam gap 0; feet planted; contact shadow; 8 poses + 4 expressions; joint map; hand/foot/coat panels | designer, developer, QA | ready |
 | G5 shots | animated shots, `build/<id>/strips/` | `npm run render:film -- <score>` + `npm run audit:motion -- <score>` + `npm run strips -- <score>` | entry/exit match; ≥3 events; no floating part; every shot's median frame-to-frame change ≥ 0.6 and no dead stretch > 0.1 s; one strip per shot every 0.5 s on one image (from the delivered MP4) | motion, editor | **measured + strips sheet** |
 | G6 mix | master + SFX + `build/<id>/sfx/spectrogram-sheet.png` | `npm run mix -- <score>` | every cue generated in code and layered (transient, body, tail); no machine-gun repetition; voice highpassed at 75 Hz; the 1–4 kHz band ducked against the voice; one shared reverb return; tail faded; **no ticks, clicks, hats, glitches or beeps (phone-speaker rule)**; a spectrogram sheet per cue on one image; master −14.0 LUFS / ≤ −1.5 dBTP | sound, editor, QA | **master ready** |
-| G7 final | MP4 + SRT + score + stills + `gate-7.json` | `npm run gate:7 -- <score>` | one frozen MP4 hash; score audit, frames, paint-match, motion floor, type safe area, rig seam, one-hash, hashed inputs, determinism, mix, palette and the final 0.5 s contact sheet all pass; only ASR is still judged by hand | all seven + director | **partial** |
+| G7 final | MP4 + SRT + score + stills + `asr.json` + `gate-7.json` | `npm run asr -- <score>` + `npm run gate:7 -- <score>` | one frozen MP4 hash; score audit, frames, paint-match, motion floor, type safe area, rig seam, one-hash, hashed inputs, determinism, mix, palette and the final 0.5 s contact sheet all pass; ASR of the master is a hard check once its report exists, and is named as pending (with the command) until then | all seven + director | **partial** |
 
 ## Paint match
 
@@ -98,13 +98,41 @@ without a browser, so bad pose data fails before a render.
 It does **not** check rendered frames, ASR or mix. Those are G5–G7. The
 mechanical parts of G7 that are not score-level are their own commands:
 `audit:motion` (motion floor), `audit:type` (safe area) and `audit:rig` (rig
-seam); ASR is still pending.
+seam). ASR is `npm run asr`, a hard check once its report exists.
 
 The render manifest hashes the score, the generated score data, the style
 backend (`styles/<style>/canvas/recipes.js`), the film page, the captions, the
 vendor scripts and **each cast pose library**. A pose edit is a film change, so
 it invalidates the manifest the same way a code edit does; `gate-7.json` checks
 the pose hashes with the `poseHashes` row.
+
+## Voice and ASR
+
+`npm run voice -- <score>` captures the narration and derives the clock from the
+actual read:
+
+1. **Capture** is `recorded` (a supplied file, used as-is) or `tts` with a
+   **provider** — `kokoro` locally, or `elevenlabs` fetched **once** at authoring
+   time and pinned as a WAV. The render never touches the network. The spoken WAV
+   is kept unless `--force` is passed.
+2. **Listen.** Local Whisper (`faster-whisper small.en`) writes what it heard.
+   `src/engine/words.ts` attaches those times to the **script's own spelling**, so
+   "nineteen nineteen" is timed as the script's "1919" — matched words keep their
+   heard span, a split or merged run shares the span by length, a missed word
+   shares the gap between its neighbours. It writes `films/<id>/words.json`.
+3. **Derive.** `build/<id>/clock.json` holds the line clock and the shot
+   boundaries a snap to a phrase beat would move. It is a **proposal**; the score
+   is not rewritten — the director edits it to accept a move.
+
+The speech tools are external and pinned like `ffmpeg`; `tools/README.md` has the
+one-time install. When a module is missing, `npm run voice` and `npm run asr`
+print the exact install and exit without touching the network.
+
+`npm run asr -- <score>` listens to the delivered master with the same Whisper,
+compares what it heard to the script and writes `build/<id>/asr.json` with the
+coverage and every word it did not hear. `gate:7` reads that report: it is a
+**hard check** when the report exists and is **named as pending**, with the
+command, until it does.
 
 ## Sheets (one look)
 

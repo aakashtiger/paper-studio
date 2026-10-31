@@ -1,6 +1,7 @@
 {
   "film": "understudy",
   "voice": "films/understudy/voice.wav",
+  "source": "guess",
   "duration": 30,
   "lines": [
     {

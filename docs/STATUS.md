@@ -15,9 +15,14 @@ hashed inputs, determinism, mix, palette and the one-image final contact sheet t
 a single frozen MP4. The review surface is one look per artifact: a board sheet,
 a derived style sheet, a stills sheet, the storyboard (one frame per shot), a
 per-shot strips sheet from the delivered MP4, and a spectrogram sheet per cue.
-**193 tests pass**, typecheck is clean, and `gate:7` passes 13 checks; ASR is the
-one remaining manual check — deferred to the voice pipeline, not skipped
-(decisions 0016, 0017). The
+**219 tests pass**, typecheck is clean, and `gate:7` passes 13 checks. The voice
+pipeline is built (`npm run voice`, `npm run asr`): capture is a recording or
+Kokoro TTS, word times come from local Whisper re-attached to the script's
+spelling (`src/engine/words.ts`), the clock is derived and the shot boundaries a
+snap would move are proposed; ASR of the master is a **hard** G7 check once its
+report exists, and is **named as pending, with the command**, until the local
+speech models are installed (one-time ~1 GB — see `tools/README.md`, decisions
+0016, 0017). The
 **stepped rough** is built (`npm run rough`): the score painted at 10 fps through
 the same painter, every board time paired to its frame on one contact sheet, every
 shot measured for motion — all nine shots pass the 0.6 floor with no hold over

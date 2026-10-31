@@ -1,0 +1,13 @@
+# Speech tools for Paper Studio. These are external, like ffmpeg — not npm deps.
+# Install once into the Python that `findPython` finds (see tools/README.md):
+#
+#   python -m pip install -r tools/requirements.txt
+#
+# Kokoro (text-to-speech, Apache-2.0) ~350 MB of model files, downloaded once
+# by `python tools/tts_kokoro.py --download`.
+kokoro-onnx>=0.4
+soundfile
+numpy
+# Whisper (word timings and the ASR gate, MIT) ~0.5 GB for small.en, downloaded
+# once on first use by tools/whisper.py.
+faster-whisper>=1.0

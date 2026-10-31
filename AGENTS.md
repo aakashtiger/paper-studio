@@ -55,6 +55,8 @@ npm run film -- films/understudy/score.json      # validate a scored film
 npm run film:new -- --brief films/understudy/brief.json   # scaffold a score, never invent one
 npm run film:review -- films/understudy/score.json        # chain the review, one page + one sheet
 npm run captions -- films/understudy/score.json  # generate transcript + SRT
+npm run voice -- films/understudy/score.json     # capture narration + word times, derive the clock
+npm run asr -- films/understudy/score.json       # listen to the master; the G7 ASR gate
 npm run board -- films/understudy/score.json     # derive board cards (HTML + manifest)
 npm run storyboard -- films/understudy/score.json   # one code-drawn frame per shot, tiled into one sheet
 npm run stills -- films/understudy/score.json    # sample the film, tiled into one sheet
@@ -164,9 +166,10 @@ one grid helper (`src/engine/grid.ts`) + board sheet → `2` `doctor` (built) �
 style sheet PNG derived into `build/` → `4` stills sheet → `5` storyboard as
 exactly one frame per shot, in order → `6–7` the G5 per-shot strips, the G6
 spectrogram sheet and the G7 final sheet, each a command → `8` `film:new`
-(scaffolds, never invents) → `9` `film:review` → `10` voice-as-clock (Kokoro TTS
-or a recorded file; word timings from local Whisper re-attached to the script's
-spelling; ASR of the master is the G7 gate) → `10e` the SFX kit (layers, modal
+(scaffolds, never invents) → `9` `film:review` → `10` voice-as-clock (**built**:
+`npm run voice` captures a recording or Kokoro TTS and derives the clock from
+local Whisper word times re-attached to the script's spelling; `npm run asr`
+listens to the master and is the G7 gate) → `10e` the SFX kit (layers, modal
 resonators, friction, synthetic IR reverb, ambience) with a cue bound to its
 picture event, still generated in code. Music (ACE-Step) is **staged** until the
 first film that uses it. Banned: generative **images or video** in the render
