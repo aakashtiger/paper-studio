@@ -46,6 +46,12 @@ export type GridOptions = {
   font: string;
   /** Explicit column count. Omit to auto-fit. */
   cols?: number;
+  /**
+   * Explicit row lengths (tiles per row, in order). Use this for a strip sheet:
+   * one row per shot, rows of different lengths, each row left-aligned and the
+   * remaining cells left as background. Sum must equal `tiles.length`.
+   */
+  rows?: number[];
   /** Column cap used by auto-fit. Default 3. */
   maxCols?: number;
   /** ffmpeg colour for the fill and the label box. Default a neutral dark. */
@@ -79,6 +85,32 @@ export function planGrid(
     (_, index) => `${(index % clamped) * tileWidth}_${Math.floor(index / clamped) * tileHeight}`,
   ).join("|");
   return { cols: clamped, rows, layout, width: clamped * tileWidth, height: rows * tileHeight };
+}
+
+/**
+ * A sheet whose rows have different lengths, e.g. one strip per shot. Each row
+ * starts at the left; the space past a short row stays background fill. The
+ * canvas is as wide as the longest row and as tall as the number of rows.
+ */
+export function planGridRows(counts: number[], tileWidth: number, tileHeight: number): GridPlan {
+  if (counts.length === 0) throw new Error("planGridRows needs at least one row");
+  if (counts.some((count) => !Number.isInteger(count) || count < 1)) {
+    throw new Error("planGridRows rows must each hold at least one tile");
+  }
+  const cols = Math.max(...counts);
+  const layout: string[] = [];
+  counts.forEach((count, row) => {
+    for (let col = 0; col < count; col += 1) {
+      layout.push(`${col * tileWidth}_${row * tileHeight}`);
+    }
+  });
+  return {
+    cols,
+    rows: counts.length,
+    layout: layout.join("|"),
+    width: cols * tileWidth,
+    height: counts.length * tileHeight,
+  };
 }
 
 /**
@@ -167,7 +199,12 @@ export async function renderGrid(options: GridOptions): Promise<GridPlan & { pat
   } = options;
   if (tiles.length === 0) throw new Error("renderGrid: no tiles");
 
-  const grid = planGrid(tiles.length, options.cols ?? autoCols(tiles.length, maxCols), tileWidth, tileHeight);
+  const grid = options.rows
+    ? planGridRows(options.rows, tileWidth, tileHeight)
+    : planGrid(tiles.length, options.cols ?? autoCols(tiles.length, maxCols), tileWidth, tileHeight);
+  if (options.rows && options.rows.reduce((sum, count) => sum + count, 0) !== tiles.length) {
+    throw new Error(`renderGrid: rows describes ${options.rows.reduce((sum, count) => sum + count, 0)} tiles, not ${tiles.length}`);
+  }
 
   const missing = tiles.filter((tile) => !existsSync(tile.image)).map((tile) => tile.image);
   if (missing.length > 0) throw new Error(`renderGrid: missing tiles: ${missing.join(", ")}`);

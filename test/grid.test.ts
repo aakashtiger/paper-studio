@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { autoCols, gridGraph, planGrid } from "../src/engine/grid.js";
+import { autoCols, gridGraph, planGrid, planGridRows } from "../src/engine/grid.js";
 
 test("autoCols stays square-ish and capped", () => {
   assert.equal(autoCols(1), 1);
@@ -37,6 +37,20 @@ test("planGrid handles a single tile", () => {
   assert.equal(grid.layout, "0_0");
   assert.equal(grid.width, 640);
   assert.equal(grid.height, 360);
+});
+
+test("planGridRows starts each row on the left and sizes to the longest", () => {
+  const grid = planGridRows([3, 1, 2], 100, 50);
+  assert.equal(grid.cols, 3);
+  assert.equal(grid.rows, 3);
+  assert.equal(grid.layout, "0_0|100_0|200_0|0_50|0_100|100_100");
+  assert.equal(grid.width, 300);
+  assert.equal(grid.height, 150);
+});
+
+test("planGridRows rejects an empty or empty-row layout", () => {
+  assert.throws(() => planGridRows([], 100, 50), /at least one row/);
+  assert.throws(() => planGridRows([2, 0], 100, 50), /at least one tile/);
 });
 
 test("gridGraph never sends a single tile through xstack", () => {
