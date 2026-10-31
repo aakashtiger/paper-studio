@@ -8,7 +8,8 @@
  * tile's label, and runs one ffmpeg pass.
  *
  * A sheet is a review artifact. It lives under `build/`, is gitignored, and
- * never enters a render manifest or a frame hash.
+ * never enters a render manifest or a frame hash. Its fill and label colours are
+ * neutral review chrome, not a film palette; the caller names the font.
  */
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, extname, join } from "node:path";
@@ -123,6 +124,28 @@ export function runBinary(
 }
 
 /**
+ * Build the ffmpeg filtergraph for a batch.
+ *
+ * ffmpeg's xstack needs at least two inputs, so a single tile is passed straight
+ * through. Pure, so the one-tile case is guarded by a unit test and not only by
+ * a live render.
+ */
+export function gridGraph(
+  filters: string[],
+  layout: string,
+  background: string,
+): { graph: string; map: string[] } {
+  if (filters.length === 0) throw new Error("gridGraph: no filters");
+  if (filters.length === 1) {
+    return { graph: `[0:v]${filters[0]}[v0]`, map: ["-map", "[v0]"] };
+  }
+  const chains = filters.map((filter, index) => `[${index}:v]${filter}[v${index}]`);
+  const stacked = filters.map((_, index) => `[v${index}]`).join("");
+  chains.push(`${stacked}xstack=inputs=${filters.length}:layout=${layout}:fill=${background}`);
+  return { graph: chains.join(";"), map: [] };
+}
+
+/**
  * Tile images into one labelled sheet.
  *
  * Label and font paths are written as repo-relative paths (forward slashes) and
@@ -172,18 +195,7 @@ export async function renderGrid(options: GridOptions): Promise<GridPlan & { pat
   });
 
   const inputs = tiles.flatMap((tile) => ["-i", tile.image]);
-  const links: string[] = [];
-  let graph: string;
-  if (tiles.length === 1) {
-    // ffmpeg xstack needs at least two inputs; a single tile passes straight through.
-    graph = `[0:v]${filters[0]}[v0]`;
-    links.push("-map", "[v0]");
-  } else {
-    const chains = filters.map((filter, index) => `[${index}:v]${filter}[v${index}]`);
-    const stacked = filters.map((_, index) => `[v${index}]`).join("");
-    chains.push(`${stacked}xstack=inputs=${tiles.length}:layout=${grid.layout}:fill=${background}`);
-    graph = chains.join(";");
-  }
+  const { graph, map } = gridGraph(filters, grid.layout, background);
 
   // A stale sheet must never masquerade as a fresh one.
   if (existsSync(out)) rmSync(out);
@@ -194,7 +206,7 @@ export async function renderGrid(options: GridOptions): Promise<GridPlan & { pat
       "-y", "-hide_banner", "-loglevel", "error",
       ...inputs,
       "-filter_complex", graph,
-      ...links,
+      ...map,
       "-frames:v", "1",
       out,
     ],

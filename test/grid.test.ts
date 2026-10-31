@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { autoCols, planGrid } from "../src/engine/grid.js";
+import { autoCols, gridGraph, planGrid } from "../src/engine/grid.js";
 
 test("autoCols stays square-ish and capped", () => {
   assert.equal(autoCols(1), 1);
@@ -37,4 +37,17 @@ test("planGrid handles a single tile", () => {
   assert.equal(grid.layout, "0_0");
   assert.equal(grid.width, 640);
   assert.equal(grid.height, 360);
+});
+
+test("gridGraph never sends a single tile through xstack", () => {
+  const one = gridGraph(["scale=640:360"], "0_0", "0x101010");
+  assert.equal(one.graph, "[0:v]scale=640:360[v0]");
+  assert.deepEqual(one.map, ["-map", "[v0]"]);
+  assert.ok(!one.graph.includes("xstack"));
+});
+
+test("gridGraph stacks two or more tiles with xstack", () => {
+  const two = gridGraph(["a", "b"], "0_0|640_0", "0x101010");
+  assert.equal(two.graph, "[0:v]a[v0];[1:v]b[v1];[v0][v1]xstack=inputs=2:layout=0_0|640_0:fill=0x101010");
+  assert.deepEqual(two.map, []);
 });
