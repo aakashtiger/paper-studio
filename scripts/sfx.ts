@@ -1,6 +1,7 @@
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
+import { findFfmpeg, renderGrid, runBinary } from "../src/engine/grid.js";
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
@@ -9,55 +10,127 @@ if (!file) {
   process.exit(2);
 }
 
-const root = process.cwd();
-const score = FilmScoreSchema.parse(JSON.parse(readFileSync(resolve(root, file), "utf8")));
-const { plan, errors } = resolveFilm(score, resolve(root, `styles/${score.style}`), root);
-if (errors.length > 0) {
-  for (const error of errors) console.error(`error: ${error.message}`);
-  process.exit(1);
-}
-const cues = plan.audio.sfx?.cues ?? [];
-if (cues.length === 0) {
-  console.log("sfx: no cues");
-  process.exit(0);
-}
-
 const sr = 48_000;
-const outDir = resolve(root, "build", score.id, "sfx");
-mkdirSync(outDir, { recursive: true });
-const total = Math.ceil((plan.duration + 0.5) * sr);
-const mix = new Float32Array(total * 2);
 
-for (const cue of cues) {
-  const len = Math.ceil((cue.duration ?? defaultLength(cue.kind)) * sr);
-  const samples = synth(cue.kind, len, cue.id);
-  let samplePeak = 0;
-  for (const value of samples) samplePeak = Math.max(samplePeak, Math.abs(value));
-  const normalize = samplePeak > 0 ? 1 / samplePeak : 1;
-  for (let i = 0; i < samples.length; i++) samples[i] = (samples[i] ?? 0) * normalize;
-  const gain = cue.gain ?? kindGain(cue.kind);
-  const start = Math.round(cue.at * sr);
-  const pan = cue.pan ?? 0;
-  for (let i = 0; i < samples.length; i++) {
-    const s = (samples[i] ?? 0) * gain;
-    const l = s * Math.sqrt(0.5 * (1 - pan));
-    const r = s * Math.sqrt(0.5 * (1 + pan));
-    const at = (start + i) * 2;
-    if (at + 1 < mix.length) {
-      mix[at] = (mix[at] ?? 0) + l;
-      mix[at + 1] = (mix[at + 1] ?? 0) + r;
-    }
+async function main(scorePath: string): Promise<void> {
+  const root = process.cwd();
+  const score = FilmScoreSchema.parse(JSON.parse(readFileSync(resolve(root, scorePath), "utf8")));
+  const { plan, errors } = resolveFilm(score, resolve(root, `styles/${score.style}`), root);
+  if (errors.length > 0) {
+    for (const error of errors) console.error(`error: ${error.message}`);
+    process.exit(1);
   }
-  writeWav(resolve(outDir, `${cue.id}.wav`), samples, gain, pan);
+  const cues = plan.audio.sfx?.cues ?? [];
+  if (cues.length === 0) {
+    console.log("sfx: no cues");
+    return;
+  }
+
+  const outDir = resolve(root, "build", score.id, "sfx");
+  mkdirSync(outDir, { recursive: true });
+  const total = Math.ceil((plan.duration + 0.5) * sr);
+  const mix = new Float32Array(total * 2);
+
+  for (const cue of cues) {
+    const len = Math.ceil((cue.duration ?? defaultLength(cue.kind)) * sr);
+    const samples = synth(cue.kind, len, cue.id);
+    let samplePeak = 0;
+    for (const value of samples) samplePeak = Math.max(samplePeak, Math.abs(value));
+    const normalize = samplePeak > 0 ? 1 / samplePeak : 1;
+    for (let i = 0; i < samples.length; i++) samples[i] = (samples[i] ?? 0) * normalize;
+    const gain = cue.gain ?? kindGain(cue.kind);
+    const start = Math.round(cue.at * sr);
+    const pan = cue.pan ?? 0;
+    for (let i = 0; i < samples.length; i++) {
+      const s = (samples[i] ?? 0) * gain;
+      const l = s * Math.sqrt(0.5 * (1 - pan));
+      const r = s * Math.sqrt(0.5 * (1 + pan));
+      const at = (start + i) * 2;
+      if (at + 1 < mix.length) {
+        mix[at] = (mix[at] ?? 0) + l;
+        mix[at + 1] = (mix[at + 1] ?? 0) + r;
+      }
+    }
+    writeWav(resolve(outDir, `${cue.id}.wav`), samples, gain, pan);
+  }
+
+  let peak = 0;
+  for (const value of mix) peak = Math.max(peak, Math.abs(value));
+  const norm = peak > 0.9 ? 0.9 / peak : 1;
+  for (let i = 0; i < mix.length; i++) mix[i] = (mix[i] ?? 0) * norm;
+  writeWav(resolve(outDir, "mix.wav"), mix, 1, 0, true);
+
+  console.log(`sfx: ${cues.length} cues → build/${score.id}/sfx/mix.wav`);
+
+  if (!args.includes("--no-sheet")) {
+    await spectrogramSheet(root, score.id, outDir, cues);
+  }
 }
 
-let peak = 0;
-for (const value of mix) peak = Math.max(peak, Math.abs(value));
-const norm = peak > 0.9 ? 0.9 / peak : 1;
-for (let i = 0; i < mix.length; i++) mix[i] = (mix[i] ?? 0) * norm;
-writeWav(resolve(outDir, "mix.wav"), mix, 1, 0, true);
+/**
+ * G6 asks for a spectrogram per cue on one image. ffmpeg's `showspectrumpic`
+ * turns each generated cue into a time x frequency picture; the one grid helper
+ * tiles them, labelled with the cue and the picture event it sits on.
+ */
+async function spectrogramSheet(
+  root: string,
+  filmId: string,
+  outDir: string,
+  cues: Array<{ id: string; kind: string; at: number }>,
+): Promise<void> {
+  const framesDir = join(outDir, "spectrograms");
+  rmSync(framesDir, { recursive: true, force: true });
+  mkdirSync(framesDir, { recursive: true });
+  const ffmpeg = findFfmpeg();
+  const tileW = 480;
+  const tileH = 200;
+  const tiles: { image: string; label: string }[] = [];
+  for (const cue of cues) {
+    const wav = resolve(outDir, `${cue.id}.wav`);
+    if (!existsSync(wav)) continue;
+    const image = join(framesDir, `${cue.id}.png`);
+    await runBinary(
+      ffmpeg,
+      ["-y", "-hide_banner", "-loglevel", "error", "-i", wav, "-lavfi", `showspectrumpic=s=${tileW}x${tileH}:legend=0`, "-frames:v", "1", image],
+      { cwd: root },
+    );
+    if (!existsSync(image)) throw new Error(`no spectrogram for cue ${cue.id}`);
+    tiles.push({ image, label: `${cue.id} · ${cue.kind} @ ${cue.at.toFixed(2)}s` });
+  }
+  if (tiles.length === 0) return;
 
-console.log(`sfx: ${cues.length} cues → build/${score.id}/sfx/mix.wav`);
+  const sheet = join(outDir, "spectrogram-sheet.png");
+  const grid = await renderGrid({
+    root,
+    out: sheet,
+    tiles,
+    tileWidth: tileW,
+    tileHeight: tileH,
+    font: "proofs/s2-paper/assets/fonts/DMMono-Regular.ttf",
+    labelDir: `build/${filmId}/sfx/labels`,
+  });
+  writeFileSync(
+    join(outDir, "spectrogram.json"),
+    `${JSON.stringify(
+      {
+        film: filmId,
+        cues: tiles.length,
+        sheet: `build/${filmId}/sfx/spectrogram-sheet.png`,
+        grid: { cols: grid.cols, rows: grid.rows, width: grid.width, height: grid.height },
+        generatedAt: new Date().toISOString(),
+      },
+      null,
+      2,
+    )}\n`,
+    "utf8",
+  );
+  console.log(`sfx: spectrogram sheet ${grid.cols}×${grid.rows} → build/${filmId}/sfx/spectrogram-sheet.png`);
+}
+
+main(file).catch((error) => {
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exit(1);
+});
 
 function kindGain(kind: string): number {
   switch (kind) {

@@ -11,9 +11,9 @@ warning.
 | G2 direction + look | score, `build/<id>/board/`, `build/<id>/board/board-sheet.png`, `build/<id>/storyboard/storyboard.png`, hero frames | `npm run board -- <score>` + `npm run storyboard -- <score>` | all shots inside the envelope; median in band; board covers every shot and marked beat; the board sheet shows every card on one image; the storyboard shows one code-drawn frame per shot, in order, on one sheet; look table complete | designer, editor | ready |
 | G3 animatic | board pass + stepped rough | `npm run animatic -- <score>` + `npm run rough -- <score>` | board pass signed 9/10; stepped rough paints the score at 10 fps; every board time paired to its frame; every shot's median frame-to-frame change ≥ 0.6 and no hold >0.4 s; no camera-only shot; ≥2 breakdowns per transition | motion, editor, QA | **board pass signed; stepped rough measures pass** |
 | G4 assets | `build/<id>/sheets/*.png` | `npm run sheet -- <score>` | seam gap 0; feet planted; contact shadow; 8 poses + 4 expressions; joint map; hand/foot/coat panels | designer, developer, QA | ready |
-| G5 shots | animated shots, `build/<id>/strips/` | `npm run render:film -- <score>` + `npm run audit:motion -- <score>` + `npm run strips -- <score>` | entry/exit match; ≥3 events; no floating part; every shot's median frame-to-frame change ≥ 0.6 and no dead stretch > 0.1 s; one strip per shot every 0.5 s on one image | motion, editor | **measured** |
+| G5 shots | animated shots, `build/<id>/strips/` | `npm run render:film -- <score>` + `npm run audit:motion -- <score>` + `npm run strips -- <score>` | entry/exit match; ≥3 events; no floating part; every shot's median frame-to-frame change ≥ 0.6 and no dead stretch > 0.1 s; one strip per shot every 0.5 s on one image (from the delivered MP4) | motion, editor | **measured + strips sheet** |
 | G6 mix | master + SFX + `build/<id>/sfx/spectrogram-sheet.png` | `npm run mix -- <score>` | every cue generated in code and layered (transient, body, tail); no machine-gun repetition; voice highpassed at 75 Hz; the 1–4 kHz band ducked against the voice; one shared reverb return; tail faded; **no ticks, clicks, hats, glitches or beeps (phone-speaker rule)**; a spectrogram sheet per cue on one image; master −14.0 LUFS / ≤ −1.5 dBTP | sound, editor, QA | **master ready** |
-| G7 final | MP4 + SRT + score + stills + `gate-7.json` | `npm run gate:7 -- <score>` | one frozen MP4 hash; score audit, frames, paint-match, motion floor, type safe area, rig seam, one-hash, hashed inputs, determinism, mix and palette all pass; only ASR is still judged by hand | all seven + director | **partial** |
+| G7 final | MP4 + SRT + score + stills + `gate-7.json` | `npm run gate:7 -- <score>` | one frozen MP4 hash; score audit, frames, paint-match, motion floor, type safe area, rig seam, one-hash, hashed inputs, determinism, mix, palette and the final 0.5 s contact sheet all pass; only ASR is still judged by hand | all seven + director | **partial** |
 
 ## Paint match
 
@@ -122,9 +122,11 @@ gitignored, and **never enters a render manifest or a frame hash**.
 | spectrogram, per cue | `npm run sfx -- <score>` | G6 |
 | final 0.5 s contact sheet | `npm run gate:7 -- <score>` | G7 |
 
-A gate is only real if a command proves it. The board sheet and storyboard exist;
-the strips, spectrogram and final sheet are the sheets G5–G7 already required but
-had no command for, and land with steps 6–7.
+A gate is only real if a command proves it. Every sheet in this table now exists:
+the board sheet and storyboard (G2), the derived style sheet, the stills sheet,
+the per-shot strips (G5, read from the delivered MP4), the per-cue spectrogram
+sheet (written by `npm run sfx`) and the final contact sheet (written by
+`npm run gate:7`).
 
 ## Rule
 

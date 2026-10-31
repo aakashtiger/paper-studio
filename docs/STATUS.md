@@ -11,10 +11,13 @@ painter now lives in the style pack (`styles/paper-kpop/canvas/recipes.js`,
 decision 0015). Four mechanical G7 audits are built — `audit:motion`,
 `audit:type`, `audit:rig`, plus `audit:paint` — and `gate:7` ties the score
 audit, frames, one-hash, paint-match, motion floor, type safe area, rig seam,
-hashed inputs, determinism, mix and palette to a single frozen MP4. **169 tests
-pass**, typecheck is clean, and `gate:7` passes 12 checks; ASR is the one
-remaining manual check — deferred to the voice pipeline, not skipped (decisions
-0016, 0017). The
+hashed inputs, determinism, mix, palette and the one-image final contact sheet to
+a single frozen MP4. The review surface is one look per artifact: a board sheet,
+a derived style sheet, a stills sheet, the storyboard (one frame per shot), a
+per-shot strips sheet from the delivered MP4, and a spectrogram sheet per cue.
+**193 tests pass**, typecheck is clean, and `gate:7` passes 13 checks; ASR is the
+one remaining manual check — deferred to the voice pipeline, not skipped
+(decisions 0016, 0017). The
 **stepped rough** is built (`npm run rough`): the score painted at 10 fps through
 the same painter, every board time paired to its frame on one contact sheet, every
 shot measured for motion — all nine shots pass the 0.6 floor with no hold over
