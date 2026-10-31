@@ -10,6 +10,7 @@
     "film": "tsx scripts/film.ts",
     "board": "tsx scripts/board.ts",
     "storyboard": "tsx scripts/storyboard.ts",
+    "stills": "tsx scripts/stills.ts",
     "doctor": "tsx scripts/doctor.ts",
     "audit": "tsx scripts/audit.ts",
     "sheet": "tsx scripts/sheet.ts",
