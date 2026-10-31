@@ -9,6 +9,7 @@
     "treatment": "tsx scripts/treatment.ts",
     "film": "tsx scripts/film.ts",
     "film:new": "tsx scripts/film-new.ts",
+    "film:review": "tsx scripts/film-review.ts",
     "board": "tsx scripts/board.ts",
     "storyboard": "tsx scripts/storyboard.ts",
     "stills": "tsx scripts/stills.ts",

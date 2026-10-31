@@ -52,9 +52,13 @@ npm install            # install
 npm run plan -- fixtures/wedding-min/brief.json   # print a shot plan
 npm run treatment -- proofs/s2-paper/plan.json    # validate a creative treatment
 npm run film -- films/understudy/score.json      # validate a scored film
+npm run film:new -- --brief films/understudy/brief.json   # scaffold a score, never invent one
+npm run film:review -- films/understudy/score.json        # chain the review, one page + one sheet
 npm run captions -- films/understudy/score.json  # generate transcript + SRT
 npm run board -- films/understudy/score.json     # derive board cards (HTML + manifest)
 npm run storyboard -- films/understudy/score.json   # one code-drawn frame per shot, tiled into one sheet
+npm run stills -- films/understudy/score.json    # sample the film, tiled into one sheet
+npm run strips -- films/understudy/score.json    # one strip per shot from the delivered MP4
 npm run audit -- films/understudy/score.json     # score-level audit
 npm run audit:motion -- films/understudy/score.json   # per-shot motion floor
 npm run audit:type -- films/understudy/score.json      # text inside the safe area
@@ -75,6 +79,7 @@ npm run style:new -- <id> --brief <file>
 npm run style:check -- <path>
 npm run style:approve -- <id> --by "<name>"
 npm run style:resolve -- --style <path> --seed <n> --brief <file> --format <file>
+npm run style:sheet -- styles/paper-kpop          # derived style sheet into build/
 npm run style:seal
 node --import tsx --test test/watercolor-gate.test.ts   # S1b pilot gate
 node --import tsx --test test/paper-kpop-gate.test.ts   # S1c gate
