@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { sampleTimes } from "../src/engine/sampling.js";
+import { sampleTimes, shotTimes } from "../src/engine/sampling.js";
 
 test("sampleTimes starts at zero, steps, and ends on the last frame", () => {
   assert.deepEqual(sampleTimes(5, 2), [0, 2, 4, 4.95]);
@@ -26,4 +26,28 @@ test("sampleTimes handles a film shorter than the step", () => {
 
 test("sampleTimes refuses a non-positive duration", () => {
   assert.throws(() => sampleTimes(0, 1));
+});
+
+const shots = [
+  { id: "s01", start: 0, duration: 4 },
+  { id: "s02", start: 4, duration: 2 },
+  { id: "s03", start: 6, duration: 8 },
+];
+
+test("shotTimes returns exactly one time per shot, in order", () => {
+  const times = shotTimes(shots);
+  assert.equal(times.length, shots.length);
+  assert.deepEqual(times.map((entry) => entry.id), ["s01", "s02", "s03"]);
+  assert.deepEqual(times.map((entry) => entry.index), [0, 1, 2]);
+});
+
+test("each shot time stays inside its own shot", () => {
+  for (const entry of shotTimes(shots, 0.99)) {
+    assert.ok(entry.time >= entry.from && entry.time < entry.to, `${entry.id} time ${entry.time}`);
+  }
+  assert.deepEqual(shotTimes(shots).map((entry) => entry.time), [2, 5, 10]);
+});
+
+test("shotTimes refuses an empty score", () => {
+  assert.throws(() => shotTimes([]));
 });

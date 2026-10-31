@@ -21,6 +21,7 @@ import { join, resolve } from "node:path";
 import { spawn } from "node:child_process";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
 import { renderGrid } from "../src/engine/grid.js";
+import { shotTimes } from "../src/engine/sampling.js";
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
@@ -54,11 +55,12 @@ async function main(): Promise<void> {
   mkdirSync(framesDir, { recursive: true });
 
   // 1. One representative time per shot, in shot order (never fewer, never invented).
-  const frames = plan.shots.map((shot) => {
-    const from = shot.start;
-    const time = Number((from + shot.duration * at).toFixed(2));
-    return { shot, from, to: Number((from + shot.duration).toFixed(2)), time };
-  });
+  const frames = shotTimes(plan.shots, at).map((entry) => ({
+    shot: plan.shots[entry.index]!,
+    from: entry.from,
+    to: entry.to,
+    time: entry.time,
+  }));
   const times = frames.map((frame) => frame.time);
 
   console.log(`storyboard: painting ${frames.length} shots at ${at * 100}% through each`);
