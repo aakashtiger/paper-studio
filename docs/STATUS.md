@@ -13,7 +13,8 @@ decision 0015). Four mechanical G7 audits are built — `audit:motion`,
 audit, frames, one-hash, paint-match, motion floor, type safe area, rig seam,
 hashed inputs, determinism, mix and palette to a single frozen MP4. **169 tests
 pass**, typecheck is clean, and `gate:7` passes 12 checks; ASR is the one
-remaining manual check (deferred to the voice pipeline, decision 0016). The
+remaining manual check — deferred to the voice pipeline, not skipped (decisions
+0016, 0017). The
 **stepped rough** is built (`npm run rough`): the score painted at 10 fps through
 the same painter, every board time paired to its frame on one contact sheet, every
 shot measured for motion — all nine shots pass the 0.6 floor with no hold over
@@ -32,6 +33,19 @@ board animatic is **9/10 signed** (editor + QA) with voice, burned captions and
 13 generated SFX cues; it is a board pass, not a stepped rough. The seven
 critics are in `critics/`, the gate checklist in `docs/GATES.md`. Next:
 stepped rough/painter, look pass, final mix. No film render before those.
+
+**Update (decision 0017):** the review surface is being closed. One grid helper
+(`src/engine/grid.ts`) and a board sheet land first, then a derived style sheet,
+a stills sheet, the storyboard as exactly one frame per shot, and the three gate
+sheets G5–G7 already required but had no command for. `film:new` (scaffolds,
+never invents) and `film:review` become the front door. The voice pipeline is
+known tooling — Kokoro (TTS) or a recorded file, word timings from local Whisper
+re-attached to the script's spelling, and ASR of the mixed master as the G7 gate
+— so step 10 unblocks without waiting for a human read. The SFX generator is
+upgraded to a real kit (layers, modal resonators, friction, synthetic IR reverb,
+ambience) with each cue bound to its picture event, still generated in code;
+music (ACE-Step) stays staged. Banned: generative images or video in the render
+path. Allowed: local models for voice, word timing and music.
 
 **Purpose:** an honest inventory of what exists, what is weak, and what is
 missing, with a deliberately small build plan. No new architecture unless it

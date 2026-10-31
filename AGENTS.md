@@ -152,6 +152,22 @@ voice pipeline (decision 0016). Only then does the user's idea become a film. No
 film render before the core is fixed. No app, no asset library, no watercolor
 until the first film ships.
 
+**The review surface is being closed (decision 0017).** Two creator workflows and
+a survey found three gate rows that required a review sheet with no command, and
+two contracts that drifted. The change set, in order: `0` reconcile docs → `1`
+one grid helper (`src/engine/grid.ts`) + board sheet → `2` `doctor` (built) → `3`
+style sheet PNG derived into `build/` → `4` stills sheet → `5` storyboard as
+exactly one frame per shot, in order → `6–7` the G5 per-shot strips, the G6
+spectrogram sheet and the G7 final sheet, each a command → `8` `film:new`
+(scaffolds, never invents) → `9` `film:review` → `10` voice-as-clock (Kokoro TTS
+or a recorded file; word timings from local Whisper re-attached to the script's
+spelling; ASR of the master is the G7 gate) → `10e` the SFX kit (layers, modal
+resonators, friction, synthetic IR reverb, ambience) with a cue bound to its
+picture event, still generated in code. Music (ACE-Step) is **staged** until the
+first film that uses it. Banned: generative **images or video** in the render
+path, and per-film LLM-written animation code. Allowed: local models for voice,
+word timing and music, because the picture stays entirely code-drawn.
+
 Do not build: the renderer in this phase, a video, the web app, a second product
 style, or a conversion of the other 58 Lemo styles. `styles/paper-vows` remains
 legacy and is not expected to pass the S1a validator.

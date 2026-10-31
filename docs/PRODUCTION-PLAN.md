@@ -146,18 +146,20 @@ fixture.
   accent count;
 - **poster frame**: design shot 8 (the duet) first; shots 3 and 7 are crops or
   moves inside it;
-- **storyboard**: **one frame per shot plus any key beat the director marks**,
-  each rendered from the score at its poster moment, assembled as a contact
-  sheet in order. The count is derived from the shots and beats; there is no
-  fixed number. 1920, plus a 390 px legibility check of the title and caption;
+- **storyboard**: **exactly one code-drawn frame per shot, in order**, each
+  rendered from the score at its poster moment, assembled as one contact sheet.
+  It is a review artifact, created only after the shots exist. Key beats live on
+  the **text board**, not here. The 390 px legibility check belongs to
+  `audit:type`, not to the sheet (decision 0017);
 - **five hero frames** cut from the board: title, wings, sticker, duet-poster,
   close, for look approval at 1920;
 - reference board: `papercut-red`, `paper-popup`, `spy-titles`; steal/refuse notes.
 
 **Gate 2:** 9 shots; median 3.0 s ±25%; every recipe inside min/max (stage_wide
 is 3.4-5.5, not 1.2); every field present; **the board covers every shot and
-every marked key beat, and reads in order**; five hero frames at 1920 plus the
-390 check; look table complete; four roles max;
+every marked key beat, and reads in order**; five hero frames at 1920 (the
+390 px text check is enforced by `audit:type`, not drawn on the sheet); look
+table complete; four roles max;
 one accent; one signature; no two shots share the same recipe + camera + event
 signature.
 
@@ -195,7 +197,7 @@ expressions on the sheet; a joint/anchor map; hand, foot and wardrobe detail
 panels; badge reads MIRA; sheet approved at 1920. Paper K-pop is a front/three-
 quarter puppet style: those are the required views. Side and back views are
 required only for a rig that has them; do not fake them with a squash. The
-390 px check applies only to the title and caption in Gate 2, not to the sheet.
+390 px text check lives in `audit:type`, not on the sheet.
 
 ### Step 5 — Animation
 
@@ -222,10 +224,15 @@ The animatic sets each shot's target; the final may not fall below 80% of it.
 designed silence, −14 LUFS ±1.
 
 **SFX:** `scripts/sfx.ts` reads `score.audio.sfx` and synthesises every cue to
-`films/<id>/sfx/<id>.wav` — paper snap, whoosh, lamp buzz, sticker slam, step,
-crowd, confetti, iris. Deterministic noise and envelopes; no sample library.
-Each cue has an id, type, start, duration, gain, pan and a hash. The mix is voice
-+ SFX; ducking is added only when a music bed exists.
+`films/<id>/sfx/<id>.wav`. The generator builds each cue from **layered parts**
+(transient, body, tail) using **modal resonators** for material (wood, metal,
+paper, glass), **friction/stick-slip** for creaks and cloth, **synthetic impulse
+responses** for space, and an **ambience kit** for wind, rain, water, crowd and
+hum. Still no sample library. Each cue has an id, type, start, duration, gain,
+pan, a hash and, where the picture causes it, a **bound event** so its time is
+derived, not typed twice. Mix for phone speakers: no ticks, clicks, hats,
+glitches or beeps. The mix is voice + SFX; ducking is added only when a music bed
+exists.
 
 **Gate 6 is a sound gate, not a file check:**
 - every cue file exists, its hash matches, and it is audible;
@@ -344,20 +351,26 @@ type AudioPlan = {
     offset?: number;
     beatMap?: string;
   };
-  sfx: { source: "generated"; cues: SoundCue[] };
+  sfx: { source: "generated" | "library" | "recorded"; cues: SoundCue[] };
 };
 ```
 
-**Narration:** recorded or TTS. Either way it produces a voice file, a transcript
-with word timings and an SRT. The shot rows then take their phrase marks from
-that transcript.
+**Narration:** recorded or TTS. A TTS voice names a **provider** (`kokoro`,
+local; `elevenlabs`, cloud, fetched once at authoring time and pinned as a WAV);
+the render never touches the network. Word timings come from local **Whisper**,
+re-attached to the script's spelling. Either way it produces a pinned voice file,
+a transcript of the actual read and an SRT. The shot rows then take their phrase
+marks from that transcript, so the voice is the clock.
 
 **Music:** library first, generated fallback. A library track carries an id, a
 licence, BPM, offset and a beat map. If no cleared track fits the style, mood and
 duration, `scripts/music.ts` generates a score. The film never ships with an
 unlicensed track.
 
-**SFX:** generated in code from the cue list. No sample library.
+**SFX:** generated in code from the cue list. The kit is upgraded (layers,
+resonators, friction, IR reverb, ambience) and a cue may bind to its picture
+event. `library` and `recorded` sources are defined but unbuilt; the library is
+grown by promoting good generated cues, with provenance kept.
 
 **Fixture:** narration only, scratch voice now; final recorded or TTS later. No
 music. The schema and order already support the other modes.
@@ -386,7 +399,7 @@ These are real gaps, listed so they are not mistaken for done:
 | Gap | Why it matters | When |
 |---|---|---|
 | **Music library + licensing** | pick or generate a track; no unlicensed music | before the first music film |
-| **Voice pipeline** | recorded vs TTS, transcript, ASR; final voice quality | before the first film's final voice |
+| **Voice pipeline** | recorded vs TTS (`provider` = kokoro/elevenlabs), word timings from local Whisper, voice as the clock; ASR of the master as the G7 gate | before the first film's final voice |
 | **Format contract 9:16 / 1:1** | re-stage, safe zones, delivery | after the first 16:9 film |
 | **Asset library + provenance** | reuse at scale, versions, rights | after three films |
 | **Rights and licences** | fonts, music, voice, references; sellable output | before delivery |
@@ -457,11 +470,11 @@ All recipes are inside their limits (stage_wide min 3.4). No `proof: true`.
 | rig port | `src/characters.js` uses the same `limbEnd`; drift test | 1 |
 | audit | 900 frame pixel hashes, trace, cues, palette, type, audio | 1 |
 | audio spine | voice + transcript + SRT + cue list | 1 |
-| storyboard | derived from the score: one frame per shot + marked beats | 2 |
+| storyboard | derived from the score: exactly one frame per shot, in order | 2 |
 | look pass | stage rebuild, poster, five hero frames | 2 |
 | animatic | board pass + stepped rough at 10 fps + camera + voice/SFX | 3 |
 | pose layer | named poses, tracks, interpolation, 10 fps stepping | 5 |
-| sfx | `scripts/sfx.ts` synthesises every cue; no sample library | 6 |
+| sfx | `scripts/sfx.ts` synthesises every cue (layers, resonators, IR, ambience); no sample library | 6 |
 | final + delivery | mix, seven critics, MP4/SRT/score/stills/audit | 7 |
 
 ## Build order
@@ -490,15 +503,26 @@ All recipes are inside their limits (stage_wide min 3.4). No `proof: true`.
 
 - A cue-sheet, shot-sheet or `assets.json` file; the score is the source.
 - A separate animatic CLI; ffmpeg concat is enough.
-- A storyboard image farm. The board is derived from the score; it is not an
-  authored asset with a target count.
+- A storyboard image farm. This bans an **authored** storyboard with a target
+  count. A **derived** storyboard — one code-drawn frame per shot, created after
+  the shots exist — is a review artifact and is required (decision 0017).
 - An asset library, watercolor backend, app, timeline editor, plugin system.
-- A sample library. SFX are generated in code.
+- A sample library. SFX are generated in code. `library` and `recorded` sources
+  are **defined but unbuilt** so a free pack can drop in later without a contract
+  change; the library grows by promoting good generated cues.
 - `proof: true` in any deliverable.
 - Per-shot native moves; one signature (slam) and one transition (iris).
 - 24–36-frame idles; a 0.4 s blanket that forces twitch.
-- 390 px approval sets; one legibility check is enough.
+- 390 px approval sets; one legibility check is enough, and it lives in
+  `audit:type`, not in the storyboard sheet.
 - Crowd tiers and speaker faces in the fixture look pass.
+
+**Banned vs allowed, stated once.** Banned: generative **images or video**
+anywhere in the render path, and per-film LLM-written animation code. Allowed:
+local models for **voice, word timing and music** (Kokoro, Whisper, ACE-Step),
+because the *picture* stays entirely code-drawn from the score. That is the
+honest reason a film re-renders byte-for-byte and a generative pipeline cannot
+(decision 0017).
 
 ## Definition of done for the first real film
 
@@ -507,8 +531,9 @@ All recipes are inside their limits (stage_wide min 3.4). No `proof: true`.
 - 9 shots, median 3.0 s, all recipes legal.
 - 6 narration lines, 6 SRT cues, read-time holds met.
 - The board covers every shot and marked beat; five hero frames approved at 1920
-  and 390 text check.
-- 10 SFX cues generated in code, layered, hashed and audible.
+  and the 390 text check in `audit:type`.
+- 10 SFX cues generated in code, layered, hashed, bound to their picture events
+  and audible.
 - No seam, blank, clip, palette or type fault in any frame.
 - Every cue on its frame; ASR, readcheck and motioncheck pass; two renders
   pixel-identical on all 900 frames.

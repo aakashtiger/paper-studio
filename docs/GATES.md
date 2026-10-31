@@ -8,11 +8,11 @@ warning.
 |---|---|---|---|---|---|
 | G0 brief | `brief.json` | `npm run film -- <score>` | fields complete; style, aspect, duration, fps and audio mode match the score | architect, editor | ready |
 | G1 audio | voice, `transcript.json`, `captions.srt`, cue list | `npm run captions -- <score>` | files exist and hash; transcript covers the script; SRT cues match; read-time holds | editor, sound, QA | ready |
-| G2 direction + look | score, `build/<id>/board/`, `build/<id>/storyboard/storyboard.png`, hero frames | `npm run board -- <score>` + `npm run storyboard -- <score>` | all shots inside the envelope; median in band; board covers every shot and marked beat; the storyboard shows one code-drawn frame per shot, in order, on one sheet; look table complete | designer, editor | ready |
+| G2 direction + look | score, `build/<id>/board/`, `build/<id>/board/board-sheet.png`, `build/<id>/storyboard/storyboard.png`, hero frames | `npm run board -- <score>` + `npm run storyboard -- <score>` | all shots inside the envelope; median in band; board covers every shot and marked beat; the board sheet shows every card on one image; the storyboard shows one code-drawn frame per shot, in order, on one sheet; look table complete | designer, editor | ready |
 | G3 animatic | board pass + stepped rough | `npm run animatic -- <score>` + `npm run rough -- <score>` | board pass signed 9/10; stepped rough paints the score at 10 fps; every board time paired to its frame; every shot's median frame-to-frame change ≥ 0.6 and no hold >0.4 s; no camera-only shot; ≥2 breakdowns per transition | motion, editor, QA | **board pass signed; stepped rough measures pass** |
 | G4 assets | `build/<id>/sheets/*.png` | `npm run sheet -- <score>` | seam gap 0; feet planted; contact shadow; 8 poses + 4 expressions; joint map; hand/foot/coat panels | designer, developer, QA | ready |
-| G5 shots | animated shots, contact sheets | `npm run render:film -- <score>` + `npm run audit:motion -- <score>` | entry/exit match; ≥3 events; no floating part; every shot's median frame-to-frame change ≥ 0.6 and no dead stretch > 0.1 s | motion, editor | **measured** |
-| G6 mix | master + SFX | `npm run mix -- <score>` | 13 cues generated; voice highpassed at 75 Hz; the 1–4 kHz band ducked against the voice; one shared reverb return; tail faded; master −14.0 LUFS / ≤ −1.5 dBTP | sound, editor, QA | **master ready** |
+| G5 shots | animated shots, `build/<id>/strips/` | `npm run render:film -- <score>` + `npm run audit:motion -- <score>` + `npm run strips -- <score>` | entry/exit match; ≥3 events; no floating part; every shot's median frame-to-frame change ≥ 0.6 and no dead stretch > 0.1 s; one strip per shot every 0.5 s on one image | motion, editor | **measured** |
+| G6 mix | master + SFX + `build/<id>/sfx/spectrogram-sheet.png` | `npm run mix -- <score>` | every cue generated in code and layered (transient, body, tail); no machine-gun repetition; voice highpassed at 75 Hz; the 1–4 kHz band ducked against the voice; one shared reverb return; tail faded; **no ticks, clicks, hats, glitches or beeps (phone-speaker rule)**; a spectrogram sheet per cue on one image; master −14.0 LUFS / ≤ −1.5 dBTP | sound, editor, QA | **master ready** |
 | G7 final | MP4 + SRT + score + stills + `gate-7.json` | `npm run gate:7 -- <score>` | one frozen MP4 hash; score audit, frames, paint-match, motion floor, type safe area, rig seam, one-hash, hashed inputs, determinism, mix and palette all pass; only ASR is still judged by hand | all seven + director | **partial** |
 
 ## Paint match
@@ -106,6 +106,26 @@ vendor scripts and **each cast pose library**. A pose edit is a film change, so
 it invalidates the manifest the same way a code edit does; `gate-7.json` checks
 the pose hashes with the `poseHashes` row.
 
+## Sheets (one look)
+
+Every batch of pictures is reviewed **on one image**, never file by file. One
+helper, `src/engine/grid.ts`, tiles labelled images; every command that produces
+N pictures uses it. A sheet is a **review artifact**: it lives under `build/`, is
+gitignored, and **never enters a render manifest or a frame hash**.
+
+| Sheet | Command | Gate |
+|---|---|---|
+| board sheet | `npm run board -- <score>` | G2 |
+| storyboard | `npm run storyboard -- <score>` | G2 |
+| style sheet | `npm run style:sheet -- <pack>` | G-sheet, pack review |
+| per-shot strips (every 0.5 s) | `npm run strips -- <score>` | G5 |
+| spectrogram, per cue | `npm run sfx -- <score>` | G6 |
+| final 0.5 s contact sheet | `npm run gate:7 -- <score>` | G7 |
+
+A gate is only real if a command proves it. The board sheet and storyboard exist;
+the strips, spectrogram and final sheet are the sheets G5–G7 already required but
+had no command for, and land with steps 6–7.
+
 ## Rule
 
 A failed gate writes the failure and sends the film back one step. “Almost” is a
@@ -113,4 +133,11 @@ no. The director signs only after the full panel at G7.
 
 ASR is the one G7 item with no command yet. It is deferred to the voice pipeline
 (the fixture voice is scratch), not skipped; see
-`docs/decisions/0016-voice-and-asr.md`.
+`docs/decisions/0016-voice-and-asr.md` and `docs/decisions/0017-review-surface-audio-and-sheets.md`.
+The tooling is now known — local **Whisper** (`faster-whisper small.en`), the same
+tool that produces the word timings — so the gate becomes a command with step 10.
+
+**Banned vs allowed, stated once.** Banned: generative **images or video** in the
+render path, and per-film LLM-written animation code. Allowed: local models for
+**voice, word timing and music** (Kokoro, Whisper, ACE-Step), because the picture
+stays entirely code-drawn from the score (decision 0017).
