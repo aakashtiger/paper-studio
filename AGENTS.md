@@ -53,7 +53,8 @@ npm run plan -- fixtures/wedding-min/brief.json   # print a shot plan
 npm run treatment -- proofs/s2-paper/plan.json    # validate a creative treatment
 npm run film -- films/understudy/score.json      # validate a scored film
 npm run captions -- films/understudy/score.json  # generate transcript + SRT
-npm run board -- films/understudy/score.json     # derive board + contact sheet
+npm run board -- films/understudy/score.json     # derive board cards (HTML + manifest)
+npm run storyboard -- films/understudy/score.json   # one code-drawn frame per shot, tiled into one sheet
 npm run audit -- films/understudy/score.json     # score-level audit
 npm run audit:motion -- films/understudy/score.json   # per-shot motion floor
 npm run audit:type -- films/understudy/score.json      # text inside the safe area
@@ -62,6 +63,7 @@ npm run sheet -- films/understudy/score.json     # character/pose sheet PNG
 npm run sfx -- films/understudy/score.json       # code-generated SFX + mix
 npm run animatic -- films/understudy/score.json  # board animatic + voice/SFX/SRT
 npm run rough -- films/understudy/score.json     # stepped rough at 10 fps + board contact sheet
+npm run doctor         # preflight: node, ffmpeg, ffprobe, chrome, fonts (--render smoke-tests a frame)
 npm run typecheck      # TypeScript check
 npm test               # unit and mutation tests
 ```

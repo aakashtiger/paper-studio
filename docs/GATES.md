@@ -8,7 +8,7 @@ warning.
 |---|---|---|---|---|---|
 | G0 brief | `brief.json` | `npm run film -- <score>` | fields complete; style, aspect, duration, fps and audio mode match the score | architect, editor | ready |
 | G1 audio | voice, `transcript.json`, `captions.srt`, cue list | `npm run captions -- <score>` | files exist and hash; transcript covers the script; SRT cues match; read-time holds | editor, sound, QA | ready |
-| G2 direction + look | score, `build/<id>/board/`, hero frames | `npm run board -- <score>` | all shots inside the envelope; median in band; board covers every shot and marked beat; look table complete | designer, editor | ready |
+| G2 direction + look | score, `build/<id>/board/`, `build/<id>/storyboard/storyboard.png`, hero frames | `npm run board -- <score>` + `npm run storyboard -- <score>` | all shots inside the envelope; median in band; board covers every shot and marked beat; the storyboard shows one code-drawn frame per shot, in order, on one sheet; look table complete | designer, editor | ready |
 | G3 animatic | board pass + stepped rough | `npm run animatic -- <score>` + `npm run rough -- <score>` | board pass signed 9/10; stepped rough paints the score at 10 fps; every board time paired to its frame; every shot's median frame-to-frame change ≥ 0.6 and no hold >0.4 s; no camera-only shot; ≥2 breakdowns per transition | motion, editor, QA | **board pass signed; stepped rough measures pass** |
 | G4 assets | `build/<id>/sheets/*.png` | `npm run sheet -- <score>` | seam gap 0; feet planted; contact shadow; 8 poses + 4 expressions; joint map; hand/foot/coat panels | designer, developer, QA | ready |
 | G5 shots | animated shots, contact sheets | `npm run render:film -- <score>` + `npm run audit:motion -- <score>` | entry/exit match; ≥3 events; no floating part; every shot's median frame-to-frame change ≥ 0.6 and no dead stretch > 0.1 s | motion, editor | **measured** |
@@ -23,6 +23,21 @@ MP4 frame at the same time and compares them with PSNR. A correct frame survives
 H.264 at about 40 dB; a frame that does not match the painter lands near
 10–20 dB. Luma and cut audits cannot see this class of defect — a video can be
 well-formed and still contain frames the current code would never draw.
+
+## Storyboard
+
+`npm run storyboard -- <score> [--tile 640] [--cols 3] [--at 0.5]` shows the shots
+as pictures. It paints one frame per defined shot through the same painter the
+final render uses (at `--at`, the fraction through each shot), then tiles them, in
+shot order, into a single sheet (`build/<id>/storyboard/storyboard.png`) with each
+tile labelled `id · time range · recipe`. It cannot invent a shot: the sheet has
+exactly one tile per shot in the score, nothing more, nothing less.
+
+The sheet is an **index**, not the review. Full-resolution frames stay in
+`build/<id>/storyboard/frames/`, so a tile that looks wrong is opened, not guessed
+at. Because every tile comes from the same style pack and pose library, the sheet
+is also the consistency check: a character or palette that drifts between shots is
+visible in one glance. A whole film is judged by looking at one image.
 
 ## Motion floor
 
