@@ -10,7 +10,7 @@
  * `pageHeight` reads it back with `--dump-dom`, and `shootHtml` then screenshots
  * at exactly that height. The height is measured, never guessed.
  */
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, rmSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 
 const CHROME_CANDIDATES = [
@@ -57,6 +57,8 @@ export function shootHtml(
   chrome: string,
   options: { url: string; out: string; width: number; height: number; timeoutMs?: number },
 ): { ok: boolean; width: number; height: number } {
+  // Clear any previous file first: a stale image must never be read as a fresh one.
+  if (existsSync(options.out)) rmSync(options.out);
   const result = spawnSync(
     chrome,
     [

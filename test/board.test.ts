@@ -49,3 +49,13 @@ test("the board sheet holds one card per entry and reports its height", () => {
     assert.ok(html.includes(entry.label), `sheet is missing ${entry.id}`);
   }
 });
+
+test("the board sheet escapes a label instead of injecting markup", () => {
+  const entries = buildBoard(plan());
+  const first = entries[0];
+  assert.ok(first);
+  first.label = "<b>Nova</b> & \"Mira\"";
+  const html = boardSheet("understudy", entries);
+  assert.ok(html.includes("&lt;b&gt;Nova&lt;/b&gt; &amp; &quot;Mira&quot;"));
+  assert.ok(!html.includes("<b>Nova</b>"));
+});

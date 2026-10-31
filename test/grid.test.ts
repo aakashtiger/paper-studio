@@ -29,3 +29,12 @@ test("planGrid never makes a column past the tile count", () => {
 test("planGrid rejects an empty batch", () => {
   assert.throws(() => planGrid(0, 3, 100, 100), /at least one tile/);
 });
+
+test("planGrid handles a single tile", () => {
+  const grid = planGrid(1, 3, 640, 360);
+  assert.equal(grid.cols, 1);
+  assert.equal(grid.rows, 1);
+  assert.equal(grid.layout, "0_0");
+  assert.equal(grid.width, 640);
+  assert.equal(grid.height, 360);
+});

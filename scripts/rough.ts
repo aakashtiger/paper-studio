@@ -43,6 +43,7 @@ async function main(): Promise<void> {
 
   const fps = Number(arg("fps") ?? 10);
   const floor = Number(arg("floor") ?? 0.6);
+  const font = "proofs/s2-paper/assets/fonts/DMMono-Regular.ttf";
   const ffmpeg = findFfmpeg();
   const entries = buildBoard(plan);
 
@@ -103,11 +104,11 @@ async function main(): Promise<void> {
     tileWidth: 640,
     tileHeight: 360,
     cols: Math.min(3, gridTiles.length),
+    font,
     labelDir: `${outRel}/labels`,
   });
 
   // 4. Captions, burned from the score, then the scratch audio.
-  const font = "proofs/s2-paper/assets/fonts/DMMono-Regular.ttf";
   const captionFilters = plan.captions.lines
     .map((caption, index) => {
       const rel = `${stillsRel}/caption-${index + 1}.txt`;

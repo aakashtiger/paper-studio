@@ -58,7 +58,7 @@ if (wantSheet && chrome) {
     process.exit(1);
   }
   const shot = shootHtml(chrome, { url, out: sheetPath, width: sheetWidth, height });
-  if (!shot.ok || Math.abs(shot.height - height) > 2) {
+  if (!shot.ok || shot.width !== sheetWidth || shot.height !== height) {
     console.error("error: board sheet render failed");
     process.exit(1);
   }

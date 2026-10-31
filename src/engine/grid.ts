@@ -1,16 +1,17 @@
 /**
  * One grid builder for every batch of pictures.
  *
- * Every review artifact that shows N pictures on one image goes through here:
- * the storyboard, the per-shot strips, the spectrogram sheet, the stills sheet
- * and the final contact sheet. It plans the grid, writes each tile's label, and
- * runs one ffmpeg xstack.
+ * Every review artifact that shows N pictures on one image goes through here.
+ * Today that is the storyboard and the stepped-rough contact sheet; the per-shot
+ * strips, the spectrogram sheet, the stills sheet and the final contact sheet
+ * (steps 6–7 of decision 0017) will use it too. It plans the grid, writes each
+ * tile's label, and runs one ffmpeg pass.
  *
  * A sheet is a review artifact. It lives under `build/`, is gitignored, and
  * never enters a render manifest or a frame hash.
  */
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { basename, extname, join } from "node:path";
 import { spawn } from "node:child_process";
 
 export type GridTile = {
@@ -37,14 +38,19 @@ export type GridOptions = {
   tiles: GridTile[];
   tileWidth: number;
   tileHeight: number;
+  /**
+   * Repo-relative font file for labels. Required: a font is a style choice, so
+   * the caller names it rather than the engine hardcoding one.
+   */
+  font: string;
   /** Explicit column count. Omit to auto-fit. */
   cols?: number;
   /** Column cap used by auto-fit. Default 3. */
   maxCols?: number;
-  /** ffmpeg colour for the fill and the label box. Default 0x171310. */
+  /** ffmpeg colour for the fill and the label box. Default a neutral dark. */
   background?: string;
-  /** Repo-relative font file for labels. */
-  font?: string;
+  /** Label text colour. Default a neutral light. */
+  fontColor?: string;
   /** Label font size. Defaults to tileWidth / 32. */
   fontSize?: number;
   /** Repo-relative directory for the generated label .txt files. */
@@ -130,9 +136,10 @@ export async function renderGrid(options: GridOptions): Promise<GridPlan & { pat
     tiles,
     tileWidth,
     tileHeight,
+    font,
     maxCols = 3,
-    background = "0x171310",
-    font = "proofs/s2-paper/assets/fonts/DMMono-Regular.ttf",
+    background = "0x101010",
+    fontColor = "0xF5F5F5",
     labelDir = "build/grid/labels",
   } = options;
   if (tiles.length === 0) throw new Error("renderGrid: no tiles");
@@ -145,33 +152,49 @@ export async function renderGrid(options: GridOptions): Promise<GridPlan & { pat
   const labelRoot = join(root, labelDir);
   mkdirSync(labelRoot, { recursive: true });
   const fontSize = options.fontSize ?? Math.max(12, Math.round(tileWidth / 32));
+  // Label files are named after the sheet, so two sheets sharing a label dir
+  // never overwrite each other's labels.
+  const slug = basename(out, extname(out));
 
-  const inputs: string[] = [];
-  const chains: string[] = [];
+  const filters: string[] = [];
   tiles.forEach((tile, index) => {
-    inputs.push("-i", tile.image);
-    let chain =
-      `[${index}:v]scale=${tileWidth}:${tileHeight}:force_original_aspect_ratio=decrease,` +
+    let filter =
+      `scale=${tileWidth}:${tileHeight}:force_original_aspect_ratio=decrease,` +
       `pad=${tileWidth}:${tileHeight}:(ow-iw)/2:(oh-ih)/2:color=${background}`;
     if (tile.label) {
-      const rel = `${labelDir}/label-${String(index + 1).padStart(3, "0")}.txt`;
+      const rel = `${labelDir}/${slug}-${String(index + 1).padStart(3, "0")}.txt`;
       writeFileSync(join(root, rel), tile.label, "utf8");
-      chain +=
-        `,drawtext=fontfile='${font}':textfile='${rel}':fontcolor=0xF2E8D5:fontsize=${fontSize}:` +
+      filter +=
+        `,drawtext=fontfile='${font}':textfile='${rel}':fontcolor=${fontColor}:fontsize=${fontSize}:` +
         `x=10:y=h-${fontSize + 14}:box=1:boxcolor=${background}@0.72:boxborderw=6`;
     }
-    chains.push(`${chain}[v${index}]`);
+    filters.push(filter);
   });
 
-  const stacked = tiles.map((_, index) => `[v${index}]`).join("");
+  const inputs = tiles.flatMap((tile) => ["-i", tile.image]);
+  const links: string[] = [];
+  let graph: string;
+  if (tiles.length === 1) {
+    // ffmpeg xstack needs at least two inputs; a single tile passes straight through.
+    graph = `[0:v]${filters[0]}[v0]`;
+    links.push("-map", "[v0]");
+  } else {
+    const chains = filters.map((filter, index) => `[${index}:v]${filter}[v${index}]`);
+    const stacked = filters.map((_, index) => `[v${index}]`).join("");
+    chains.push(`${stacked}xstack=inputs=${tiles.length}:layout=${grid.layout}:fill=${background}`);
+    graph = chains.join(";");
+  }
+
+  // A stale sheet must never masquerade as a fresh one.
+  if (existsSync(out)) rmSync(out);
   const ffmpeg = options.ffmpeg ?? findFfmpeg();
   await runBinary(
     ffmpeg,
     [
       "-y", "-hide_banner", "-loglevel", "error",
       ...inputs,
-      "-filter_complex",
-      `${chains.join(";")};${stacked}xstack=inputs=${tiles.length}:layout=${grid.layout}:fill=${background}`,
+      "-filter_complex", graph,
+      ...links,
       "-frames:v", "1",
       out,
     ],

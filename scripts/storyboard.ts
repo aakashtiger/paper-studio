@@ -20,7 +20,7 @@ import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node
 import { join, resolve } from "node:path";
 import { spawn } from "node:child_process";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
-import { renderGrid, autoCols } from "../src/engine/grid.js";
+import { renderGrid } from "../src/engine/grid.js";
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
@@ -87,7 +87,7 @@ async function main(): Promise<void> {
   });
   if (missing.length > 0) throw new Error(`no storyboard frame for shots: ${missing.join(", ")}`);
 
-  const cols = Number(arg("cols") ?? 0) || autoCols(frames.length, 3);
+  const cols = Number(arg("cols") ?? 0) || Math.ceil(Math.sqrt(frames.length));
   const sheet = join(outDir, "storyboard.png");
   const grid = await renderGrid({
     root,
@@ -96,6 +96,7 @@ async function main(): Promise<void> {
     tileWidth: tileW,
     tileHeight: tileH,
     cols,
+    font: "proofs/s2-paper/assets/fonts/DMMono-Regular.ttf",
     labelDir: `build/${score.id}/storyboard/labels`,
   });
 
