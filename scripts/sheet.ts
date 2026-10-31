@@ -1,9 +1,9 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { spawnSync } from "node:child_process";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
 import { PoseLibrarySchema, resolvePoseLibrary } from "../src/engine/pose.js";
 import { sheetHtml, sheetSlug } from "../src/engine/sheet.js";
+import { findChrome, fileUrl, shootHtml } from "../src/engine/chrome.js";
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
@@ -76,47 +76,18 @@ for (const entry of plan.cast) {
   if (render && chrome) {
     const pngPath = resolve(outDir, `${slug}.png`);
     if (existsSync(pngPath)) rmSync(pngPath);
-    const url = `file:///${htmlPath.replace(/\\/g, "/")}`;
-    const result = spawnSync(
-      chrome,
-      [
-        "--headless=new",
-        "--disable-gpu",
-        "--no-sandbox",
-        "--allow-file-access-from-files",
-        "--hide-scrollbars",
-        "--virtual-time-budget=10000",
-        "--window-size=1920," + height,
-        `--screenshot=${pngPath}`,
-        url,
-      ],
-      { stdio: "ignore", timeout: 40_000 },
-    );
-    const size = existsSync(pngPath) ? pngSize(pngPath) : null;
-    if (result.status !== 0 || !size || size.width !== 1920 || Math.abs(size.height - height) > 2) {
+    const shot = shootHtml(chrome, {
+      url: fileUrl(htmlPath),
+      out: pngPath,
+      width: 1920,
+      height,
+    });
+    if (!shot.ok || shot.width !== 1920 || Math.abs(shot.height - height) > 2) {
       console.error(`error: sheet render failed for ${library.character}`);
       process.exit(1);
     }
-    console.log(`sheet: ${library.character} → build/${score.id}/sheets/${slug}.png (${size.width}×${size.height})`);
+    console.log(`sheet: ${library.character} → build/${score.id}/sheets/${slug}.png (${shot.width}×${shot.height})`);
     continue;
   }
   console.log(`sheet: ${library.character} → build/${score.id}/sheets/${slug}.html`);
-}
-
-function findChrome(): string | undefined {
-  const candidates = [
-    process.env.CHROME_PATH,
-    "C:/Program Files/Google/Chrome/Application/chrome.exe",
-    "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe",
-    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    "/usr/bin/google-chrome",
-    "/usr/bin/chromium",
-  ].filter((value): value is string => Boolean(value));
-  return candidates.find((candidate) => existsSync(candidate));
-}
-
-function pngSize(path: string): { width: number; height: number } | null {
-  const header = readFileSync(path).subarray(0, 24);
-  if (header.length < 24 || header.toString("ascii", 1, 4) !== "PNG") return null;
-  return { width: header.readUInt32BE(16), height: header.readUInt32BE(20) };
 }

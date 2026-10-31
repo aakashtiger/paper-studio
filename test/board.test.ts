@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { resolveFilm, type FilmScore } from "../src/engine/treatment.js";
-import { buildBoard } from "../src/engine/board.js";
+import { buildBoard, boardSheet } from "../src/engine/board.js";
 
 const root = process.cwd();
 const styleDir = resolve(root, "styles/paper-kpop");
@@ -38,4 +38,14 @@ test("a marked beat adds one board frame; there is no fixed count", () => {
   const entries = buildBoard(resolved);
   assert.equal(entries.length, 10);
   assert.ok(entries.some((entry) => entry.id === "s01-beat-4" && entry.time === 0.8));
+});
+
+test("the board sheet holds one card per entry and reports its height", () => {
+  const entries = buildBoard(plan());
+  const html = boardSheet("understudy", entries);
+  assert.equal((html.match(/class="card"/g) ?? []).length, entries.length);
+  assert.match(html, /data-sheet-height/);
+  for (const entry of entries) {
+    assert.ok(html.includes(entry.label), `sheet is missing ${entry.id}`);
+  }
 });

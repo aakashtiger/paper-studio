@@ -16,6 +16,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { extname, join, resolve, sep, dirname } from "node:path";
 import type { AddressInfo } from "node:net";
+import { findChrome as findChromePath } from "../src/engine/chrome.js";
 
 const MIME: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
@@ -29,16 +30,6 @@ const MIME: Record<string, string> = {
   ".wav": "audio/wav",
 };
 
-const CHROME_CANDIDATES = [
-  process.env.CHROME_PATH,
-  "C:/Program Files/Google/Chrome/Application/chrome.exe",
-  "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe",
-  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-  "/usr/bin/google-chrome",
-  "/usr/bin/chromium",
-  "/usr/bin/chromium-browser",
-];
-
 function arg(name: string): string | undefined {
   const index = process.argv.indexOf(`--${name}`);
   if (index === -1) return undefined;
@@ -50,10 +41,9 @@ function has(name: string): boolean {
 }
 
 function findChrome(): string {
-  for (const candidate of CHROME_CANDIDATES) {
-    if (candidate && existsSync(candidate)) return candidate;
-  }
-  throw new Error("Chrome not found. Set CHROME_PATH.");
+  const found = findChromePath();
+  if (!found) throw new Error("Chrome not found. Set CHROME_PATH.");
+  return found;
 }
 
 function findFfmpeg(): string {

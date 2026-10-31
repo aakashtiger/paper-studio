@@ -14,6 +14,7 @@
 import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
+import { findChrome } from "../src/engine/chrome.js";
 
 const root = process.cwd();
 const wantRender = process.argv.includes("--render");
@@ -24,16 +25,6 @@ const FONTS = [
   "DMMono-Regular.ttf",
   "PermanentMarker-Regular.ttf",
 ].map((name) => join("proofs", "s2-paper", "assets", "fonts", name));
-
-const CHROME_CANDIDATES = [
-  process.env.CHROME_PATH,
-  "C:/Program Files/Google/Chrome/Application/chrome.exe",
-  "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe",
-  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-  "/usr/bin/google-chrome",
-  "/usr/bin/chromium",
-  "/usr/bin/chromium-browser",
-];
 
 function firstExisting(paths: (string | undefined)[]): string | undefined {
   return paths.find((value): value is string => Boolean(value) && existsSync(value as string));
@@ -79,7 +70,7 @@ function checkFfprobe(): Check {
 }
 
 function checkChrome(): Check {
-  const found = firstExisting(CHROME_CANDIDATES);
+  const found = findChrome();
   return { name: "headless chrome", ok: Boolean(found), detail: found ?? "set CHROME_PATH" };
 }
 

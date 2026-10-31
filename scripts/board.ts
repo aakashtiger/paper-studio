@@ -1,13 +1,29 @@
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+/**
+ * Board (Gate 2, the text half).
+ *
+ * The board is a view of the score: one card per shot at its poster moment,
+ * plus any beat the director marks. It writes a manifest, an HTML page and, on
+ * one image, a sheet of every card, so the whole board is judged by looking at
+ * one picture.
+ *
+ * usage: npm run board -- <score.json> [--no-render] [--sheet-width 1600]
+ */
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
-import { buildBoard } from "../src/engine/board.js";
+import { buildBoard, boardSheet } from "../src/engine/board.js";
+import { findChrome, fileUrl, pageHeight, shootHtml } from "../src/engine/chrome.js";
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
 if (!file) {
-  console.error("usage: npm run board -- <score.json>");
+  console.error("usage: npm run board -- <score.json> [--no-render]");
   process.exit(2);
+}
+
+function arg(name: string): string | undefined {
+  const index = process.argv.indexOf(`--${name}`);
+  return index === -1 ? undefined : process.argv[index + 1];
 }
 
 const root = process.cwd();
@@ -24,44 +40,58 @@ const out = resolve(root, "build", score.id, "board");
 mkdirSync(out, { recursive: true });
 writeFileSync(resolve(out, "manifest.json"), `${JSON.stringify({ film: score.id, entries }, null, 2)}\n`, "utf8");
 
-const esc = (value: string) =>
-  value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const html = boardSheet(score.id, entries);
+const htmlPath = resolve(out, "index.html");
+writeFileSync(htmlPath, html, "utf8");
 
-const cards = entries
-  .map((entry) => {
-    const slots = Object.entries(entry.slots)
-      .map(([key, value]) => `<div class="slot"><b>${esc(key)}</b> ${esc(value)}</div>`)
-      .join("");
-    return `<article class="card">
-  <header><span class="time">${entry.time.toFixed(2)}s · f${entry.frame}</span><span class="recipe">${esc(entry.recipe)}</span></header>
-  <h2>${esc(entry.label)}</h2>
-  ${slots}
-  <p class="spine">${esc(entry.direction.spine)}</p>
-  <p class="state">${esc(entry.direction.entry)} → ${esc(entry.direction.exit)}</p>
-</article>`;
-  })
-  .join("\n");
+const sheetWidth = Number(arg("sheet-width") ?? 1600);
+const sheetPath = resolve(out, "board-sheet.png");
+const wantSheet = !args.includes("--no-render");
+const chrome = findChrome();
+let rendered: { width: number; height: number } | null = null;
 
+if (wantSheet && chrome) {
+  const url = fileUrl(htmlPath);
+  const height = pageHeight(chrome, url, sheetWidth);
+  if (!height) {
+    console.error("error: board page did not report a height; cannot sheet it");
+    process.exit(1);
+  }
+  const shot = shootHtml(chrome, { url, out: sheetPath, width: sheetWidth, height });
+  if (!shot.ok || Math.abs(shot.height - height) > 2) {
+    console.error("error: board sheet render failed");
+    process.exit(1);
+  }
+  rendered = { width: shot.width, height: shot.height };
+} else if (wantSheet) {
+  console.error("error: Chrome not found; cannot render the board sheet (use --no-render to skip)");
+}
+
+const checks = {
+  everyShotOnBoard: plan.shots.every((shot) => entries.some((entry) => entry.shotId === shot.id)),
+  inTimeOrder: entries.every((entry, index) => index === 0 || entry.time >= (entries[index - 1]?.time ?? 0)),
+  manifestWritten: existsSync(resolve(out, "manifest.json")),
+  htmlWritten: existsSync(htmlPath),
+  sheetWritten: rendered ? existsSync(sheetPath) : !wantSheet,
+};
+const pass = Object.values(checks).every(Boolean);
 writeFileSync(
-  resolve(out, "index.html"),
-  `<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><title>${esc(score.id)} — board</title>
-<style>
-  body { margin: 32px; background: #171310; color: #f2e8d5; font: 14px/1.4 system-ui, sans-serif; }
-  h1 { font-size: 20px; letter-spacing: .08em; text-transform: uppercase; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-  .card { background: #f2e8d5; color: #171310; border-radius: 2px; padding: 16px; }
-  header { display: flex; justify-content: space-between; font: 11px/1.2 ui-monospace, monospace; opacity: .7; }
-  h2 { font-size: 18px; margin: 12px 0 8px; }
-  .slot { font: 12px/1.5 ui-monospace, monospace; }
-  .spine { margin-top: 12px; font-weight: 600; }
-  .state { font-size: 12px; opacity: .65; }
-</style></head>
-<body><h1>${esc(score.id)} — board · ${entries.length} frames</h1><div class="grid">
-${cards}
-</div></body></html>
-`,
+  resolve(out, "board.json"),
+  `${JSON.stringify(
+    {
+      film: score.id,
+      pass,
+      entries: entries.length,
+      sheet: rendered ? { path: `build/${score.id}/board/board-sheet.png`, ...rendered } : null,
+      checks,
+      generatedAt: new Date().toISOString(),
+    },
+    null,
+    2,
+  )}\n`,
   "utf8",
 );
 
 console.log(`board: ${entries.length} frames → build/${score.id}/board/`);
+if (rendered) console.log(`board: sheet ${rendered.width}×${rendered.height} → build/${score.id}/board/board-sheet.png`);
+if (!pass) process.exit(1);

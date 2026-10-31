@@ -14,9 +14,10 @@
  */
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { spawn, spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
 import { buildBoard } from "../src/engine/board.js";
+import { findFfmpeg, renderGrid, runBinary } from "../src/engine/grid.js";
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
@@ -28,39 +29,6 @@ if (!file) {
 function arg(name: string): string | undefined {
   const index = process.argv.indexOf(`--${name}`);
   return index === -1 ? undefined : process.argv[index + 1];
-}
-
-function findFfmpeg(): string {
-  const roots = [
-    process.env.FFMPEG_PATH,
-    join(process.cwd(), "node_modules", "ffmpeg-static"),
-    join(process.cwd(), "..", "node_modules", "ffmpeg-static"),
-  ];
-  for (const root of roots) {
-    if (!root) continue;
-    if (existsSync(root) && /ffmpeg(\.exe)?$/i.test(root)) return root;
-    for (const name of ["ffmpeg.exe", "ffmpeg"]) {
-      const candidate = join(root, name);
-      if (existsSync(candidate)) return candidate;
-    }
-  }
-  return "ffmpeg";
-}
-
-function run(binary: string, argv: string[]): Promise<string> {
-  return new Promise((done, fail) => {
-    const child = spawn(binary, argv, { stdio: ["ignore", "pipe", "pipe"] });
-    let out = "";
-    let err = "";
-    child.stdout.setEncoding("utf8");
-    child.stderr.setEncoding("utf8");
-    child.stdout.on("data", (chunk: string) => (out += chunk));
-    child.stderr.on("data", (chunk: string) => (err += chunk));
-    child.on("close", (code) => {
-      if (code === 0) done(out + err);
-      else fail(new Error(`${binary} exited ${code}\n${err.slice(-1200)}`));
-    });
-  });
 }
 
 async function main(): Promise<void> {
@@ -112,52 +80,34 @@ async function main(): Promise<void> {
     const index = Math.min(Math.round(time * fps), Math.round(plan.duration * fps) - 1);
     return join(framesDir, `frame-${String(index + 1).padStart(4, "0")}.png`);
   };
-  const tiles: { entry: typeof entries[number]; still: string; tile: string }[] = [];
+  const tilesList: { entry: typeof entries[number]; still: string }[] = [];
   entries.forEach((entry, index) => {
     const source = frameFile(entry.time);
     if (!existsSync(source)) throw new Error(`no rough frame for board time ${entry.time}s`);
     const n = String(index + 1).padStart(2, "0");
     const still = join(stillsDir, `${n}-${entry.id}.png`);
     copyFileSync(source, still);
-    tiles.push({ entry, still, tile: join(stillsDir, `${n}-tile.png`) });
+    tilesList.push({ entry, still });
   });
 
   // 3. One contact sheet: each rough frame carrying its board label.
-  const font = "proofs/s2-paper/assets/fonts/DMMono-Regular.ttf";
-  const cols = Math.min(3, tiles.length);
-  const rows = Math.ceil(tiles.length / cols);
-  const cellW = 640;
-  const cellH = 360;
-  const inputs: string[] = [];
-  const chains: string[] = [];
-  tiles.forEach((tile, index) => {
-    const labelRel = `${stillsRel}/label-${index + 1}.txt`;
-    writeFileSync(
-      resolve(root, labelRel),
-      `${tile.entry.label}   ${tile.entry.time.toFixed(2)}s   f${tile.entry.frame}`,
-      "utf8",
-    );
-    inputs.push("-i", tile.still);
-    chains.push(
-      `[${index}:v]scale=640:360:force_original_aspect_ratio=decrease,pad=640:360:(ow-iw)/2:(oh-ih)/2:color=0x171310,` +
-        `drawtext=fontfile='${font}':textfile='${labelRel}':fontcolor=0xF2E8D5:fontsize=20:x=12:y=h-34:box=1:boxcolor=0x171310@0.72:boxborderw=8[v${index}]`,
-    );
-  });
-  const layout = tiles
-    .map((_, index) => `${(index % cols) * cellW}_${Math.floor(index / cols) * cellH}`)
-    .join("|");
-  const stacked = tiles.map((_, index) => `[v${index}]`).join("");
+  const gridTiles = tilesList.map((tile) => ({
+    image: tile.still,
+    label: `${tile.entry.label}   ${tile.entry.time.toFixed(2)}s   f${tile.entry.frame}`,
+  }));
   const sheet = join(outDir, "contact-sheet.png");
-  await run(ffmpeg, [
-    "-y", "-hide_banner", "-loglevel", "error",
-    ...inputs,
-    "-filter_complex",
-    `${chains.join(";")};${stacked}xstack=inputs=${tiles.length}:layout=${layout}:fill=0x171310`,
-    "-frames:v", "1",
-    sheet,
-  ]);
+  await renderGrid({
+    root,
+    out: sheet,
+    tiles: gridTiles,
+    tileWidth: 640,
+    tileHeight: 360,
+    cols: Math.min(3, gridTiles.length),
+    labelDir: `${outRel}/labels`,
+  });
 
   // 4. Captions, burned from the score, then the scratch audio.
+  const font = "proofs/s2-paper/assets/fonts/DMMono-Regular.ttf";
   const captionFilters = plan.captions.lines
     .map((caption, index) => {
       const rel = `${stillsRel}/caption-${index + 1}.txt`;
@@ -166,7 +116,7 @@ async function main(): Promise<void> {
     })
     .join(",");
   const captioned = join(outDir, "rough-captioned.mp4");
-  await run(ffmpeg, [
+  await runBinary(ffmpeg, [
     "-y", "-hide_banner", "-loglevel", "error",
     "-i", silent,
     "-vf", captionFilters || "null",
@@ -184,7 +134,7 @@ async function main(): Promise<void> {
     muxArgs.push("-i", audio, "-map", "0:v", "-map", "1:a", "-c:a", "aac", "-b:a", "192k", "-shortest");
   }
   muxArgs.push("-c:v", "copy", output);
-  await run(ffmpeg, muxArgs);
+  await runBinary(ffmpeg, muxArgs);
 
   // 5. Per-shot motion on the stepped cut.
   const shots: {
@@ -195,7 +145,7 @@ async function main(): Promise<void> {
   for (const [index, shot] of plan.shots.entries()) {
     const from = shot.start ?? start;
     start = from + shot.duration;
-    const out = await run(ffmpeg, [
+    const out = await runBinary(ffmpeg, [
       "-hide_banner", "-ss", from.toFixed(3), "-t", shot.duration.toFixed(3), "-i", silent,
       "-vf", "tblend=all_mode=difference,signalstats,metadata=print:file=-",
       "-an", "-f", "null", "-",
@@ -222,7 +172,7 @@ async function main(): Promise<void> {
   }
 
   const checks = {
-    boardPaired: tiles.length === entries.length && existsSync(sheet),
+    boardPaired: tilesList.length === entries.length && existsSync(sheet),
     everyShotMoves: shots.every((shot) => shot.median >= floor),
     noLongHold: shots.every((shot) => shot.deadSeconds <= 0.4),
     // A camera-only shot has no character/action event; every event is a camera
@@ -243,7 +193,7 @@ async function main(): Promise<void> {
     floor,
     rate: `1/${Math.max(1, Math.round((plan.fps || 30) / fps))} frames (${plan.fps || 30} → ${fps} fps)`,
     boardEntries: entries.length,
-    pairedStills: tiles.length,
+    pairedStills: tilesList.length,
     contactSheet: sheet,
     output,
     audio: audio ? audio.replace(`${root}\\`, "").replace(`${root}/`, "") : "silent",
