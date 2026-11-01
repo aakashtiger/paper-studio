@@ -87,7 +87,15 @@ async function finalSheet(videoHash: string | null): Promise<{ ok: boolean; deta
   const measured = videoStreamHash(findFfmpeg(), video);
   const matches = Boolean(videoHash) && measured === videoHash;
 
-  const step = 0.5;
+  // Windows hands a spawned process about 32,000 characters of command line, and
+  // `renderGrid` puts one `-i` and one filter chain per tile on it: 120 tiles is
+  // ~44,000 characters and `spawn` refuses it (ENAMETOOLONG), which is how this
+  // row failed on the first 60 s film after passing on a 30 s one. The sheet is a
+  // review aid, so it samples the film rather than every half second: at most 40
+  // tiles, which still shows every shot and keeps the command line at ~15,000.
+  // The row's claim is unchanged — the hash is measured from the file the tiles
+  // came from.
+  const step = Math.max(0.5, Math.ceil((score.duration / 40) * 2) / 2);
   const framesDir = resolve(dir, "final-frames");
   rmSync(framesDir, { recursive: true, force: true });
   mkdirSync(framesDir, { recursive: true });
