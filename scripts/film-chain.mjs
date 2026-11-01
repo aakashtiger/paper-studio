@@ -101,6 +101,12 @@ const steps = [
   // four tenths of a second would have said. A check that can refuse a render
   // must run before it.
   { name: "audit", tsx: "scripts/audit.ts", args: [score] },
+  // The preflight is the same lesson one stage up: it asks the *writing* every
+  // question a viewer asked about the last film — median shot length, words a
+  // minute, where the voice stops, whether one cue owns the whole thing, whether
+  // the cast the vendor will draw even exists — and the renderer refuses to
+  // paint a whole film without a fresh pass from it.
+  { name: "preflight", tsx: "scripts/preflight.ts", args: [score] },
   { name: "sfx", tsx: "scripts/sfx.ts", args: [score] },
   { name: "mix", tsx: "scripts/mix.ts", args: [score] },
   {

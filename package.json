@@ -48,7 +48,8 @@
     "style:resolve": "tsx scripts/style.ts resolve",
     "style:seal": "tsx scripts/style.ts seal",
     "style:sheet": "tsx scripts/style-sheet.ts",
-    "story": "tsx scripts/story.ts"
+    "story": "tsx scripts/story.ts",
+    "preflight": "tsx scripts/preflight.ts"
   },
   "dependencies": {
     "zod": "^3.24.1"

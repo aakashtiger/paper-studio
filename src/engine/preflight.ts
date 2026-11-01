@@ -1,0 +1,306 @@
+import { kindLength } from "./sfx.js";
+import { type Issue, type Pace, countWords } from "./story.js";
+import type { ResolvedFilm } from "./treatment.js";
+
+/**
+ * Checks that run before frame 1.
+ *
+ * The sixteen-hour day that produced *Same Alarm* was not sixteen hours of work.
+ * It was nine full renders, seven of which were cuts that a cheap check had
+ * already rejected — a still photograph at 0.533, 209 locked knees, a chair 2.5
+ * men wide. Every one of those checks was correct and every one of them ran
+ * *after* the expensive step, so each defect cost a whole film to discover.
+ *
+ * This module is the other order: every claim that can be made about the film
+ * from its own documents is made here, in a second, before the renderer starts.
+ * It is deliberately not a new kind of measurement — the numbers are the ones a
+ * viewer used to reject the last film (median shot length, words a minute, the
+ * length of the quiet, the bed that never stops), applied to the writing instead
+ * of the delivered file.
+ *
+ * Nothing in here reads a file or paints a frame, so it is testable by
+ * construction: give it a resolved film and it answers.
+ */
+
+/**
+ * The band a film declares when it does not declare one.
+ *
+ * A Short or a Reel in this idiom cuts at a median of 2.5–3.0 s, and a narrated
+ * one speaks 140–150 words a minute. Both are *style* numbers — a history
+ * channel and a K-pop edit do not cut alike — so a style pack may declare its
+ * own in `tokens.json` and a film may declare its own in `story.json`. This is
+ * only what happens when neither has said anything.
+ */
+export const DEFAULT_PACE: Pace = { wpm: [140, 150], medianShot: [2.5, 3] };
+
+/** No single cue may own more than this share of the film. The room bed owned 98% of *Same Alarm*. */
+export const MAX_CUE_SHARE = 0.25;
+
+/** No shot may run longer than this multiple of the film's median. */
+export const LONGEST_SHOT_FACTOR = 2;
+
+/**
+ * How long the film may go with no narration in it.
+ *
+ * The user's rule for a narrated short is that the whole film carries narration.
+ * 2.5 s is the same number the foley gap uses, for the same reason: a hole
+ * longer than a breath is a hole, and *Same Alarm* left 17.0 s of one.
+ */
+export const NARRATION_HOLE_MAX = 2.5;
+
+/** A narrated film speaks for at least this share of its own length. */
+export const NARRATION_COVERAGE_MIN = 0.5;
+
+export type PaceSource = "story" | "style" | "default";
+
+/**
+ * What the caller could find out about one cast member, because it touched the
+ * files. The engine does not read the disk; the checks below only reason.
+ */
+export type CastFact = {
+  character: string;
+  rig: string;
+  poses: string;
+  /** Anything wrong with the pose file or the rig registration. */
+  problems: Issue[];
+};
+
+export type PreflightInput = {
+  plan: ResolvedFilm;
+  pace: Pace;
+  paceSource: PaceSource;
+  /**
+   * The result of `checkStory()` when the film has a `story.json`.
+   *
+   * `null` means the film was never written — it begins at the shot list, which
+   * is the defect decision 0025 exists to stop. Only a film that has already
+   * been delivered (`reproduce`) may be re-rendered without one.
+   */
+  story: { errors: Issue[]; warnings: Issue[] } | null;
+  cast: CastFact[];
+  /** True when the film already has a delivered file: this is a reproduction, not a new film. */
+  reproduce: boolean;
+};
+
+export type PreflightIssue = Issue & { check: "story" | "pacing" | "narration" | "sound" | "cast" };
+
+export type PreflightReport = {
+  film: string;
+  ok: boolean;
+  /** A re-render of a film that was already delivered; see `PreflightInput.story`. */
+  reproduce: boolean;
+  duration: number;
+  pace: { wpm: [number, number]; medianShot: [number, number]; source: PaceSource };
+  shots: { count: number; median: number; shortest: number; longest: number };
+  narration: {
+    lines: number;
+    words: number;
+    wpm: number;
+    /** Seconds of spoken word, as measured by the clock. */
+    speak: number;
+    coverage: number;
+    /** The longest stretch with no line in it, and where it starts. */
+    hole: number;
+    holeAt: number;
+  } | null;
+  sound: {
+    cues: number;
+    longest: { id: string; seconds: number; share: number } | null;
+  };
+  cast: { character: string; rig: string; poses: string }[];
+  errors: PreflightIssue[];
+  warnings: PreflightIssue[];
+};
+
+/** The middle of a set of shot lengths; for an even count, the mean of the two middle ones. */
+export function median(values: number[]): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 1 ? (sorted[mid] as number) : ((sorted[mid - 1] as number) + (sorted[mid] as number)) / 2;
+}
+
+/**
+ * The longest stretch with no line in it — including the run-in before the first
+ * line and the run-out after the last, because both are silence in a narrated
+ * film. Returns the length and where it starts.
+ */
+export function longestHole(lines: { start: number; duration: number }[], duration: number) {
+  let cursor = 0;
+  let hole = 0;
+  let holeAt = 0;
+  for (const line of [...lines].sort((a, b) => a.start - b.start)) {
+    const gap = line.start - cursor;
+    if (gap > hole) {
+      hole = gap;
+      holeAt = cursor;
+    }
+    cursor = Math.max(cursor, line.start + line.duration);
+  }
+  if (duration - cursor > hole) {
+    hole = duration - cursor;
+    holeAt = cursor;
+  }
+  return { hole, holeAt };
+}
+
+const secs = (value: number) => `${value.toFixed(1)}s`;
+const band = (value: [number, number]) => `${value[0]}–${value[1]}`;
+
+export function preflightFilm(input: PreflightInput): PreflightReport {
+  const { plan, pace, paceSource, story, cast, reproduce } = input;
+  const errors: PreflightIssue[] = [];
+  const warnings: PreflightIssue[] = [];
+  const add = (check: PreflightIssue["check"], issue: Issue) => errors.push({ ...issue, check });
+  const warn = (check: PreflightIssue["check"], issue: Issue) => warnings.push({ ...issue, check });
+
+  const duration = plan.shots.reduce((end, shot) => Math.max(end, shot.start + shot.duration), 0);
+
+  // 1 — the writing. This is the check that had no home before 0025.
+  if (story === null) {
+    const issue: Issue = {
+      code: "story:missing",
+      message:
+        "no story.json — the film begins at the shot list, so nothing was ever written: " +
+        "no spine, no turn, no narration to measure",
+    };
+    if (reproduce) warn("story", issue);
+    else add("story", issue);
+  } else {
+    for (const issue of story.errors) add("story", issue);
+    for (const issue of story.warnings) warn("story", issue);
+  }
+
+  // 2 — the cut. A shot list is not a cut, and the count is where it shows.
+  const lengths = plan.shots.map((shot) => shot.duration);
+  const mid = median(lengths);
+  const shotBand = pace.medianShot;
+  if (plan.shots.length === 0) {
+    add("pacing", { code: "pacing:none", message: "the score has no shots" });
+  } else {
+    if (mid < shotBand[0] || mid > shotBand[1]) {
+      const wanted = Math.round(duration / shotBand[0]);
+      add("pacing", {
+        code: "pacing:median",
+        message:
+          `median shot is ${secs(mid)} — outside the declared ${band(shotBand)}s band. ` +
+          `${plan.shots.length} shots in ${secs(duration)}; at this band the film needs about ${wanted} ` +
+          `(${Math.round(duration / shotBand[1])}–${wanted}), not ${plan.shots.length}`,
+      });
+    }
+    const longest = Math.max(...lengths);
+    const slowest = plan.shots.find((shot) => shot.duration === longest);
+    if (mid > 0 && longest > mid * LONGEST_SHOT_FACTOR) {
+      add("pacing", {
+        code: "pacing:long",
+        message:
+          `shot "${slowest?.id}" runs ${secs(longest)}, ${(longest / mid).toFixed(1)}× the ${secs(mid)} median — ` +
+          `past ${LONGEST_SHOT_FACTOR}× it is a scene sitting still`,
+      });
+    }
+    for (const shot of plan.shots) {
+      if (shot.duration < 0.4) {
+        warn("pacing", {
+          code: "pacing:short",
+          message: `shot "${shot.id}" runs ${shot.duration.toFixed(2)}s — under 0.4s a shot cannot register`,
+        });
+      }
+    }
+  }
+
+  // 3 — the narration. The clock is the measured voice, so this is what the
+  // audience will actually hear, not what the script hoped for.
+  let narration: PreflightReport["narration"] = null;
+  if (plan.clock.mode === "narration") {
+    const lines = plan.clock.lines;
+    const words = lines.reduce((sum, line) => sum + countWords(line.text), 0);
+    const speak = lines.reduce((sum, line) => sum + line.duration, 0);
+    const wpm = duration > 0 ? (words / duration) * 60 : 0;
+    const coverage = duration > 0 ? speak / duration : 0;
+    const { hole, holeAt } = longestHole(lines, duration);
+    narration = {
+      lines: lines.length,
+      words,
+      wpm: Number(wpm.toFixed(1)),
+      speak: Number(speak.toFixed(2)),
+      coverage: Number(coverage.toFixed(3)),
+      hole: Number(hole.toFixed(2)),
+      holeAt: Number(holeAt.toFixed(2)),
+    };
+
+    if (words > 0 && (wpm < pace.wpm[0] || wpm > pace.wpm[1])) {
+      add("narration", {
+        code: "narration:wpm",
+        message:
+          `${words} words in ${secs(duration)} is ${wpm.toFixed(0)} wpm, outside the declared ` +
+          `${band(pace.wpm)} band (${Math.round((pace.wpm[0] * duration) / 60)}–` +
+          `${Math.round((pace.wpm[1] * duration) / 60)} words for this length)`,
+      });
+    }
+    if (words === 0) {
+      add("narration", { code: "narration:silent", message: "the clock is narration but no line has a word in it" });
+    }
+    if (hole > NARRATION_HOLE_MAX) {
+      add("narration", {
+        code: "narration:hole",
+        message:
+          `${secs(hole)} with no narration from ${secs(holeAt)} — the film stops talking. ` +
+          `A narrated short is carried by the voice end to end (max ${NARRATION_HOLE_MAX}s)`,
+      });
+    }
+    if (coverage < NARRATION_COVERAGE_MIN) {
+      add("narration", {
+        code: "narration:coverage",
+        message:
+          `speech covers ${(coverage * 100).toFixed(0)}% of the film (${secs(speak)} of ${secs(duration)}); ` +
+          `a narrated short speaks for at least ${NARRATION_COVERAGE_MIN * 100}% of itself`,
+      });
+    }
+  } else if (plan.clock.mode === "sfx") {
+    warn("narration", { code: "narration:none", message: "the clock is foley: the film has no spoken word" });
+  }
+
+  // 4 — the sound. One cue under the whole film is not a bed, it is a wall, and
+  // it is why the delivered mix had no contrast left to land a line on.
+  let longest: PreflightReport["sound"]["longest"] = null;
+  for (const cue of plan.cues) {
+    const seconds = cue.duration ?? kindLength(cue.kind);
+    const share = duration > 0 ? seconds / duration : 0;
+    if (!longest || seconds > longest.seconds) {
+      longest = { id: cue.id, seconds: Number(seconds.toFixed(2)), share: Number(share.toFixed(3)) };
+    }
+    if (share > MAX_CUE_SHARE) {
+      add("sound", {
+        code: "sound:bed",
+        message:
+          `cue "${cue.id}" (${cue.kind}) runs ${secs(seconds)} — ${(share * 100).toFixed(0)}% of the film, ` +
+          `more than the ${MAX_CUE_SHARE * 100}% a single cue may own. A bed under everything is a film with no air in it`,
+      });
+    }
+  }
+
+  // 5 — the cast. A rig the film's own vendor does not register draws nothing,
+  // and a blank character is the kind of thing the collage must never discover.
+  for (const member of cast) {
+    for (const problem of member.problems) add("cast", problem);
+  }
+
+  return {
+    film: plan.projectId,
+    ok: errors.length === 0,
+    reproduce,
+    duration: Number(duration.toFixed(3)),
+    pace: { wpm: pace.wpm, medianShot: pace.medianShot, source: paceSource },
+    shots: {
+      count: plan.shots.length,
+      median: Number(mid.toFixed(3)),
+      shortest: lengths.length > 0 ? Number(Math.min(...lengths).toFixed(3)) : 0,
+      longest: lengths.length > 0 ? Number(Math.max(...lengths).toFixed(3)) : 0,
+    },
+    narration,
+    sound: { cues: plan.cues.length, longest },
+    cast: cast.map(({ character, rig, poses }) => ({ character, rig, poses })),
+    errors,
+    warnings,
+  };
+}

@@ -17,7 +17,7 @@
 import { createServer } from "node:http";
 import { createServer as createNetServer } from "node:net";
 import { spawn, spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { extname, join, relative, resolve, sep, dirname } from "node:path";
@@ -48,6 +48,44 @@ function arg(name: string): string | undefined {
 
 function has(name: string): boolean {
   return process.argv.includes(`--${name}`);
+}
+
+/**
+ * Refuse to paint a whole film without a fresh, passing preflight report.
+ *
+ * This is the ordering fix from the sixteen-hour day, enforced where it cannot
+ * be skipped: nine full renders produced seven cuts a one-second check had
+ * already rejected, and every one of those checks ran *after* the expensive
+ * step. A probe (`--stills`, `--from/--to`) is not a film, so it is not gated;
+ * a whole-film paint is, and it needs the report to describe **this** score —
+ * a pass written before the cut changed proves nothing.
+ */
+function requirePreflight(cwd: string, id: string, scoreFile: string, scorePath: string): void {
+  const reportPath = join(cwd, "build", id, "preflight.json");
+  const run = `npm run preflight -- ${relative(cwd, scoreFile).replace(/\\/g, "/")}`;
+  if (!existsSync(reportPath)) {
+    throw new Error(`refusing to paint ${id}: no preflight report. Run \`${run}\` first`);
+  }
+  const written = JSON.parse(readFileSync(reportPath, "utf8")) as {
+    ok?: boolean;
+    score?: string;
+    errors?: { code: string; message: string }[];
+  };
+  const hash = fileHash(scoreFile);
+  if (written.score !== hash) {
+    throw new Error(
+      `refusing to paint ${id}: build/${id}/preflight.json describes a different score ` +
+        `(${written.score ?? "no hash"} ≠ ${hash}). Run \`${run}\` again`,
+    );
+  }
+  if (!written.ok) {
+    const errors = written.errors ?? [];
+    throw new Error(
+      `refusing to paint ${id}: preflight has ${errors.length} refusal(s):\n` +
+        errors.map((error) => `  ${error.code}  ${error.message}`).join("\n") +
+        `\n  see build/${id}/preflight.json · ${scorePath}`,
+    );
+  }
 }
 
 /**
@@ -515,6 +553,10 @@ async function main(): Promise<void> {
   const keepDir = arg("keep-frames");
   const framesDir = keepDir ? resolve(cwd, keepDir) : await mkdtemp(join(tmpdir(), "paper-film-"));
   await mkdir(framesDir, { recursive: true });
+
+  // The gate comes before the browser, not after the film.
+  const fullRange = Number(arg("from") ?? 0) <= 0 && Number(arg("to") ?? duration) >= duration;
+  if (!stills && fullRange) requirePreflight(cwd, score.id, scoreFile, scorePath);
 
   const server = await serve(cwd);
   // One browser paints one frame at a time; N browsers paint N contiguous
