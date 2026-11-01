@@ -106,10 +106,13 @@ are one-off scripts that each answered one question with one render. That is the
 right instrument, used at the wrong scale: **15 s per still, but a human in the
 loop for every decision**.
 
-**Change:** one command, `npm run sheet:shots`, that renders **one frame per shot**
-and tiles them into a single PNG in ~25 s. Staging is then judged as a sequence,
-and a bad beat is visible next to a good one. This is the single biggest
-human-time lever, because it turns nine review rounds into one.
+**Change:** `npm run storyboard` **already is that command** — it renders one
+code-drawn frame per shot and tiles them into a single PNG. The mistake was not a
+missing instrument but that the day used fifteen separate stills and never once
+ran the sheet that puts them side by side: 2 minutes of work that would have made
+every staging pass a sequence, with a bad beat visible next to a good one. The one
+thing it does not do is sample **inside** a shot, which is what `npm run stills`
+and `render:film --stills <t>` are for.
 
 ### Step 5 — voice (10 min)
 
@@ -167,7 +170,7 @@ one at a time in one Chrome while every frame is an independent pure function of
 | step | today | target | how |
 |---|---|---|---|
 | score authored against a linter | 3 h 30 | 20 min | human decides; linter refuses blends-as-holds, stale cue bindings, over-long lines |
-| one frame per shot, tiled | — | 30 s | `sheet:shots` (new) |
+| one frame per shot, tiled | — | 2 min | `npm run storyboard` (it exists) |
 | 720p / 12 fps preview, with sound | — | 2 min | a second, cheaper render target |
 | fix rounds | 3 × 20 min | 2 × 6 min | stills + slices, as done for s07 |
 | **final render, 1080p30, 1800 frames** | **33 min** | **6–8 min** | 4–6 parallel workers, contiguous ranges, one encode |
@@ -178,23 +181,33 @@ one at a time in one Chrome while every frame is an independent pure function of
 
 ### The ordered change set
 
+**Landed the same night** (measured, not projected): item 1 as decision `0023` —
+`--workers N`, contiguous absolute ranges, one encode path, and
+`npm run render:workers` proving **60 of 60 frames byte-identical** and the same
+picture hash (67.3 s → 28 s on 4 workers *while a third render used the machine*);
+item 3's cheapest half — `film:chain` now runs the **unit suite (14 s)** and the
+score audit before the first frame, because `test/cast-rig.test.ts` already knew
+the legs did not reach the floor. Items 2, 4 and 5 are still projections.
+
 1. **Parallel frame workers** in `scripts/render-film.ts`: N Chrome instances,
-   contiguous ranges, per-range segments concatenated in order. Frames are pure,
-   so ordering is the only correctness question. Prove with a test that a
-   4-worker render and a serial render produce identical `videoHash`, and that
-   two 4-worker renders are byte-identical. *This is the 4× and it is the one
-   that makes the target reachable.*
+   contiguous ranges, one encode. Frames are pure, so ordering is the only
+   correctness question, and it is answered by bytes rather than by argument.
+   *This is the 4× and it is the one that makes the target reachable.*
 2. **Static-layer caching in the painter**: the room, window, desk and monitor
    are repainted identically in ~1200 of 1800 frames. Cache them to an offscreen
    canvas keyed by `(recipe, hour, camera)`. Expected 2–3× on per-frame paint;
    must be measured, not assumed, and must not change a single pixel
-   (`paint-match` already compares the page against the video).
+   (`paint-match` already compares the page against the video). **Not landed:**
+   it moves a hashed input, so it belongs to a deliberate picture revision.
 3. **Movement of every check upstream of the first frame**: pre-render gate,
    score lint, per-shot motion probe, prop footprint (exists), rig reachability
-   for *every* cast rig (exists, was just not wired to the office rig).
+   for *every* cast rig (exists, now wired by the chain's test step).
 4. **Determinism as a probe, not a second film**: a 30-frame two-process test,
-   plus the full twin only on a tagged acceptance run.
-5. **`sheet:shots` and the 720p preview**, so the human loop is minutes.
+   plus the full twin only on a tagged acceptance run. With six workers the twin
+   costs ~10 minutes rather than 34, which changes the urgency but not the point.
+5. **A 720p preview target**, so the human loop is minutes rather than half an
+   hour: `storyboard` and `stills` already cover the judging; what is missing is
+   a moving preview with sound.
 
 ### What I would not change
 
