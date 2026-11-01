@@ -60,7 +60,15 @@ type Anchor = {
 type Matrix = [number, number, number, number, number, number];
 type Record = Solve | Limb | Anchor;
 type ProbeFile = { frames: { time: number; rigRecords: Record[] }[] };
-type Score = { id: string; duration: number; fps?: number };
+type Score = {
+  id: string;
+  duration: number;
+  fps?: number;
+  shots?: {
+    duration: number;
+    direction?: { events?: { t: number; kind: string; who?: string }[] };
+  }[];
+};
 
 /** Device position of a point in the transform's own space. */
 function place(m: Matrix, x: number, y: number): [number, number] {
@@ -120,6 +128,36 @@ async function main(): Promise<void> {
   // allowed drift is small: pose blending moves the anchor not at all, and a
   // part outside its parent's transform moves it by tens of units.
   const seamTolerance = Number(arg("seam-tolerance") ?? 1.5);
+
+  /**
+   * The times the score itself asks the rig to jump.
+   *
+   * A cut re-stages the frame, and a pose event is a keyframe the film asked
+   * for — the painter snaps to it in 0.08 s, and its breakdown lands there. A
+   * part that moves at a cut or a key is the film cutting, not the rig coming
+   * apart. A dropped transform is the other thing entirely: it is continuous in
+   * the pose, so it shows between two neighbouring frames with no event to
+   * explain it, which is what the row is for (decision 0011).
+   */
+  const cuts: number[] = [0];
+  const poseKeys = new Map<string, number[]>();
+  {
+    let start = 0;
+    for (const shot of score.shots ?? []) {
+      for (const event of shot.direction?.events ?? []) {
+        if (event.kind !== "pose" || !event.who) continue;
+        const list = poseKeys.get(event.who) ?? [];
+        list.push(start + event.t, start + Math.max(0, event.t - 0.08));
+        poseKeys.set(event.who, list);
+      }
+      start += shot.duration;
+      cuts.push(start);
+    }
+  }
+  const near = (times: number[] | undefined, time: number) =>
+    (times ?? []).some((t) => Math.abs(time - t) <= step + 0.02);
+  const declaredJump = (character: string, time: number) =>
+    near(cuts, time) || near(poseKeys.get(character), time);
 
   const work = resolve(root, "build", score.id, "rig-probe");
   await mkdir(work, { recursive: true });
@@ -299,6 +337,8 @@ async function main(): Promise<void> {
   // same reason as the ankle: a cut re-stages the character, and a rig defect
   // is continuous in the pose, so it shows up between two neighbouring frames.
   let worstSeam = { character: "", part: "", time: 0, distance: 0 };
+  let worstAttributed = { character: "", part: "", time: 0, distance: 0 };
+  let attributed = 0;
   let seamPairs = 0;
   for (const [key, list] of seams) {
     const [character, part] = key.split("|");
@@ -320,10 +360,19 @@ async function main(): Promise<void> {
         });
         continue;
       }
-      if (shift > worstSeam.distance) {
-        worstSeam = { character: character ?? "", part: part ?? "", time: current.time, distance: shift };
-      }
       if (shift > seamTolerance) {
+        if (declaredJump(character ?? "?", current.time)) {
+          // The film cut, or asked for this pose. Counted, and reported, but it
+          // is not the rig failing to inherit a transform.
+          attributed++;
+          if (shift > worstAttributed.distance) {
+            worstAttributed = { character: character ?? "", part: part ?? "", time: current.time, distance: shift };
+          }
+          continue;
+        }
+        if (shift > worstSeam.distance) {
+          worstSeam = { character: character ?? "", part: part ?? "", time: current.time, distance: shift };
+        }
         findings.push({
           time: current.time,
           character: character ?? "?",
@@ -368,6 +417,14 @@ async function main(): Promise<void> {
       units: Math.round(worstSeam.distance * 100) / 100,
       limit: seamTolerance,
     },
+    // Shifts across a cut or a declared pose key: the film asking for a jump,
+    // counted so the row cannot quietly ignore everything it sees.
+    declaredSeamShifts: {
+      count: attributed,
+      worst: Math.round(worstAttributed.distance * 100) / 100,
+      at: worstAttributed.time,
+      part: worstAttributed.part,
+    },
     thresholds: { lengthTolerance, landingTolerance, minBend, maxBend, jumpLimit, seamTolerance },
     findings,
     probe: `sha256:${createHash("sha256")
@@ -386,7 +443,7 @@ async function main(): Promise<void> {
     `rig: ${legs} legs from ${characters} character frames · worst ankle jump ${worstJump.distance.toFixed(1)}px at ${worstJump.time.toFixed(2)}s · ${unpaired} unpaired solves · ${pass ? "pass" : instrumented ? `FAIL ${findings.length}` : "FAIL not instrumented"}`,
   );
   console.log(
-    `rig: ${anchors} anchor samples on ${anchored.size} character(s) (${[...anchored].sort().join(", ") || "none"}) · ${seamPairs} adjacent pairs · worst in-parent shift ${worstSeam.distance.toFixed(2)} units (${worstSeam.part || "n/a"} at ${worstSeam.time.toFixed(2)}s, limit ${seamTolerance})`,
+    `rig: ${anchors} anchor samples on ${anchored.size} character(s) (${[...anchored].sort().join(", ") || "none"}) · ${seamPairs} adjacent pairs · worst in-parent shift ${worstSeam.distance.toFixed(2)} units (${worstSeam.part || "n/a"} at ${worstSeam.time.toFixed(2)}s, limit ${seamTolerance}) · ${attributed} shift(s) at a declared cut or pose key (worst ${worstAttributed.distance.toFixed(2)} units at ${worstAttributed.time.toFixed(2)}s)`,
   );
   console.log(`report: ${reportPath}`);
   if (!pass) process.exit(1);

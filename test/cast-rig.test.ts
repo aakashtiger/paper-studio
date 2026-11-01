@@ -105,3 +105,98 @@ for (const [name, rig] of Object.entries(rigs)) {
     assert.deepEqual(bad, [], "a planted foot must bend its knee and touch the ground");
   });
 }
+
+/**
+ * The office rig (*Same Alarm*) is a different rig with the same requirement, and
+ * it was not covered: its hip sat 272 above the floor on a 273 leg — straight by
+ * construction — and the supervisor's 286 floated above legs that could not reach
+ * the ground. A walk then raised the hip by up to 10 units (a negative pose
+ * bounce, the breathing, and the recipe's step bob) and `audit:rig` found 209
+ * clamped legs on a delivered cut.
+ *
+ * The allowance for that bob is not a number typed here: it is read out of the
+ * pack painter, so a faster walk or a deeper breath fails this test instead of a
+ * film.
+ */
+function readOfficeRig() {
+  const source = readFileSync(resolve(root, "films/same-alarm/vendor/office.js"), "utf8");
+  const painter = readFileSync(resolve(root, "styles/paper-kpop/canvas/recipes.js"), "utf8");
+
+  const hips = [...source.matchAll(/const HIP = (-?\d+);/g)].map((m) => Number(m[1]));
+  assert.equal(hips.length, 1, "the office rig should declare one hip height, not one per character");
+
+  const legs = /solveLeg\(hx, hy, target\[0\], target\[1\], (\d+), (\d+), side\)[\s\S]{0,240}?limb\(ctx, hx, hy, (\d+)[\s\S]{0,200}?limb\(ctx, knee\[0\], knee\[1\], (\d+)/.exec(source);
+  assert.ok(legs, "could not read the office leg lengths");
+  assert.equal(legs[1], legs[3], "the office rig solves one thigh length and draws another");
+  assert.equal(legs[2], legs[4], "the office rig solves one shin length and draws another");
+
+  // How far the paint may lift the hip above the pose the library declares.
+  const steps = [...painter.matchAll(/stepBob\([\d.]+, t, (\d+)\)/g)].map((m) => Number(m[1]));
+  const breath = Number(/p\.bounce = \(p\.bounce \|\| 0\) \+ Math\.sin\(t \* 2\.1 \+ 0\.7\) \* ([\d.]+)/.exec(painter)?.[1] ?? 0);
+  assert.ok(steps.length > 0, "no step bob found in the painter; did the walk recipes change?");
+  assert.ok(breath > 0, "no breathing found in the painter");
+
+  return {
+    hip: Number(hips[0]),
+    // `boss ? 16 : 14` is the hip's half-width, which the solve measures from.
+    hipX: { Kiran: 14, Vaz: 16 },
+    thigh: Number(legs[1]),
+    shin: Number(legs[2]),
+    sole: 8, // the shoe is drawn from -9 to +10 around an ankle placed 2 px up
+    lift: Math.max(...steps) + breath,
+    poses: { Kiran: "films/same-alarm/cast/kiran.poses.json", Vaz: "films/same-alarm/cast/vaz.poses.json" },
+  };
+}
+
+const office = readOfficeRig();
+const officeLeg = office.thigh + office.shin;
+
+for (const [name, posesPath] of Object.entries(office.poses)) {
+  const library = JSON.parse(readFileSync(resolve(root, posesPath), "utf8")) as {
+    poses: { name: string; params: Record<string, unknown> }[];
+  };
+  const hipX = office.hipX[name as "Kiran" | "Vaz"];
+
+  test(`office ${name}: every pose reaches the ground at the top of its bob`, () => {
+    const unreachable: string[] = [];
+    for (const pose of library.poses) {
+      const bounce = Number(pose.params.bounce ?? 0);
+      // the highest the hip can be drawn: the pose's own lift, the breath, the bob
+      const hip = office.hip + bounce - office.lift;
+      for (const side of [-1, 1] as const) {
+        const target = pose.params[side < 0 ? "footL" : "footR"];
+        if (!Array.isArray(target)) continue;
+        const reach = Math.hypot(Number(target[0]) - side * hipX, Number(target[1]) - hip);
+        // 8 px of leg kept for the bend, so a planted foot cannot stand locked.
+        if (reach > officeLeg - 8) {
+          unreachable.push(
+            `${pose.name}/${side < 0 ? "L" : "R"} needs ${reach.toFixed(1)} of ${officeLeg} at the top of the bob`,
+          );
+        }
+      }
+    }
+    assert.deepEqual(unreachable, [], "the leg clamps, the knee locks and the foot floats above its shadow");
+  });
+
+  test(`office ${name}: every pose has a foot on the ground, and none through it`, () => {
+    const bad: string[] = [];
+    for (const pose of library.poses) {
+      const soles = ([-1, 1] as const).map((side) => {
+        const target = pose.params[side < 0 ? "footL" : "footR"];
+        return Array.isArray(target) ? Number(target[1]) + office.sole : null;
+      });
+      const grounded = soles.filter((sole): sole is number => sole !== null);
+      if (!grounded.length) continue;
+      // A stepping foot is lifted — that is what a step is, and -y is up, so a
+      // lifted sole is negative. What no pose may do is stand in the floor, or
+      // stand with no foot on it at all.
+      for (const sole of grounded) {
+        if (sole > 2) bad.push(`${pose.name} puts a sole ${sole.toFixed(1)} px into the ground`);
+      }
+      if (!grounded.some((sole) => Math.abs(sole) <= 10)) {
+        bad.push(`${pose.name} has no support foot (soles ${grounded.map((s) => s.toFixed(1)).join(", ")})`);
+      }
+    }
+    assert.deepEqual(bad, [], "a planted foot must touch the ground and no foot may pass through it");
+  });
+}

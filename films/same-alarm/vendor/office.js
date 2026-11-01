@@ -30,7 +30,22 @@ function officeFigure(ctx, x, y, s, o = {}) {
   const legR = p.legR || [-0.03, -0.01];
 
   const boss = o.outfit === "supervisor";
-  const HIP = boss ? -286 : -272;
+  // One leg, one ground line. The hip sits 258 above the feet and the leg is
+  // 156 + 117 = 273 long, so a standing figure spends 15 units of leg on a bent
+  // knee instead of standing on two locked sticks.
+  //
+  // It was -272 (worker) and -286 (supervisor): the worker's leg summed to 273
+  // against a hip 272 above the floor, i.e. exactly straight, and the
+  // supervisor's hip floated 13 units above legs that could not reach the floor
+  // at all. A walk then *raised* the hip by up to 10 (a -2 pose bounce, -2.2 of
+  // breathing and 6 from the recipe's step bob), which the leg could not follow:
+  // the solver clamped, the knee locked at 0.005 rad and the ankle stopped 4 px
+  // short. `test/cast-rig.test.ts` now holds every cast pose to a reach that
+  // leaves room for that bob, so this cannot come back quietly.
+  //
+  // The supervisor is still the taller man: he is taller in the torso
+  // (SHOULDER/HEAD), not in a hip that hangs above his own legs.
+  const HIP = -258;
   const SHOULDER = boss ? -466 : -452;
   const HEAD = boss ? -530 : -518;
   // One colour convention for every rig: the painter passes `colors`, an object
