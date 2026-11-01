@@ -130,29 +130,46 @@ async function main(): Promise<void> {
 
   const work = resolve(root, "build", score.id, "type-probe");
   await mkdir(work, { recursive: true });
-  const probeFile = join(work, "probe.json");
+  let probeFile = join(work, "probe.json");
   const times: number[] = [];
   for (let time = 0; time < score.duration; time += step) times.push(Math.round(time * 100) / 100);
 
-  console.log(`type: painting ${times.length} frames at ${step}s steps`);
-  await run(
-    process.execPath,
-    [
-      "--import",
-      "tsx",
-      "scripts/render-film.ts",
-      scorePath,
-      "--stills",
-      times.map((time) => time.toFixed(2)).join(","),
-      "--out-dir",
-      join("build", score.id, "type-probe", "stills"),
-      "--probe",
-      join("build", score.id, "type-probe", "probe.json"),
-    ],
-    root,
-  );
+  // `--probe <file>` reads a probe another pass already painted. One inspection
+  // pass can carry text, joints and movement at once; the audit then keeps only
+  // the frames on its own grid, so its verdict is the one it would have reached
+  // by painting them itself (decision 0029).
+  const shared = arg("probe");
+  if (shared) {
+    probeFile = resolve(root, shared);
+    console.log(`type: reading ${shared} (no paint)`);
+  } else {
+    console.log(`type: painting ${times.length} frames at ${step}s steps`);
+    await run(
+      process.execPath,
+      [
+        "--import",
+        "tsx",
+        "scripts/render-film.ts",
+        scorePath,
+        "--stills",
+        times.map((time) => time.toFixed(2)).join(","),
+        "--out-dir",
+        join("build", score.id, "type-probe", "stills"),
+        // Text boxes, not pictures: the audit reads the probe and never opens a PNG.
+        "--no-png",
+        "--probe",
+        join("build", score.id, "type-probe", "probe.json"),
+      ],
+      root,
+    );
+  }
 
-  const data = JSON.parse(await readFile(probeFile, "utf8")) as ProbeFile;
+  const raw = JSON.parse(await readFile(probeFile, "utf8")) as ProbeFile;
+  const onGrid = (time: number) => {
+    const steps = time / step;
+    return Math.abs(steps - Math.round(steps)) < 1e-6;
+  };
+  const data: ProbeFile = { frames: raw.frames.filter((frame) => onGrid(frame.time)) };
   if (data.frames.length === 0) throw new Error("the paint probe returned no frames");
 
   const outside: { time: number; text: string; box: TextBox; over: number }[] = [];

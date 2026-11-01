@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { STILL_TRAVEL, WEAK_TRAVEL, checkMotion, motionOf, type MotionFrame } from "../src/engine/motion.js";
+import { STILL_TRAVEL, WEAK_TRAVEL, checkMotion, motionOf, motionReportFor, type MotionFrame } from "../src/engine/motion.js";
 
 const shots = [
   { id: "s01", start: 0, duration: 3 },
@@ -61,6 +61,29 @@ test("frames outside every shot are not attributed to a shot", () => {
 test("a shot with fewer than two frames cannot be measured", () => {
   const report = checkMotion(motionOf(shots, framesAt(0, [0])));
   assert.ok(report.errors.some((issue) => issue.code === "motion:unmeasured"));
+});
+
+test("the report file names the score and counts the frames, so the gate can trust it", () => {
+  const report = motionReportFor({
+    film: "same-alarm",
+    score: "sha256:abc",
+    step: 0.1,
+    shots: [shots[0]!],
+    frames: [
+      { time: 0, sample: sample(0) },
+      { time: 0.1, sample: sample(3) },
+      { time: 0.2, sample: sample(6) },
+      { time: 0.3, sample: sample(9) },
+    ],
+  });
+  assert.equal(report.score, "sha256:abc");
+  assert.equal(report.step, 0.1);
+  assert.equal(report.frames, 4);
+  assert.equal(report.shots.length, 1);
+  assert.deepEqual(report.errors, []);
+  // Same shape the three separate passes produced, so the renderer's gate reads
+  // one file regardless of which command painted the frames.
+  assert.deepEqual(Object.keys(report).sort(), ["errors", "film", "frames", "score", "shots", "step", "warnings"]);
 });
 
 test("the last frame of a shot belongs to the next shot", () => {

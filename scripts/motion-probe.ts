@@ -77,6 +77,8 @@ async function main(): Promise<void> {
         "--import", "tsx", "scripts/render-film.ts", file as string,
         "--stills", all.join(","),
         "--out-dir", join(outDir, "frames"),
+        // The probe reads numbers, not pictures: no PNG is encoded or written.
+        "--no-png",
         "--probe", probePath,
       ],
       { stdio: ["ignore", "inherit", "inherit"] },

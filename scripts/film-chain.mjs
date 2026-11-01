@@ -107,10 +107,12 @@ const steps = [
   // the cast the vendor will draw even exists — and the renderer refuses to
   // paint a whole film without a fresh pass from it.
   { name: "preflight", tsx: "scripts/preflight.ts", args: [score] },
-  // The still photograph: a short window inside every shot, painted through the
-  // real painter, and one question per shot — does it travel from the first
-  // frame to the last? Two whole renders were lost to shots that did not.
-  { name: "probe:motion", tsx: "scripts/motion-probe.ts", args: [score] },
+  // One pass for every picture question a score can answer (decision 0029): the
+  // frames are painted once, probe-only, and the movement, the type and the rig
+  // are all read from that same probe. It also writes the movement report the
+  // renderer's gate reads. Before this, the chain painted those frames three
+  // times — and a rig pass wrote 2 GB of PNGs that nothing opened.
+  { name: "inspect", tsx: "scripts/inspect.ts", args: [score] },
   // Stage 5: the character sheet and the collage. The sheet is the page where a
   // plank arm is obvious; the collage is one frame per shot, checked by the tool
   // (every shot present, none blank or duplicated, every staged character drawn,
@@ -138,8 +140,6 @@ const steps = [
   { name: "paint", tsx: "scripts/paint-match.ts", args: [score, "--video", deliverable] },
   { name: "palette", tsx: "scripts/palette-audit.ts", args: [score, "--video", deliverable] },
   { name: "motion", tsx: "scripts/motion-audit.ts", args: [score, "--video", deliverable] },
-  { name: "type", tsx: "scripts/type-audit.ts", args: [score] },
-  { name: "rig", tsx: "scripts/rig-audit.ts", args: [score] },
   { name: "deliver", tsx: "scripts/deliver.ts", args: [score, "--video", deliverable, "--out", delivered] },
   { name: "asr", tsx: "scripts/asr.ts", args: [score] },
   { name: "gate", tsx: "scripts/gate-7.ts", args: [score] },

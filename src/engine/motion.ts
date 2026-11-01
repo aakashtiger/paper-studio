@@ -125,3 +125,41 @@ export function checkMotion(shots: ShotMotion[]): MotionReport {
 
   return { shots, errors, warnings };
 }
+
+/**
+ * The report file the renderer's gate reads, from one set of sampled frames.
+ *
+ * `probe:motion` writes it and `inspect` writes it too — the same shape, so the
+ * renderer does not care which pass produced the evidence, only that the
+ * evidence is about the score it is about to paint.
+ */
+export type MotionReportFile = {
+  film: string;
+  /** sha256 of the score this measured, so a stale pass cannot be mistaken for a fresh one. */
+  score: string;
+  /** The sampling step, in seconds. */
+  step: number;
+  frames: number;
+  shots: ShotMotion[];
+  errors: MotionIssue[];
+  warnings: MotionIssue[];
+};
+
+export function motionReportFor(input: {
+  film: string;
+  score: string;
+  step: number;
+  shots: { id: string; start: number; duration: number }[];
+  frames: MotionFrame[];
+}): MotionReportFile {
+  const report = checkMotion(motionOf(input.shots, input.frames));
+  return {
+    film: input.film,
+    score: input.score,
+    step: input.step,
+    frames: input.frames.length,
+    shots: report.shots,
+    errors: report.errors,
+    warnings: report.warnings,
+  };
+}

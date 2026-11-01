@@ -470,6 +470,8 @@ async function attachProbe(cdp: Cdp, cwd: string): Promise<void> {
 async function drawFrame(
   cdp: Cdp,
   time: number,
+  /** Encode the frame as a PNG. False for a probe-only pass: the audits read numbers only. */
+  png = true,
 ): Promise<{ data: string; drawnAt: number; textBoxes?: TextBox[]; rigRecords?: RigRecord[]; sample?: number[] }> {
   const probe = await cdp.send<{
     result: {
@@ -489,7 +491,7 @@ async function drawFrame(
       window.__draw(${time});
       if (window.__lastDrawError) return { error: String(window.__lastDrawError) };
       return {
-        data: document.getElementById("out").toDataURL("image/png"),
+        data: ${png ? 'document.getElementById("out").toDataURL("image/png")' : '"probe-only"'},
         drawnAt: window.__drawnAt,
         textBoxes: window.__paintProbe ? window.__textBoxes.slice() : undefined,
         rigRecords: window.__paintProbe ? window.__rigRecords.slice() : undefined,
@@ -703,6 +705,10 @@ async function main(): Promise<void> {
     if (probePath && !stills) await attachProbe(cdp, cwd);
 
     if (stills) {
+      // `--no-png` is the probe-only pass: the frame is drawn and measured but
+      // never encoded. The audits (rig, type, movement) read numbers, and a rig
+      // pass used to write 2 GB of PNGs that nothing opened.
+      const wantPng = !has("no-png");
       await mkdir(stillsDir, { recursive: true });
       const chunks = splitEven(stills, Math.min(workerTotal, stills.length));
       const painted = await Promise.all(
@@ -711,10 +717,12 @@ async function main(): Promise<void> {
           if (probePath) await attachProbe(worker.cdp, cwd);
           const out: { time: number; textBoxes: TextBox[]; rigRecords: RigRecord[]; sample?: number[] }[] = [];
           for (const time of times) {
-            const frame = await drawFrame(worker.cdp, time);
-            const base64 = frame.data.slice(frame.data.indexOf(",") + 1);
+            const frame = await drawFrame(worker.cdp, time, wantPng);
             const name = `t-${time.toFixed(2).padStart(5, "0")}.png`;
-            await writeFile(join(stillsDir, name), Buffer.from(base64, "base64"));
+            if (wantPng) {
+              const base64 = frame.data.slice(frame.data.indexOf(",") + 1);
+              await writeFile(join(stillsDir, name), Buffer.from(base64, "base64"));
+            }
             if (frame.textBoxes || frame.rigRecords) {
               out.push({
                 time,
@@ -723,13 +731,13 @@ async function main(): Promise<void> {
                 sample: frame.sample,
               });
             }
-            console.log(`still ${name}`);
+            console.log(wantPng ? `still ${name}` : `probe ${time.toFixed(2)}s`);
           }
           return out;
         }),
       );
       const probeFrames = painted.flat().sort((a, b) => a.time - b.time);
-      console.log(`stills: ${stillsDir}`);
+      console.log(wantPng ? `stills: ${stillsDir}` : `probe: ${probeFrames.length} frames drawn, no PNG written`);
       if (probePath) {
         const probeFile = resolve(cwd, probePath);
         await mkdir(dirname(probeFile), { recursive: true });

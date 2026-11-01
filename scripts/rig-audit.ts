@@ -150,30 +150,46 @@ async function main(): Promise<void> {
 
   const work = resolve(root, "build", score.id, "rig-probe");
   await mkdir(work, { recursive: true });
-  const probeFile = join(work, "probe.json");
+  let probeFile = join(work, "probe.json");
 
   const times: number[] = [];
   for (let time = 0; time < score.duration; time += step) times.push(Math.round(time * 1000) / 1000);
 
-  console.log(`rig: painting ${times.length} frames at ${step}s steps`);
-  await run(
-    process.execPath,
-    [
-      "--import",
-      "tsx",
-      "scripts/render-film.ts",
-      scorePath,
-      "--stills",
-      times.map((time) => time.toFixed(3)).join(","),
-      "--out-dir",
-      join("build", score.id, "rig-probe", "stills"),
-      "--probe",
-      join("build", score.id, "rig-probe", "probe.json"),
-    ],
-    root,
-  );
+  // `--probe <file>` reads a probe another pass already painted (decision 0029);
+  // the audit keeps only the frames on its own grid, so its verdict is the one it
+  // would have reached by painting them.
+  const shared = arg("probe");
+  if (shared) {
+    probeFile = resolve(root, shared);
+    console.log(`rig: reading ${shared} (no paint)`);
+  } else {
+    console.log(`rig: painting ${times.length} frames at ${step}s steps`);
+    await run(
+      process.execPath,
+      [
+        "--import",
+        "tsx",
+        "scripts/render-film.ts",
+        scorePath,
+        "--stills",
+        times.map((time) => time.toFixed(3)).join(","),
+        "--out-dir",
+        join("build", score.id, "rig-probe", "stills"),
+        // 601 frames x 3.5 MB of PNG that nothing opens. The audit reads joints.
+        "--no-png",
+        "--probe",
+        join("build", score.id, "rig-probe", "probe.json"),
+      ],
+      root,
+    );
+  }
 
-  const data = JSON.parse(await readFile(probeFile, "utf8")) as ProbeFile;
+  const raw = JSON.parse(await readFile(probeFile, "utf8")) as ProbeFile;
+  const onGrid = (time: number) => {
+    const steps = time / step;
+    return Math.abs(steps - Math.round(steps)) < 1e-6;
+  };
+  const data: ProbeFile = { frames: raw.frames.filter((frame) => onGrid(frame.time)) };
   if (data.frames.length === 0) throw new Error("the paint probe returned no frames");
 
   const findings: { time: number; character: string; side: number; part?: string; check: string; detail: string }[] = [];
