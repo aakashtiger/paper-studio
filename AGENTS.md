@@ -102,7 +102,54 @@ npx hyperframes render proofs/s2-paper -o proofs/s2-paper/paper-proof.mp4 --fps 
 
 ## Current phase
 
-**The first real film — *Same Alarm* — and Paper K-pop 0.2.0.**
+**The loop is fixed before the next film is made (decisions 0025–0031).**
+
+The user's instruction, after *Same Alarm* was rejected: fix the whole system
+first, then make another film. What was wrong was not the painter — it was the
+**order** and the **cost** of the work. Nine full renders produced seven cuts a
+one-second check had already rejected; the film that shipped had never been
+written; the first time anyone saw the cut move was after paying for it. Six
+decisions changed that, and the pipeline a film now takes is:
+
+```
+story.json   the spine, the tone, the narration lines, the pace band       (0025)
+beats.json   what each beat is for, the share it owns, its signature sound (0025)
+score.json   the shots, each bound to a beat, with a reason to exist       (0025)
+   ↓ npm run preflight     ~1 s    the writing, the cut, the voice, the sound, the cast
+   ↓ npm run inspect       ~1 min  ONE pass: movement, type and rig, probe-only
+   ↓ npm run collage       ~30 s   one frame per shot, checked by the tool, not by a person
+   ↓ npm run sfx / mix             the sound, generated in code, measured
+   ↓ npm run draft         ~4 min  watch and listen at 10 fps, with the master
+   ↓ npm run render:film   ~12 min the film, refused without all three checks passing
+   ↓ npm run deliver + gate        the delivered file, measured
+```
+
+What each decision bought, measured on *Same Alarm* (60 s, 10 shots):
+
+| decision | before | after |
+|---|---|---|
+| 0026 preflight | 70–81 min per defect, discovered after the render | **0.9 s**, 5 refusals, before a browser opens |
+| 0027 collage | nine rounds of fifteen stills, ~2 h | **30 s**, one page, self-checked |
+| 0028 movement probe | two whole renders lost to still shots | **50 s**, refuses `motion:still` before the paint |
+| 0029 one pass | 3 passes / 871 frames / 2.4 GB of PNGs / 92.5 s | **1 pass**, 600 frames, **0 bytes**, **59.4 s** |
+| 0030 front door | `film:new` wrote only the score — a film could start at its shot list | writes **story, beats, score**, in order, and names every gap |
+| 0031 draft | the first moving look was the film itself | **3 min 52 s** for a 10 fps cut with the master |
+
+`render:film` refuses a whole-film paint without a passing preflight, collage
+and movement report, each carrying the sha256 of the score it describes. Probes
+(`--stills`, `--from/--to`, `--draft`) are ungated — they are the instruments.
+The type and rig audits now run **before** the render, on frames identical to the
+delivered ones by purity (0023).
+
+**Still open, and named:** the chain paints the film twice to prove determinism
+(2 × ~12 min — the largest remaining cost); the collage and the storyboard each
+paint their own ten frames; narration word times still say `source: "guess"`
+until the local Whisper model is installed, so ASR is the one manual gate row.
+No new film starts until the user says so.
+
+---
+
+**The first real film - *Same Alarm* - and Paper K-pop 0.2.0.**
 
 The user's own idea is a film: *the life of a corporate slave from morning to
 night*, one minute, new characters (`films/same-alarm/`). It is a 10-shot, 60 s,
@@ -172,7 +219,7 @@ The **contract layer and the first generators are implemented**: film brief,
 audio resolver (recorded/TTS narration, library/generated music, generated SFX),
 asset manifest, pose library, film score, derived **board**, score-level
 **audit**, the **character/pose sheet** generator and the **board animatic**
-builder. **269 tests.** The sheet has a signed **9/10 design** review. The paper
+builder. **346 tests.** The sheet has a signed **9/10 design** review. The paper
 rig has two-bone leg IK, ankle targets, foot pitch and a knee-driven bounce; the
 leg targets are now reachable, so a planted foot bends its knee and lands on its
 shadow (`test/cast-rig.test.ts`). The board animatic is **9/10 signed** (editor +
