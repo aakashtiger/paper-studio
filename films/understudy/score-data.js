@@ -494,7 +494,10 @@ window.SCORE = {
       }
     }
   ],
-  "warnings": [],
+  "warnings": [
+    "film pins paper-kpop@0.1.0 but the pack is @0.2.0",
+    "brief pins paper-kpop@0.1.0 but the pack is @0.2.0"
+  ],
   "brief": "films/understudy/brief.json",
   "clock": {
     "mode": "narration",
@@ -1302,7 +1305,7 @@ window.SCORE = {
       "id": "character.lead",
       "type": "character",
       "version": "0.1.0",
-      "hash": "sha256:fd660e883273fa7b836aa78a39b09df8a7c1e768aedbbc8f185913ada1538257",
+      "hash": "sha256:96f542bcf0b3d6b98bf6e9a79c4b95cf8c5ad3a8fe55a7032b552baaf304d2b4",
       "source": "reused",
       "anchors": [
         "face",
@@ -1318,7 +1321,7 @@ window.SCORE = {
       "id": "character.second",
       "type": "character",
       "version": "0.1.0",
-      "hash": "sha256:fd660e883273fa7b836aa78a39b09df8a7c1e768aedbbc8f185913ada1538257",
+      "hash": "sha256:96f542bcf0b3d6b98bf6e9a79c4b95cf8c5ad3a8fe55a7032b552baaf304d2b4",
       "source": "reused",
       "anchors": [
         "face",

@@ -1,0 +1,18 @@
+{
+  "id": "same-alarm",
+  "title": "Same Alarm",
+  "audience": "Short-video audience, phones first; an office-life character piece that plays as a joke that stops being funny",
+  "style": "paper-kpop",
+  "styleVersion": "0.2.0",
+  "aspect": "16:9",
+  "duration": 60,
+  "fps": 30,
+  "audioMode": "narration",
+  "references": ["papercut-red", "spy-titles"],
+  "mustSay": [
+    "same alarm",
+    "nine hours",
+    "still here"
+  ],
+  "notes": "The premise is the user's: the life of a corporate slave from morning to night, one minute, new characters. The film is a loop: an alarm, a commute, a desk under fluorescent light, and the same alarm again before anything has been decided. Facts the film may use are only the ones written here. The cast names below are the only invented facts in the film and they are invented in this file, once, where they can be changed: Kiran (the employee) and Vaz (the supervisor). Nothing else about them is known, so nothing else may be shown as known: no salary, no city, no family, no employer brand. The hour markers are the film's spine and come from this brief, not from the painter: 06:00 (the alarm), 07:20 (the corridor), 09:00 (the desk), 13:00 (the stack), 18:00 (the window), 21:00 (alone), 06:00 (the same alarm). 'Nine hours' is therefore exactly the desk, 09:00 to 18:00, and the film shows 21:00 after it. The day never resolves: the film ends on the alarm it began with. Style version 0.2.0 is the revision that raises the supported durations to include 60 s and honours the shot's camera ease; against 0.1.0 this brief is refused with brief_duration, which is the contract working as intended."
+}

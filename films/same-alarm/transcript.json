@@ -1,0 +1,194 @@
+{
+  "film": "same-alarm",
+  "voice": "films/same-alarm/voice.wav",
+  "source": "asr",
+  "duration": 60,
+  "lines": [
+    {
+      "id": "v01",
+      "text": "Same alarm.",
+      "start": 0.53,
+      "duration": 0.94,
+      "words": [
+        {
+          "w": "Same",
+          "start": 0.53,
+          "end": 1.11
+        },
+        {
+          "w": "alarm.",
+          "start": 1.11,
+          "end": 1.47
+        }
+      ]
+    },
+    {
+      "id": "v02",
+      "text": "Same corridor, same doors.",
+      "start": 6.54,
+      "duration": 1.4,
+      "words": [
+        {
+          "w": "Same",
+          "start": 6.54,
+          "end": 6.68
+        },
+        {
+          "w": "corridor,",
+          "start": 6.68,
+          "end": 7.12
+        },
+        {
+          "w": "same",
+          "start": 7.38,
+          "end": 7.5
+        },
+        {
+          "w": "doors.",
+          "start": 7.5,
+          "end": 7.94
+        }
+      ]
+    },
+    {
+      "id": "v03",
+      "text": "Nine hours under a light that never changes.",
+      "start": 12.5,
+      "duration": 2.16,
+      "words": [
+        {
+          "w": "Nine",
+          "start": 12.5,
+          "end": 12.68
+        },
+        {
+          "w": "hours",
+          "start": 12.68,
+          "end": 13.06
+        },
+        {
+          "w": "under",
+          "start": 13.06,
+          "end": 13.38
+        },
+        {
+          "w": "a",
+          "start": 13.38,
+          "end": 13.54
+        },
+        {
+          "w": "light",
+          "start": 13.54,
+          "end": 13.72
+        },
+        {
+          "w": "that",
+          "start": 13.72,
+          "end": 13.94
+        },
+        {
+          "w": "never",
+          "start": 13.94,
+          "end": 14.16
+        },
+        {
+          "w": "changes.",
+          "start": 14.16,
+          "end": 14.66
+        }
+      ]
+    },
+    {
+      "id": "v04",
+      "text": "Someone always needs it sooner.",
+      "start": 24.65,
+      "duration": 1.46,
+      "words": [
+        {
+          "w": "Someone",
+          "start": 24.65,
+          "end": 24.93
+        },
+        {
+          "w": "always",
+          "start": 24.93,
+          "end": 25.33
+        },
+        {
+          "w": "needs",
+          "start": 25.33,
+          "end": 25.63
+        },
+        {
+          "w": "it",
+          "start": 25.63,
+          "end": 25.85
+        },
+        {
+          "w": "sooner.",
+          "start": 25.85,
+          "end": 26.11
+        }
+      ]
+    },
+    {
+      "id": "v05",
+      "text": "The room empties.",
+      "start": 33,
+      "duration": 0.86,
+      "words": [
+        {
+          "w": "The",
+          "start": 33,
+          "end": 33.12
+        },
+        {
+          "w": "room",
+          "start": 33.12,
+          "end": 33.32
+        },
+        {
+          "w": "empties.",
+          "start": 33.32,
+          "end": 33.86
+        }
+      ]
+    },
+    {
+      "id": "v06",
+      "text": "Still here.",
+      "start": 37.72,
+      "duration": 0.38,
+      "words": [
+        {
+          "w": "Still",
+          "start": 37.72,
+          "end": 37.76
+        },
+        {
+          "w": "here.",
+          "start": 37.76,
+          "end": 38.1
+        }
+      ]
+    },
+    {
+      "id": "v07",
+      "text": "Same alarm.",
+      "start": 55.86,
+      "duration": 0.6,
+      "words": [
+        {
+          "w": "Same",
+          "start": 55.86,
+          "end": 56.08
+        },
+        {
+          "w": "alarm.",
+          "start": 56.08,
+          "end": 56.46
+        }
+      ]
+    }
+  ]
+}

@@ -622,10 +622,14 @@ function mira(ctx, x, y, s, o = {}) {
   const legL = p.legL || [.03, .01], legR = p.legR || [-.03, -.01];
   const headTilt = p.headTilt || 0;
   const HIP = -272, SHOULDER = -452, HEAD = -518;
-  const coat = o.coat === false ? null : (o.coatCol || PAL.cream);
-  const skin = o.skin || SKIN;
-  const trouser = o.trouser || PAL.blueD;
-  const hairCol = o.hair || PAL.ink;
+  // One colour convention: the painter passes `colors`, already mapped through
+  // the pack palette. This rig's roles are flat names in the pose library, so it
+  // reads them out of that object rather than off the top level.
+  const col = o.colors || {};
+  const coat = col.coat === false ? null : (col.coatCol || PAL.cream);
+  const skin = col.skin || SKIN;
+  const trouser = col.trouser || PAL.blueD;
+  const hairCol = col.hair || PAL.ink;
 
   ctx.save();
   ctx.translate(x, y);
@@ -990,3 +994,14 @@ function doomMeter(ctx, x, y, s, v, o = {}) {
   }
   ctx.restore();
 }
+
+/* The registry the painter dispatches through: the score's cast entry names a
+ * rig id and this is the only thing that answers to it. A rig's own defaults
+ * (outfit, petals, earrings) live here, not in the pack. */
+window.CHARACTERS = window.CHARACTERS || {};
+window.CHARACTERS["idol@0.1.0"] = function (ctx, x, y, s, o = {}) {
+  return idol(ctx, x, y, s, { ...o, outfit: o.outfit || "stage", petals: 0, earrings: true });
+};
+window.CHARACTERS["mira@0.1.0"] = function (ctx, x, y, s, o = {}) {
+  return mira(ctx, x, y, s, o);
+};

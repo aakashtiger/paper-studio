@@ -1,0 +1,1207 @@
+{
+  "id": "same-alarm",
+  "style": "paper-kpop",
+  "styleVersion": "0.2.0",
+  "aspect": "16:9",
+  "fps": 30,
+  "duration": 60,
+  "seed": "same-alarm-01",
+  "brief": "films/same-alarm/brief.json",
+  "edit": {
+    "minShot": 1.2,
+    "medianShot": 6.25,
+    "maxShot": 8
+  },
+  "clock": {
+    "mode": "narration",
+    "lines": [
+      {
+        "id": "v01",
+        "text": "Same alarm.",
+        "start": 0.8,
+        "duration": 1.3,
+        "hold": 0.9
+      },
+      {
+        "id": "v02",
+        "text": "Same corridor, same doors.",
+        "start": 6.4,
+        "duration": 2.2,
+        "hold": 0.8
+      },
+      {
+        "id": "v03",
+        "text": "Nine hours under a light that never changes.",
+        "start": 12.4,
+        "duration": 3.4,
+        "hold": 1
+      },
+      {
+        "id": "v04",
+        "text": "Someone always needs it sooner.",
+        "start": 24.6,
+        "duration": 2.4,
+        "hold": 0.9
+      },
+      {
+        "id": "v05",
+        "text": "The room empties.",
+        "start": 33,
+        "duration": 1.7,
+        "hold": 1
+      },
+      {
+        "id": "v06",
+        "text": "Still here.",
+        "start": 37.5,
+        "duration": 1.3,
+        "hold": 1
+      },
+      {
+        "id": "v07",
+        "text": "Same alarm.",
+        "start": 55.8,
+        "duration": 1.3,
+        "hold": 1
+      }
+    ]
+  },
+  "audio": {
+    "mode": "narration",
+    "narration": {
+      "source": "tts",
+      "provider": "kokoro",
+      "voiceId": "af_heart",
+      "voice": "films/same-alarm/voice.wav",
+      "transcript": "films/same-alarm/transcript.json",
+      "srt": "films/same-alarm/captions.srt"
+    },
+    "sfx": {
+      "source": "generated",
+      "silences": [
+        {
+          "from": 0,
+          "to": 0.5,
+          "why": "the film opens on a still frame; the alarm is the first sound and it starts at 0.50 s"
+        }
+      ],
+      "cues": [
+        {
+          "id": "sfx-room",
+          "kind": "room",
+          "at": 0.5,
+          "duration": 58.9,
+          "gain": 0.45,
+          "note": "the office room, from the first word to the tail fade"
+        },
+        {
+          "id": "sfx-alarm-1",
+          "kind": "hum",
+          "event": {
+            "shot": "s01",
+            "index": 1
+          },
+          "gain": 0.62,
+          "note": "the alarm on the nightstand"
+        },
+        {
+          "id": "sfx-slap",
+          "kind": "slam",
+          "event": {
+            "shot": "s01",
+            "index": 2
+          },
+          "gain": 0.45,
+          "note": "the hand hits the alarm; a slam this close to the phone needs to sit under the peak ceiling, not on it"
+        },
+        {
+          "id": "sfx-corridor",
+          "kind": "whoosh",
+          "event": {
+            "shot": "s02",
+            "index": 1
+          },
+          "gain": 0.34,
+          "duration": 1.4,
+          "note": "the corridor slides past"
+        },
+        {
+          "id": "sfx-step-1",
+          "kind": "step",
+          "event": {
+            "shot": "s02",
+            "index": 2
+          },
+          "gain": 0.5,
+          "note": "his first step"
+        },
+        {
+          "id": "sfx-step-2",
+          "kind": "step",
+          "event": {
+            "shot": "s02",
+            "index": 3
+          },
+          "gain": 0.44,
+          "note": "the next step, a slightly different tile"
+        },
+        {
+          "id": "sfx-step-3",
+          "kind": "step",
+          "event": {
+            "shot": "s02",
+            "index": 4
+          },
+          "gain": 0.47,
+          "note": "and the next"
+        },
+        {
+          "id": "sfx-bar-1",
+          "kind": "lamp",
+          "event": {
+            "shot": "s03",
+            "index": 0
+          },
+          "gain": 0.36,
+          "note": "the fluorescent bar comes on"
+        },
+        {
+          "id": "sfx-chair-1",
+          "kind": "cloth",
+          "event": {
+            "shot": "s03",
+            "index": 1
+          },
+          "gain": 0.42,
+          "note": "he sits into the work"
+        },
+        {
+          "id": "sfx-row-1",
+          "kind": "paper",
+          "event": {
+            "shot": "s03",
+            "index": 2
+          },
+          "gain": 0.4,
+          "note": "the first row lands on the stack"
+        },
+        {
+          "id": "sfx-row-2",
+          "kind": "paper",
+          "event": {
+            "shot": "s03",
+            "index": 3
+          },
+          "gain": 0.5,
+          "note": "the row lands under the line about the light, so it goes under the words",
+          "duckDb": 3
+        },
+        {
+          "id": "sfx-slump-1",
+          "kind": "cloth",
+          "event": {
+            "shot": "s03",
+            "index": 4
+          },
+          "gain": 0.34,
+          "note": "his shoulders drop"
+        },
+        {
+          "id": "sfx-row-3",
+          "kind": "paper",
+          "event": {
+            "shot": "s04",
+            "index": 2
+          },
+          "gain": 0.55,
+          "note": "one more row"
+        },
+        {
+          "id": "sfx-row-4",
+          "kind": "paper",
+          "event": {
+            "shot": "s04",
+            "index": 3
+          },
+          "gain": 0.5,
+          "note": "and one more"
+        },
+        {
+          "id": "sfx-row-5",
+          "kind": "paper",
+          "event": {
+            "shot": "s04",
+            "index": 4
+          },
+          "gain": 0.44,
+          "note": "and one more"
+        },
+        {
+          "id": "sfx-chair-2",
+          "kind": "cloth",
+          "event": {
+            "shot": "s04",
+            "index": 5
+          },
+          "gain": 0.38,
+          "note": "he sits up and keeps going"
+        },
+        {
+          "id": "sfx-door",
+          "kind": "door",
+          "event": {
+            "shot": "s05",
+            "index": 2
+          },
+          "gain": 0.46,
+          "note": "the door opens behind him"
+        },
+        {
+          "id": "sfx-step-4",
+          "kind": "step",
+          "event": {
+            "shot": "s05",
+            "index": 3
+          },
+          "gain": 0.42,
+          "note": "a supervisor's steps on the office carpet"
+        },
+        {
+          "id": "sfx-point",
+          "kind": "swing",
+          "event": {
+            "shot": "s05",
+            "index": 4
+          },
+          "gain": 0.34,
+          "note": "the arm comes up and points"
+        },
+        {
+          "id": "sfx-leave",
+          "kind": "cloth",
+          "event": {
+            "shot": "s05",
+            "index": 6
+          },
+          "gain": 0.32,
+          "note": "he leaves without a word"
+        },
+        {
+          "id": "sfx-look",
+          "kind": "cloth",
+          "event": {
+            "shot": "s06",
+            "index": 4
+          },
+          "gain": 0.3,
+          "note": "he looks up at the window"
+        },
+        {
+          "id": "sfx-lamp-on",
+          "kind": "lamp",
+          "event": {
+            "shot": "s07",
+            "index": 2
+          },
+          "gain": 0.34,
+          "note": "the desk lamp is the only light"
+        },
+        {
+          "id": "sfx-row-6",
+          "kind": "paper",
+          "event": {
+            "shot": "s07",
+            "index": 3
+          },
+          "gain": 0.46,
+          "note": "a row lands in the dark"
+        },
+        {
+          "id": "sfx-row-7",
+          "kind": "paper",
+          "event": {
+            "shot": "s07",
+            "index": 4
+          },
+          "gain": 0.52,
+          "note": "and another"
+        },
+        {
+          "id": "sfx-row-8",
+          "kind": "paper",
+          "event": {
+            "shot": "s07",
+            "index": 5
+          },
+          "gain": 0.38,
+          "note": "and another"
+        },
+        {
+          "id": "sfx-head-down",
+          "kind": "cloth",
+          "event": {
+            "shot": "s07",
+            "index": 6
+          },
+          "gain": 0.32,
+          "note": "his head goes down"
+        },
+        {
+          "id": "sfx-alarm-2",
+          "kind": "hum",
+          "event": {
+            "shot": "s08",
+            "index": 0
+          },
+          "gain": 0.72,
+          "note": "the same alarm, six o'clock again"
+        },
+        {
+          "id": "sfx-hand",
+          "kind": "cloth",
+          "event": {
+            "shot": "s08",
+            "index": 1
+          },
+          "gain": 0.28,
+          "note": "his hand comes up over the phone"
+        },
+        {
+          "id": "sfx-bar-2",
+          "kind": "lamp",
+          "event": {
+            "shot": "s09",
+            "index": 1
+          },
+          "gain": 0.32,
+          "note": "the same light comes on again"
+        },
+        {
+          "id": "sfx-row-9",
+          "kind": "paper",
+          "event": {
+            "shot": "s09",
+            "index": 2
+          },
+          "gain": 0.5,
+          "note": "the stack is taller than it was this morning"
+        },
+        {
+          "id": "sfx-row-10",
+          "kind": "paper",
+          "event": {
+            "shot": "s09",
+            "index": 3
+          },
+          "gain": 0.44,
+          "note": "another row"
+        },
+        {
+          "id": "sfx-row-11",
+          "kind": "paper",
+          "event": {
+            "shot": "s09",
+            "index": 4
+          },
+          "gain": 0.48,
+          "note": "another row"
+        },
+        {
+          "id": "sfx-row-12",
+          "kind": "paper",
+          "event": {
+            "shot": "s09",
+            "index": 5
+          },
+          "gain": 0.4,
+          "note": "another row"
+        },
+        {
+          "id": "sfx-alarm-3",
+          "kind": "hum",
+          "event": {
+            "shot": "s10",
+            "index": 1
+          },
+          "gain": 0.5,
+          "duration": 2.2,
+          "note": "the alarm rings once under the card, and the frame goes quiet before the film does"
+        },
+        {
+          "id": "sfx-fall",
+          "kind": "paper",
+          "event": {
+            "shot": "s10",
+            "index": 2
+          },
+          "gain": 0.3,
+          "duration": 0.9,
+          "note": "the paper falls and the frame goes quiet"
+        }
+      ]
+    }
+  },
+  "captions": {
+    "source": "films/same-alarm/captions.srt",
+    "lines": [
+      {
+        "id": "v01",
+        "text": "Same alarm.",
+        "start": 0.8,
+        "end": 2.7
+      },
+      {
+        "id": "v02",
+        "text": "Same corridor, same doors.",
+        "start": 6.4,
+        "end": 9.2
+      },
+      {
+        "id": "v03",
+        "text": "Nine hours under a light that never changes.",
+        "start": 12.4,
+        "end": 16.4
+      },
+      {
+        "id": "v04",
+        "text": "Someone always needs it sooner.",
+        "start": 24.6,
+        "end": 27.6
+      },
+      {
+        "id": "v05",
+        "text": "The room empties.",
+        "start": 33,
+        "end": 35.3
+      },
+      {
+        "id": "v06",
+        "text": "Still here.",
+        "start": 37.5,
+        "end": 39.4
+      },
+      {
+        "id": "v07",
+        "text": "Same alarm.",
+        "start": 55.8,
+        "end": 57.7
+      }
+    ]
+  },
+  "assets": [
+    {
+      "id": "character.lead",
+      "version": "0.1.0",
+      "hash": "sha256:8b1aa9b1e7b7637808f5c1f272a19a6ab66e9adfd179c15fadb73643820ac742",
+      "source": "new",
+      "type": "character",
+      "anchors": [
+        "face",
+        "hair",
+        "hand-left",
+        "hand-right",
+        "foot-left",
+        "foot-right"
+      ],
+      "path": "films/same-alarm/cast/kiran.poses.json"
+    },
+    {
+      "id": "character.second",
+      "version": "0.1.0",
+      "hash": "sha256:80066565305f91a9143d2c68c43fd59e5aaa5d3b06bc430880f85469a7940155",
+      "source": "new",
+      "type": "character",
+      "anchors": [
+        "face",
+        "hair",
+        "hand-left",
+        "hand-right",
+        "foot-left",
+        "foot-right"
+      ],
+      "path": "films/same-alarm/cast/vaz.poses.json"
+    },
+    {
+      "id": "character.office-rig",
+      "version": "0.1.0",
+      "hash": "sha256:2a08777e2d3c5c4f1aec327bc41f5b4ea7d577a453d32a24459e581af20c8f59",
+      "source": "new",
+      "type": "character",
+      "anchors": [
+        "face",
+        "hair",
+        "hand-left",
+        "hand-right",
+        "foot-left",
+        "foot-right",
+        "chest",
+        "head"
+      ],
+      "path": "films/same-alarm/vendor/office.js"
+    },
+    {
+      "id": "set.paper-card",
+      "version": "0.1.0",
+      "hash": "sha256:018c7f5a9ca8f3f981c058fb2d9ea0c80ea2ba891f109e7b3a610212dd05b52b",
+      "source": "reused",
+      "type": "set",
+      "anchors": [
+        "paper edge",
+        "cut edge",
+        "sheet centre"
+      ],
+      "path": "films/same-alarm/vendor/core.js"
+    },
+    {
+      "id": "set.stage",
+      "version": "0.1.0",
+      "hash": "sha256:de446f4de848e1d682260f958fcd1d46d8de09173b6f3ef63fd9b7ebc06aa73b",
+      "source": "reused",
+      "type": "set",
+      "anchors": [
+        "stage floor",
+        "sunburst centre"
+      ],
+      "path": "films/same-alarm/vendor/props.js"
+    },
+    {
+      "id": "set.scene-kit",
+      "version": "0.1.0",
+      "hash": "sha256:9aee6914f17eccdb3e911888910ae823fd653cb35dccb80a3ac6f878b15d66ad",
+      "source": "reused",
+      "type": "set",
+      "anchors": [
+        "stage set",
+        "paper light"
+      ],
+      "path": "films/same-alarm/vendor/scene_kit.js"
+    },
+    {
+      "id": "prop.paper-sticker",
+      "version": "0.1.0",
+      "hash": "sha256:de446f4de848e1d682260f958fcd1d46d8de09173b6f3ef63fd9b7ebc06aa73b",
+      "source": "reused",
+      "type": "prop",
+      "anchors": [
+        "sticker centre",
+        "peel corner"
+      ],
+      "path": "films/same-alarm/vendor/props.js"
+    },
+    {
+      "id": "type.paper",
+      "version": "0.1.0",
+      "hash": "sha256:de4b64dfaab1c6e1aafc1ce47eb069381807dd4e1fd5258729436d8e2cafb1b8",
+      "source": "reused",
+      "type": "type",
+      "anchors": [
+        "display",
+        "caption"
+      ],
+      "path": "films/same-alarm/vendor/type.js"
+    }
+  ],
+  "cast": [
+    {
+      "character": "Kiran",
+      "poses": "films/same-alarm/cast/kiran.poses.json",
+      "rig": "worker@0.1.0"
+    },
+    {
+      "character": "Vaz",
+      "poses": "films/same-alarm/cast/vaz.poses.json",
+      "rig": "supervisor@0.1.0"
+    }
+  ],
+  "shots": [
+    {
+      "recipe": "alarm_close",
+      "duration": 4,
+      "slots": {
+        "content.caption": "06:00"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.06,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "note": "the lamp pool breathes once; the hand comes down and the ring stops"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "a dark room, a phone face up on the nightstand",
+        "exit": "the hand has landed and the phone is flat",
+        "spine": "The day starts with a noise he did not choose.",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "light",
+            "note": "the lamp pool settles on the nightstand",
+            "quiet": "the room is silent until the alarm"
+          },
+          {
+            "t": 0.5,
+            "kind": "prop",
+            "note": "the phone starts to ring"
+          },
+          {
+            "t": 2.4,
+            "kind": "slam",
+            "note": "a hand comes down on it"
+          },
+          {
+            "t": 3.3,
+            "kind": "transition",
+            "note": "cut on the silence",
+            "quiet": "a cut has no sound"
+          }
+        ]
+      }
+    },
+    {
+      "recipe": "corridor_walk",
+      "duration": 5.5,
+      "slots": {
+        "content.caption": "07:20"
+      },
+      "motion": {
+        "note": "doors slide past at 96 px/s while he walks in place: he never arrives"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "a corridor of identical doors",
+        "exit": "the same corridor, one more door gone by",
+        "spine": "The commute is the same corridor, and it does not end.",
+        "cast": [
+          "Kiran"
+        ],
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "pose",
+            "who": "Kiran",
+            "pose": "walk",
+            "breakdown": "idle",
+            "note": "he is already walking when the shot finds him",
+            "quiet": "a pose has no sound of its own"
+          },
+          {
+            "t": 0.3,
+            "kind": "whoosh",
+            "note": "the corridor starts to slide"
+          },
+          {
+            "t": 1.1,
+            "kind": "step",
+            "note": "his first step"
+          },
+          {
+            "t": 2.6,
+            "kind": "step",
+            "note": "another door passes"
+          },
+          {
+            "t": 4.2,
+            "kind": "step",
+            "note": "and another"
+          }
+        ]
+      }
+    },
+    {
+      "recipe": "desk_wide",
+      "duration": 6.5,
+      "slots": {
+        "content.caption": "09:00"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.05,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "note": "the bar flickers once; two rows of paper land; the shoulders drop"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "the office at nine, the desk almost clear",
+        "exit": "the same desk with two more rows on the stack",
+        "spine": "Nine hours begin under a light that will not change.",
+        "cast": [
+          "Kiran"
+        ],
+        "events": [
+          {
+            "t": 0.3,
+            "kind": "light",
+            "note": "the fluorescent bar comes on"
+          },
+          {
+            "t": 0.9,
+            "kind": "pose",
+            "who": "Kiran",
+            "pose": "type",
+            "breakdown": "idle",
+            "note": "he sits into the work"
+          },
+          {
+            "t": 2,
+            "kind": "build",
+            "note": "the first row lands on the stack"
+          },
+          {
+            "t": 4,
+            "kind": "build",
+            "note": "a second row"
+          },
+          {
+            "t": 5.6,
+            "kind": "pose",
+            "who": "Kiran",
+            "pose": "slump",
+            "breakdown": "type",
+            "note": "his shoulders drop"
+          }
+        ]
+      }
+    },
+    {
+      "recipe": "desk_wide",
+      "duration": 6,
+      "slots": {
+        "content.caption": "13:00"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1.02,
+        "to": 1.08,
+        "ease": "easeInOut"
+      },
+      "motion": {
+        "note": "the same frame a little closer, three more rows, no change in the light"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "the same desk, four hours further into the day",
+        "exit": "the same desk with three more rows",
+        "spine": "Nothing in the room marks the hours except the paper.",
+        "cast": [
+          "Kiran"
+        ],
+        "events": [
+          {
+            "t": 0.1,
+            "kind": "pose",
+            "who": "Kiran",
+            "pose": "slump",
+            "breakdown": "idle",
+            "note": "he never sat up between these two hours",
+            "quiet": "a pose has no sound of its own"
+          },
+          {
+            "t": 0.4,
+            "kind": "light",
+            "note": "the bar has not changed",
+            "quiet": "the hum is already in the room tone"
+          },
+          {
+            "t": 1.2,
+            "kind": "build",
+            "note": "one more row"
+          },
+          {
+            "t": 3,
+            "kind": "build",
+            "note": "and one more"
+          },
+          {
+            "t": 4.4,
+            "kind": "build",
+            "note": "and one more"
+          },
+          {
+            "t": 5.2,
+            "kind": "pose",
+            "who": "Kiran",
+            "pose": "type",
+            "breakdown": "slump",
+            "note": "he sits up and keeps going"
+          }
+        ]
+      }
+    },
+    {
+      "recipe": "supervisor_point",
+      "duration": 6.5,
+      "slots": {
+        "content.caption": "16:00"
+      },
+      "camera": {
+        "move": "orbit",
+        "from": 1,
+        "to": 1.04,
+        "ease": "easeInOut"
+      },
+      "motion": {
+        "note": "the supervisor crosses the frame, points once, and goes"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "the door behind the desk opens",
+        "exit": "the door has closed and Kiran is alone with the stack",
+        "spine": "Someone always needs it sooner, and does not stay to say it twice.",
+        "cast": [
+          "Kiran",
+          "Vaz"
+        ],
+        "events": [
+          {
+            "t": 0.1,
+            "kind": "pose",
+            "who": "Kiran",
+            "pose": "type",
+            "breakdown": "idle",
+            "note": "he is working when the door opens",
+            "quiet": "a pose has no sound of its own"
+          },
+          {
+            "t": 0.1,
+            "kind": "pose",
+            "who": "Vaz",
+            "pose": "enter",
+            "breakdown": "idle",
+            "note": "Vaz comes in already walking",
+            "quiet": "a pose has no sound of its own"
+          },
+          {
+            "t": 0.2,
+            "kind": "door",
+            "note": "the door opens behind him"
+          },
+          {
+            "t": 1,
+            "kind": "step",
+            "note": "the supervisor's steps"
+          },
+          {
+            "t": 2.8,
+            "kind": "pose",
+            "who": "Vaz",
+            "pose": "point",
+            "breakdown": "enter",
+            "note": "he points at the stack"
+          },
+          {
+            "t": 3.1,
+            "kind": "prop",
+            "note": "the stack is the target",
+            "quiet": "he says nothing"
+          },
+          {
+            "t": 5.2,
+            "kind": "pose",
+            "who": "Vaz",
+            "pose": "leave",
+            "breakdown": "point",
+            "note": "he leaves without a word"
+          },
+          {
+            "t": 5.9,
+            "kind": "pose",
+            "who": "Kiran",
+            "pose": "slump",
+            "breakdown": "type",
+            "note": "Kiran's shoulders drop",
+            "quiet": "the door closes over it"
+          }
+        ]
+      }
+    },
+    {
+      "recipe": "window_dusk",
+      "duration": 6.5,
+      "slots": {
+        "content.caption": "18:00"
+      },
+      "camera": {
+        "move": "pull_back",
+        "from": 1.05,
+        "to": 1,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "note": "the window goes grey, orange, grey; the room opens a little as it does"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "the desk with the window behind it, the sky flat and grey",
+        "exit": "the same window, grey again, the sun under the buildings",
+        "spine": "The day ends outside the window, not in the room.",
+        "cast": [
+          "Kiran"
+        ],
+        "events": [
+          {
+            "t": 0.1,
+            "kind": "pose",
+            "who": "Kiran",
+            "pose": "slump",
+            "breakdown": "idle",
+            "note": "the same slump, an hour later",
+            "quiet": "a pose has no sound of its own"
+          },
+          {
+            "t": 0.4,
+            "kind": "light",
+            "note": "the window goes grey to orange",
+            "quiet": "light has no sound"
+          },
+          {
+            "t": 2.2,
+            "kind": "light",
+            "note": "the sun is under the buildings",
+            "quiet": "light has no sound"
+          },
+          {
+            "t": 4.4,
+            "kind": "light",
+            "note": "the window goes grey again",
+            "quiet": "light has no sound"
+          },
+          {
+            "t": 5.6,
+            "kind": "pose",
+            "who": "Kiran",
+            "pose": "look",
+            "breakdown": "slump",
+            "note": "he looks up at the window"
+          }
+        ]
+      }
+    },
+    {
+      "recipe": "desk_night",
+      "duration": 7.5,
+      "slots": {
+        "content.caption": "21:00"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.09,
+        "ease": "easeInOut"
+      },
+      "motion": {
+        "note": "the dark closes a little; three rows land; the head goes down"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "the office at nine in the evening, the fluorescent bar off",
+        "exit": "his head is down on the desk and the lamp is still on",
+        "spine": "Nobody is left to see him stay, which is when the work is done.",
+        "cast": [
+          "Kiran"
+        ],
+        "events": [
+          {
+            "t": 0.1,
+            "kind": "pose",
+            "who": "Kiran",
+            "pose": "type",
+            "breakdown": "idle",
+            "note": "he is still typing in the dark",
+            "quiet": "a pose has no sound of its own"
+          },
+          {
+            "t": 0.2,
+            "kind": "light",
+            "note": "the fluorescent bar is off",
+            "quiet": "the room tone covers the switch"
+          },
+          {
+            "t": 0.5,
+            "kind": "light",
+            "note": "the desk lamp is the only light"
+          },
+          {
+            "t": 1.3,
+            "kind": "build",
+            "note": "a row lands in the dark"
+          },
+          {
+            "t": 2.6,
+            "kind": "build",
+            "note": "another row"
+          },
+          {
+            "t": 4,
+            "kind": "build",
+            "note": "another row"
+          },
+          {
+            "t": 5.4,
+            "kind": "pose",
+            "who": "Kiran",
+            "pose": "asleep",
+            "breakdown": "slump",
+            "note": "his head goes down"
+          }
+        ]
+      }
+    },
+    {
+      "recipe": "loop_close",
+      "duration": 6,
+      "slots": {
+        "content.caption": "06:00"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1.04,
+        "to": 1,
+        "ease": "easeInOut"
+      },
+      "motion": {
+        "note": "the ring arcs pulse; the hand comes up and stays up"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "the nightstand again, six o'clock again",
+        "exit": "the hand is over the phone and has not come down",
+        "spine": "The alarm is the same alarm, and this time he does not stop it.",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.3,
+            "kind": "prop",
+            "note": "the same alarm, six o'clock"
+          },
+          {
+            "t": 1.5,
+            "kind": "hand",
+            "note": "his hand comes up over the phone"
+          },
+          {
+            "t": 3.6,
+            "kind": "hand",
+            "note": "it stops there and does not come down",
+            "quiet": "nothing lands, and that is the point"
+          },
+          {
+            "t": 5,
+            "kind": "prop",
+            "note": "the alarm keeps ringing",
+            "quiet": "the first ring is still sounding"
+          }
+        ]
+      }
+    },
+    {
+      "recipe": "desk_wide",
+      "duration": 6.5,
+      "slots": {
+        "content.caption": "09:00"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.06,
+        "ease": "easeInOut"
+      },
+      "motion": {
+        "note": "the same desk, the stack now as tall as he is, four rows landing"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "the desk at nine, the stack nearly to his head",
+        "exit": "four more rows and the same fluorescent light",
+        "spine": "The day has started again and nothing has been decided.",
+        "cast": [
+          "Kiran"
+        ],
+        "events": [
+          {
+            "t": 0.1,
+            "kind": "pose",
+            "who": "Kiran",
+            "pose": "type",
+            "breakdown": "idle",
+            "note": "the same desk, the next morning",
+            "quiet": "a pose has no sound of its own"
+          },
+          {
+            "t": 0.3,
+            "kind": "light",
+            "note": "the same light comes on again"
+          },
+          {
+            "t": 2.2,
+            "kind": "build",
+            "note": "the stack is taller than it was this morning"
+          },
+          {
+            "t": 3.4,
+            "kind": "build",
+            "note": "another row"
+          },
+          {
+            "t": 4.6,
+            "kind": "build",
+            "note": "another row"
+          },
+          {
+            "t": 5.8,
+            "kind": "build",
+            "note": "another row"
+          }
+        ]
+      }
+    },
+    {
+      "recipe": "loop_card",
+      "duration": 5,
+      "slots": {
+        "content.title": "SAME ALARM",
+        "content.body": "nine hours. still here."
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.1,
+        "ease": "easeInOut"
+      },
+      "motion": {
+        "note": "the card pushes in slowly; paper falls at the end and the frame goes quiet"
+      },
+      "transitionOut": "hold",
+      "direction": {
+        "entry": "a cream card with a paper alarm bell",
+        "exit": "the title held, paper falling",
+        "spine": "The film ends on the sentence it began with.",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.4,
+            "kind": "type",
+            "note": "the title lands",
+            "quiet": "the title lands in silence"
+          },
+          {
+            "t": 2.6,
+            "kind": "prop",
+            "note": "the alarm rings once under the card"
+          },
+          {
+            "t": 3.4,
+            "kind": "transition",
+            "note": "paper falls and the frame goes quiet"
+          }
+        ]
+      }
+    }
+  ]
+}
