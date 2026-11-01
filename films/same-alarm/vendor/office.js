@@ -14,10 +14,38 @@
  * drawn inside the head's pivot, and the head inside the torso's lean.
  */
 
+/**
+ * The face the body is making.
+ *
+ * A spine can be blended; an eye cannot. Until this table existed, every office
+ * shot drew the rig's default face, so a man in the `asleep` pose had his eyes
+ * open — at 21:00, in the one shot whose whole job is to say he has been at the
+ * desk too long. The painter hands the rig the pose's *name* and the rig decides
+ * what a face for it looks like, which keeps the pack ignorant of expressions
+ * and the film in charge of who is in it.
+ */
+const FACE_BY_POSE = {
+  idle: { eyes: "dot" },
+  type: { eyes: "dot", browLift: -1.6 },
+  slump: { eyes: "closed", browLift: -3 },
+  asleep: { eyes: "closed", browLift: -4 },
+  wake: { eyes: "wide", browLift: 3 },
+  look: { eyes: "wide", browLift: 2.4 },
+  reach: { eyes: "wide", browLift: 1.2 },
+  walk: { eyes: "dot", browLift: -0.8 },
+  enter: { eyes: "dot" },
+  point: { eyes: "dot", browLift: 2.6 },
+  turn: { eyes: "dot", browLift: 1 },
+  crossed: { eyes: "dot", browLift: -2.6 },
+  nod: { eyes: "dot", browLift: 0.8 },
+  leave: { eyes: "dot", browLift: -1.2 },
+  listen: { eyes: "dot", browLift: -0.8 },
+};
+
 function officeFigure(ctx, x, y, s, o = {}) {
   const t = o.t || 0;
   const p = o.pose || {};
-  const f = o.face || {};
+  const f = o.face || FACE_BY_POSE[o.poseKey] || {};
   const flip = o.flip || 1;
   const pose = o.pose || {};
   const bounce = pose.bounce || 0;

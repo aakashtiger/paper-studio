@@ -415,7 +415,7 @@ window.SCORE = {
       "camera": {
         "move": "push_in",
         "from": 1,
-        "to": 1.09,
+        "to": 1.2,
         "ease": "easeInOut"
       },
       "motion": {
@@ -456,9 +456,25 @@ window.SCORE = {
             "note": "a row lands in the dark"
           },
           {
+            "t": 2.4,
+            "kind": "pose",
+            "note": "he keeps at it: this key ends the hold, so the lift to `wake` takes a second instead of the whole shot",
+            "quiet": "a pose has no sound of its own",
+            "who": "Kiran",
+            "pose": "type"
+          },
+          {
             "t": 2.6,
             "kind": "build",
             "note": "another row"
+          },
+          {
+            "t": 3.6,
+            "kind": "pose",
+            "note": "he lifts his head to fight the sleep",
+            "quiet": "a pose has no sound of its own",
+            "who": "Kiran",
+            "pose": "wake"
           },
           {
             "t": 4,
@@ -466,12 +482,20 @@ window.SCORE = {
             "note": "another row"
           },
           {
-            "t": 5.4,
+            "t": 5.2,
             "kind": "pose",
-            "note": "his head goes down",
+            "note": "he loses it: the spine gives before the head",
+            "quiet": "a pose has no sound of its own",
             "who": "Kiran",
-            "pose": "asleep",
-            "breakdown": "slump"
+            "pose": "slump"
+          },
+          {
+            "t": 6.6,
+            "kind": "pose",
+            "note": "and the head goes down, over the better part of a second",
+            "quiet": "a pose has no sound of its own",
+            "who": "Kiran",
+            "pose": "asleep"
           }
         ]
       }
@@ -936,30 +960,30 @@ window.SCORE = {
           "id": "sfx-row-7",
           "event": {
             "shot": "s07",
-            "index": 4
+            "index": 5
           },
           "kind": "paper",
-          "note": "and another",
+          "note": "another row",
           "gain": 0.52
         },
         {
           "id": "sfx-row-8",
           "event": {
             "shot": "s07",
-            "index": 5
+            "index": 7
           },
           "kind": "paper",
-          "note": "and another",
+          "note": "another row",
           "gain": 0.38
         },
         {
           "id": "sfx-head-down",
           "event": {
             "shot": "s07",
-            "index": 6
+            "index": 9
           },
           "kind": "cloth",
-          "note": "his head goes down",
+          "note": "and the head goes down, over the better part of a second",
           "gain": 0.32
         },
         {
@@ -1410,13 +1434,13 @@ window.SCORE = {
       "id": "sfx-row-7",
       "event": {
         "shot": "s07",
-        "index": 4,
+        "index": 5,
         "t": 2.6,
         "kind": "build",
         "note": "another row"
       },
       "kind": "paper",
-      "note": "and another",
+      "note": "another row",
       "gain": 0.52,
       "at": 37.6,
       "from": "event"
@@ -1425,13 +1449,13 @@ window.SCORE = {
       "id": "sfx-row-8",
       "event": {
         "shot": "s07",
-        "index": 5,
+        "index": 7,
         "t": 4,
         "kind": "build",
         "note": "another row"
       },
       "kind": "paper",
-      "note": "and another",
+      "note": "another row",
       "gain": 0.38,
       "at": 39,
       "from": "event"
@@ -1440,15 +1464,15 @@ window.SCORE = {
       "id": "sfx-head-down",
       "event": {
         "shot": "s07",
-        "index": 6,
-        "t": 5.4,
+        "index": 9,
+        "t": 6.6,
         "kind": "pose",
-        "note": "his head goes down"
+        "note": "and the head goes down, over the better part of a second"
       },
       "kind": "cloth",
-      "note": "his head goes down",
+      "note": "and the head goes down, over the better part of a second",
       "gain": 0.32,
-      "at": 40.4,
+      "at": 41.6,
       "from": "event"
     },
     {
@@ -1641,7 +1665,7 @@ window.SCORE = {
       "id": "character.lead",
       "type": "character",
       "version": "0.1.0",
-      "hash": "sha256:8b1aa9b1e7b7637808f5c1f272a19a6ab66e9adfd179c15fadb73643820ac742",
+      "hash": "sha256:337c3360c5f065c13cb73c7b0d1a6c4abad33d4c67d0f76bfe93b200c72eecb5",
       "source": "new",
       "anchors": [
         "face",
@@ -1673,7 +1697,7 @@ window.SCORE = {
       "id": "character.office-rig",
       "type": "character",
       "version": "0.1.0",
-      "hash": "sha256:87f71ab951b293befd4f8b1af3f923efbf28de8376b1f32ccc8cc28506f22615",
+      "hash": "sha256:af1bf54424c40ae3bc1ed3468d687262a7c8fe7bf90c00df95c52f4d36c1f253",
       "source": "new",
       "anchors": [
         "face",
@@ -1929,7 +1953,7 @@ window.POSES = {
           "bounce": 0,
           "sway": 0,
           "lean": 0.12,
-          "headTilt": 0.16,
+          "headTilt": 0.3,
           "headTurn": 0.02,
           "hairSwing": 2,
           "armL": [

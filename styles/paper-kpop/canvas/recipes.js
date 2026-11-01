@@ -246,7 +246,7 @@ function rigFor(name) {
   return entry.rig;
 }
 
-function drawCharacter(name, x, y, scale, poseName, flip, poseOverride, time) {
+function drawCharacter(name, x, y, scale, poseName, flip, poseOverride, time, extra = {}) {
   const rig = rigFor(name);
   const draw = window.CHARACTERS && window.CHARACTERS[rig];
   if (typeof draw !== "function") {
@@ -259,7 +259,21 @@ function drawCharacter(name, x, y, scale, poseName, flip, poseOverride, time) {
   // One colour convention for every rig: `colors` is an object keyed by garment
   // role, already mapped through the pack palette. A rig reads `o.colors.shirt`,
   // never a dozen loose keys, so a new rig cannot invent a second spelling.
-  draw(ctx, x, y, scale, { pose, colors: colorsFor(name), flip: flip || 1, shadow: 1, t: time || 0 });
+  //
+  // `poseKey` is the pose's *name*, which `pose` cannot carry because blending
+  // produces a body in neither pose. A rig needs it for anything it cannot
+  // average — a face, a held prop — and the pack takes no view on what that rig
+  // then draws, the same way it takes no view on what a pair of trousers looks
+  // like.
+  draw(ctx, x, y, scale, {
+    pose,
+    poseKey: extra.poseKey || poseName,
+    face: extra.face,
+    colors: colorsFor(name),
+    flip: flip || 1,
+    shadow: 1,
+    t: time || 0,
+  });
 }
 
 function blendValue(a, b, k) {
@@ -279,6 +293,29 @@ function blendPose(a, b, k) {
   const keys = new Set([...Object.keys(a || {}), ...Object.keys(b || {})]);
   for (const key of keys) out[key] = blendValue(a ? a[key] : undefined, b ? b[key] : undefined, k);
   return out;
+}
+
+/**
+ * The pose a body is *in* at time `lt`, as a name.
+ *
+ * `poseAt` blends parameters, so a body mid-blend is in neither pose — which is
+ * right for a spine and wrong for a face. Anything discrete needs the name, and
+ * takes the target once the blend is past half, the same rule `blendValue`
+ * already uses for values that cannot be averaged.
+ */
+function poseNameAt(name, keys, lt) {
+  const first = keys.length ? keys[0].pose : null;
+  if (!keys.length) return "idle";
+  if (lt <= keys[0].t) return first || "idle";
+  for (let i = 0; i < keys.length - 1; i++) {
+    const a = keys[i], b = keys[i + 1];
+    if (lt >= a.t && lt <= b.t) {
+      if (!b.pose) return a.pose || "idle";
+      const k = C.smooth(C.clamp((lt - a.t) / Math.max(1e-4, b.t - a.t)));
+      return k < 0.5 ? a.pose || b.pose : b.pose;
+    }
+  }
+  return keys[keys.length - 1].pose || "idle";
 }
 
 function poseAt(name, keys, lt) {
@@ -1082,31 +1119,26 @@ const PROPS = {
     h: 152,
     anchor: "bottom-center",
     flat: false,
-    draw(left, bottom, s) {
-      const w = 84 * s;
-      const h = 152 * s;
-      paper(ctx, () => {
-        ctx.beginPath();
-        ctx.moveTo(left + w * 0.5, bottom - h);
-        ctx.quadraticCurveTo(left + w, bottom - h * 0.84, left + w, bottom - h * 0.3);
-        ctx.lineTo(left + w * 0.9, bottom);
-        ctx.lineTo(left + w * 0.1, bottom);
-        ctx.lineTo(left, bottom - h * 0.3);
-        ctx.quadraticCurveTo(left, bottom - h * 0.84, left + w * 0.5, bottom - h);
-        ctx.closePath();
-      }, {
+    /**
+     * `box` is the declared footprint, and it is one object rather than three
+     * positional numbers: the first version took `(left, bottom, s)` while
+     * `placeProp` passed the box's *top*, so the chair was drawn a full height
+     * too high — a rounded slab floating at his shoulder, which read as a rock
+     * behind him and took two frames to notice. A named box cannot be
+     * mis-ordered.
+     */
+    draw(box, s) {
+      const { left, top, w, h } = box;
+      paper(ctx, () => roundRectPath(ctx, left, top, w, h, 26 * s), {
         fill: PAL.ink3, edge: C.rgba(PAL.ink, 0.6), edgeW: 2.4,
         shadow: C.rgba(PAL.ink, 0.24), sx: 7, sy: 10,
       });
-      // A spine slot and one seam, so it reads as a chair back and not a box.
+      // The upholstered panel, inset, so the back reads as a chair and not a box.
       ctx.save();
-      ctx.globalAlpha = 0.3;
-      ctx.strokeStyle = PAL.ink;
-      ctx.lineWidth = 2.2;
-      ctx.beginPath();
-      ctx.moveTo(left + w * 0.5, bottom - h * 0.9);
-      ctx.lineTo(left + w * 0.5, bottom - h * 0.16);
-      ctx.stroke();
+      ctx.globalAlpha = 0.22;
+      ctx.fillStyle = PAL.ink;
+      roundRectPath(ctx, left + w * 0.14, top + h * 0.1, w * 0.72, h * 0.78, 18 * s);
+      ctx.fill();
       ctx.restore();
     },
   },
@@ -1116,9 +1148,8 @@ const PROPS = {
     h: 84,
     anchor: "top-center",
     flat: true,
-    draw(left, top, s, o = {}) {
-      const w = 340 * s;
-      const h = 84 * s;
+    draw(box, s, o = {}) {
+      const { left, top, w, h } = box;
       paper(ctx, () => tornRectPath(ctx, left, top, w, h, 3, 11), {
         fill: PAL.cream, edge: C.rgba(PAL.ink, 0.45), edgeW: 2, shadow: null,
       });
@@ -1159,8 +1190,9 @@ function placeProp(id, x, y, s = 1, o = {}) {
   const anchor = PROP_ANCHORS[prop.anchor];
   if (!anchor) throw new Error(`prop "${id}" has an anchor "${prop.anchor}" the pack does not place`);
   const [left, top] = anchor(x, y, prop.w * s, prop.h * s);
-  prop.draw(left, top, s, o);
-  return { id, left, top, w: prop.w * s, h: prop.h * s };
+  const box = { left, top, w: prop.w * s, h: prop.h * s };
+  prop.draw(box, s, o);
+  return { id, ...box };
 }
 
 /** A cut-paper hand, palm and five digits, drawn as a prop. */
@@ -1343,7 +1375,9 @@ function officeActor(shot, lt, t, name, x, y, scale, entry, flip, extra = {}) {
   for (const [key, value] of Object.entries(extra)) {
     pose[key] = typeof value === "function" ? value(pose[key]) : (typeof pose[key] === "number" ? pose[key] + value : value);
   }
-  drawCharacter(name, x, y, scale, "idle", flip || 1, pose, t);
+  // The pose's name as well as its numbers: the rig chooses a face from the name,
+  // because an open eye cannot be blended into a closed one.
+  drawCharacter(name, x, y, scale, "idle", flip || 1, pose, t, { poseKey: poseNameAt(name, keys, lt) });
   return pose;
 }
 

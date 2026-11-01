@@ -321,30 +321,30 @@
           "kind": "paper",
           "event": {
             "shot": "s07",
-            "index": 4
+            "index": 5
           },
           "gain": 0.52,
-          "note": "and another"
+          "note": "another row"
         },
         {
           "id": "sfx-row-8",
           "kind": "paper",
           "event": {
             "shot": "s07",
-            "index": 5
+            "index": 7
           },
           "gain": 0.38,
-          "note": "and another"
+          "note": "another row"
         },
         {
           "id": "sfx-head-down",
           "kind": "cloth",
           "event": {
             "shot": "s07",
-            "index": 6
+            "index": 9
           },
           "gain": 0.32,
-          "note": "his head goes down"
+          "note": "and the head goes down, over the better part of a second"
         },
         {
           "id": "sfx-alarm-2",
@@ -492,7 +492,7 @@
     {
       "id": "character.lead",
       "version": "0.1.0",
-      "hash": "sha256:8b1aa9b1e7b7637808f5c1f272a19a6ab66e9adfd179c15fadb73643820ac742",
+      "hash": "sha256:337c3360c5f065c13cb73c7b0d1a6c4abad33d4c67d0f76bfe93b200c72eecb5",
       "source": "new",
       "type": "character",
       "anchors": [
@@ -524,7 +524,7 @@
     {
       "id": "character.office-rig",
       "version": "0.1.0",
-      "hash": "sha256:87f71ab951b293befd4f8b1af3f923efbf28de8376b1f32ccc8cc28506f22615",
+      "hash": "sha256:af1bf54424c40ae3bc1ed3468d687262a7c8fe7bf90c00df95c52f4d36c1f253",
       "source": "new",
       "type": "character",
       "anchors": [
@@ -1000,7 +1000,7 @@
       "camera": {
         "move": "push_in",
         "from": 1,
-        "to": 1.09,
+        "to": 1.2,
         "ease": "easeInOut"
       },
       "motion": {
@@ -1041,9 +1041,25 @@
             "note": "a row lands in the dark"
           },
           {
+            "t": 2.4,
+            "kind": "pose",
+            "who": "Kiran",
+            "pose": "type",
+            "note": "he keeps at it: this key ends the hold, so the lift to `wake` takes a second instead of the whole shot",
+            "quiet": "a pose has no sound of its own"
+          },
+          {
             "t": 2.6,
             "kind": "build",
             "note": "another row"
+          },
+          {
+            "t": 3.6,
+            "kind": "pose",
+            "who": "Kiran",
+            "pose": "wake",
+            "note": "he lifts his head to fight the sleep",
+            "quiet": "a pose has no sound of its own"
           },
           {
             "t": 4,
@@ -1051,12 +1067,20 @@
             "note": "another row"
           },
           {
-            "t": 5.4,
+            "t": 5.2,
+            "kind": "pose",
+            "who": "Kiran",
+            "pose": "slump",
+            "note": "he loses it: the spine gives before the head",
+            "quiet": "a pose has no sound of its own"
+          },
+          {
+            "t": 6.6,
             "kind": "pose",
             "who": "Kiran",
             "pose": "asleep",
-            "breakdown": "slump",
-            "note": "his head goes down"
+            "note": "and the head goes down, over the better part of a second",
+            "quiet": "a pose has no sound of its own"
           }
         ]
       }

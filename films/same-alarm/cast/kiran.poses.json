@@ -164,7 +164,7 @@
         "bounce": 0,
         "sway": 0,
         "lean": 0.12,
-        "headTilt": 0.16,
+        "headTilt": 0.3,
         "headTurn": 0.02,
         "hairSwing": 2,
         "armL": [
