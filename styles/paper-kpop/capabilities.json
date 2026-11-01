@@ -2,7 +2,7 @@
   "identity": {
     "id": "paper-kpop",
     "name": "Paper K-pop",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "family": "paper",
     "status": "reviewable",
     "author": "Paper Studio",
@@ -25,7 +25,8 @@
     ],
     "durations": [
       30,
-      45
+      45,
+      60
     ],
     "maxCast": 2,
     "maxWords": 8
@@ -278,7 +279,15 @@
       "stage_wide",
       "sticker_slam",
       "side_scroll_chase",
-      "pullback_close"
+      "pullback_close",
+      "alarm_close",
+      "corridor_walk",
+      "desk_wide",
+      "supervisor_point",
+      "window_dusk",
+      "desk_night",
+      "loop_close",
+      "loop_card"
     ],
     "aspects": [
       "16:9",
@@ -298,7 +307,10 @@
       "no gloss/3D",
       "banned-token scan",
       "9:16 contain/re-stage",
-      "all eight recipes"
+      "all eight recipes",
+      "all eight office recipes",
+      "the printed hour is the film's, from content.caption",
+      "the stack grows one row per scored build event"
     ]
   },
   "governance": {

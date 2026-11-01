@@ -1,0 +1,126 @@
+{
+  "id": "alarm_close",
+  "beatRoles": [
+    "detail",
+    "open"
+  ],
+  "duration": {
+    "min": 1.2,
+    "max": 8,
+    "default": 4
+  },
+  "camera": {
+    "move": "push_in",
+    "from": 1,
+    "to": 1.06,
+    "ease": "easeOut"
+  },
+  "slots": [
+    "content.caption"
+  ],
+  "assets": [
+    "set.paper-card",
+    "set.tabletop",
+    "prop.object",
+    "texture.halftone"
+  ],
+  "composition": [
+    {
+      "op": "image",
+      "id": "room-wall",
+      "asset": "set.paper-card",
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "z": 0
+    },
+    {
+      "op": "image",
+      "id": "night-table",
+      "asset": "set.tabletop",
+      "x": 0,
+      "y": 0.648,
+      "w": 1,
+      "h": 0.36,
+      "z": 1
+    },
+    {
+      "op": "image",
+      "id": "phone",
+      "asset": "prop.object",
+      "x": 0.4,
+      "y": 0.6,
+      "w": 0.2,
+      "h": 0.11,
+      "z": 3
+    },
+    {
+      "op": "shape",
+      "id": "hour-rule",
+      "kind": "rule",
+      "color": "red",
+      "x": 0.062,
+      "y": 0.07,
+      "w": 0.06,
+      "h": 0.008,
+      "z": 6
+    },
+    {
+      "op": "text",
+      "id": "hour-label",
+      "slot": "content.caption",
+      "typeRole": "caption",
+      "x": 0.062,
+      "y": 0.078,
+      "w": 0.34,
+      "h": 0.27,
+      "align": "left",
+      "z": 7,
+      "color": "ink"
+    },
+    {
+      "op": "effect",
+      "kind": "halftone",
+      "z": 2,
+      "opacity": 0.12,
+      "amount": 0.4
+    },
+    {
+      "op": "camera",
+      "move": "push_in",
+      "from": 1,
+      "to": 1.06,
+      "ease": "easeOut"
+    },
+    {
+      "op": "transition",
+      "kind": "cut"
+    }
+  ],
+  "vertical": [
+    [
+      "night-table",
+      "tabletop"
+    ],
+    [
+      "phone",
+      "macroObject"
+    ],
+    [
+      "hour-rule",
+      "captionRule"
+    ],
+    [
+      "hour-label",
+      "caption"
+    ]
+  ],
+  "transitionOut": "cut",
+  "failureModes": [
+    "a phone that reads as a rectangle with a screen and no slab edge",
+    "the hand entering from nowhere with no paper edge",
+    "the room lit by a gradient instead of one lamp pool",
+    "an hour that is not the score's content.caption"
+  ]
+}

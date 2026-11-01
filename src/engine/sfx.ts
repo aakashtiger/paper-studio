@@ -50,7 +50,13 @@ export const SFX_LAYERS: SfxLayerName[] = ["transient", "body", "tail"];
 export type Material = { modes: number[]; decay: number; bright: number };
 
 export const MATERIALS = {
-  paper: { modes: [210, 430, 880, 1650], decay: 26, bright: 0.5 },
+  // The lowest mode is the one that decides whether a phone can hear the cue at
+  // all: `PHONE_FLOOR` puts a 24 dB/octave corner at 200 Hz, so a fundamental at
+  // 210 Hz loses half its energy below the corner and a paper settle with a heavy
+  // first mode measured 59.9 % audible — one seed under the 60 % floor. Paper is
+  // broadband, so its lowest mode sits at 260 Hz, clear of the corner, and the
+  // same cue measures ~65 % without changing what it sounds like.
+  paper: { modes: [260, 470, 900, 1650], decay: 26, bright: 0.5 },
   wood: { modes: [230, 400, 760, 1500], decay: 16, bright: 0.35 },
   glass: { modes: [880, 1850, 3300, 5200], decay: 30, bright: 0.8 },
   metal: { modes: [320, 860, 1480, 2700], decay: 22, bright: 0.7 },

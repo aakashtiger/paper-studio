@@ -1,6 +1,16 @@
 {
   "id": "paper-kpop-shorts",
   "name": "Paper K-pop shorts",
+  "recipes": [
+    "paper_open",
+    "type_stack",
+    "portrait_iris",
+    "macro_prop_beat",
+    "stage_wide",
+    "sticker_slam",
+    "side_scroll_chase",
+    "pullback_close"
+  ],
   "beatRoleMap": {
     "short-01": "open",
     "short-02": "title",

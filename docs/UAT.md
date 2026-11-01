@@ -89,6 +89,32 @@ Notes:          <one line>
 - [ ] Approval is recorded with a timestamp.
 - [ ] Delivery kit contains all outputs in the spec.
 
+## F1 — the first real film (*Same Alarm*)
+
+**Story:** the director's idea becomes a one-minute film without anyone typing
+animation code, and every claim the film makes can be checked by looking at one
+command's output.
+
+- [ ] `npm run film -- films/same-alarm/score.json` prints the film and exits 0.
+- [ ] `npm run audit -- films/same-alarm/score.json` prints `"ok": true` with no
+      errors and no warnings.
+- [ ] `npm run film:chain -- films/same-alarm/score.json` runs to the end and the
+      last line is the review, with `film:review --gate` **PASS**.
+- [ ] `build/same-alarm/storyboard/storyboard.png` shows ten different frames,
+      one per shot, in order: a phone at dawn, a corridor, a desk, the same desk,
+      a supervisor, a window, the desk at night, the phone again, the desk, a
+      card.
+- [ ] The hour tab in the corner of each frame changes only where the brief's
+      spine changes it, and reads the same hour twice (06:00 at the start and at
+      the loop) because the day repeats.
+- [ ] The paper stack is never smaller than it was in the shot before.
+- [ ] The narration says "same alarm", "nine hours" and "still here" — the
+      brief's three must-say lines — and the film says nothing the brief does not.
+- [ ] `films/same-alarm/same-alarm.mp4` plays with sound, is 60 s long, and the
+      last thing heard is the alarm it opened with.
+- [ ] Watching it muted still tells the story: alarm, commute, desk, someone
+      demanding, dark, alarm again.
+
 ## Regression
 
 - [ ] Golden fixture renders to the committed hash on a clean machine.

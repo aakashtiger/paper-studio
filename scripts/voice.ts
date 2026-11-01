@@ -38,6 +38,8 @@ import {
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
+/** The three files this command writes: missing until it has run. */
+const VOICE_OUTPUTS = new Set(["audio_voice_file", "audio_transcript_file", "audio_srt_file"]);
 if (!file) {
   console.error("usage: npm run voice -- <score.json> [--force]");
   process.exit(2);
@@ -120,8 +122,13 @@ async function main(): Promise<void> {
   const scorePath = file as string;
   const score = FilmScoreSchema.parse(JSON.parse(readFileSync(resolve(root, scorePath), "utf8")));
   const { plan, errors } = resolveFilm(score, resolve(root, `styles/${score.style}`), root);
-  if (errors.length > 0) {
-    for (const error of errors) console.error(`error: ${error.message}`);
+  // This step *writes* the voice, the transcript and the captions, so their
+  // absence is not a reason to refuse: every other error is. Without this the
+  // first voice run on a new film could never happen — the score is invalid
+  // until the file this command makes exists.
+  const blocking = errors.filter((error) => !VOICE_OUTPUTS.has(error.code));
+  if (blocking.length > 0) {
+    for (const error of blocking) console.error(`error: ${error.message}`);
     process.exit(1);
   }
 

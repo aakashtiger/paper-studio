@@ -13,8 +13,13 @@ const scorePath = resolve(process.cwd(), file);
 const score = FilmScoreSchema.parse(JSON.parse(readFileSync(scorePath, "utf8")));
 const styleDir = resolve(process.cwd(), `styles/${score.style}`);
 const { errors } = resolveFilm(score, styleDir);
-if (errors.length > 0) {
-  for (const error of errors) console.error(`error: ${error.message}`);
+// This step writes the transcript and the captions, so their absence is not a
+// reason to refuse; every other error is.
+const blocking = errors.filter(
+  (error) => error.code !== "audio_transcript_file" && error.code !== "audio_srt_file",
+);
+if (blocking.length > 0) {
+  for (const error of blocking) console.error(`error: ${error.message}`);
   process.exit(1);
 }
 

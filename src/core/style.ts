@@ -1181,6 +1181,12 @@ export const ResolveFormatSchema = z
         "beatRoleMap must map at least one format beat",
       ),
     sequence: z.array(SequenceEntrySchema).min(1).optional(),
+    /**
+     * The recipes this deliverable is allowed to use. A format that names its
+     * pool cannot be re-cut by a recipe added to the pack later; a format that
+     * does not name one may use any recipe in the pack.
+     */
+    recipes: z.array(z.string().min(1)).min(1).optional(),
     durations: z.array(z.number().positive()).min(1),
     aspects: z.array(z.string().min(1)).min(1),
     primaryAspect: z.string().min(1),
@@ -2523,13 +2529,26 @@ export function validateStylePack(
       }
 
       const slots = asArray(recipe.slots);
+      // An optional slot is still a slot the recipe may draw: `plan.ts` and
+      // `treatment.ts` both honour `optionalSlots`, so the validator refused a
+      // recipe the resolver happily resolves. One rule, one reading.
+      const optionalSlots = asArray(recipe.optionalSlots);
       const listedSlots = new Set(
-        slots.filter((slot): slot is string => typeof slot === "string"),
+        [...slots, ...optionalSlots].filter((slot): slot is string => typeof slot === "string"),
       );
-      for (const slot of slots) {
+      for (const slot of [...slots, ...optionalSlots]) {
         if (typeof slot !== "string" || !SLOT_SET.has(slot)) {
           addFailure("references", "slot-vocabulary", `recipe "${id}" uses unknown slot "${String(slot)}"`, where);
         }
+      }
+      if (optionalSlots.some((slot) => slots.includes(slot))) {
+        addFailure(
+          "references",
+          "slot-contract",
+          `recipe "${id}" lists a slot in both slots and optionalSlots`,
+          where,
+          "declare a slot once: required or optional",
+        );
       }
 
       for (const asset of asArray(recipe.assets)) {
@@ -3448,7 +3467,23 @@ function buildResolvePlan(
     pack.capabilities.assets.starterLibrary.map((asset) => asset.id),
   );
   const transitionsAllowed = new Set<string>(pack.tokens.motion.transitions);
-  const recipes = [...pack.recipes].sort((a, b) => a.id.localeCompare(b.id, "en"));
+  // A format may name the recipes it uses, so a recipe added to the pack later
+  // cannot silently re-cut a plan that was already accepted.
+  if (format.recipes) {
+    const known = new Set(pack.recipes.map((recipe) => recipe.id));
+    for (const id of format.recipes) {
+      if (!known.has(id)) {
+        throw new StyleResolveError(
+          "assertion-2",
+          `format "${format.id}" names recipe "${id}" which the pack does not have`,
+        );
+      }
+    }
+  }
+  const pool = format.recipes ? new Set(format.recipes) : null;
+  const recipes = pack.recipes
+    .filter((recipe) => pool === null || pool.has(recipe.id))
+    .sort((a, b) => a.id.localeCompare(b.id, "en"));
   const beatEntries = Object.entries(format.beatRoleMap);
 
   if (beatEntries.length === 0) {

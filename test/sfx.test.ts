@@ -49,10 +49,14 @@ test("the same cue renders byte-identical samples twice", () => {
 test("the kit's take on a kind is pinned by a golden hash", () => {
   // A generator change must be a deliberate change to this number, not a
   // silent drift in the delivered sound.
+  //
+  // This number moved once, on purpose: `paper`'s lowest mode went from 210 Hz
+  // to 260 Hz, because 24 dB/oct below 200 Hz left a paper cue unhearable on a
+  // phone (docs/decisions/0017, the third sound pass).
   const samples = renderSfx("snap", Math.round(0.14 * sr), sr, "sfx-snap");
   const bytes = Buffer.from(samples.buffer, samples.byteOffset, samples.byteLength);
   const hash = createHash("sha256").update(bytes).digest("hex");
-  assert.equal(hash, "473ad575c21d3989e0c2998eb7c5d9badfd11d8ca8a49d0a348bba19ef5959b7");
+  assert.equal(hash, "d1e00dd1f6931e5c768649867fa8fb1182a014da89eef2326fd04c06e82b589b");
 });
 
 test("two cues of the same kind are not the same take", () => {

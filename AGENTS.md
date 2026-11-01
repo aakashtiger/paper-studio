@@ -95,6 +95,28 @@ npx hyperframes render proofs/s2-paper -o proofs/s2-paper/paper-proof.mp4 --fps 
 
 ## Current phase
 
+**The first real film — *Same Alarm* — and Paper K-pop 0.2.0.**
+
+The user's own idea is a film: *the life of a corporate slave from morning to
+night*, one minute, new characters (`films/same-alarm/`). It is a 10-shot, 60 s,
+16:9 scored film built from the pack's painter with no hand-written animation:
+seven narration lines (Kokoro, clock measured on the audio), 35 code-generated
+SFX cues bound to picture events, a measured master, 1800 frames, a delivered
+MP4, and `npm run film:chain` to run the whole order. The picture is a loop — the
+same alarm at 06:00 opens and closes it, and the last hand does not come down.
+
+The pack that hosts it is **0.2.0**: eight office recipes for the film's world, a
+painter that honours `camera.ease`, staging derived from the film's cast
+(`castIn`), `drawCharacter` dispatched by the score's `rig`, and an hour tab that
+is a declared zone the label is set inside. 0.2.0 is **REVIEWABLE, not sealed**:
+the evidence is the film's own gate, and the seal lands with acceptance.
+
+Two structural rules came out of it (`docs/decisions/0020`): a **format names the
+recipes it uses**, so a pack can grow without re-cutting a sealed plan; and
+**`optionalSlots` counts as a declared slot**. `BEAT_ROLES` and the closed
+contract are unchanged, because widening them re-validates every sealed pack in
+the repository.
+
 **S1c — Paper K-pop — complete, accepted 9/10 GO.**
 
 S1a is complete and accepted **9/10 GO**. S1b converted watercolor into a real pack.

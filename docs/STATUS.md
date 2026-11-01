@@ -275,6 +275,45 @@ nothing at all. The bounds now live once, in `src/engine/loudness.ts`
 and every failing condition prints its own sentence. Master: **−14.1 LUFS /
 −1.9 dBTP**. Decision `0019` has the numbers.
 
+**Update 2026-11-01 — a pack cannot grow without re-cutting its own film.**
+*Same Alarm* is the first film with a **world**: a bedroom before dawn, a
+corridor, a desk under a fluorescent bar, a window at dusk, a card. The painter
+lives in the pack (decision 0015), so the world was painted there — eight office
+recipes in `styles/paper-kpop/recipes/`. Adding them silently re-cut the pack's
+own accepted films: `paper-kpop-song` picks a recipe **by beat role**, so
+`alarm_close` took the `open` beat because `a` sorts before `p`, and the sealed
+blind resolved with the alarm twice at the front. Every audit stayed green,
+because every audit was about the pack as it is and none was about the pack as it
+was accepted.
+
+Three fixes, one decision (`docs/decisions/0020`):
+
+- **A format names the recipes it uses** (`format.recipes`). `paper-kpop-song`
+  and `paper-kpop-shorts` now name their eight, so a recipe added to a pack can
+  never re-cut a sealed plan. Proven, not asserted: both formats resolve against
+  the live 0.2.0 pack to exactly the sealed 0.1.0 shot lists, recipe for recipe.
+- **`optionalSlots` is part of the slot contract.** The validator read
+  `recipe.slots` only, so `loop_card` — which declares `content.caption` optional,
+  as `plan.ts` and `treatment.ts` both honour — was refused as DRAFT. One rule,
+  one reading.
+- **The hour tab is a zone the label is set inside.** Eight recipes declared the
+  tab as a one-line box; the geometry proof feeds every recipe the pack's widest
+  caption ("I hear the crowd through the wall"), which needs three lines at the
+  14 px floor. The tab now wraps (16 → 14 phone-scale px, never below), is
+  clipped to its declared box (`x 0.062, y 0.078, w 0.34, h 0.27`), and an hour
+  still sets on one line exactly as before.
+
+`BEAT_ROLES` is unchanged on purpose: it is hashed into every pack's
+`contractHash`, so widening it would have re-validated every sealed pack in the
+repository (the watercolor gates went DRAFT when it was tried, which is how the
+blast radius was found). The tie-break costs nothing outside a format.
+
+Evidence: **276 tests, 276 pass**, typecheck clean, `paper-kpop-gate` 9/9 against
+the sealed 0.1.0 pack, `paper-kpop-0.2.0-gate` 4/4 against the live pack,
+`style:check` REVIEWABLE with one open taste choice, `audit:type` 150 boxes /
+150 copy / pass. 0.2.0 is **not sealed** and has **no fresh blind**: the pack is
+still moving under the film, and its evidence is the film's gate.
+
 **Purpose:** an honest inventory of what exists, what is weak, and what is
 missing, with a deliberately small build plan. No new architecture unless it
 removes a real blocker.

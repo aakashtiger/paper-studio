@@ -1,0 +1,124 @@
+{
+  "id": "corridor_walk",
+  "beatRoles": [
+    "list",
+    "detail"
+  ],
+  "duration": {
+    "min": 2,
+    "max": 8,
+    "default": 6
+  },
+  "camera": {
+    "move": "pan",
+    "from": 1,
+    "to": 1,
+    "ease": "linear"
+  },
+  "slots": [
+    "content.caption"
+  ],
+  "assets": [
+    "set.corridor",
+    "character.lead",
+    "texture.halftone"
+  ],
+  "composition": [
+    {
+      "op": "image",
+      "id": "corridor-wall",
+      "asset": "set.corridor",
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "z": 0
+    },
+    {
+      "op": "path",
+      "id": "corridor-floor",
+      "color": "ink2",
+      "x": 0,
+      "y": 0.8,
+      "w": 1,
+      "h": 0.2,
+      "z": 1
+    },
+    {
+      "op": "image",
+      "id": "walking-figure",
+      "asset": "character.lead",
+      "x": 0.42,
+      "y": 0.3,
+      "w": 0.16,
+      "h": 0.68,
+      "z": 3
+    },
+    {
+      "op": "shape",
+      "id": "hour-rule",
+      "kind": "rule",
+      "color": "red",
+      "x": 0.062,
+      "y": 0.07,
+      "w": 0.06,
+      "h": 0.008,
+      "z": 6
+    },
+    {
+      "op": "text",
+      "id": "hour-label",
+      "slot": "content.caption",
+      "typeRole": "caption",
+      "x": 0.062,
+      "y": 0.078,
+      "w": 0.34,
+      "h": 0.27,
+      "align": "left",
+      "z": 7,
+      "color": "ink"
+    },
+    {
+      "op": "effect",
+      "kind": "halftone",
+      "z": 2,
+      "opacity": 0.1,
+      "amount": 0.4
+    },
+    {
+      "op": "camera",
+      "move": "pan",
+      "from": 1,
+      "to": 1,
+      "ease": "linear"
+    },
+    {
+      "op": "transition",
+      "kind": "cut"
+    }
+  ],
+  "vertical": [
+    [
+      "corridor-wall",
+      "corridor"
+    ],
+    [
+      "walking-figure",
+      "lead"
+    ],
+    [
+      "hour-rule",
+      "captionRule"
+    ],
+    [
+      "hour-label",
+      "caption"
+    ]
+  ],
+  "transitionOut": "cut",
+  "failureModes": [
+    "doors that move but a floor that does not, so the corridor is a still wall",
+    "a figure who arrives at a door (the corridor is a loop)",
+    "identical doors that are not identical"
+  ]
+}

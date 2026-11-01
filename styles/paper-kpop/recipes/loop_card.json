@@ -1,0 +1,164 @@
+{
+  "id": "loop_card",
+  "beatRoles": [
+    "title",
+    "close"
+  ],
+  "duration": {
+    "min": 3,
+    "max": 10,
+    "default": 6
+  },
+  "camera": {
+    "move": "static",
+    "from": 1,
+    "to": 1,
+    "ease": "linear"
+  },
+  "slots": [
+    "content.title",
+    "content.body"
+  ],
+  "optionalSlots": [
+    "content.caption"
+  ],
+  "assets": [
+    "set.paper-card",
+    "texture.halftone",
+    "texture.paper-fibre",
+    "prop.paper-sticker"
+  ],
+  "composition": [
+    {
+      "op": "image",
+      "id": "card",
+      "asset": "set.paper-card",
+      "x": 0.078,
+      "y": 0.111,
+      "w": 0.844,
+      "h": 0.778,
+      "z": 0
+    },
+    {
+      "op": "text",
+      "id": "card-title",
+      "slot": "content.title",
+      "typeRole": "display",
+      "x": 0.13,
+      "y": 0.4,
+      "w": 0.52,
+      "h": 0.16,
+      "align": "left",
+      "z": 3,
+      "color": "ink"
+    },
+    {
+      "op": "shape",
+      "id": "card-rule",
+      "kind": "rule",
+      "color": "red",
+      "x": 0.131,
+      "y": 0.57,
+      "w": 0.115,
+      "h": 0.011,
+      "z": 4
+    },
+    {
+      "op": "text",
+      "id": "card-body",
+      "slot": "content.body",
+      "typeRole": "body",
+      "x": 0.131,
+      "y": 0.61,
+      "w": 0.47,
+      "h": 0.14,
+      "align": "left",
+      "z": 5,
+      "color": "ink"
+    },
+    {
+      "op": "image",
+      "id": "card-mark",
+      "asset": "prop.paper-sticker",
+      "x": 0.7,
+      "y": 0.16,
+      "w": 0.16,
+      "h": 0.2,
+      "z": 2
+    },
+    {
+      "op": "shape",
+      "id": "hour-rule",
+      "kind": "rule",
+      "color": "red",
+      "x": 0.062,
+      "y": 0.07,
+      "w": 0.06,
+      "h": 0.008,
+      "z": 6
+    },
+    {
+      "op": "text",
+      "id": "hour-label",
+      "slot": "content.caption",
+      "typeRole": "caption",
+      "x": 0.062,
+      "y": 0.078,
+      "w": 0.34,
+      "h": 0.27,
+      "align": "left",
+      "z": 7,
+      "color": "ink"
+    },
+    {
+      "op": "effect",
+      "kind": "halftone",
+      "z": 1,
+      "opacity": 0.1,
+      "amount": 0.4
+    },
+    {
+      "op": "camera",
+      "move": "static",
+      "from": 1,
+      "to": 1,
+      "ease": "linear"
+    },
+    {
+      "op": "transition",
+      "kind": "cut"
+    }
+  ],
+  "vertical": [
+    [
+      "card",
+      "screen"
+    ],
+    [
+      "card-title",
+      "title"
+    ],
+    [
+      "card-rule",
+      "subtitleRule"
+    ],
+    [
+      "card-body",
+      "body"
+    ],
+    [
+      "hour-rule",
+      "captionRule"
+    ],
+    [
+      "hour-label",
+      "caption"
+    ]
+  ],
+  "transitionOut": "cut",
+  "failureModes": [
+    "a card whose type moves while the card does not",
+    "a title that is not content.title",
+    "a second sticker competing with the title"
+  ]
+}

@@ -1,6 +1,16 @@
 {
   "id": "paper-kpop-song",
   "name": "Paper K-pop song",
+  "recipes": [
+    "paper_open",
+    "type_stack",
+    "portrait_iris",
+    "macro_prop_beat",
+    "stage_wide",
+    "sticker_slam",
+    "side_scroll_chase",
+    "pullback_close"
+  ],
   "beatRoleMap": {
     "song-01": "open",
     "song-02": "title",
