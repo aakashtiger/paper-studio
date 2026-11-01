@@ -82,6 +82,25 @@ most of 20 threads idle. At 4 workers expect the picture in **8–10 min**; at 6
 until measured, and the first measurement goes in this file, not in a chat
 message.
 
+## Landed · first measurement
+
+`npm run render:workers -- films/same-alarm/score.json` renders the same 2 s
+window twice and compares it:
+
+```
+window: 20s–22s of same-alarm · serial then 4 workers
+frames: 60 vs 60 · IDENTICAL BYTES
+picture: same · sha256:314be94b320001a61...
+time: 67.3s serial → 28s on 4 workers · 2.4×
+```
+
+**Identical PNG bytes for every one of the 60 frames**, and the same encoded
+picture hash. That is the claim the decision asked for, at frame resolution, and
+it holds while a *third* render was already using the machine — so the 2.4× is a
+floor, not a ceiling: 67 s of that window is 60 frames of paint plus two process
+starts and two encodes, and the 28 s includes four Chrome launches that a
+1800-frame render pays once.
+
 ## Consequences
 
 - An acceptance chain drops from ~88 min to ~30 min before any other change.

@@ -365,6 +365,18 @@ pass gave a dark garment a light rim (a black coat outlined in black has no
 contour), a cuff and a visible hand to the pointing arm, and the supervisor a
 crop instead of Kiran's bob.
 
+**The renderer paints in parallel now, and the proof is byte equality (`0023`).**
+A frame is a pure function of `(time, score, assets)`, so `--workers N` hands N
+contiguous frame ranges to N browsers and then encodes them through the **same**
+ffmpeg call (`-start_number`, absolute 6-digit frame names): parallelism changes
+who paints, never what is encoded. `npm run render:workers --
+films/same-alarm/score.json` renders a 2 s window twice and compares every PNG —
+**60 of 60 identical bytes**, same picture hash, 67.3 s → 28 s on 4 workers *while
+a third render was already using the machine*. That is a 2.4× floor, not a
+ceiling: four Chrome launches and two encodes are most of the 28 s.
+`film:chain` picks `min(6, threads / 2)` workers and prints the count, and
+`--workers 1` restores the serial render for a machine short of memory.
+
 **Purpose:** an honest inventory of what exists, what is weak, and what is
 missing, with a deliberately small build plan. No new architecture unless it
 removes a real blocker.

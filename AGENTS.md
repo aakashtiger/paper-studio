@@ -68,6 +68,8 @@ npm run audit:rig -- films/understudy/score.json       # leg solve + contact sea
 npm run sheet -- films/understudy/score.json     # character/pose sheet PNG
 npm run sfx -- films/understudy/score.json       # code-generated SFX + mix
 npm run mix -- films/understudy/score.json       # score-level master, measured
+npm run render:film -- <score> --workers 4       # paint N contiguous ranges in N browsers (0023)
+npm run render:workers -- <score>                # proof: 4 workers == serial, frame by frame
 npm run deliver -- films/understudy/score.json   # mux the master into the frozen picture, measure the file
 npm run animatic -- films/understudy/score.json  # board animatic + voice/SFX/SRT
 npm run rough -- films/understudy/score.json     # stepped rough at 10 fps + board contact sheet

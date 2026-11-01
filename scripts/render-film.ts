@@ -6,8 +6,13 @@
  * encodes the PNG sequence with ffmpeg.
  *
  * usage: npm run render:film -- films/understudy/score.json [--out film.mp4]
- *        [--audio mix.wav] [--crf 18] [--keep-frames <dir>]
+ *        [--audio mix.wav] [--crf 18] [--keep-frames <dir>] [--workers 4]
  *        [--from <s> --to <s>]   a probe slice of one shot; writes no manifest
+ *
+ * A frame is a pure function of `(time, score, assets)`, so `--workers N` paints
+ * N contiguous frame ranges in N browsers and encodes the result through exactly
+ * the same ffmpeg call (decision 0023). One worker is the default, because a
+ * machine that cannot afford N browsers must still render correctly.
  */
 import { createServer } from "node:http";
 import { createServer as createNetServer } from "node:net";
@@ -43,6 +48,24 @@ function arg(name: string): string | undefined {
 
 function has(name: string): boolean {
   return process.argv.includes(`--${name}`);
+}
+
+/**
+ * How many browsers may paint at once. One is the default: a machine with less
+ * memory than this one must still render correctly, and slower is correct while
+ * a second browser it cannot afford is a crash. The cap is a memory budget, not
+ * a correctness one — an eighth Chrome buys nothing on a 20-thread laptop.
+ */
+const WORKER_CAP = 8;
+
+function workerCount(): number {
+  const raw = arg("workers");
+  if (raw === undefined) return 1;
+  const count = Number(raw);
+  if (!Number.isInteger(count) || count < 1) {
+    throw new Error(`--workers must be a whole number >= 1 (got "${raw}")`);
+  }
+  return Math.min(count, WORKER_CAP);
 }
 
 function findChrome(): string {
@@ -192,8 +215,120 @@ async function quietly(task: () => Promise<unknown>): Promise<void> {
   }
 }
 
+/**
+ * One browser, ready to paint.
+ *
+ * A frame is a pure function of `(time, score, assets)`, so a worker is not a
+ * thread of a shared renderer — it is a second, identical renderer that happens
+ * to be given a shorter list of times (decision 0023). Nothing is shared but the
+ * page it loads and the directory it writes into, which is why this is a whole
+ * function with its own Chrome, profile and port, and not a flag in a loop.
+ */
+type Worker = { cdp: Cdp; close: () => Promise<void> };
+
+async function openWorker(serverUrl: string, filmDir: string, filmId: string): Promise<Worker> {
+  const debugPort = await freePort();
+  const profile = await mkdtemp(join(tmpdir(), "paper-chrome-"));
+  const chrome = spawn(
+    findChrome(),
+    [
+      "--headless=new",
+      "--no-sandbox",
+      "--disable-gpu",
+      "--hide-scrollbars",
+      "--mute-audio",
+      "--no-first-run",
+      "--no-default-browser-check",
+      "--disable-background-timer-throttling",
+      "--disable-renderer-backgrounding",
+      "--disable-backgrounding-occluded-windows",
+      `--remote-debugging-port=${debugPort}`,
+      `--user-data-dir=${profile}`,
+      "--window-size=1920,1080",
+      "about:blank",
+    ],
+    { stdio: "ignore" },
+  );
+
+  const close = async (): Promise<void> => {
+    await quietly(() => stopChrome(chrome));
+    await quietly(() => rm(profile, { recursive: true, force: true }));
+  };
+
+  try {
+    let target: { webSocketDebuggerUrl?: string } | undefined;
+    for (let attempt = 0; attempt < 100; attempt++) {
+      try {
+        const list = (await (
+          await fetch(`http://127.0.0.1:${debugPort}/json/list`)
+        ).json()) as { type: string; webSocketDebuggerUrl?: string }[];
+        target = list.find((entry) => entry.type === "page");
+        if (target?.webSocketDebuggerUrl) break;
+      } catch {
+        // Chrome is still starting.
+      }
+      await sleep(100);
+    }
+    if (!target?.webSocketDebuggerUrl) throw new Error("Chrome debugging endpoint did not start");
+    const cdp = await Cdp.connect(target.webSocketDebuggerUrl);
+    await cdp.send("Page.enable");
+    await cdp.send("Emulation.setDeviceMetricsOverride", {
+      width: 1920,
+      height: 1080,
+      deviceScaleFactor: 1,
+      mobile: false,
+    });
+    await cdp.send("Page.navigate", { url: `${serverUrl}/films/${filmId}/index.html` });
+    await waitForReady(cdp, 60_000);
+    // The families waited on are the ones the **page** declares, read from its
+    // `@font-face` rules: those are the only names `document.fonts.load` can
+    // resolve, so a list kept here would either be a second copy of style data
+    // or — on a pack whose page names other faces — a wait that proves nothing.
+    const faces = fontFaces(await readFile(join(filmDir, "index.html"), "utf8"));
+    const familyNames = [...new Set(faces.map((face) => face.family))];
+    if (familyNames.length === 0) {
+      throw new Error(`films/${filmId}/index.html declares no @font-face, so no font can be waited for`);
+    }
+    await cdp.send("Runtime.evaluate", {
+      expression: `Promise.all(${JSON.stringify(familyNames)}.map((name) => document.fonts.load('16px "' + name + '"'))).then(() => document.fonts.ready).then(() => {
+        if (window.TY) window.TY.ready = true;
+        window.__fontsReady = true;
+        return true;
+      })`,
+      awaitPromise: true,
+      returnByValue: true,
+    });
+    return { cdp, close: async () => { cdp.close(); await close(); } };
+  } catch (error) {
+    await close();
+    throw error;
+  }
+}
+
 type TextBox = { text: string; x: number; y: number; w: number; h: number };
 type RigRecord = Record<string, unknown>;
+
+/**
+ * Instrument the page's text and rig helpers, then read what each still
+ * actually drew. The probe is engine-owned so every film gets the same one.
+ */
+async function attachProbe(cdp: Cdp, cwd: string): Promise<void> {
+  const probeSource = await readFile(resolve(cwd, "src/engine/paint-probe.js"), "utf8");
+  const injected = await cdp.send<{
+    result: { value?: unknown };
+    exceptionDetails?: { text?: string };
+  }>("Runtime.evaluate", { expression: probeSource, returnByValue: true });
+  if (injected.exceptionDetails) {
+    throw new Error(`paint probe failed: ${injected.exceptionDetails.text ?? "evaluate failed"}`);
+  }
+  const check = await cdp.send<{ result: { value?: unknown } }>("Runtime.evaluate", {
+    expression: "Boolean(window.__paintProbe)",
+    returnByValue: true,
+  });
+  if (check.result.value !== true) {
+    throw new Error("paint probe did not attach (no TY text helpers on the page)");
+  }
+}
 
 async function drawFrame(
   cdp: Cdp,
@@ -234,11 +369,75 @@ async function drawFrame(
   };
 }
 
+/**
+ * Frames are named by their **absolute** index in the film, not by their place
+ * in a worker's chunk, so a parallel render writes the same file names a serial
+ * render writes and the encoder reads the film in order either way (decision
+ * 0023). Six digits, because four caps a film at 9999 frames = 5.5 minutes.
+ */
+function frameName(absolute: number): string {
+  return `frame-${String(absolute).padStart(6, "0")}.png`;
+}
+
+/**
+ * Paint `total` frames across the workers and return how many landed.
+ *
+ * Worker `w` takes the contiguous range `[first + w·chunk, first + (w+1)·chunk)`.
+ * Contiguous so the frame names are the film in order with no gaps; absolute so
+ * worker 3 painting frame 903 draws the same picture as one worker painting it
+ * (decision 0023). Ranges are indices, never seconds, so no worker can drift.
+ */
+async function paintFrames(input: {
+  workers: Worker[];
+  framesDir: string;
+  firstFrame: number;
+  total: number;
+  fps: number;
+}): Promise<number> {
+  const count = Math.max(1, Math.min(input.workers.length, input.total));
+  const chunk = Math.ceil(input.total / count);
+  const ranges: { worker: Worker; from: number; to: number }[] = [];
+  for (let w = 0; w < count; w++) {
+    const worker = input.workers[w];
+    if (!worker) break;
+    const from = input.firstFrame + w * chunk;
+    const to = Math.min(input.firstFrame + input.total, input.firstFrame + (w + 1) * chunk);
+    if (to > from) ranges.push({ worker, from, to });
+  }
+
+  const started = Date.now();
+  let painted = 0;
+  let reported = 0;
+  await Promise.all(
+    ranges.map(async ({ worker, from, to }) => {
+      for (let index = from; index < to; index++) {
+        const time = index / input.fps;
+        const frame = await drawFrame(worker.cdp, time);
+        const base64 = frame.data.slice(frame.data.indexOf(",") + 1);
+        await writeFile(join(input.framesDir, frameName(index + 1)), Buffer.from(base64, "base64"));
+        painted += 1;
+        if (painted === 1 || painted - reported >= 60 || painted === input.total) {
+          reported = painted;
+          const rate = painted / ((Date.now() - started) / 1000);
+          const left = Math.round((input.total - painted) / Math.max(rate, 0.001));
+          console.log(
+            `frame ${String(painted).padStart(4, "0")}/${input.total} · ${rate.toFixed(1)} fps` +
+              (count > 1 ? ` · ${count} workers` : "") +
+              (painted === input.total ? "" : ` · ~${left}s left`),
+          );
+        }
+      }
+    }),
+  );
+  return painted;
+}
+
 async function encode(input: {
   ffmpeg: string;
   framesDir: string;
   fps: number;
   crf: number;
+  firstFrame: number;
   audio?: string;
   output: string;
 }): Promise<void> {
@@ -246,8 +445,10 @@ async function encode(input: {
     "-y",
     "-framerate",
     String(input.fps),
+    "-start_number",
+    String(input.firstFrame + 1),
     "-i",
-    join(input.framesDir, "frame-%04d.png"),
+    join(input.framesDir, "frame-%06d.png"),
   ];
   if (input.audio) args.push("-i", input.audio);
   args.push(
@@ -316,95 +517,22 @@ async function main(): Promise<void> {
   await mkdir(framesDir, { recursive: true });
 
   const server = await serve(cwd);
-  const debugPort = await freePort();
-  const profile = await mkdtemp(join(tmpdir(), "paper-chrome-"));
-  const chrome = spawn(
-    findChrome(),
-    [
-      "--headless=new",
-      "--no-sandbox",
-      "--disable-gpu",
-      "--hide-scrollbars",
-      "--mute-audio",
-      "--no-first-run",
-      "--no-default-browser-check",
-      "--disable-background-timer-throttling",
-      "--disable-renderer-backgrounding",
-      "--disable-backgrounding-occluded-windows",
-      `--remote-debugging-port=${debugPort}`,
-      `--user-data-dir=${profile}`,
-      "--window-size=1920,1080",
-      "about:blank",
-    ],
-    { stdio: "ignore" },
-  );
-
-  let cdp: Cdp | undefined;
+  // One browser paints one frame at a time; N browsers paint N contiguous
+  // ranges (decision 0023). A stills or probe pass is one page read once, so it
+  // takes one worker whatever `--workers` says — the parallelism is for frames.
+  const workerTotal = stills ? 1 : workerCount();
+  const workers: Worker[] = [];
   try {
-    let target: { webSocketDebuggerUrl?: string } | undefined;
-    for (let attempt = 0; attempt < 100; attempt++) {
-      try {
-        const list = (await (
-          await fetch(`http://127.0.0.1:${debugPort}/json/list`)
-        ).json()) as { type: string; webSocketDebuggerUrl?: string }[];
-        target = list.find((entry) => entry.type === "page");
-        if (target?.webSocketDebuggerUrl) break;
-      } catch {
-        // Chrome is still starting.
-      }
-      await sleep(100);
+    for (let index = 0; index < workerTotal; index++) {
+      workers.push(await openWorker(server.url, filmDir, score.id));
     }
-    if (!target?.webSocketDebuggerUrl) throw new Error("Chrome debugging endpoint did not start");
-    cdp = await Cdp.connect(target.webSocketDebuggerUrl);
-
-    await cdp.send("Page.enable");
-    await cdp.send("Emulation.setDeviceMetricsOverride", {
-      width: 1920,
-      height: 1080,
-      deviceScaleFactor: 1,
-      mobile: false,
-    });
-    await cdp.send("Page.navigate", { url: `${server.url}/films/${score.id}/index.html` });
-    await waitForReady(cdp, 60_000);
-    // The families waited on are the ones the **page** declares, read from its
-    // `@font-face` rules: those are the only names `document.fonts.load` can
-    // resolve, so a list kept here would either be a second copy of style data
-    // or — on a pack whose page names other faces — a wait that proves nothing.
-    const faces = fontFaces(await readFile(join(filmDir, "index.html"), "utf8"));
-    const familyNames = [...new Set(faces.map((face) => face.family))];
-    if (familyNames.length === 0) {
-      throw new Error(`films/${score.id}/index.html declares no @font-face, so no font can be waited for`);
-    }
-    await cdp.send("Runtime.evaluate", {
-      expression: `Promise.all(${JSON.stringify(familyNames)}.map((name) => document.fonts.load('16px "' + name + '"'))).then(() => document.fonts.ready).then(() => {
-        if (window.TY) window.TY.ready = true;
-        window.__fontsReady = true;
-        return true;
-      })`,
-      awaitPromise: true,
-      returnByValue: true,
-    });
+    if (workerTotal > 1) console.log(`workers: ${workerTotal}`);
+    const first = workers[0];
+    if (!first) throw new Error("no browser started");
+    const cdp = first.cdp;
 
     const probePath = arg("probe");
-    if (probePath) {
-      // Instrument the page's text and rig helpers, then read what each still
-      // actually drew. The probe is engine-owned so every film gets the same one.
-      const probeSource = await readFile(resolve(cwd, "src/engine/paint-probe.js"), "utf8");
-      const injected = await cdp.send<{
-        result: { value?: unknown };
-        exceptionDetails?: { text?: string };
-      }>("Runtime.evaluate", { expression: probeSource, returnByValue: true });
-      if (injected.exceptionDetails) {
-        throw new Error(`paint probe failed: ${injected.exceptionDetails.text ?? "evaluate failed"}`);
-      }
-      const check = await cdp.send<{ result: { value?: unknown } }>("Runtime.evaluate", {
-        expression: "Boolean(window.__paintProbe)",
-        returnByValue: true,
-      });
-      if (check.result.value !== true) {
-        throw new Error("paint probe did not attach (no TY text helpers on the page)");
-      }
-    }
+    if (probePath) await attachProbe(cdp, cwd);
 
     if (stills) {
       await mkdir(stillsDir, { recursive: true });
@@ -452,29 +580,17 @@ async function main(): Promise<void> {
       throw new Error(`--from ${fromSec} --to ${toSec} selects no frames`);
     }
 
-    const started = Date.now();
     const limit = arg("limit");
     const sliceTotal = lastFrame - firstFrame;
     const total = limit === undefined ? sliceTotal : Math.min(sliceTotal, Math.max(0, Number(limit)));
-    for (let offset = 0; offset < total; offset++) {
-      const index = firstFrame + offset;
-      const time = index / fps;
-      const frame = await drawFrame(cdp, time);
-      const base64 = frame.data.slice(frame.data.indexOf(",") + 1);
-      await writeFile(
-        join(framesDir, `frame-${String(offset + 1).padStart(4, "0")}.png`),
-        Buffer.from(base64, "base64"),
-      );
-      if (offset === 0 || (offset + 1) % 60 === 0 || offset === total - 1) {
-        const seconds = (Date.now() - started) / 1000;
-        const rate = (offset + 1) / seconds;
-        console.log(
-          `frame ${String(offset + 1).padStart(4, "0")}/${total} · ${time.toFixed(2)}s · ${rate.toFixed(1)} fps`,
-        );
-      }
+    const painted = await paintFrames({ workers, framesDir, firstFrame, total, fps });
+    // Contiguous ranges cannot leave a hole, but a hole is the one failure that
+    // would reach the encoder silently, so it is checked rather than assumed.
+    if (painted !== total) {
+      throw new Error(`painted ${painted} of ${total} frames; refusing to encode a picture with a hole`);
     }
 
-    await encode({ ffmpeg: findFfmpeg(), framesDir, fps, crf, audio, output });
+    await encode({ ffmpeg: findFfmpeg(), framesDir, fps, crf, firstFrame, audio, output });
     console.log(`render: ${output}`);
 
     if (slice) {
@@ -506,11 +622,9 @@ async function main(): Promise<void> {
     await writeFile(out, JSON.stringify(manifest, null, 2) + "\n", "utf8");
     console.log(`manifest: build/${score.id}/render-manifest.json · picture ${picture.slice(0, 19)}...`);
   } finally {
-    cdp?.close();
-    await stopChrome(chrome);
+    await Promise.all(workers.map((worker) => worker.close()));
     await quietly(() => server.close());
     if (!has("keep-frames")) await quietly(() => rm(framesDir, { recursive: true, force: true }));
-    await quietly(() => rm(profile, { recursive: true, force: true }));
   }
 }
 

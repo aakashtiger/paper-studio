@@ -18,9 +18,11 @@
  *   npm run film:chain -- films/understudy/score.json
  *   npm run film:chain -- <score> --skip-render   (reuse the two renders)
  *   npm run film:chain -- <score> --from gate     (resume at a step)
+ *   npm run film:chain -- <score> --workers 1     (force a serial render)
  */
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
+import { cpus } from "node:os";
 import { resolve } from "node:path";
 
 const args = process.argv.slice(2);
@@ -33,9 +35,27 @@ const skipRender = args.includes("--skip-render");
 const from = flag("from");
 
 if (!scoreArg) {
-  console.error("usage: npm run film:chain -- <score.json> [--skip-render] [--from <step>]");
+  console.error("usage: npm run film:chain -- <score.json> [--skip-render] [--from <step>] [--workers <n>]");
   process.exit(2);
 }
+
+/**
+ * How many browsers paint at once (decision 0023).
+ *
+ * A frame is a pure function of `(time, score, assets)`, so this is a speed
+ * knob and not a contract: the proof is `npm run render:workers`, which shows a
+ * 4-worker render produces the serial render's bytes. Two threads per worker
+ * because a frame occupies one thread for canvas work and borrows another to
+ * encode the PNG, and six because a 60 s film split into more ranges spends more
+ * time starting browsers than painting. Override with `--workers N`; `1` is the
+ * serial render, which is what a machine short of memory should ask for.
+ */
+const threads = cpus().length;
+const workersFlag = flag("workers");
+const workers =
+  workersFlag === undefined
+    ? Math.min(6, Math.max(1, Math.floor(threads / 2)))
+    : Math.max(1, Number(workersFlag) || 1);
 
 const root = process.cwd();
 const score = scoreArg.replace(/\\/g, "/");
@@ -72,8 +92,8 @@ const steps = [
     name: "render",
     skip: skipRender,
     commands: [
-      { name: "render (deliverable)", tsx: "scripts/render-film.ts", args: [score, "--out", deliverable, "--audio", master] },
-      { name: "render (twin)", tsx: "scripts/render-film.ts", args: [score, "--out", twin, "--audio", master] },
+      { name: "render (deliverable)", tsx: "scripts/render-film.ts", args: [score, "--out", deliverable, "--audio", master, "--workers", String(workers)] },
+      { name: "render (twin)", tsx: "scripts/render-film.ts", args: [score, "--out", twin, "--audio", master, "--workers", String(workers)] },
     ],
   },
   {
@@ -115,6 +135,7 @@ function run(step) {
 }
 
 mkdirSync(resolve(root, build), { recursive: true });
+console.log(`chain: ${id} · ${workers} worker(s) of ${threads} threads · render ${skipRender ? "reused" : "twice (deliverable + twin)"}`);
 
 // A resumed or audio-only run must not measure a picture that is not there.
 if (skipRender) {

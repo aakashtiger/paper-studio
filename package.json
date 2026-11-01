@@ -23,6 +23,7 @@
     "embed": "tsx scripts/embed.ts",
     "assets:hash": "tsx scripts/assets-hash.ts",
     "render:film": "tsx scripts/render-film.ts",
+    "render:workers": "node scripts/render-workers-proof.mjs",
     "audit:frames": "tsx scripts/frame-audit.ts",
     "audit:palette": "tsx scripts/palette-audit.ts",
     "audit:paint": "tsx scripts/paint-match.ts",
