@@ -51,6 +51,41 @@ function has(name: string): boolean {
 }
 
 /**
+ * Refuse to paint a whole film without a passing collage for **this** score.
+ *
+ * The collage is stage 5 of decision 0025 and the user's one hard rule about it
+ * is that nobody approves it by hand: the tool paints one frame per shot, checks
+ * the frames it painted (every shot present, none blank, none a duplicate,
+ * every staged character drawn, no word off the edge) and either goes on or says
+ * what is broken. A person still looks at the page — the sheet is written beside
+ * the report — but a pass is the tool's claim, not a signature.
+ */
+function requireCollage(cwd: string, id: string, scoreFile: string): void {
+  const reportPath = join(cwd, "build", id, "collage.json");
+  const run = `npm run collage -- ${relative(cwd, scoreFile).replace(/\\/g, "/")}`;
+  if (!existsSync(reportPath)) {
+    throw new Error(
+      `refusing to paint ${id}: no collage. Run \`${run}\` first — one frame per shot, checked before the film`,
+    );
+  }
+  const written = JSON.parse(readFileSync(reportPath, "utf8")) as {
+    ok?: boolean;
+    score?: string;
+    errors?: { code: string; message: string }[];
+  };
+  if (written.score !== fileHash(scoreFile)) {
+    throw new Error(`refusing to paint ${id}: build/${id}/collage.json is a collage of a different score. Run \`${run}\` again`);
+  }
+  if (!written.ok) {
+    const errors = written.errors ?? [];
+    throw new Error(
+      `refusing to paint ${id}: the collage refused ${errors.length} shot(s):\n` +
+        errors.map((error) => `  ${error.code}  ${error.message}`).join("\n") +
+        `\n  see build/${id}/collage.json · build/${id}/collage/collage.png`,
+    );
+  }
+}
+/**
  * Refuse to paint a whole film without a fresh, passing preflight report.
  *
  * This is the ordering fix from the sixteen-hour day, enforced where it cannot
@@ -556,7 +591,10 @@ async function main(): Promise<void> {
 
   // The gate comes before the browser, not after the film.
   const fullRange = Number(arg("from") ?? 0) <= 0 && Number(arg("to") ?? duration) >= duration;
-  if (!stills && fullRange) requirePreflight(cwd, score.id, scoreFile, scorePath);
+  if (!stills && fullRange) {
+    requirePreflight(cwd, score.id, scoreFile, scorePath);
+    requireCollage(cwd, score.id, scoreFile);
+  }
 
   const server = await serve(cwd);
   // One browser paints one frame at a time; N browsers paint N contiguous

@@ -49,7 +49,8 @@
     "style:seal": "tsx scripts/style.ts seal",
     "style:sheet": "tsx scripts/style-sheet.ts",
     "story": "tsx scripts/story.ts",
-    "preflight": "tsx scripts/preflight.ts"
+    "preflight": "tsx scripts/preflight.ts",
+    "collage": "tsx scripts/collage.ts"
   },
   "dependencies": {
     "zod": "^3.24.1"

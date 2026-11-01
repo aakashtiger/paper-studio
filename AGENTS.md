@@ -62,6 +62,7 @@ npm run storyboard -- films/understudy/score.json   # one code-drawn frame per s
 npm run stills -- films/understudy/score.json    # sample the film, tiled into one sheet
 npm run strips -- films/understudy/score.json    # one strip per shot from the delivered MP4
 npm run preflight -- films/understudy/score.json  # every cheap check, before frame 1
+npm run collage -- films/understudy/score.json    # one frame per shot, self-checked
 npm run audit -- films/understudy/score.json     # score-level audit
 npm run audit:motion -- films/understudy/score.json   # per-shot motion floor
 npm run audit:type -- films/understudy/score.json      # text inside the safe area

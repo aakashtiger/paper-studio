@@ -107,6 +107,12 @@ const steps = [
   // the cast the vendor will draw even exists — and the renderer refuses to
   // paint a whole film without a fresh pass from it.
   { name: "preflight", tsx: "scripts/preflight.ts", args: [score] },
+  // Stage 5: the character sheet and the collage. The sheet is the page where a
+  // plank arm is obvious; the collage is one frame per shot, checked by the tool
+  // (every shot present, none blank or duplicated, every staged character drawn,
+  // no word off the edge). `render:film` refuses a whole film without both.
+  { name: "sheet", tsx: "scripts/sheet.ts", args: [score] },
+  { name: "collage", tsx: "scripts/collage.ts", args: [score] },
   { name: "sfx", tsx: "scripts/sfx.ts", args: [score] },
   { name: "mix", tsx: "scripts/mix.ts", args: [score] },
   {
