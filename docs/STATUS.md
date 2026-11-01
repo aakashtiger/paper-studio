@@ -155,20 +155,35 @@ the substance. This pass measures everything it claims:
   `npm run embed` restored the same bytes and the PASS. That is the point: a
   stale data file is invisible in the pixels.
 
-Evidence: `sfx` 30/30 ok, all −14 dBFS loud · `audit` 32 events / 27 scored / 5
-bare / 30 cues / 2 silences / longest hole 1.07 s · `mix` **−14.1 LUFS / −1.9
-dBTP**, gain +6.6 dB, limiter 6.8 dB at the peak, **median window 0.02 dB**
-(33/293 over 3 dB) · `deliver` **−14.4 LUFS / −1.9 dBTP measured on the file** ·
-`gate:7` **PASS, 20 checks · 1 manual (ASR)** · **269 tests**, typecheck clean.
+Evidence (this build, one `npm run film:chain -- films/understudy/score.json`):
+`sfx` 28/28 ok, every cue at its own level · `audit` **36 events / 27 scored / 9
+bare** (each bare one carries its own `quiet` reason) / **28 cues** / 1 declared
+silence / 9 shots / 900 frames / 6 captions · `mix` **−14.1 LUFS / −1.9 dBTP**,
+gain +9.1 dB, every declared duck reached at the depth it declared, cue level
+drift **0.00 dB**, no undeclared hole, no room bed under a line · `deliver`
+**−14.2 LUFS / −2.0 dBTP measured on the delivered file**, one encode pass, the
+picture stream unchanged · `asr` **93.1 %** of the script (27/29; "cue" is heard
+as "Q") · `gate:7` **PASS, 21 checks, nothing manual** · `film:review --gate`
+**PASS** · **272 tests**, typecheck clean. The determinism comparands are
+`build/understudy/deliverable.mp4` and `build/understudy/det-e.mp4`: identical
+bytes, same picture as the delivered film.
+The numbers above were re-measured by that run; where they drift, the run is the
+source of truth (`build/understudy/deliver.json`, `build/understudy/gate-7.json`).
 Still open: no music, narration ending at 19.5 s (the brief's copy ends there), a
-mono field, guessed word times, and ASR pending the local speech models. The
-MP4's earlier audio cut is **closed**: the delivered MP4 now carries the measured
-master.
+mono field, and a `crowd` bed that has to be declared 10 dB under a line before it
+can be heard over one. The MP4's earlier audio cut is **closed**: the delivered
+MP4 carries the measured master, not an earlier one.
+One quality gap is named rather than fixed: `audit:motion` measures frame
+difference per shot, so a pose change that moves one limb is legal and quiet —
+there is no per-character centre-of-mass metric yet. The type audit samples
+rather than reading every frame (151 of 900 here), so a sub-sample overflow could
+still hide; the copy floor it enforces applies to the film's own words only.
 
 **The counts above are the current ones; the blocks before this were written
 against earlier builds.** Where an older block says "13 checks" or "237 tests",
-it is describing the state on that date, not today's. The gate now has **19
-checks** and the suite **269 tests**; the commands are the source of truth
+it is describing the state on that date, not today's. The gate now has **21
+checks** — the ASR row is present rather than pending — and the suite **272
+tests**; the commands are the source of truth
 (`npm run gate:7 -- films/understudy/score.json`, `npm test`).
 
 **Update:** `docs/PRODUCTION-PLAN.md` v1.4 is accepted. The contract layer and
@@ -195,6 +210,70 @@ upgraded to a real kit (layers, modal resonators, friction, synthetic IR reverb,
 ambience) with each cue bound to its picture event, still generated in code;
 music (ACE-Step) stays staged. Banned: generative images or video in the render
 path. Allowed: local models for voice, word timing and music.
+
+**Update 2026-11-01 — the hair bug: a defect found by looking at delivered frames.**
+Inspecting the delivered MP4 at 26.00 s showed a **vertical black slab** standing
+behind Nova's head. It was not a stray prop or a camera artifact: it was her
+**long hair**, drawn at the rig root instead of under the head, so it never
+inherited the torso's lean. Standing still the two coincided; on the film's
+closing bow the face swung ~95 units sideways and left the hair behind, which
+reads as a **detached head** for about two seconds of the last shot.
+
+What is worth recording is why every existing check passed. `audit:frames` saw no
+blank frame and no long hold; `audit:paint` saw a 37 dB match; `audit:palette`
+saw no clipping; `audit:type` saw the copy inside the safe area; `audit:rig`
+checked the legs, and the legs were perfect. **Every check asked whether something
+was wrong where it looked. None asked whether a part was where it hangs.** The
+character sheet did not catch it either, because the sheet was reviewed from a
+distance at which a lean looks like a lean.
+
+The fix moves the hair under the head, inside the lean transform, and keeps its
+draw order (hair behind the torso). The new evidence is mechanical:
+
+- `audit:rig` now wraps a new `rigAnchor` helper. Each rig publishes the chest,
+  the head pivot and the hair, and the audit holds each of them to a **fixed
+  place in chest space** (1.5 rig units) across every sampled frame — a part in
+  the wrong transform drifts, a part in the right one cannot. Understudy:
+  **435 anchor samples, 0.00 units worst shift, pass.**
+- `npm run audit:rig:proof` proves the row catches the defect rather than
+  describing it: it puts the hair back at the rig root, and on that placement the
+  hair moves **96.9 units in one 0.1 s step** at 25.0 s against a 1.5 limit, while
+  the fixed rig reads **0.0**. It restores the rig byte-identically in a
+  `finally`.
+- The pose edit that was made while hunting this (`mira`'s `bow.headTilt: 0.2 → 0`)
+  was an experiment that proved head tilt was *not* the cause; it is reverted to
+  the authored `0.2`.
+
+`docs/GATES.md` has the row and the numbers, `docs/decisions/0011` has the
+invariant ("a part that hangs from a part inherits every transform between it and
+the root"), and `gate:7` now refuses a rig report with no anchors or no adjacent
+pairs — an empty anchor set is not a pass, it is a check that proved nothing.
+
+**Update 2026-11-01 — the voice ignored its own clock.** The score places six
+lines at 0.5 / 5.1 / 8.9 / 12.0 / 15.4 / 18.5 s; the captions name those seconds;
+the cut puts line 4 over `s04`, which starts at 12.0 s. The capture **butted the
+reads end to end**, so the WAV was 14.41 s long and line 4 was spoken at 8.2 s.
+The narration lived in different seconds than the film that contained it, by up to
+3.8 s, and no audit could see it: the mix proves the voice is present and ducks
+correctly, and the ASR proves the words are the script's — both true of a voice in
+the wrong place.
+
+The fix is placement, not a patch: `VoiceLine` carries `start`, the bridge pads
+silence to that second and **refuses** a read that would overrun the next line.
+`npm run voice` then checks the clock **on the audio** — the first sample above
+−40 dBFS within ±0.25 s of each authored start, tolerance **0.1 s** — because
+Whisper's onsets wobbled 0.32 s early on a read that measures 0.53 s. Understudy:
+lines at 0.50/5.10/8.90/12.00/15.40/18.50, measured 0.53/5.13/8.93/12.03/15.43/
+18.53, **worst +0.03 s, clock kept**; 28/29 words timed.
+
+The same pass found the master's bound written twice — 8 dB in `scripts/mix.ts`
+and 8 dB restated in `scripts/gate-7.ts`. The correctly-placed narration dropped
+the premaster to −22.0 LUFS and needed **+9.1 dB**: the mix accepted it, the gate
+would have refused it, and the mix's loudness condition could fail while printing
+nothing at all. The bounds now live once, in `src/engine/loudness.ts`
+(`MASTER_MAX_GAIN` **12**, `LIMITER_MAX_REDUCTION` **8**), both files import them,
+and every failing condition prints its own sentence. Master: **−14.1 LUFS /
+−1.9 dBTP**. Decision `0019` has the numbers.
 
 **Purpose:** an honest inventory of what exists, what is weak, and what is
 missing, with a deliberately small build plan. No new architecture unless it
@@ -268,6 +347,10 @@ These are missing, not weak.
 | **CI render / golden frames** | CI runs unit tests only | With `film-audit` |
 
 ## 4. Status at a glance
+
+*(This table is from 2026-10-24 and is kept as history. The updates above it are
+the current state; several rows here are no longer true — audio is measured, the
+rig is fixed in the source, and the renderer paints from the score.)*
 
 | Layer | Status |
 |---|---|

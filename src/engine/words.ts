@@ -201,3 +201,42 @@ export function unheard(scriptWords: string[], heard: HeardWord[]): string[] {
   }
   return kept.filter((_, index) => !matched.has(index));
 }
+
+export type UnmatchedWord = { word: string; heard: string | null };
+
+/**
+ * The same list with the token the recogniser wrote **in its place**.
+ *
+ * A script word that was not matched by spelling is usually a word the film did
+ * say and the recogniser spelled its own way — "cue" heard as "Q", "Mira" as
+ * "Myra". Reporting the pair is the difference between "the film dropped this
+ * word" and "this word sounded like that"; the gate and the ASR report both read
+ * it, and the coverage threshold is still what decides pass or fail.
+ *
+ * The pairing comes from the alignment already computed for `attachWords`: the
+ * unmatched script words between two matched blocks share the heard tokens
+ * between those blocks, in order.
+ */
+export function unheardWith(scriptWords: string[], heard: HeardWord[]): UnmatchedWord[] {
+  const kept = scriptWords.filter((word) => normalizeWord(word) !== "");
+  const blocks = matchingBlocks(kept.map(normalizeWord), heard.map((word) => normalizeWord(word.word)));
+  const gaps: Array<{ i1: number; i2: number; j1: number; j2: number }> = [];
+  let prev = { i: 0, j: 0 };
+  for (const [start, heardStart, length] of blocks) {
+    if (prev.i < start) gaps.push({ i1: prev.i, i2: start, j1: prev.j, j2: heardStart });
+    prev = { i: start + length, j: heardStart + length };
+  }
+  if (prev.i < kept.length) gaps.push({ i1: prev.i, i2: kept.length, j1: prev.j, j2: heard.length });
+
+  const out: UnmatchedWord[] = [];
+  for (const gap of gaps) {
+    const count = gap.i2 - gap.i1;
+    const tokens = Math.max(0, gap.j2 - gap.j1);
+    for (let k = 0; k < count; k += 1) {
+      const heardIndex = tokens === count ? gap.j1 + k : gap.j1 + Math.floor((k * tokens) / count);
+      const token = tokens > 0 ? heard[Math.min(heardIndex, gap.j2 - 1)]?.word ?? null : null;
+      out.push({ word: kept[gap.i1 + k]!, heard: token });
+    }
+  }
+  return out;
+}

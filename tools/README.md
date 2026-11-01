@@ -40,7 +40,10 @@ time on the delivered master, and compares what it heard against the script.
 ## Determinism
 
 Same WAV in, same words out: Whisper runs with `beam_size=5`, CPU, `int8`, and
-no voice-activity filter. The clock derived from those words is a pure function.
+the voice-activity filter **on** (faster-whisper 1.2.1's word aligner raises on a
+segment with no tokens, which this film's foley-only stretches produce). Running
+it twice on the same WAV returns the same words and the same times. The clock
+derived from those words is a pure function.
 The narration WAV itself is written once and pinned by hash; it is not
 regenerated on a normal render.
 

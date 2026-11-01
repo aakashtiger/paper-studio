@@ -26,20 +26,21 @@ test("the fixture passes the score-level audit", () => {
   assert.equal(report.captions, 6);
   // Every picture event is either scored or sits in a silence the film wrote
   // down: no event is quietly dropped.
-  assert.equal(report.events, 32);
+  assert.equal(report.events, 36);
   assert.equal(report.scored + report.bare, report.events);
-  assert.ok(report.bare <= 6, `${report.bare} events are bare`);
+  // Quiet is a decision, not a default: a quarter of the events is the ceiling
+  // before the film is mostly held beats.
+  assert.ok(report.bare <= 9, `${report.bare} events are bare`);
 });
 
 test("an event nobody scored is an error, not a warning", () => {
   const plan = resolvedPlan();
-  const shot = plan.shots[7];
-  assert.ok(shot);
-  // Find a cue bound to this shot and unbind it by moving it to another event
-  // index that does not exist: the coverage row must notice the gap.
-  const cue = plan.cues.find((candidate) => candidate.event?.shot === shot.id && candidate.event.index === 4);
-  assert.ok(cue, "the fixture should score the paper shard on the hold");
-  cue.event = { shot: shot.id, index: 0, t: 0.4, kind: "entrance", note: "Nova enters from the wing" };
+  // Take a cue off the event it is bound to: the event is now bare in a score
+  // that gave it no `quiet` reason, which is the case the coverage row exists
+  // for. (The reverse — a cue *and* a reason — is the next test.)
+  const cue = plan.cues.find((candidate) => (candidate.event?.index ?? 0) > 0);
+  assert.ok(cue?.event, "the fixture should score an event after the first");
+  plan.cues = plan.cues.filter((candidate) => candidate !== cue);
   const report = auditFilm(plan, { root });
   assert.ok(report.errors.some((issue) => issue.code === "sfx_unscored"));
 });
@@ -111,11 +112,12 @@ test("an event with no cue and no quiet reason is an error", () => {
 
 test("a long hole needs a reason", () => {
   // Bare events now carry their own reason, so a hole is only visible as a
-  // stretch of *time* with no foley in it. Strip the cues out of the middle of
-  // the film and remove every declared silence: 5 s of nothing has to fail.
+  // stretch of *time* with no foley in it. A room bed is a sound, so it fills
+  // one: strip the cues out of the middle of the film, take the bed with them
+  // and remove every declared silence. 9 s of nothing has to fail.
   const plan = resolvedPlan();
   plan.audio.sfx?.silences.splice(0, plan.audio.sfx.silences.length);
-  plan.cues = plan.cues.filter((cue) => cue.at < 5 || cue.at > 14);
+  plan.cues = plan.cues.filter((cue) => cue.kind !== "room" && (cue.at < 5 || cue.at > 14));
   const report = auditFilm(plan, { root });
   assert.ok(report.ok === false);
   assert.ok(report.errors.some((issue) => issue.code === "sfx_gap"), "a 9 s hole must be named");

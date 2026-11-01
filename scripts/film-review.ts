@@ -61,9 +61,11 @@ if (wantGate) {
   for (const gate of ["frame-audit", "paint-match", "motion-audit", "type-audit", "rig-audit"] as const) {
     steps.push({ name: gate, script: `scripts/${gate}.ts`, detail: "G7 mechanical audit" });
   }
-  // After the audits, because `frame-audit` rewrites the render manifest and
-  // `deliver` is what puts the measured audio back into it. Before the gate,
-  // because the gate's `deliveredAudio` row reads the delivered file.
+  // After the audits, because `deliver` puts the measured master into the
+  // picture — and the picture must already have passed its frame audit. Before
+  // the gate, because the gate's `deliveredAudio` row reads the delivered file.
+  // Nothing in this chain rewrites `render-manifest.json`: the renderer is its
+  // only writer (see `src/engine/manifest.ts`).
   steps.push({ name: "deliver", script: "scripts/deliver.ts", detail: "master into the picture, measured" });
   steps.push({ name: "gate:7", script: "scripts/gate-7.ts", detail: "the final gate" });
 }
@@ -305,8 +307,17 @@ function describe(name: string): string | null {
       return `${report.shots.length} shots · weakest median ${weakest}`;
     }
     case "type-audit": {
-      const report = readJson<{ sampled: number; boxes: number; outside: unknown[] }>(`build/${id}/type-audit.json`);
-      return report ? `${report.boxes} boxes in ${report.sampled} frames · ${report.outside.length} outside` : null;
+      const report = readJson<{
+        sampled: number;
+        boxes: number;
+        copyBoxes?: number;
+        floor?: { px: number };
+        outside: unknown[];
+        belowFloor?: unknown[];
+      }>(`build/${id}/type-audit.json`);
+      return report
+        ? `${report.boxes} boxes in ${report.sampled} frames (${report.copyBoxes ?? 0} copy at the ${report.floor?.px ?? "?"}px floor) · ${report.outside.length} outside · ${report.belowFloor?.length ?? 0} under the floor`
+        : null;
     }
     case "rig-audit": {
       const report = readJson<{ legs: number; unpairedSolves: number; worstAnkleJump: { distance: number } }>(

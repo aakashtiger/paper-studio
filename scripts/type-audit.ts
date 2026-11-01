@@ -1,5 +1,6 @@
 /**
- * Type audit: is every word inside the safe area?
+ * Type audit: is every word inside the safe area, and is the film's copy at the
+ * size the pack says it must be?
  *
  * Paints sampled times through the real renderer with the paint probe attached,
  * reads the box of every text run the frame drew, and asserts each box sits
@@ -7,8 +8,16 @@
  * each box through the canvas transform, so a label on a rotated sticker is
  * measured as the rectangle it actually covers.
  *
- * The safe margin comes from the style pack (`tokens.json` safeZones) so a film
- * inherits it instead of hardcoding a number.
+ * The safe margin comes from the style pack (`tokens.json` safeZones) and the
+ * size floor from its own type scale (`type.scale.label`, authored at the 390 px
+ * review width), so a film inherits both instead of hardcoding a number.
+ *
+ * "At the floor" applies to **the film's copy** — the strings the score puts in
+ * a shot's slots. A costume badge or a hud label is set dressing drawn by the
+ * rig; it is not a sentence the viewer has to read, and holding it to the copy
+ * floor would fail every character with a name tag. The probe box height is the
+ * em size the frame drew, so the check is on the drawn size, not on a number the
+ * painter reported.
  *
  * usage: npm run audit:type -- films/understudy/score.json [--step 0.5] [--margin 0.06]
  */
@@ -18,7 +27,7 @@ import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 
-type TextBox = { text: string; x: number; y: number; w: number; h: number };
+type TextBox = { text: string; x: number; y: number; w: number; h: number; copy?: boolean };
 type ProbeFile = { frames: { time: number; textBoxes: TextBox[] }[] };
 type Score = {
   id: string;
@@ -26,7 +35,31 @@ type Score = {
   duration: number;
   fps?: number;
   aspect?: string;
+  shots?: { duration: number; slots?: Record<string, string> }[];
 };
+
+const AUTHORED_WIDTH = 390;
+const DEFAULT_FLOOR = 14;
+
+/** `type.scale.label` from the pack: the smallest size the pack sets copy in. */
+async function copyFloor(root: string, style: string): Promise<{ px: number; source: string }> {
+  const tokensPath = resolve(root, "styles", style, "tokens.json");
+  if (existsSync(tokensPath)) {
+    const tokens = JSON.parse(await readFile(tokensPath, "utf8")) as {
+      type?: { scale?: Record<string, number> };
+    };
+    const label = tokens.type?.scale?.label;
+    if (Number.isFinite(label) && (label as number) > 0) {
+      return { px: label as number, source: `styles/${style}/tokens.json type.scale.label` };
+    }
+  }
+  return { px: DEFAULT_FLOOR, source: `default ${DEFAULT_FLOOR}` };
+}
+
+/** Letters and digits only, so a wrapped caption still matches its slot line. */
+function normalise(text: string): string {
+  return String(text).toLowerCase().replace(/[^a-z0-9]/g, "");
+}
 
 function arg(name: string): string | undefined {
   const index = process.argv.indexOf(`--${name}`);
@@ -84,8 +117,10 @@ async function main(): Promise<void> {
   const style = score.style ?? "";
   const resolved = arg("margin") === undefined ? await safeMargin(root, style) : { margin: Number(arg("margin")), source: "--margin" };
   const margin = resolved.margin;
+  const floor = await copyFloor(root, style);
 
   const { width, height } = frameSize(score.aspect);
+  const floorPx = Math.round((floor.px * width) / AUTHORED_WIDTH);
   const safe = {
     x0: Math.round(width * margin * 10) / 10,
     y0: Math.round(height * margin * 10) / 10,
@@ -121,8 +156,39 @@ async function main(): Promise<void> {
   if (data.frames.length === 0) throw new Error("the paint probe returned no frames");
 
   const outside: { time: number; text: string; box: TextBox; over: number }[] = [];
+  const belowFloor: { time: number; text: string; box: TextBox; px: number }[] = [];
+  const misMarked: { time: number; text: string; shot: string }[] = [];
+  // The score stores each shot's duration, not its start: the start is the sum
+  // of the durations before it. One place computes it, so the sample and the
+  // shot can never disagree about where a shot begins.
+  let clock = 0;
+  const shots = (score.shots ?? []).map((shot, index) => {
+    const entry = { index, start: clock, duration: shot.duration, slots: shot.slots ?? {} };
+    clock += shot.duration;
+    return entry;
+  });
+  const shotAt = (time: number) =>
+    shots.find((entry) => time >= entry.start && time < entry.start + entry.duration) ??
+    // The sample at exactly the film's duration is the last shot's last frame,
+    // not a frame outside the film.
+    (time >= clock - 1e-9 ? shots[shots.length - 1] : undefined);
+  const label = (entry: { index: number; start: number }) => `s${String(entry.index + 1).padStart(2, "0")}@${entry.start.toFixed(2)}s`;
+  const copyAt = (time: number): string[] =>
+    Object.values(shotAt(time)?.slots ?? {}).map(normalise).filter(Boolean);
+  // Which shots showed their copy: a shot that has a slot and never reports a
+  // copy box is a painter that stopped marking, not a film with no words.
+  const shotsWithCopy = new Set<string>();
+  const shotsWithSlots = new Set<string>();
+  for (const shot of shots) {
+    if (Object.values(shot.slots).some((value) => normalise(value).length > 0)) {
+      shotsWithSlots.add(label(shot));
+    }
+  }
   let boxes = 0;
+  let copyBoxes = 0;
   for (const frame of data.frames) {
+    const copy = copyAt(frame.time);
+    const shot = shotAt(frame.time);
     for (const box of frame.textBoxes) {
       boxes++;
       const over = Math.max(
@@ -133,20 +199,50 @@ async function main(): Promise<void> {
       );
       // 1 px of tolerance: antialiasing and glyph side bearings are not layout.
       if (over > 1) outside.push({ time: frame.time, text: box.text, box, over: Math.round(over * 10) / 10 });
+      if (box.copy !== true) continue;
+      copyBoxes++;
+      if (shot) shotsWithCopy.add(label(shot));
+      // A marked run must be a piece of *this* shot's copy: the mark says "this
+      // is the film's words", and the score says which words those are.
+      const run = normalise(box.text);
+      if (!copy.some((line) => line.includes(run) || run.includes(line))) {
+        misMarked.push({ time: frame.time, text: box.text, shot: shot ? label(shot) : "?" });
+      }
+      // The probe records the drawn em size; the box can be scaled by a camera,
+      // and a camera that shrinks copy below the floor is still a defect.
+      const px = Math.round(box.h);
+      if (px + 0.5 < floorPx) belowFloor.push({ time: frame.time, text: box.text, box, px });
     }
   }
+  const unmarked = [...shotsWithSlots].filter((shot) => !shotsWithCopy.has(shot));
 
-  const pass = outside.length === 0;
+  const pass =
+    outside.length === 0 &&
+    belowFloor.length === 0 &&
+    misMarked.length === 0 &&
+    copyBoxes > 0 &&
+    unmarked.length === 0;
   const report = {
     film: score.id,
     pass,
     frame: { width, height },
     safe,
     margin: { value: margin, source: resolved.source },
+    floor: { px: floorPx, authored: floor.px, authoredWidth: AUTHORED_WIDTH, source: floor.source },
     sampled: data.frames.length,
     step,
     boxes,
+    copyBoxes,
     outside,
+    belowFloor,
+    misMarked,
+    unmarked,
+    checks: {
+      insideSafe: outside.length === 0,
+      copyMarked: copyBoxes > 0 && unmarked.length === 0,
+      copyAtFloor: belowFloor.length === 0,
+      copyMatchesScore: misMarked.length === 0,
+    },
     probe: `sha256:${createHash("sha256")
       .update(await readFile(resolve(root, "src/engine/paint-probe.js")))
       .digest("hex")}`,
@@ -161,9 +257,21 @@ async function main(): Promise<void> {
       );
     }
     if (outside.length > 12) console.log(`  ... ${outside.length - 12} more`);
+    for (const item of belowFloor.slice(0, 12)) {
+      console.log(
+        `  SMALL ${item.time.toFixed(2)}s "${item.text}" ${item.px}px · the pack's floor is ${floorPx}px`,
+      );
+    }
+    if (belowFloor.length > 12) console.log(`  ... ${belowFloor.length - 12} more`);
+    for (const item of misMarked.slice(0, 12)) {
+      console.log(`  MARKED-BUT-NOT-COPY ${item.time.toFixed(2)}s "${item.text}" (${item.shot})`);
+    }
+    for (const shot of unmarked.slice(0, 12)) {
+      console.log(`  NO-COPY-MARKED ${shot}: the shot has a slot and no marked copy box`);
+    }
   }
   console.log(
-    `type: ${data.frames.length} frames · ${boxes} text boxes · safe ${safe.x0},${safe.y0}–${safe.x1},${safe.y1} (${Math.round(margin * 100)}% from ${resolved.source}) · ${pass ? "pass" : `FAIL ${outside.length} outside`}`,
+    `type: ${data.frames.length} frames · ${boxes} text boxes (${copyBoxes} copy) · safe ${safe.x0},${safe.y0}–${safe.x1},${safe.y1} (${Math.round(margin * 100)}% from ${resolved.source}) · copy floor ${floorPx}px (${floor.px} at ${AUTHORED_WIDTH}px, ${floor.source}) · ${pass ? "pass" : `FAIL ${outside.length} outside, ${belowFloor.length} under the floor, ${misMarked.length} mis-marked, ${unmarked.length} shots unmarked`}`,
   );
   console.log(`report: ${reportPath}`);
   if (!pass) process.exit(1);

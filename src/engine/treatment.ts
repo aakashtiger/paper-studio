@@ -143,6 +143,14 @@ export const DirectionSchema = z.object({
   entry: z.string().min(1),
   exit: z.string().min(1),
   spine: z.string().min(1),
+  /**
+   * Who is in this frame. A list, because "the wings were empty" and "the
+   * understudy walks on" are stage directions the picture has to obey, not
+   * prose: the painter draws exactly these characters. Absent means the recipe's
+   * own staging (a float, a close-up with no one in it); an empty list means
+   * nobody, which is a thing a film needs to be able to say.
+   */
+  cast: z.array(z.string().min(1)).optional(),
   events: z
     .array(
       z.object({
@@ -156,6 +164,11 @@ export const DirectionSchema = z.object({
          * with a cue or with a reason, and refuses one that claims both.
          */
         quiet: z.string().min(1).optional(),
+        /** For `kind: "pose"` — whose performance, and which pose. */
+        who: z.string().min(1).optional(),
+        pose: z.string().min(1).optional(),
+        /** The pose to come *from*, for anticipation into this one. */
+        breakdown: z.string().min(1).optional(),
       }),
     )
     .min(3),
@@ -389,6 +402,7 @@ export function resolveFilm(
     }
   }
 
+  const poseNames = new Map<string, Set<string>>();
   for (const entry of film.cast) {
     const posePath = resolve(root, entry.poses);
     if (!existsSync(posePath)) {
@@ -403,6 +417,10 @@ export function resolveFilm(
           message: `pose library "${entry.poses}" is for "${library.character}", not "${entry.character}"`,
         });
       }
+      poseNames.set(
+        entry.character.toLowerCase(),
+        new Set(library.poses.map((pose) => pose.name)),
+      );
       const poseResult = resolvePoseLibrary(library);
       errors.push(...poseResult.errors.map((issue) => ({ code: issue.code, message: issue.message })));
       warnings.push(...poseResult.warnings.map((issue) => ({ code: issue.code, message: issue.message })));
@@ -440,7 +458,7 @@ export function resolveFilm(
       checkRecipe(id, shot, recipe, false, capabilities, errors, warnings);
     }
 
-    checkDirection(id, shot, errors);
+    checkDirection(id, shot, errors, poseNames);
 
     const resolved: ResolvedFilmShot = {
       id,
@@ -516,7 +534,12 @@ export function resolveFilm(
   return { plan, errors, warnings };
 }
 
-function checkDirection(id: string, shot: FilmShot, errors: TreatmentIssue[]) {
+function checkDirection(
+  id: string,
+  shot: FilmShot,
+  errors: TreatmentIssue[],
+  poseNames: Map<string, Set<string>>,
+) {
   let previous = -1;
   for (const event of shot.direction.events) {
     if (event.t >= shot.duration) {
@@ -534,7 +557,73 @@ function checkDirection(id: string, shot: FilmShot, errors: TreatmentIssue[]) {
       });
     }
     previous = event.t;
+
+    // A pose event is the score directing the cast, so it has to name someone
+    // who is in the film and a pose that person actually has. Without this the
+    // painter falls back to the library's first pose and a character stands
+    // still for a whole shot with nothing to say it happened.
+    if (event.kind === "pose") {
+      if (!event.who || !event.pose) {
+        errors.push({
+          code: "pose_undeclared",
+          message: `a pose event at ${event.t}s must name \`who\` and \`pose\``,
+          shot: id,
+        });
+        continue;
+      }
+      const poses = poseNames.get(event.who.toLowerCase());
+      if (!poses) {
+        errors.push({
+          code: "pose_unknown_actor",
+          message: `pose event names "${event.who}", who is not in the film's cast`,
+          shot: id,
+        });
+      } else {
+        for (const name of [event.pose, event.breakdown].filter(Boolean) as string[]) {
+          if (!poses.has(name)) {
+            errors.push({
+              code: "pose_unknown",
+              message: `"${event.who}" has no pose "${name}" (has: ${[...poses].join(", ")})`,
+              shot: id,
+            });
+          }
+        }
+      }
+    }
+    // A `who` on an event that does not change a pose is a note pretending to
+    // be direction.
+    if (event.kind !== "pose" && (event.pose || event.breakdown)) {
+      errors.push({
+        code: "pose_on_wrong_event",
+        message: `a "${event.kind}" event at ${event.t}s cannot carry a pose`,
+        shot: id,
+      });
+    }
   }
+
+  // The declared cast, if the shot declares one, has to be film cast too: a
+  // typo would draw an empty stage and look like a directorial choice.
+  for (const who of shot.direction.cast ?? []) {
+    if (!poseNames.has(who.toLowerCase())) {
+      errors.push({
+        code: "cast_unknown",
+        message: `direction.cast names "${who}", who is not in the film's cast`,
+        shot: id,
+      });
+    }
+  }
+  for (const event of shot.direction.events) {
+    if (event.kind === "pose" && event.who && shot.direction.cast?.length) {
+      if (!shot.direction.cast.some((who) => who.toLowerCase() === event.who!.toLowerCase())) {
+        errors.push({
+          code: "pose_offstage",
+          message: `a pose for "${event.who}" at ${event.t}s, who is not in this shot's cast`,
+          shot: id,
+        });
+      }
+    }
+  }
+
   if (!shot.direction.events.some((event) => event.t >= shot.duration / 3)) {
     errors.push({
       code: "event_late_missing",

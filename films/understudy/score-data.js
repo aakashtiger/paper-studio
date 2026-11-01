@@ -13,7 +13,7 @@ window.SCORE = {
       "id": "s01",
       "recipe": "paper_open",
       "start": 0,
-      "duration": 2.2,
+      "duration": 3.1,
       "slots": {
         "content.title": "THE UNDERSTUDY",
         "content.subtitle": "A PAPER STAGE SHORT"
@@ -31,23 +31,24 @@ window.SCORE = {
       "direction": {
         "entry": "cream card, empty",
         "exit": "red iris edge",
-        "spine": "The title lands and the lamp answers.",
+        "spine": "The title lands and the cue lamp answers.",
+        "cast": [],
         "events": [
           {
             "t": 0.2,
             "kind": "type",
             "note": "title drops character by character",
-            "quiet": "the title lands before the film's first sound; the lamp at 1.00 s is the cue"
+            "quiet": "the title lands before the film's first sound; the cue is the lamp at 1.00 s"
           },
           {
             "t": 1,
             "kind": "light",
-            "note": "lamp glow sweeps"
+            "note": "the cue lamp's bulb sweeps up"
           },
           {
-            "t": 1.8,
+            "t": 2.9,
             "kind": "transition",
-            "note": "red iris starts"
+            "note": "the red iris snaps shut"
           }
         ]
       }
@@ -55,16 +56,16 @@ window.SCORE = {
     {
       "id": "s02",
       "recipe": "portrait_iris",
-      "start": 2.2,
-      "duration": 3.3,
+      "start": 3.1,
+      "duration": 3.8,
       "slots": {
         "content.names": "NOVA",
         "content.caption": "THE STAR"
       },
       "camera": {
         "move": "push_in",
-        "from": 1.02,
-        "to": 1.09,
+        "from": 1,
+        "to": 1.06,
         "ease": "easeOut"
       },
       "motion": {
@@ -75,21 +76,30 @@ window.SCORE = {
         "entry": "Nova centred at the cue",
         "exit": "hand on the lamp",
         "spine": "Nova waits; the lamp buzzes; she reaches for it.",
+        "cast": [
+          "Nova"
+        ],
         "events": [
           {
             "t": 0.3,
             "kind": "pose",
-            "note": "head turn to the lamp"
+            "note": "head turns to the lamp",
+            "who": "Nova",
+            "pose": "turn",
+            "breakdown": "idle"
           },
           {
-            "t": 1.2,
+            "t": 1.4,
             "kind": "pose",
-            "note": "hand lifts"
+            "note": "her hand lifts to the bulb",
+            "who": "Nova",
+            "pose": "reach",
+            "breakdown": "turn"
           },
           {
-            "t": 2.2,
+            "t": 2.9,
             "kind": "light",
-            "note": "lamp pulses"
+            "note": "the lamp pulses under her hand"
           }
         ]
       }
@@ -97,139 +107,56 @@ window.SCORE = {
     {
       "id": "s03",
       "recipe": "stage_wide",
-      "start": 5.5,
-      "duration": 3.4,
+      "start": 6.9,
+      "duration": 3.5,
       "slots": {
         "content.body": "ONE NIGHT",
-        "content.caption": "THE LAST CUE"
+        "content.caption": "THE WINGS ARE EMPTY"
       },
       "camera": {
         "move": "orbit",
         "from": 1,
-        "to": 1.03,
+        "to": 1.05,
         "ease": "easeInOut"
       },
       "motion": {
-        "note": "The stage builds from the floor up."
+        "note": "The stage builds from the floor up, and nobody is on it."
       },
       "transitionOut": "cut",
       "direction": {
         "entry": "dark stage",
-        "exit": "stage full",
-        "spine": "Floor, sun and crowd build into the stage.",
+        "exit": "stage full, no one on it",
+        "spine": "Floor, sun and crowd build into an empty stage.",
+        "cast": [],
         "events": [
           {
             "t": 0.2,
             "kind": "build",
-            "note": "floor wipes up"
+            "note": "the floor wipes up"
           },
           {
             "t": 1,
             "kind": "build",
-            "note": "sun drops"
+            "note": "the sun drops"
           },
           {
             "t": 2.2,
             "kind": "build",
-            "note": "crowd rises"
+            "note": "the crowd rises"
           },
           {
             "t": 3,
             "kind": "confetti",
-            "note": "first confetti"
+            "note": "first confetti falls on an empty stage"
           }
         ]
       }
     },
     {
       "id": "s04",
-      "recipe": "sticker_slam",
-      "start": 8.9,
-      "duration": 1.6,
-      "slots": {
-        "content.body": "NO NOVA"
-      },
-      "camera": {
-        "move": "push_in",
-        "from": 1,
-        "to": 1.03,
-        "ease": "easeOut"
-      },
-      "motion": {
-        "note": "The sticker slams over the empty mark."
-      },
-      "transitionOut": "cut",
-      "direction": {
-        "entry": "red bed",
-        "exit": "sticker settled",
-        "spine": "NO NOVA slams onto the empty stage.",
-        "events": [
-          {
-            "t": 0.1,
-            "kind": "slam",
-            "note": "sticker hits with squash"
-          },
-          {
-            "t": 0.7,
-            "kind": "shards",
-            "note": "paper shards"
-          },
-          {
-            "t": 1.3,
-            "kind": "settle",
-            "note": "sticker settles",
-            "quiet": "the sticker's own paper is still settling; the shards' decay is the sound of it"
-          }
-        ]
-      }
-    },
-    {
-      "id": "s05",
-      "recipe": "portrait_iris",
-      "start": 10.5,
-      "duration": 2.8,
-      "slots": {
-        "content.names": "MIRA",
-        "content.caption": "THE UNDERSTUDY"
-      },
-      "camera": {
-        "move": "push_in",
-        "from": 1.02,
-        "to": 1.1,
-        "ease": "easeOut"
-      },
-      "motion": {
-        "note": "Mira steps into the light."
-      },
-      "transitionOut": "cut",
-      "direction": {
-        "entry": "wing shadow",
-        "exit": "spotlight",
-        "spine": "Mira steps from the wing into the light.",
-        "events": [
-          {
-            "t": 0.2,
-            "kind": "step",
-            "note": "foot lands"
-          },
-          {
-            "t": 1.1,
-            "kind": "light",
-            "note": "spotlight finds her"
-          },
-          {
-            "t": 2.4,
-            "kind": "pose",
-            "note": "she points to the stage"
-          }
-        ]
-      }
-    },
-    {
-      "id": "s06",
       "recipe": "macro_prop_beat",
-      "start": 13.3,
-      "duration": 2.1,
+      "start": 10.4,
+      "duration": 1.6,
       "slots": {
         "content.caption": "THE CUE LAMP"
       },
@@ -240,28 +167,137 @@ window.SCORE = {
         "ease": "easeOut"
       },
       "motion": {
-        "note": "The lamp swings; Nova's hand almost reaches it."
+        "note": "The lamp swings; Nova's hand enters and misses."
       },
       "transitionOut": "cut",
       "direction": {
         "entry": "lamp close",
-        "exit": "hand enters",
+        "exit": "the hand gone",
         "spine": "The cue lamp swings; Nova's hand enters and misses.",
+        "cast": [],
         "events": [
           {
             "t": 0.3,
             "kind": "prop",
-            "note": "lamp swings"
+            "note": "the lamp swings"
           },
           {
-            "t": 1,
-            "kind": "pose",
-            "note": "hand enters"
+            "t": 0.4,
+            "kind": "hand",
+            "note": "her paper hand enters"
           },
           {
-            "t": 1.7,
+            "t": 1.1,
+            "kind": "miss",
+            "note": "her hand passes through air"
+          },
+          {
+            "t": 1.466667,
             "kind": "tear",
-            "note": "paper tear"
+            "note": "the sleeve tears on the way out"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s05",
+      "recipe": "sticker_slam",
+      "start": 12,
+      "duration": 1.5,
+      "slots": {
+        "content.body": "THE UNDERSTUDY"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.12,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "note": "The sticker slams: the name, not the person. The push keeps the frame alive after the paper settles."
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "red bed",
+        "exit": "sticker settled",
+        "spine": "THE UNDERSTUDY slams over the empty stage.",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.1,
+            "kind": "slam",
+            "note": "the sticker hits with squash"
+          },
+          {
+            "t": 0.6,
+            "kind": "shards",
+            "note": "paper shards"
+          },
+          {
+            "t": 1.1,
+            "kind": "settle",
+            "note": "the sticker settles",
+            "quiet": "the sticker's own paper is still settling; the shards' decay is the sound of it"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s06",
+      "recipe": "portrait_iris",
+      "start": 13.5,
+      "duration": 3.4,
+      "slots": {
+        "content.names": "MIRA",
+        "content.caption": "THE UNDERSTUDY"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.12,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "note": "Mira steps out of the wing."
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "wing shadow",
+        "exit": "spotlight",
+        "spine": "Mira steps from the wing into the light.",
+        "cast": [
+          "Mira"
+        ],
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "pose",
+            "note": "her foot lands",
+            "who": "Mira",
+            "pose": "step",
+            "breakdown": "idle"
+          },
+          {
+            "t": 0.933333,
+            "kind": "pose",
+            "note": "she stops",
+            "quiet": "she stops on the line's last word; the room is the sound of it",
+            "who": "Mira",
+            "pose": "idle",
+            "breakdown": "step"
+          },
+          {
+            "t": 1.6,
+            "kind": "light",
+            "note": "the spotlight finds her"
+          },
+          {
+            "t": 2.5,
+            "kind": "pose",
+            "note": "she points at the empty mark",
+            "who": "Mira",
+            "pose": "point",
+            "breakdown": "idle"
           }
         ]
       }
@@ -269,44 +305,50 @@ window.SCORE = {
     {
       "id": "s07",
       "recipe": "stage_wide",
-      "start": 15.4,
-      "duration": 4.1,
+      "start": 16.9,
+      "duration": 3.4,
       "slots": {
         "content.body": "THE LIGHT",
         "content.caption": "MIRA WALKS ON"
       },
       "camera": {
         "move": "orbit",
-        "from": 1.02,
-        "to": 1.06,
+        "from": 1.05,
+        "to": 1.1,
         "ease": "easeInOut"
       },
       "motion": {
-        "note": "Mira points; the crowd answers."
+        "note": "Mira alone on the stage the crowd came for."
       },
       "transitionOut": "cut",
       "direction": {
-        "entry": "stage left",
-        "exit": "crowd up",
-        "spine": "Mira points and the crowd answers.",
+        "entry": "Mira alone",
+        "exit": "the crowd up",
+        "spine": "Mira points and the crowd answers her.",
+        "cast": [
+          "Mira"
+        ],
         "events": [
           {
             "t": 0.3,
             "kind": "pose",
-            "note": "Mira points"
+            "note": "Mira points",
+            "who": "Mira",
+            "pose": "point",
+            "breakdown": "idle"
           },
           {
-            "t": 1.4,
+            "t": 1.2,
             "kind": "crowd",
-            "note": "crowd rises"
+            "note": "the crowd rises"
           },
           {
-            "t": 2.6,
+            "t": 2.4,
             "kind": "confetti",
             "note": "confetti hits"
           },
           {
-            "t": 3.4,
+            "t": 2.9,
             "kind": "hold",
             "note": "held reaction",
             "quiet": "the line carries the beat: no foley under a held reaction"
@@ -317,52 +359,72 @@ window.SCORE = {
     {
       "id": "s08",
       "recipe": "stage_wide",
-      "start": 19.5,
-      "duration": 5.1,
+      "start": 20.3,
+      "duration": 4.2,
       "slots": {
         "content.body": "TWO OF THEM",
         "content.caption": "THE CROWD NEVER KNEW"
       },
       "camera": {
         "move": "orbit",
-        "from": 1.03,
-        "to": 1.08,
+        "from": 1.1,
+        "to": 1.16,
         "ease": "easeInOut"
       },
       "motion": {
-        "note": "Nova joins late; two silhouettes."
+        "note": "Nova walks on late; the two perform the same eight counts."
       },
       "transitionOut": "cut",
       "direction": {
         "entry": "Mira alone",
         "exit": "duet formation",
         "spine": "Nova joins late; the two perform the same eight counts.",
+        "cast": [
+          "Mira",
+          "Nova"
+        ],
         "events": [
           {
             "t": 0.4,
-            "kind": "entrance",
-            "note": "Nova enters from the wing"
-          },
-          {
-            "t": 1.6,
             "kind": "pose",
-            "note": "duet begins"
+            "note": "Nova walks out of the wing",
+            "who": "Nova",
+            "pose": "turn",
+            "breakdown": "idle"
           },
           {
-            "t": 3,
+            "t": 1.4,
+            "kind": "pose",
+            "note": "into the first count",
+            "who": "Nova",
+            "pose": "duet-left",
+            "breakdown": "turn"
+          },
+          {
+            "t": 1.4,
+            "kind": "pose",
+            "note": "into the first count",
+            "quiet": "one costume rustle for the two of them; nova's cloth cue is it",
+            "who": "Mira",
+            "pose": "duet-right",
+            "breakdown": "point"
+          },
+          {
+            "t": 2.8,
             "kind": "formation",
-            "note": "formation shifts"
+            "note": "the formation shifts",
+            "quiet": "the shift is the two of them moving; their cloth is the sound"
           },
           {
-            "t": 4,
+            "t": 3.6,
             "kind": "hold",
             "note": "held two-shot",
             "quiet": "the room holds the two-shot; the hold is the beat, not an action"
           },
           {
-            "t": 4.6,
+            "t": 3.9,
             "kind": "beat",
-            "note": "paper shard on the hold"
+            "note": "a paper shard ticks on the hold"
           }
         ]
       }
@@ -370,8 +432,8 @@ window.SCORE = {
     {
       "id": "s09",
       "recipe": "pullback_close",
-      "start": 24.6,
-      "duration": 5.4,
+      "start": 24.5,
+      "duration": 5.5,
       "slots": {
         "content.monogram": "N",
         "content.body": "THE UNDERSTUDY"
@@ -383,31 +445,47 @@ window.SCORE = {
         "ease": "easeOut"
       },
       "motion": {
-        "note": "Bow; the cream iris closes on the lamp."
+        "note": "The bow; the cream iris closes."
       },
       "transitionOut": "iris",
       "direction": {
         "entry": "two-shot",
         "exit": "cream paper",
-        "spine": "They bow; the iris closes on the cue lamp.",
+        "spine": "They bow; the iris closes on the two of them.",
+        "cast": [
+          "Nova",
+          "Mira"
+        ],
         "events": [
           {
-            "t": 0.3,
+            "t": 0.4,
             "kind": "pose",
-            "note": "bow"
+            "note": "Nova bows",
+            "who": "Nova",
+            "pose": "bow",
+            "breakdown": "duet-left"
           },
           {
-            "t": 1.8,
+            "t": 0.5,
+            "kind": "pose",
+            "note": "Mira bows with her",
+            "quiet": "the two bows are one cloth sound; nova's cue is that sound",
+            "who": "Mira",
+            "pose": "bow",
+            "breakdown": "duet-right"
+          },
+          {
+            "t": 1.6,
             "kind": "confetti",
-            "note": "confetti"
+            "note": "the last confetti"
           },
           {
-            "t": 3.6,
+            "t": 3.4,
             "kind": "transition",
-            "note": "cream iris"
+            "note": "the cream iris closes"
           },
           {
-            "t": 5,
+            "t": 4.6,
             "kind": "paper",
             "note": "paper texture",
             "quiet": "the film is fading out; the last beat is the fade, not a sound"
@@ -430,10 +508,10 @@ window.SCORE = {
       },
       {
         "id": "v02",
-        "text": "Tonight, it called Nova.",
+        "text": "Tonight, Nova is the star.",
         "start": 5.1,
         "duration": 1.733333,
-        "hold": 0.867
+        "hold": 0.866667
       },
       {
         "id": "v03",
@@ -444,7 +522,7 @@ window.SCORE = {
       },
       {
         "id": "v04",
-        "text": "The understudy knew the light.",
+        "text": "Mira is the understudy.",
         "start": 12,
         "duration": 1.3,
         "hold": 0.9
@@ -468,8 +546,10 @@ window.SCORE = {
   "audio": {
     "mode": "narration",
     "narration": {
-      "source": "recorded",
+      "source": "tts",
+      "provider": "kokoro",
       "voice": "films/understudy/voice.wav",
+      "voiceId": "af_heart",
       "transcript": "films/understudy/transcript.json",
       "srt": "films/understudy/captions.srt"
     },
@@ -492,7 +572,7 @@ window.SCORE = {
             "index": 2
           },
           "kind": "snap",
-          "note": "the red iris closes"
+          "note": "the red iris snaps shut"
         },
         {
           "id": "sfx-turn",
@@ -549,7 +629,8 @@ window.SCORE = {
             "index": 2
           },
           "kind": "crowd",
-          "note": "the crowd rises"
+          "note": "the crowd rises, and ducks under the line that names it",
+          "duckDb": 8
         },
         {
           "id": "sfx-first-confetti",
@@ -558,13 +639,54 @@ window.SCORE = {
             "index": 3
           },
           "kind": "confetti",
-          "note": "the first confetti",
-          "gain": 0.5
+          "note": "the first confetti, on an empty stage",
+          "gain": 0.4,
+          "duckDb": 10
+        },
+        {
+          "id": "sfx-swing",
+          "event": {
+            "shot": "s04",
+            "index": 0
+          },
+          "kind": "swing",
+          "note": "the cue lamp swings"
+        },
+        {
+          "id": "sfx-hand",
+          "event": {
+            "shot": "s04",
+            "index": 1
+          },
+          "kind": "cloth",
+          "note": "her sleeve enters the frame",
+          "gain": 0.4
+        },
+        {
+          "id": "sfx-miss",
+          "event": {
+            "shot": "s04",
+            "index": 2
+          },
+          "kind": "whoosh",
+          "note": "her hand passes through air",
+          "gain": 0.4
+        },
+        {
+          "id": "sfx-tear",
+          "event": {
+            "shot": "s04",
+            "index": 3
+          },
+          "kind": "paper",
+          "note": "the sleeve tears",
+          "duration": 0.4,
+          "gain": 0.45
         },
         {
           "id": "sfx-slam",
           "event": {
-            "shot": "s04",
+            "shot": "s05",
             "index": 0
           },
           "kind": "slam",
@@ -575,16 +697,17 @@ window.SCORE = {
         {
           "id": "sfx-shards",
           "event": {
-            "shot": "s04",
+            "shot": "s05",
             "index": 1
           },
           "kind": "paper",
-          "note": "paper shards"
+          "note": "paper shards, falling while the line names her",
+          "duckDb": 4
         },
         {
           "id": "sfx-step",
           "event": {
-            "shot": "s05",
+            "shot": "s06",
             "index": 0
           },
           "kind": "step",
@@ -593,8 +716,8 @@ window.SCORE = {
         {
           "id": "sfx-spot",
           "event": {
-            "shot": "s05",
-            "index": 1
+            "shot": "s06",
+            "index": 2
           },
           "kind": "lamp",
           "note": "the spotlight glow finds her",
@@ -603,40 +726,13 @@ window.SCORE = {
         {
           "id": "sfx-point",
           "event": {
-            "shot": "s05",
-            "index": 2
+            "shot": "s06",
+            "index": 3
           },
           "kind": "paper",
           "note": "she points: a paper edge snaps",
-          "gain": 0.45
-        },
-        {
-          "id": "sfx-swing",
-          "event": {
-            "shot": "s06",
-            "index": 0
-          },
-          "kind": "swing",
-          "note": "the cue lamp swings"
-        },
-        {
-          "id": "sfx-miss",
-          "event": {
-            "shot": "s06",
-            "index": 1
-          },
-          "kind": "whoosh",
-          "note": "her hand passes through air",
-          "gain": 0.4
-        },
-        {
-          "id": "sfx-tear",
-          "event": {
-            "shot": "s06",
-            "index": 2
-          },
-          "kind": "paper",
-          "note": "the paper tears"
+          "gain": 0.45,
+          "duckDb": 8
         },
         {
           "id": "sfx-mira-points",
@@ -655,7 +751,8 @@ window.SCORE = {
             "index": 1
           },
           "kind": "crowd",
-          "note": "the crowd answers"
+          "note": "the crowd answers, under the last line",
+          "duckDb": 6
         },
         {
           "id": "sfx-confetti",
@@ -664,7 +761,9 @@ window.SCORE = {
             "index": 2
           },
           "kind": "confetti",
-          "note": "confetti hits"
+          "note": "confetti hits while the line is still in the air: it ducks hard and lands as the line ends",
+          "gain": 0.35,
+          "duckDb": 12
         },
         {
           "id": "sfx-entrance",
@@ -673,7 +772,7 @@ window.SCORE = {
             "index": 0
           },
           "kind": "step",
-          "note": "Nova walks on"
+          "note": "Nova walks on out of the wing"
         },
         {
           "id": "sfx-duet",
@@ -686,20 +785,10 @@ window.SCORE = {
           "gain": 0.45
         },
         {
-          "id": "sfx-formation",
-          "event": {
-            "shot": "s08",
-            "index": 2
-          },
-          "kind": "whoosh",
-          "note": "the formation shifts",
-          "gain": 0.4
-        },
-        {
           "id": "sfx-shard",
           "event": {
             "shot": "s08",
-            "index": 4
+            "index": 5
           },
           "kind": "snap",
           "note": "a paper shard ticks on the hold",
@@ -719,7 +808,7 @@ window.SCORE = {
           "id": "sfx-final-confetti",
           "event": {
             "shot": "s09",
-            "index": 1
+            "index": 2
           },
           "kind": "confetti",
           "note": "the last confetti",
@@ -729,34 +818,18 @@ window.SCORE = {
           "id": "sfx-iris",
           "event": {
             "shot": "s09",
-            "index": 2
+            "index": 3
           },
           "kind": "iris",
           "note": "the cream iris closes",
-          "gain": 0.45
+          "gain": 0.3
         },
         {
           "id": "sfx-room",
           "at": 1,
           "kind": "room",
-          "note": "the room arrives with the lamp",
-          "duration": 9,
-          "gain": 0.1
-        },
-        {
-          "id": "sfx-room-b",
-          "at": 10.666667,
-          "kind": "room",
-          "note": "room tone returns with Mira's step",
-          "duration": 8.05,
-          "gain": 0.1
-        },
-        {
-          "id": "sfx-room-c",
-          "at": 19.866667,
-          "kind": "room",
-          "note": "room tone, to the iris",
-          "duration": 9.2,
+          "note": "the room, from the first word to the tail fade",
+          "duration": 28.5,
           "gain": 0.1
         }
       ],
@@ -764,12 +837,7 @@ window.SCORE = {
         {
           "from": 0,
           "to": 0.5,
-          "why": "the title lands before the lamp; the film's first sound is at 1.00 s"
-        },
-        {
-          "from": 19.55,
-          "to": 19.85,
-          "why": "the line ends and the room has not come back: the beat before Nova's entrance"
+          "why": "the title lands before the first word; the narration starts at 0.50 s and the room fades in under it"
         }
       ]
     }
@@ -782,7 +850,7 @@ window.SCORE = {
         "index": 1,
         "t": 1,
         "kind": "light",
-        "note": "lamp glow sweeps"
+        "note": "the cue lamp's bulb sweeps up"
       },
       "kind": "lamp",
       "note": "the cue lamp glows",
@@ -794,13 +862,13 @@ window.SCORE = {
       "event": {
         "shot": "s01",
         "index": 2,
-        "t": 1.8,
+        "t": 2.9,
         "kind": "transition",
-        "note": "red iris starts"
+        "note": "the red iris snaps shut"
       },
       "kind": "snap",
-      "note": "the red iris closes",
-      "at": 1.8,
+      "note": "the red iris snaps shut",
+      "at": 2.9,
       "from": "event"
     },
     {
@@ -810,11 +878,11 @@ window.SCORE = {
         "index": 0,
         "t": 0.3,
         "kind": "pose",
-        "note": "head turn to the lamp"
+        "note": "head turns to the lamp"
       },
       "kind": "cloth",
       "note": "Nova turns her head: costume rustle",
-      "at": 2.5,
+      "at": 3.4,
       "from": "event"
     },
     {
@@ -822,13 +890,13 @@ window.SCORE = {
       "event": {
         "shot": "s02",
         "index": 1,
-        "t": 1.2,
+        "t": 1.4,
         "kind": "pose",
-        "note": "hand lifts"
+        "note": "her hand lifts to the bulb"
       },
       "kind": "paper",
       "note": "her paper sleeve lifts",
-      "at": 3.4,
+      "at": 4.5,
       "from": "event"
     },
     {
@@ -836,13 +904,13 @@ window.SCORE = {
       "event": {
         "shot": "s02",
         "index": 2,
-        "t": 2.2,
+        "t": 2.9,
         "kind": "light",
-        "note": "lamp pulses"
+        "note": "the lamp pulses under her hand"
       },
       "kind": "lamp",
       "note": "the lamp pulses",
-      "at": 4.4,
+      "at": 6,
       "from": "event"
     },
     {
@@ -852,12 +920,12 @@ window.SCORE = {
         "index": 0,
         "t": 0.2,
         "kind": "build",
-        "note": "floor wipes up"
+        "note": "the floor wipes up"
       },
       "kind": "whoosh",
       "note": "the floor wipes up",
       "duration": 0.45,
-      "at": 5.7,
+      "at": 7.1,
       "from": "event"
     },
     {
@@ -867,13 +935,13 @@ window.SCORE = {
         "index": 1,
         "t": 1,
         "kind": "build",
-        "note": "sun drops"
+        "note": "the sun drops"
       },
       "kind": "whoosh",
       "note": "the sun drops into place",
       "duration": 0.4,
       "gain": 0.5,
-      "at": 6.5,
+      "at": 7.9,
       "from": "event"
     },
     {
@@ -883,11 +951,12 @@ window.SCORE = {
         "index": 2,
         "t": 2.2,
         "kind": "build",
-        "note": "crowd rises"
+        "note": "the crowd rises"
       },
       "kind": "crowd",
-      "note": "the crowd rises",
-      "at": 7.7,
+      "note": "the crowd rises, and ducks under the line that names it",
+      "duckDb": 8,
+      "at": 9.1,
       "from": "event"
     },
     {
@@ -897,129 +966,149 @@ window.SCORE = {
         "index": 3,
         "t": 3,
         "kind": "confetti",
-        "note": "first confetti"
+        "note": "first confetti falls on an empty stage"
       },
       "kind": "confetti",
-      "note": "the first confetti",
-      "gain": 0.5,
-      "at": 8.5,
-      "from": "event"
-    },
-    {
-      "id": "sfx-slam",
-      "event": {
-        "shot": "s04",
-        "index": 0,
-        "t": 0.1,
-        "kind": "slam",
-        "note": "sticker hits with squash"
-      },
-      "kind": "slam",
-      "note": "the sticker hits; ducked hard against the line",
-      "gain": 0.85,
-      "duckDb": 8,
-      "at": 9,
-      "from": "event"
-    },
-    {
-      "id": "sfx-shards",
-      "event": {
-        "shot": "s04",
-        "index": 1,
-        "t": 0.7,
-        "kind": "shards",
-        "note": "paper shards"
-      },
-      "kind": "paper",
-      "note": "paper shards",
-      "at": 9.6,
-      "from": "event"
-    },
-    {
-      "id": "sfx-step",
-      "event": {
-        "shot": "s05",
-        "index": 0,
-        "t": 0.2,
-        "kind": "step",
-        "note": "foot lands"
-      },
-      "kind": "step",
-      "note": "Mira's foot lands",
-      "at": 10.7,
-      "from": "event"
-    },
-    {
-      "id": "sfx-spot",
-      "event": {
-        "shot": "s05",
-        "index": 1,
-        "t": 1.1,
-        "kind": "light",
-        "note": "spotlight finds her"
-      },
-      "kind": "lamp",
-      "note": "the spotlight glow finds her",
+      "note": "the first confetti, on an empty stage",
       "gain": 0.4,
-      "at": 11.6,
-      "from": "event"
-    },
-    {
-      "id": "sfx-point",
-      "event": {
-        "shot": "s05",
-        "index": 2,
-        "t": 2.4,
-        "kind": "pose",
-        "note": "she points to the stage"
-      },
-      "kind": "paper",
-      "note": "she points: a paper edge snaps",
-      "gain": 0.45,
-      "at": 12.9,
+      "duckDb": 10,
+      "at": 9.9,
       "from": "event"
     },
     {
       "id": "sfx-swing",
       "event": {
-        "shot": "s06",
+        "shot": "s04",
         "index": 0,
         "t": 0.3,
         "kind": "prop",
-        "note": "lamp swings"
+        "note": "the lamp swings"
       },
       "kind": "swing",
       "note": "the cue lamp swings",
-      "at": 13.6,
+      "at": 10.7,
+      "from": "event"
+    },
+    {
+      "id": "sfx-hand",
+      "event": {
+        "shot": "s04",
+        "index": 1,
+        "t": 0.4,
+        "kind": "hand",
+        "note": "her paper hand enters"
+      },
+      "kind": "cloth",
+      "note": "her sleeve enters the frame",
+      "gain": 0.4,
+      "at": 10.8,
       "from": "event"
     },
     {
       "id": "sfx-miss",
       "event": {
-        "shot": "s06",
-        "index": 1,
-        "t": 1,
-        "kind": "pose",
-        "note": "hand enters"
+        "shot": "s04",
+        "index": 2,
+        "t": 1.1,
+        "kind": "miss",
+        "note": "her hand passes through air"
       },
       "kind": "whoosh",
       "note": "her hand passes through air",
       "gain": 0.4,
-      "at": 14.3,
+      "at": 11.5,
       "from": "event"
     },
     {
       "id": "sfx-tear",
       "event": {
-        "shot": "s06",
-        "index": 2,
-        "t": 1.7,
+        "shot": "s04",
+        "index": 3,
+        "t": 1.466667,
         "kind": "tear",
-        "note": "paper tear"
+        "note": "the sleeve tears on the way out"
       },
       "kind": "paper",
-      "note": "the paper tears",
-      "at": 15,
+      "note": "the sleeve tears",
+      "duration": 0.4,
+      "gain": 0.45,
+      "at": 11.866666666666667,
+      "from": "event"
+    },
+    {
+      "id": "sfx-slam",
+      "event": {
+        "shot": "s05",
+        "index": 0,
+        "t": 0.1,
+        "kind": "slam",
+        "note": "the sticker hits with squash"
+      },
+      "kind": "slam",
+      "note": "the sticker hits; ducked hard against the line",
+      "gain": 0.85,
+      "duckDb": 8,
+      "at": 12.1,
+      "from": "event"
+    },
+    {
+      "id": "sfx-shards",
+      "event": {
+        "shot": "s05",
+        "index": 1,
+        "t": 0.6,
+        "kind": "shards",
+        "note": "paper shards"
+      },
+      "kind": "paper",
+      "note": "paper shards, falling while the line names her",
+      "duckDb": 4,
+      "at": 12.6,
+      "from": "event"
+    },
+    {
+      "id": "sfx-step",
+      "event": {
+        "shot": "s06",
+        "index": 0,
+        "t": 0.2,
+        "kind": "pose",
+        "note": "her foot lands"
+      },
+      "kind": "step",
+      "note": "Mira's foot lands",
+      "at": 13.7,
+      "from": "event"
+    },
+    {
+      "id": "sfx-spot",
+      "event": {
+        "shot": "s06",
+        "index": 2,
+        "t": 1.6,
+        "kind": "light",
+        "note": "the spotlight finds her"
+      },
+      "kind": "lamp",
+      "note": "the spotlight glow finds her",
+      "gain": 0.4,
+      "at": 15.1,
+      "from": "event"
+    },
+    {
+      "id": "sfx-point",
+      "event": {
+        "shot": "s06",
+        "index": 3,
+        "t": 2.5,
+        "kind": "pose",
+        "note": "she points at the empty mark"
+      },
+      "kind": "paper",
+      "note": "she points: a paper edge snaps",
+      "gain": 0.45,
+      "duckDb": 8,
+      "at": 16,
       "from": "event"
     },
     {
@@ -1034,7 +1123,7 @@ window.SCORE = {
       "kind": "cloth",
       "note": "Mira's arm lifts: costume rustle",
       "gain": 0.5,
-      "at": 15.7,
+      "at": 17.2,
       "from": "event"
     },
     {
@@ -1042,13 +1131,14 @@ window.SCORE = {
       "event": {
         "shot": "s07",
         "index": 1,
-        "t": 1.4,
+        "t": 1.2,
         "kind": "crowd",
-        "note": "crowd rises"
+        "note": "the crowd rises"
       },
       "kind": "crowd",
-      "note": "the crowd answers",
-      "at": 16.8,
+      "note": "the crowd answers, under the last line",
+      "duckDb": 6,
+      "at": 18.1,
       "from": "event"
     },
     {
@@ -1056,13 +1146,15 @@ window.SCORE = {
       "event": {
         "shot": "s07",
         "index": 2,
-        "t": 2.6,
+        "t": 2.4,
         "kind": "confetti",
         "note": "confetti hits"
       },
       "kind": "confetti",
-      "note": "confetti hits",
-      "at": 18,
+      "note": "confetti hits while the line is still in the air: it ducks hard and lands as the line ends",
+      "gain": 0.35,
+      "duckDb": 12,
+      "at": 19.3,
       "from": "event"
     },
     {
@@ -1071,12 +1163,12 @@ window.SCORE = {
         "shot": "s08",
         "index": 0,
         "t": 0.4,
-        "kind": "entrance",
-        "note": "Nova enters from the wing"
+        "kind": "pose",
+        "note": "Nova walks out of the wing"
       },
       "kind": "step",
-      "note": "Nova walks on",
-      "at": 19.9,
+      "note": "Nova walks on out of the wing",
+      "at": 20.7,
       "from": "event"
     },
     {
@@ -1084,44 +1176,29 @@ window.SCORE = {
       "event": {
         "shot": "s08",
         "index": 1,
-        "t": 1.6,
+        "t": 1.4,
         "kind": "pose",
-        "note": "duet begins"
+        "note": "into the first count"
       },
       "kind": "cloth",
       "note": "they turn into the duet",
       "gain": 0.45,
-      "at": 21.1,
-      "from": "event"
-    },
-    {
-      "id": "sfx-formation",
-      "event": {
-        "shot": "s08",
-        "index": 2,
-        "t": 3,
-        "kind": "formation",
-        "note": "formation shifts"
-      },
-      "kind": "whoosh",
-      "note": "the formation shifts",
-      "gain": 0.4,
-      "at": 22.5,
+      "at": 21.7,
       "from": "event"
     },
     {
       "id": "sfx-shard",
       "event": {
         "shot": "s08",
-        "index": 4,
-        "t": 4.6,
+        "index": 5,
+        "t": 3.9,
         "kind": "beat",
-        "note": "paper shard on the hold"
+        "note": "a paper shard ticks on the hold"
       },
       "kind": "snap",
       "note": "a paper shard ticks on the hold",
       "gain": 0.4,
-      "at": 24.1,
+      "at": 24.2,
       "from": "event"
     },
     {
@@ -1129,9 +1206,9 @@ window.SCORE = {
       "event": {
         "shot": "s09",
         "index": 0,
-        "t": 0.3,
+        "t": 0.4,
         "kind": "pose",
-        "note": "bow"
+        "note": "Nova bows"
       },
       "kind": "cloth",
       "note": "they bow",
@@ -1143,56 +1220,38 @@ window.SCORE = {
       "id": "sfx-final-confetti",
       "event": {
         "shot": "s09",
-        "index": 1,
-        "t": 1.8,
+        "index": 2,
+        "t": 1.6,
         "kind": "confetti",
-        "note": "confetti"
+        "note": "the last confetti"
       },
       "kind": "confetti",
       "note": "the last confetti",
       "gain": 0.45,
-      "at": 26.4,
+      "at": 26.1,
       "from": "event"
     },
     {
       "id": "sfx-iris",
       "event": {
         "shot": "s09",
-        "index": 2,
-        "t": 3.6,
+        "index": 3,
+        "t": 3.4,
         "kind": "transition",
-        "note": "cream iris"
+        "note": "the cream iris closes"
       },
       "kind": "iris",
       "note": "the cream iris closes",
-      "gain": 0.45,
-      "at": 28.2,
+      "gain": 0.3,
+      "at": 27.9,
       "from": "event"
     },
     {
       "id": "sfx-room",
       "at": 1,
       "kind": "room",
-      "note": "the room arrives with the lamp",
-      "duration": 9,
-      "gain": 0.1,
-      "from": "at"
-    },
-    {
-      "id": "sfx-room-b",
-      "at": 10.666667,
-      "kind": "room",
-      "note": "room tone returns with Mira's step",
-      "duration": 8.05,
-      "gain": 0.1,
-      "from": "at"
-    },
-    {
-      "id": "sfx-room-c",
-      "at": 19.866667,
-      "kind": "room",
-      "note": "room tone, to the iris",
-      "duration": 9.2,
+      "note": "the room, from the first word to the tail fade",
+      "duration": 28.5,
       "gain": 0.1,
       "from": "at"
     }
@@ -1208,7 +1267,7 @@ window.SCORE = {
       },
       {
         "id": "v02",
-        "text": "Tonight, it called Nova.",
+        "text": "Tonight, Nova is the star.",
         "start": 5.1,
         "end": 7.7
       },
@@ -1220,7 +1279,7 @@ window.SCORE = {
       },
       {
         "id": "v04",
-        "text": "The understudy knew the light.",
+        "text": "Mira is the understudy.",
         "start": 12,
         "end": 14.2
       },
@@ -1243,7 +1302,7 @@ window.SCORE = {
       "id": "character.lead",
       "type": "character",
       "version": "0.1.0",
-      "hash": "sha256:0cab71a952294fe9110ebfcfd9f3730062b062354aded7c7e4f8b428f6cf58c4",
+      "hash": "sha256:fd660e883273fa7b836aa78a39b09df8a7c1e768aedbbc8f185913ada1538257",
       "source": "reused",
       "anchors": [
         "face",
@@ -1259,7 +1318,7 @@ window.SCORE = {
       "id": "character.second",
       "type": "character",
       "version": "0.1.0",
-      "hash": "sha256:0cab71a952294fe9110ebfcfd9f3730062b062354aded7c7e4f8b428f6cf58c4",
+      "hash": "sha256:fd660e883273fa7b836aa78a39b09df8a7c1e768aedbbc8f185913ada1538257",
       "source": "reused",
       "anchors": [
         "face",
@@ -1288,7 +1347,7 @@ window.SCORE = {
       "id": "set.stage",
       "type": "set",
       "version": "0.1.0",
-      "hash": "sha256:a813516e4717efe400ad4d4c7671f9b6ea34296dc35ef3b860dcf14d18001aac",
+      "hash": "sha256:de446f4de848e1d682260f958fcd1d46d8de09173b6f3ef63fd9b7ebc06aa73b",
       "source": "reused",
       "anchors": [
         "stage floor",
@@ -1312,7 +1371,7 @@ window.SCORE = {
       "id": "prop.paper-sticker",
       "type": "prop",
       "version": "0.1.0",
-      "hash": "sha256:a813516e4717efe400ad4d4c7671f9b6ea34296dc35ef3b860dcf14d18001aac",
+      "hash": "sha256:de446f4de848e1d682260f958fcd1d46d8de09173b6f3ef63fd9b7ebc06aa73b",
       "source": "reused",
       "anchors": [
         "sticker centre",
@@ -1324,7 +1383,7 @@ window.SCORE = {
       "id": "type.paper",
       "type": "type",
       "version": "0.1.0",
-      "hash": "sha256:e0d1638c46e3e3316187769625edb8a69642d96fb211a22b11034be545fba8b4",
+      "hash": "sha256:de4b64dfaab1c6e1aafc1ce47eb069381807dd4e1fd5258729436d8e2cafb1b8",
       "source": "reused",
       "anchors": [
         "display",

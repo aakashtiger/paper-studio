@@ -83,10 +83,10 @@ export const SFX_KINDS: Record<string, SfxKindSpec> = {
   // The fixture's kinds.
   lamp: { shape: "hum", material: "paper", length: 0.6, gain: 0.5, band: [80, 6000], layers: ["transient", "body", "tail"], send: 0.12, duckDb: 2 },
   snap: { shape: "impact", material: "paper", length: 0.14, gain: 0.7, band: [500, 8000], layers: ["transient", "body", "tail"], send: 0.08, duckDb: 4 },
-  whoosh: { shape: "whoosh", material: "paper", length: 0.5, gain: 0.6, band: [200, 5000], layers: ["body", "tail"], send: 0.18, duckDb: 3 },
+  whoosh: { shape: "whoosh", material: "paper", length: 0.5, gain: 0.6, band: [200, 5000], layers: ["transient", "body", "tail"], send: 0.18, duckDb: 3 },
   slam: { shape: "impact", material: "stone", length: 0.4, gain: 0.9, band: [60, 4000], layers: ["transient", "body", "tail"], send: 0.06, duckDb: 4 },
   step: { shape: "impact", material: "wood", length: 0.18, gain: 0.55, band: [70, 3000], layers: ["transient", "body"], send: 0.05, duckDb: 3 },
-  swing: { shape: "whoosh", material: "metal", length: 0.6, gain: 0.5, band: [180, 6000], layers: ["body", "tail"], send: 0.14, duckDb: 2 },
+  swing: { shape: "whoosh", material: "metal", length: 0.6, gain: 0.5, band: [180, 6000], layers: ["transient", "body", "tail"], send: 0.14, duckDb: 2 },
   crowd: { shape: "ambience", material: "cloth", length: 1.4, gain: 0.55, band: [120, 7000], layers: ["body", "tail"], send: 0.22, duckDb: 4 },
   confetti: { shape: "sparkle", material: "paper", length: 0.8, gain: 0.6, band: [500, 9000], layers: ["transient", "tail"], send: 0.16, duckDb: 3 },
   iris: { shape: "sweep", material: "glass", length: 0.9, gain: 0.55, band: [200, 5000], layers: ["body", "tail"], send: 0.28, duckDb: 2 },
@@ -451,6 +451,12 @@ export function renderSfx(kind: string, len: number, sr: number, seedText: strin
       case "creak":
         add(edge, noiseTransient(len, sr, rng, 60, 0.6), 0.3);
         break;
+      case "whoosh":
+        // A whoosh that arrives as a swell alone is an envelope, not an event:
+        // the air has to catch the paper edge before the body moves. G6 asks for
+        // transient, body and tail on every whoosh, and this is that edge.
+        add(edge, noiseTransient(len, sr, rng, 220, 0.55), 0.5);
+        break;
       default:
         break;
     }
@@ -463,8 +469,17 @@ export function renderSfx(kind: string, len: number, sr: number, seedText: strin
   // then a peak limit keeps the loudest sample under 1 without the low end of
   // the mix clipping. A hit and a bed then hit at the same level, so the score's
   // `gain` is the only level that matters.
+  //
+  // With one exception, learned by measuring: a **sustained** cue at a hit's
+  // loudest-moment level is far louder to a listener, because its energy fills
+  // its whole length instead of a 140 ms decay. A 900 ms sweep normalised like a
+  // snap measured 7.2 dB over the snap in the film and became the loudest
+  // sustained sound after the voice, at a gain the score called quiet. Sustained
+  // shapes are set SUSTAINED_UNDER_DB under that target, and the cue's own
+  // sustained level is reported so the number is visible, not implied.
   const moment = loudMoment(out, sr);
-  const scale = moment > 0 ? CUE_LOUD / moment : 1;
+  const target = CUE_LOUD * (SUSTAINED_SHAPES.has(spec.shape) ? 10 ** (-SUSTAINED_UNDER_DB / 20) : 1);
+  const scale = moment > 0 ? target / moment : 1;
   for (let i = 0; i < out.length; i++) out[i] = (out[i] ?? 0) * scale;
   softKnee(out);
   const peak = peakOf(out);
@@ -528,6 +543,35 @@ export function loudMoment(samples: Float32Array, sr: number, window = 0.05): nu
  * decides the level.
  */
 export const CUE_LOUD = 0.2;
+
+/**
+ * Shapes whose energy fills their whole length. They are normalised under a hit
+ * of the same gain, because "the loudest 50 ms" answers a question about hits:
+ * for a bed it is the level, and a bed at a hit's level is the loudest thing in
+ * the film. `sustainedDb` in the cue record is the measurement this rule is
+ * aimed at, so a change to it can be read rather than assumed.
+ */
+export const SUSTAINED_SHAPES = new Set(["sweep"]);
+export const SUSTAINED_UNDER_DB = 8;
+
+/**
+ * How far under a hit's loudest-moment level this kind is placed. One place
+ * answers the question, because three callers ask it — the renderer, its cue
+ * check and the mix bus — and a rule repeated three times is a rule that drifts.
+ */
+export function sustainedFactor(kind: string): number {
+  return SUSTAINED_SHAPES.has(kindSpec(kind).shape) ? 10 ** (-SUSTAINED_UNDER_DB / 20) : 1;
+}
+
+/** The level, in dBFS, that a cue of this kind and gain is aimed at. */
+export function cueTargetDb(kind: string, gain?: number): number {
+  return 20 * Math.log10(CUE_LOUD * sustainedFactor(kind) * (gain ?? kindGain(kind)) + 1e-9);
+}
+
+/** The RMS of a cue's loudest 300 ms: the level a sustained sound actually holds. */
+export function sustainedLevel(samples: Float32Array, sr: number): number {
+  return loudMoment(samples, sr, 0.3);
+}
 
 /* ------------------------------------------------------------------- review */
 
@@ -650,7 +694,11 @@ export function checkCue(
   const fraction = bandFraction(samples, sr, band);
   const audible = phoneAudible(samples, sr);
   const level = 20 * Math.log10(loudMoment(samples, sr) + 1e-9);
-  const shortfall = 20 * Math.log10(CUE_LOUD) - level;
+  // The level the kit aims at for this shape. A sustained sound is normalised
+  // under a hit on purpose, so comparing an iris to a snap's level would fail
+  // the one kind the rule deliberately treats differently.
+  const target = CUE_LOUD * sustainedFactor(cue.kind);
+  const shortfall = 20 * Math.log10(target) - level;
   if (band[1] > 9000) reasons.push(`band top ${band[1]} Hz is above the 9 kHz phone limit`);
   if (seconds < 0.05) reasons.push(`only ${seconds.toFixed(3)}s long`);
   if (!fadesClean(samples, sr)) reasons.push("does not fade out clean");

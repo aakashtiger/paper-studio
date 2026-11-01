@@ -29,6 +29,7 @@ import {
   kindGain,
   kindLength,
   loudMoment,
+  sustainedLevel,
   renderSfx,
   SFX_GENERATOR,
   SFX_SAMPLE_RATE,
@@ -79,6 +80,7 @@ async function main(scorePath: string): Promise<void> {
     gain: number;
     /** The cue's level after its gain: what the tile's spectrogram cannot show. */
     levelDb: number;
+    sustainedDb: number;
     layers: string[];
     band: [number, number];
     /** What the WAV was rendered from, so the mix can refuse a stale file. */
@@ -116,6 +118,10 @@ async function main(scorePath: string): Promise<void> {
       seconds: Number((samples.length / sr).toFixed(3)),
       gain,
       levelDb: Number((20 * Math.log10(loudMoment(samples, sr) * gain + 1e-9)).toFixed(1)),
+      // The level a sustained cue actually holds. Its `levelDb` is the loudest
+      // 50 ms, which is the right question for a hit and the wrong one for a
+      // bed; this is the number that says whether a "quiet" cue is quiet.
+      sustainedDb: Number((20 * Math.log10(sustainedLevel(samples, sr) * gain + 1e-9)).toFixed(1)),
       layers: effectiveLayers(cue.kind, cue.layers),
       band: cue.band ?? kindBand(cue.kind),
       spec: sha256(cueSpec(cue)),

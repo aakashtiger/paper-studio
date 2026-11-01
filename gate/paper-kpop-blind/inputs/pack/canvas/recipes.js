@@ -12,6 +12,69 @@ function bgPaper() {
   ctx.fillRect(0, 0, W, H);
 }
 
+/* ---- type on a 1920 frame ------------------------------------------------
+ *
+ * `tokens.type.scale` is authored for a 390 px frame, and STYLE.md says larger
+ * frames scale proportionally ("the 14 px floor holds"). The recipes used to set
+ * a 1920 frame at the 390 px numbers, so every caption and label landed at 3-5
+ * px at phone scale — below the pack's own floor — and the film's two must-say
+ * lines were its smallest type. `TS` is that proportional step; `fitSize` keeps
+ * a line inside its paper.
+ */
+function TS(px) {
+  return Math.round(px * (W / 390));
+}
+
+/**
+ * The size that puts a string inside `maxW` at the pack's own type scale.
+ *
+ * It measures with `TY.width`, the same per-character measure the draw uses. A
+ * whole-string `measureText` ignores the tracking and the measured fallback
+ * metrics, which is how a caption was drawn ~100 px wider than the card it sat
+ * on. A string that cannot be set at the pack's floor inside the box is not
+ * drawn smaller than the floor: the floor holds and `wrapLines` breaks it.
+ */
+function fitSize(str, maxW, size, family, track = 0) {
+  const width = TY.width(ctx, str, size, family || "Anton", "400", track);
+  if (width <= maxW) return size;
+  return Math.max(TS(14), Math.floor((size * maxW) / Math.max(1, width)));
+}
+
+/** Greedy word wrap against the same measure `fitSize` used. */
+function wrapLines(str, maxW, size, family, track = 0) {
+  const words = String(str || "").split(/\s+/).filter(Boolean);
+  if (words.length === 0) return [];
+  const measure = (line) => TY.width(ctx, line, size, family || "Anton", "400", track);
+  const widthOf = (slice) => measure(slice.join(" "));
+  if (widthOf(words) <= maxW) return [words.join(" ")];
+  // Two balanced lines read better than a greedy break that leaves one word
+  // alone on the second line, which is what a caption should never do.
+  let best = null;
+  for (let k = 1; k < words.length; k += 1) {
+    const left = widthOf(words.slice(0, k));
+    const right = widthOf(words.slice(k));
+    if (left > maxW || right > maxW) continue;
+    const balance = Math.abs(left - right);
+    if (best === null || balance < best.balance) best = { k, balance };
+  }
+  if (best !== null) {
+    return [words.slice(0, best.k).join(" "), words.slice(best.k).join(" ")];
+  }
+  const fits = (line) => measure(line) <= maxW;
+  const lines = [];
+  let line = words[0];
+  for (const word of words.slice(1)) {
+    const next = `${line} ${word}`;
+    if (fits(next)) line = next;
+    else {
+      lines.push(line);
+      line = word;
+    }
+  }
+  lines.push(line);
+  return lines;
+}
+
 function libFor(name) {
   if (!window.POSES) return null;
   const key = Object.keys(window.POSES).find((k) => name.toLowerCase().includes(k.toLowerCase().split(" ")[0]));
@@ -29,11 +92,82 @@ function clonePose(params) {
 function poseFor(name, poseName) {
   const lib = libFor(name);
   if (!lib) return {};
-  const pose = lib.poses.find((p) => p.name === poseName) || lib.poses[0];
+  const pose = lib.poses.find((p) => p.name === poseName);
+  // No silent fallback to the first pose: a misspelled or missing pose used to
+  // leave a character standing in `idle` for a whole shot, which looks like a
+  // directorial choice and is not one. The resolver rejects an unknown pose
+  // before the render; this makes a hand-edited score loud too.
+  if (!pose) {
+    throw new Error(
+      `pose "${poseName}" is not in ${lib.character || name}'s library (has: ${lib.poses.map((p) => p.name).join(", ")})`,
+    );
+  }
   // Always a copy: callers adjust poses (headTurn, sway). Returning the live
   // library object let those adjustments accumulate across frames, so the same
   // time painted differently depending on how many frames came before it.
-  return pose ? clonePose(pose.params) : {};
+  return clonePose(pose.params);
+}
+
+/* ---- what the score directs ------------------------------------------
+ *
+ * The score owns *who* is in a frame, *what they do* and *how the camera
+ * moves*; the pack owns the composition and the look. Before this, every
+ * recipe hardcoded its cast, its poses and its camera, so the score's
+ * `direction` and `camera` were prose that nothing honoured — a film could not
+ * be re-directed without editing the style pack.
+ */
+
+/** The people this shot contains. No `cast` on the shot = the recipe's own. */
+function shotCast(shot, fallback) {
+  const cast = shot && shot.direction && shot.direction.cast;
+  if (!Array.isArray(cast)) return fallback.slice();
+  return cast.map((who) => String(who).toLowerCase());
+}
+
+function hasCast(shot, fallback, name) {
+  return shotCast(shot, fallback).includes(String(name).toLowerCase());
+}
+
+/**
+ * A character's performance for this shot, from the score's pose events: each
+ * one is a keyframe, `breakdown` is the pose it comes *from* (the anticipation
+ * before the change). No events = no invented performance; the character holds
+ * `entry` and the living hold does the breathing.
+ */
+function scoreKeys(shot, name, d, entry) {
+  const events = (shot && shot.direction && shot.direction.events) || [];
+  const mine = events
+    .filter((e) => e.kind === "pose" && String(e.who || "").toLowerCase() === String(name).toLowerCase())
+    .sort((a, b) => a.t - b.t);
+  const keys = [];
+  for (const event of mine) {
+    if (event.breakdown) keys.push({ t: Math.max(0, event.t - 0.08), pose: event.breakdown });
+    keys.push({ t: event.t, pose: event.pose });
+  }
+  if (!keys.length) return [{ t: 0, pose: entry || "idle" }, { t: d, pose: entry || "idle" }];
+  if (keys[0].t > 0) keys.unshift({ t: 0, pose: entry || "idle" });
+  return keys;
+}
+
+/** The time the score gives an event of `kind`, or null if it does not. */
+function eventTime(shot, kind) {
+  const event = ((shot && shot.direction && shot.direction.events) || []).find((e) => e.kind === kind);
+  return event ? event.t : null;
+}
+
+/**
+ * The shot's camera, from the score: `from`/`to` are zoom multipliers, `move`
+ * is the path (push, pull, orbit, pan, hold), `ease` is the shape. `x`/`y` and
+ * `tilt` are the recipe's own composition.
+ */
+function shotCam(shot, lt, d, x, y, tilt, t) {
+  const cam = (shot && shot.camera) || {};
+  const from = Number.isFinite(cam.from) ? cam.from : 1;
+  const to = cam.move === "hold" ? from : Number.isFinite(cam.to) ? cam.to : from;
+  const k = C.smooth(C.clamp(lt / Math.max(1e-4, d)));
+  const drift = cam.move === "orbit" ? Math.sin(lt * 0.55) * 14 : cam.move === "pan" ? (k - 0.5) * 46 : 0;
+  const rot = cam.move === "orbit" ? Math.sin(lt * 0.45) * 0.006 : cam.move === "hold" ? 0 : Math.sin(lt * 0.5) * 0.004;
+  setCam(x + drift, y, from + (to - from) * k, rot, tilt, t);
 }
 
 function colorsFor(name) {
@@ -172,8 +306,7 @@ function cueLamp(x, y, scale, t) {
 function paperOpen(shot, lt, t) {
   bgPaper();
   const d = shot.duration;
-  const push = 1 + 0.06 * C.smooth(C.clamp(lt / d));
-  setCam(W / 2, 500, push, Math.sin(lt * 0.6) * 0.006, 0.6, t);
+  shotCam(shot, lt, d, W / 2, 500, 0.6, t);
   beginCam(ctx);
   sunburst(ctx, W / 2, 470, 120, 630, 30, PAL.gold, PAL.paper2, lt * 0.32, 0.95);
   const coreIn = C.backOut(C.clamp(lt / 0.55));
@@ -186,7 +319,8 @@ function paperOpen(shot, lt, t) {
   const titleIn = C.clamp((lt - 0.2) / 0.4);
   ctx.save();
   ctx.translate(0, (1 - C.backOut(titleIn)) * -60);
-  TY.type(ctx, title, W / 2, 350, 150, {
+  TY.type(ctx, title, W / 2, 300, fitSize(title, W - 380, TS(64)), {
+    copy: true,
     align: "center", color: PAL.ink, edge: PAL.cream, edgeW: 14,
     shadow: C.rgba(PAL.ink, 0.3), shadowOff: 9, time: t, seed: 7,
     charRot: 0.02,
@@ -199,11 +333,12 @@ function paperOpen(shot, lt, t) {
   if (subtitle && tab > 0) {
     ctx.save();
     ctx.globalAlpha = tab;
-    paper(ctx, () => tornRectPath(ctx, W / 2 - 300, 500, 600, 46, 3, 23), {
+    paper(ctx, () => tornRectPath(ctx, W / 2 - 560, 770, 1120, 130, 3, 23), {
       fill: PAL.cream, edge: C.rgba(PAL.ink, 0.55), edgeW: 2,
       shadow: C.rgba(PAL.ink, 0.22), sx: 5, sy: 8,
     });
-    TY.text(ctx, subtitle, W / 2, 530, 21, {
+    TY.text(ctx, subtitle, W / 2, 856, fitSize(subtitle, 1040, TS(18), "DMMono", 3), {
+      copy: true,
       family: "DMMono", color: PAL.ink, align: "center", letter: 3,
     });
     ctx.restore();
@@ -228,23 +363,10 @@ function portrait(shot, lt, t) {
   const name = shot.slots["content.names"] || "NOVA";
   const caption = shot.slots["content.caption"] || "THE STAR";
   const miraShot = /mira/i.test(name);
-  const keys = miraShot
-    ? [
-        { t: 0, pose: "idle" },
-        { t: 0.35, pose: "step" },
-        { t: 1.15, pose: "idle" },
-        { t: 2.2, pose: "point" },
-        { t: d, pose: "point" },
-      ]
-    : [
-        { t: 0, pose: "idle" },
-        { t: 1.0, pose: "reach" },
-        { t: d, pose: "reach" },
-      ];
-  const pose = poseAt(name, keys, lt);
-  const zoom = 1.42;
-  const push = zoom + 0.05 * C.smooth(C.clamp(lt / d));
-  setCam(W / 2, 520, push, Math.sin(lt * 0.5) * 0.005, 0.5, t);
+  // The performance comes from the score's pose events. A portrait with no pose
+  // events is a held portrait — not the two-shot the recipe used to invent.
+  const pose = poseAt(name, scoreKeys(shot, name, d, "idle"), lt);
+  shotCam(shot, lt, d, W / 2, 520, 0.5, t);
   beginCam(ctx);
   sunburst(ctx, W / 2, 480, 180, 700, 28, PAL.gold, PAL.paper2, lt * 0.18, 0.85);
 
@@ -271,26 +393,27 @@ function portrait(shot, lt, t) {
     cueLamp(1320, 488, 1.15, t);
   }
 
-  drawCharacter(name, 1000, miraShot ? 960 : 1160, miraShot ? 1.34 : 1.28, "idle", miraShot ? -1 : 1, pose, t);
+  // Both portraits are framed the same way: the figure is cut at the hem by the
+  // bottom of the frame, so the film never shows a rig's knees. Mira's face was
+  // 25 px nearer the camera and 12.5 % smaller than Nova's.
+  if (hasCast(shot, [name], name)) {
+    drawCharacter(name, 1000, 1160, 1.30, "idle", miraShot ? -1 : 1, pose, t);
+  }
   endCam(ctx);
 
-  paper(ctx, () => tornRectPath(ctx, 76, 208, 370, 232, 5, 17), {
+  paper(ctx, () => tornRectPath(ctx, 56, 120, 780, 380, 6, 17), {
     fill: PAL.paper, edge: C.rgba(PAL.ink, 0.4), edgeW: 2,
     shadow: C.rgba(PAL.ink, 0.28), sx: 8, sy: 12,
   });
-  TY.type(ctx, name, 120, 300, 80, {
+  TY.type(ctx, name, 116, 316, fitSize(name, 680, TS(64)), {
+    copy: true,
     align: "left", color: PAL.ink, edge: PAL.cream, edgeW: 8,
     shadow: null, time: t, seed: 5,
     charRot: 0.02,
   });
-  TY.text(ctx, caption, 124, 356, 24, {
+  TY.text(ctx, caption, 120, 428, fitSize(caption, 680, TS(18), "DMMono", 3), {
+    copy: true,
     family: "DMMono", color: PAL.red, letter: 3,
-  });
-  TY.text(ctx, "THE LAST CUE", 124, 410, 14, {
-    family: "DMMono", color: C.rgba(PAL.ink, 0.6), letter: 2,
-  });
-  TY.vertical(ctx, "PAPER STAGE", 1790, 220, 14, {
-    family: "DMMono", color: C.rgba(PAL.ink, 0.55),
   });
   if (lt > d - 0.4) paperShards(ctx, W / 2, 700, lt, 18, [PAL.cream, PAL.gold, PAL.red], 480, C.clamp(1 - (lt - (d - 0.4)) / 0.4), 5);
 }
@@ -298,125 +421,111 @@ function portrait(shot, lt, t) {
 function stage(shot, lt, t) {
   const d = shot.duration;
   const body = shot.slots["content.body"] || "";
-  const duet = /\bTWO\b/i.test(body);
-  const lightShot = /LIGHT/i.test(body);
-  const oneNight = /ONE NIGHT/i.test(body);
-  const crowdRise = duet ? 0 : lightShot ? 1 - C.smooth(C.clamp((lt - 1.4) / 0.6)) : oneNight ? 1 - C.smooth(C.clamp((lt - 2.2) / 0.6)) : 0;
+  // Who is on stage, and what they do, is the score's decision — not the caption
+  // text's. This used to branch on /TWO/ and /LIGHT/ inside the body line, so
+  // renaming a card silently re-cast the shot.
+  const cast = shotCast(shot, ["Nova", "Mira"]);
+  const nova = hasCast(shot, ["Nova", "Mira"], "Nova");
+  const mira = hasCast(shot, ["Nova", "Mira"], "Mira");
+  const solo = nova !== mira;
+  const both = nova && mira;
+  const confettiAt = eventTime(shot, "confetti");
+  const crowdRise = both ? 0 : 1 - C.smooth(C.clamp((lt - Math.max(0.2, (confettiAt ?? 1.4) - 0.6)) / 0.6));
   const pulse = Math.exp(-C.frac(C.beat(t)) * 6);
-  setCam(W / 2 + Math.sin(lt * 0.55) * 14, 520, 1 + 0.05 * C.smooth(C.clamp(lt / d)) + 0.012 * pulse, Math.sin(lt * 0.45) * 0.006, 0.7, t);
+  shotCam(shot, lt, d, W / 2, 520, 0.7, t);
   beginCam(ctx);
   stageSet(ctx, t, {
     sky: PAL.redD, sun: PAL.gold, floor: PAL.blue, accent: PAL.cream,
     crowd: true, crowdY: 1052 + crowdRise * 220,
-    confetti: 40, confettiCols: [PAL.cream, PAL.gold, PAL.blue, PAL.red],
-    rot: lt * 0.03,
+    // The confetti starts when the score says it starts. A shot that never
+    // declares confetti gets none, instead of a paper storm from frame one.
+    confetti: 0, rot: lt * 0.03,
   });
-  let poseA;
-  let poseB;
-  if (duet) {
-    const join = C.smooth(C.clamp((lt - 1.4) / 0.6));
-    poseA = blendPose(poseFor("Nova", "idle"), poseFor("Nova", "duet-left"), join);
-    poseB = blendPose(poseFor("Mira", "idle"), poseFor("Mira", "duet-right"), join);
-    const duetStart = 1.9;
-    if (lt >= duetStart) {
-      const count = Math.floor((lt - duetStart) / 0.55);
-      const phase = C.frac((lt - duetStart) / 0.55);
-      const ease = C.smooth(phase);
-      // Nova carries the call. Mira answers rather than mirrors: a listen, a
-      // weight shift, then her half of the phrase. The two silhouettes then
-      // stack on a shared eyeline instead of cancelling as a mirror.
-      const seqA = ["duet-left", "duet-right", "duet-left", "duet-right"];
-      const seqB = ["listen", "step", "duet-right", "duet-left"];
-      const a0 = seqA[((count % 4) + 4) % 4];
-      const a1 = seqA[(((count + 1) % 4) + 4) % 4];
-      const b0 = seqB[((count % 4) + 4) % 4];
-      const b1 = seqB[(((count + 1) % 4) + 4) % 4];
-      const cycleA = blendPose(poseFor("Nova", a0), poseFor("Nova", a1), ease);
-      const cycleB = blendPose(poseFor("Mira", b0), poseFor("Mira", b1), ease);
-      const into = C.smooth(C.clamp((lt - duetStart) / 0.3));
-      poseA = blendPose(poseA, cycleA, into);
-      poseB = blendPose(poseB, cycleB, into);
-    }
-  } else if (lightShot) {
-    poseA = poseAt("Nova", [{ t: 0, pose: "idle" }, { t: 0.5, pose: "listen" }], lt);
-    poseB = poseAt("Mira", [{ t: 0, pose: "idle" }, { t: 0.4, pose: "point" }], lt);
-    const look = C.smooth(C.clamp((lt - 1.2) / 0.5));
-    poseA.headTurn = (poseA.headTurn || 0) + look * 0.25;
-    poseA.sway = (poseA.sway || 0) + look * 3;
-    poseB.headTurn = (poseB.headTurn || 0) - look * 0.18;
-    poseB.sway = (poseB.sway || 0) + look * 4;
-    const settle = C.smooth(C.clamp((lt - 2.6) / 0.5));
-    if (settle > 0) poseB = blendPose(poseB, poseFor("Mira", "idle"), settle * 0.7);
-  } else {
-    poseA = poseAt("Nova", [{ t: 0, pose: "idle" }, { t: 0.35, pose: "point" }], lt);
-    poseB = poseAt("Mira", [{ t: 0, pose: "idle" }, { t: 0.5, pose: "listen" }], lt);
-  }
-  if (duet && lt < 1.4) {
-    const phase = (lt - 0.3) / 0.34;
-    const swing = Math.sin(phase * Math.PI);
-    const base = poseFor("Nova", "idle");
-    // A step: the planted foot stays on the ground line (-39 for Nova's boot),
-    // the other lifts. The bob is a knee-driven sink, never a body lift, so the
-    // planted foot never leaves its shadow.
-    poseA = {
-      ...base,
-      footL: [-31, -39 - 30 * Math.max(0, swing)],
-      footR: [33, -39 - 30 * Math.max(0, -swing)],
-      bounce: 4 * Math.abs(swing),
-      armL: [0.2 + 0.18 * swing, 0.05],
-      armR: [-0.2 - 0.18 * swing, -0.05],
-    };
-  }
-  // The beat pulse is a knee-driven sink, not a body lift. Translating the
-  // character up would float the feet off their own shadows on every beat;
-  // adding it to `bounce` makes the legs take the weight with the feet planted.
-  const bob = Math.abs(Math.sin(C.frac(C.beat(t)) * Math.PI)) * 10;
-  const formation = duet ? C.smooth(C.clamp((lt - 3.0) / 0.5)) : 0;
-  const novaX = duet ? 60 + 740 * C.smooth(C.clamp((lt - 0.3) / 0.9)) + formation * 35 : 700;
-  const miraX = duet ? 1100 - formation * 35 : 1180;
-  ctx.save();
-  ctx.globalAlpha = 0.22;
-  ctx.fillStyle = PAL.ink;
-  ctx.beginPath(); ctx.ellipse(novaX, 966, 70, 12, 0, 0, TAU); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(miraX, 991, 52, 10, 0, 0, TAU); ctx.fill();
-  ctx.restore();
-  ctx.save();
-  drawCharacter("Nova", novaX, 960, 1.12, "point", 1, { ...poseA, bounce: (poseA.bounce || 0) + bob }, t);
-  drawCharacter("Mira", miraX, 985, 0.98, "listen", -1, { ...poseB, bounce: (poseB.bounce || 0) + bob }, t);
-  ctx.restore();
-
-  if (shot.slots["content.body"] && d >= 3.2) {
-    const land = C.clamp(C.backOut(C.clamp((lt - (d - 1.8)) / 0.5)));
-    if (land > 0) {
+  if (confettiAt !== null) {
+    const fall = C.smooth(C.clamp((lt - confettiAt) / 0.3));
+    if (fall > 0) {
       ctx.save();
-      ctx.globalAlpha = land;
-      ctx.translate((1 - land) * 90, 0);
-      paper(ctx, () => tornRectPath(ctx, 1120, 90, 620, 128, 5, 9), {
-        fill: PAL.paper, edge: C.rgba(PAL.ink, 0.4), edgeW: 2,
-        shadow: C.rgba(PAL.ink, 0.22), sx: 4, sy: 8,
-      });
-      TY.type(ctx, shot.slots["content.body"], 1146, 156, 50, {
-        align: "left", color: PAL.ink, edge: null, edgeW: 0, shadow: null, time: t, seed: 3,
-        alpha: land,
-      });
-      TY.text(ctx, shot.slots["content.caption"] || "", 1148, 192, 15, {
-        family: "DMMono", color: C.rgba(PAL.ink, 0.7), letter: 2, alpha: land,
-      });
+      confetti(ctx, Math.max(0, lt - confettiAt), 40, [PAL.cream, PAL.gold, PAL.blue, PAL.red], fall);
       ctx.restore();
     }
   }
+
+  let poseA = nova ? poseAt("Nova", scoreKeys(shot, "Nova", d, "idle"), lt) : null;
+  let poseB = mira ? poseAt("Mira", scoreKeys(shot, "Mira", d, "idle"), lt) : null;
+  // A beat pulse is a knee-driven sink, not a body lift; it is added to every
+  // pose so the feet stay planted on their own shadows.
+  const bob = Math.abs(Math.sin(C.frac(C.beat(t)) * Math.PI)) * 10;
+
+  // Composition follows the cast: a solo figure owns the left of the stage and
+  // the title card the right, a pair stands as a pair on the left. The cast has
+  // to clear the card: a full-body performer is 800 px tall in a 1080 frame, so
+  // a card in the top corner is over a head unless the body is composed left.
+  const formation = both ? C.smooth(C.clamp((lt - Math.max(0.2, d * 0.55)) / 0.5)) : 0;
+  const novaX = solo ? 560 : 300 + 220 * C.smooth(C.clamp((lt - 0.3) / 0.9)) + formation * 55;
+  const miraX = solo ? 560 : 800 - formation * 35;
+  const novaScale = both ? 1.1 : 1.18;
+  const miraScale = both ? 1.1 : 1.18;
+  // One shadow per performer, drawn by the character rig itself.
+  if (nova) drawCharacter("Nova", novaX, 960, novaScale, "idle", 1, { ...poseA, bounce: (poseA.bounce || 0) + bob }, t);
+  if (mira) drawCharacter("Mira", miraX, 985, miraScale, "idle", -1, { ...poseB, bounce: (poseB.bounce || 0) + bob }, t);
   endCam(ctx);
+
+  // The body card lands as soon as the shot has room for it, not only in its
+  // last 1.8 s: on a 5 s wide that left the top third empty for two thirds of
+  // the shot.
+  //
+  // It is a **screen-space layer**, drawn after the camera closes. Inside the
+  // camera a 16% orbit scaled the card past the top edge and dragged the
+  // caption off the right one; a title is read at the frame, so it is laid out
+  // at the frame. The box sits inside the pack's 64 px margin and the type is
+  // measured against it, so nothing can run off the paper.
+  if (shot.slots["content.body"] && d >= 1.2) {
+    const landAt = Math.min(d - 1.0, Math.max(0.4, d * 0.35));
+    const land = C.clamp(C.backOut(C.clamp((lt - landAt) / 0.5)));
+    if (land > 0) {
+      const boxX = 880;
+      const boxY = 64;
+      const boxW = 940;
+      const boxH = 344;
+      const pad = 44;
+      const innerW = boxW - pad * 2;
+      const body = shot.slots["content.body"];
+      const caption = shot.slots["content.caption"] || "";
+      const bodySize = fitSize(body, innerW, TS(26));
+      const capSize = fitSize(caption, innerW, TS(18), "DMMono", 3);
+      const capLines = wrapLines(caption, innerW, capSize, "DMMono", 3);
+      ctx.save();
+      ctx.globalAlpha = land;
+      ctx.translate((1 - land) * 90, 0);
+      paper(ctx, () => tornRectPath(ctx, boxX, boxY, boxW, boxH, 6, 9), {
+        fill: PAL.paper, edge: C.rgba(PAL.ink, 0.4), edgeW: 2,
+        shadow: C.rgba(PAL.ink, 0.22), sx: 4, sy: 8,
+      });
+      TY.type(ctx, body, boxX + pad + 16, boxY + 104, bodySize, {
+        copy: true,
+        align: "left", color: PAL.ink, edge: null, edgeW: 0, shadow: null, time: t, seed: 3,
+        alpha: land,
+      });
+      // The caption is information, so it is set at the pack's floor for a
+      // 1920 frame (69 px = the 14 px floor at 390), not at 14 px.
+      capLines.forEach((line, index) =>
+        TY.text(ctx, line, boxX + pad + 18, boxY + 214 + index * Math.round(capSize * 1.35), capSize, {
+          copy: true,
+          family: "DMMono", color: C.rgba(PAL.ink, 0.78), letter: 3, alpha: land,
+        }),
+      );
+      ctx.restore();
+    }
+  }
   if (pulse > 0.7) {
     ctx.save(); ctx.globalAlpha = (pulse - 0.7) * 0.12; ctx.fillStyle = PAL.gold; ctx.fillRect(0, 0, W, H); ctx.restore();
   }
 }
-
 function sticker(shot, lt, t) {
   bgPaper();
   const d = shot.duration;
-  const push = 1 + 0.05 * C.smooth(C.clamp(lt / d));
-  ctx.save();
-  ctx.translate(W / 2, 500); ctx.scale(push, push); ctx.translate(-W / 2, -500);
+  shotCam(shot, lt, d, W / 2, 500, 0, t);
+  beginCam(ctx);
   paper(ctx, () => tornRectPath(ctx, 90, 78, W - 180, H - 156, 12, 31), {
     fill: PAL.red, edge: C.rgba(PAL.ink, 0.45), edgeW: 3,
     shadow: C.rgba(PAL.ink, 0.25), sx: 0, sy: 0,
@@ -426,22 +535,24 @@ function sticker(shot, lt, t) {
   if (lt > 0.2) paperShards(ctx, W / 2, 500, lt, 30, [PAL.cream, PAL.gold, PAL.red], 720, C.clamp(1 - (lt - 0.2) / 1.2), 9);
   const settle = C.clamp((lt - 0.03) / 0.42);
   const hit = C.backOut(settle);
-  const scale = 1.55 - 0.55 * hit;
-  const wobble = Math.sin(settle * Math.PI * 3) * 0.09 * (1 - settle);
+  // The slam overshoots, and the overshoot is bounded by the safe area: at the
+  // largest scale the label was 2,080 px wide in a 1,920 px frame, so the film's
+  // own words ran off both edges for the first third of a second. The punch is
+  // the speed of the settle, not the size of the first frame.
+  const scale = 1.24 - 0.24 * hit;
+  const wobble = Math.sin(settle * Math.PI * 3) * 0.05 * (1 - settle);
   ctx.save();
   ctx.translate(W / 2, 500);
   ctx.rotate(-0.045 + 0.015 * Math.sin(lt * 1.8) + 0.03 * (1 - settle));
   ctx.scale(scale * (1 + wobble), scale * (1 - wobble));
-  TY.sticker(ctx, shot.slots["content.body"] || "NO NOVA", 0, 0, 112, {
+  TY.sticker(ctx, shot.slots["content.body"] || "NO NOVA", 0, 0, fitSize(shot.slots["content.body"] || "NO NOVA", 1240, TS(64), "Archivo Black"), {
+    copy: true,
     fill: PAL.cream, text: PAL.ink, rot: 0, seed: 5, barcode: true, tape: true,
     textShadow: C.rgba(PAL.ink, 0.18),
   });
   ctx.restore();
-  ctx.restore();
+  endCam(ctx);
   if (lt > 0.2 && lt < 0.45) flash(ctx, (lt - 0.2) * 4, "#FFF7E4");
-  TY.text(ctx, "THE LAST CUE  /  NOVA", 120, 960, 20, {
-    family: "DMMono", color: PAL.cream, letter: 3, alpha: C.seg(lt, 0.7, 1.2),
-  });
 }
 
 function paperHand(x, y, s, rot, alpha) {
@@ -487,7 +598,11 @@ function paperHand(x, y, s, rot, alpha) {
 function macro(shot, lt, t) {
   bgPaper();
   const d = shot.duration;
-  setCam(W / 2 + 30, 520, 1 + 0.09 * C.smooth(C.clamp(lt / d)), 0, 0.4, t);
+  // The hand enters and misses on the score's own events, not on a constant
+  // typed into the recipe.
+  const handAt = eventTime(shot, "hand") ?? 0.7;
+  const missAt = eventTime(shot, "miss") ?? handAt + 0.85;
+  shotCam(shot, lt, d, W / 2 + 30, 520, 0.4, t);
   beginCam(ctx);
   paper(ctx, () => tornRectPath(ctx, 60, 60, W - 120, H - 120, 16, 17), {
     fill: PAL.paper2, edge: C.rgba(PAL.ink, 0.35), edgeW: 3,
@@ -508,9 +623,9 @@ function macro(shot, lt, t) {
   cueLamp(0, 0, 1, t);
   ctx.restore();
 
-  const enter = C.smooth(C.clamp((lt - 0.7) / 0.35));
+  const enter = C.smooth(C.clamp((lt - handAt) / 0.35));
   if (enter > 0) {
-    const retreat = C.smooth(C.clamp((lt - 1.55) / 0.5));
+    const retreat = C.smooth(C.clamp((lt - (missAt + 0.5)) / 0.5));
     const handIn = enter * (1 - 0.55 * retreat);
     paperHand(1140 + (1 - handIn) * 260, 604, 1.4, -0.12, enter);
   }
@@ -532,67 +647,73 @@ function macro(shot, lt, t) {
   // zoom cannot push it toward the frame edge, and it holds still while the
   // lamp breathes.
   endCam(ctx);
-  TY.type(ctx, shot.slots["content.caption"] || "THE CUE LAMP", 140, 856, 46, {
+  TY.type(ctx, shot.slots["content.caption"] || "THE CUE LAMP", 132, 838, fitSize(shot.slots["content.caption"] || "THE CUE LAMP", 900, TS(26)), {
+    copy: true,
     align: "left", color: PAL.ink, edge: PAL.cream, edgeW: 7,
     shadow: C.rgba(PAL.ink, 0.2), shadowOff: 5, time: t, seed: 9,
-  });
-  TY.text(ctx, "NOVA  /  THE LAST CUE", 152, 890, 17, {
-    family: "DMMono", color: C.rgba(PAL.ink, 0.62), letter: 2,
   });
   if (lt > d - 0.3) paperShards(ctx, W / 2, 500, lt, 16, [PAL.cream, PAL.gold], 420, C.clamp(1 - (lt - (d - 0.3)) / 0.3), 4);
 }
 
-function bowPose(name, lt = 0) {
-  const k = C.smooth(C.clamp((lt - 0.25) / 0.8));
-  const pose = { ...poseFor(name, "bow") };
-  pose.lean = 0.02;
-  pose.headTilt = 0.25;
-  // A bow settles the weight down, it does not lift the body off the floor:
-  // the hip sinks and the knees take it, so the feet stay planted.
-  pose.bounce = -4 + 10 * k;
-  pose.armL = [0.6 - 0.45 * k, 0.2];
-  pose.armR = [-0.6 + 0.45 * k, -0.2];
-  return pose;
-}
-
 function pullback(shot, lt, t) {
   const d = shot.duration;
-  const z = 1.18 - 0.18 * C.smooth(C.clamp(lt / d));
-  setCam(W / 2, 540, z, Math.sin(lt * 0.4) * 0.005, 0.6, t);
+  const cast = shotCast(shot, ["Nova", "Mira"]);
+  shotCam(shot, lt, d, W / 2, 540, 0.6, t);
   beginCam(ctx);
   stageSet(ctx, t, {
     sky: PAL.redD, sun: PAL.gold, floor: PAL.blue, accent: PAL.cream,
     crowd: true, confetti: 44, confettiCols: [PAL.cream, PAL.gold, PAL.blue, PAL.red],
     rot: lt * 0.02,
   });
-  const bowK = C.smooth(C.clamp((lt - 0.25) / 0.8));
-  ctx.save();
-  ctx.translate(0, 960);
-  ctx.scale(1, 1 - 0.28 * bowK);
-  ctx.translate(0, -960);
-  drawCharacter("Nova", 700, 960, 1.12, "bow", 1, bowPose("Nova", lt), t);
-  drawCharacter("Mira", 1180, 985, 0.98, "bow", -1, bowPose("Mira", lt), t);
-  ctx.restore();
+  // The bow is a pose the score asks for, and it is drawn by the rig that owns
+  // the spine: leaning, with the knees taking the weight. It used to be a
+  // vertical squash of the cut-outs with the lean overridden to 1 degree, which
+  // PRODUCTION-PLAN bans by name ("do not fake them with a squash").
+  const novaPose = poseAt("Nova", scoreKeys(shot, "Nova", d, "idle"), lt);
+  const miraPose = poseAt("Mira", scoreKeys(shot, "Mira", d, "idle"), lt);
+  // The pair stands as a pair, with room between them: at 280 px apart the two
+  // cut-outs overlapped, and Mira's head sat on Nova's shoulder in the last shot
+  // of the film. 400 px puts a gap between the bodies and still leaves the right
+  // half clear for the end card.
+  if (cast.includes("nova")) drawCharacter("Nova", 460, 960, 1.04, "idle", 1, novaPose, t);
+  if (cast.includes("mira")) drawCharacter("Mira", 860, 985, 1.04, "idle", -1, miraPose, t);
+  endCam(ctx);
+
+  // The end card is a screen-space layer: drawn after the camera closes, inside
+  // the 16:9 safe margin (x <= 1804, y >= 64), so the pull-back cannot drag it
+  // off the top-right corner. Its body line is measured against the card, not
+  // against a guessed fraction of it.
   if (lt > 1.2) {
     const land = C.clamp(C.backOut(C.clamp((lt - 1.2) / 0.5)));
-    ctx.save();
-    ctx.globalAlpha = land;
-    ctx.translate(0, (1 - land) * 40);
-    paper(ctx, () => tornRectPath(ctx, 1480, 80, 320, 250, 5, 23), {
-      fill: PAL.paper, edge: C.rgba(PAL.ink, 0.4), edgeW: 2,
-      shadow: C.rgba(PAL.ink, 0.28), sx: 8, sy: 12,
-    });
-    TY.type(ctx, shot.slots["content.monogram"] || "N", 1600, 280, 140, {
-      align: "center", color: PAL.ink, edge: null, edgeW: 0,
-      shadow: C.rgba(PAL.ink, 0.18), shadowOff: 4, time: t, seed: 4,
-      family: "Permanent Marker",
-    });
-    TY.text(ctx, shot.slots["content.body"] || "THE UNDERSTUDY", 1600, 324, 16, {
-      family: "DMMono", color: PAL.ink, align: "center", letter: 3,
-    });
-    ctx.restore();
+    if (land > 0) {
+      const boxX = 1000;
+      const boxY = 64;
+      const boxW = 830;
+      const boxH = 300;
+      const midX = boxX + boxW / 2;
+      const innerW = boxW - 90;
+      const body = shot.slots["content.body"] || "THE UNDERSTUDY";
+      const bodySize = fitSize(body, innerW, TS(18), "DMMono", 2);
+      ctx.save();
+      ctx.globalAlpha = land;
+      ctx.translate(0, (1 - land) * 40);
+      paper(ctx, () => tornRectPath(ctx, boxX, boxY, boxW, boxH, 6, 23), {
+        fill: PAL.paper, edge: C.rgba(PAL.ink, 0.4), edgeW: 2,
+        shadow: C.rgba(PAL.ink, 0.28), sx: 8, sy: 12,
+      });
+      TY.type(ctx, shot.slots["content.monogram"] || "N", midX, boxY + 128, TS(30), {
+        copy: true,
+        align: "center", color: PAL.ink, edge: null, edgeW: 0,
+        shadow: C.rgba(PAL.ink, 0.18), shadowOff: 4, time: t, seed: 4,
+        family: "Permanent Marker",
+      });
+      TY.text(ctx, body, midX, boxY + 232, bodySize, {
+        copy: true,
+        family: "DMMono", color: PAL.ink, align: "center", letter: 2, alpha: land,
+      });
+      ctx.restore();
+    }
   }
-  endCam(ctx);
   if (lt > 3.6) {
     // Close the iris into paper. It already pinches to ~1 px by the last frame,
     // so no extra fill: a hard fill here flashed the frame beige.
@@ -600,7 +721,6 @@ function pullback(shot, lt, t) {
     irisOverlay(ctx, W / 2, 470, iris, PAL.paper, 70);
   }
 }
-
 window.PAPER_BACKEND = {
   shots: { paper_open: paperOpen, portrait_iris: portrait, stage_wide: stage, sticker_slam: sticker, macro_prop_beat: macro, pullback_close: pullback },
 };

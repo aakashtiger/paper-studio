@@ -61,6 +61,14 @@ const picture = (file) => {
   return match ? `sha256:${match[1]}` : null;
 };
 
+// Two paths, not one: a file compared with itself is identical by construction,
+// and the gate now refuses that. The delivered film is a *third* file — delivery
+// re-cuts its audio — which is why the comparands are build copies.
+if (resolve(fileA) === resolve(fileB)) {
+  console.error(`error: both comparands are ${fileA}; this compares a file with itself and proves nothing`);
+  process.exit(2);
+}
+
 const a = { file: fileA, bytes: statSync(fileA).size, hash: hash(fileA), videoHash: picture(fileA) };
 const b = { file: fileB, bytes: statSync(fileB).size, hash: hash(fileB), videoHash: picture(fileB) };
 const bytesMatch = a.hash === b.hash && a.bytes === b.bytes;
@@ -70,11 +78,12 @@ const report = {
   mode: "mp4-bytes",
   a,
   b,
+  comparedAt: new Date().toISOString(),
   countMatch: a.bytes === b.bytes,
   mismatches: bytesMatch ? 0 : 1,
   frameSetHash: a.videoHash,
   pictureMatch,
-  pass: bytesMatch,
+  pass: bytesMatch && pictureMatch,
 };
 writeFileSync(out, JSON.stringify(report, null, 2) + "\n", "utf8");
 console.log(

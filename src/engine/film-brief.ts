@@ -20,6 +20,26 @@ export const FilmBriefSchema = z.object({
 export type FilmBrief = z.infer<typeof FilmBriefSchema>;
 export type BriefIssue = { code: string; message: string };
 
+/** Lowercase, letters and digits only — the same rule the ASR uses on words. */
+function plain(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, "");
+}
+
+/**
+ * The lines of the brief the film has to *say*, checked as words rather than as
+ * intent. `mustSay` is the client's promise — the phrase a wedding film must
+ * contain, the name a brand film must land — so the check is literal: the words
+ * have to be in the narration, the captions or the type, in that order of
+ * plainness. Anything looser would be the director grading their own film.
+ *
+ * `texts` is every word the audience hears or reads; `mustSayGaps` returns the
+ * ones the film does not contain, so a gate row can name them.
+ */
+export function mustSayGaps(mustSay: string[], texts: string[]): string[] {
+  const haystack = plain(texts.join(" \n "));
+  return mustSay.filter((phrase) => plain(phrase) !== "" && !haystack.includes(plain(phrase)));
+}
+
 type Capabilities = {
   identity: { id: string; version: string };
   limits: { aspects: string[]; durations: number[] };

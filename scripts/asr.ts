@@ -1,5 +1,5 @@
 /**
- * ASR — the G7 gate on the delivered master.
+ * ASR â€” the G7 gate on the delivered master.
  *
  * The last thing a film owes the director: it is listened to, once, by the same
  * local Whisper that timed the narration, and the words it hears are compared to
@@ -17,7 +17,8 @@ import { join, resolve } from "node:path";
 import { spawn } from "node:child_process";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
 import { hashFile } from "../src/core/style.js";
-import { coverage, unheard, type HeardWord } from "../src/engine/words.js";
+import { coverage, unheardWith, type HeardWord } from "../src/engine/words.js";
+import { findFfmpeg, videoStreamHash } from "../src/engine/video.js";
 import { installSteps, scriptWords, showPath, speechStatus, SPEECH_TOOLS } from "../src/engine/voice.js";
 
 const args = process.argv.slice(2);
@@ -73,7 +74,7 @@ async function main(): Promise<void> {
   const buildDir = resolve(root, "build", score.id);
   mkdirSync(buildDir, { recursive: true });
   const heardPath = join(buildDir, "asr-heard.json");
-  console.log(`asr: listening to ${showPath(root, audio)} with Whisper ${model}…`);
+  console.log(`asr: listening to ${showPath(root, audio)} with Whisper ${model}â€¦`);
   const code = await run(
     status.python!.command,
     [
@@ -92,8 +93,14 @@ async function main(): Promise<void> {
   const words = scriptWords(lines.map((line) => ({ id: line.id, text: line.text })));
   const ratio = Number(coverage(words, heard).toFixed(4));
 
-  // Every script word the recogniser did not hear, in order, for the record.
-  const missing = unheard(words, heard);
+  // Every script word the recogniser did not match, in order, with the token it
+  // heard in its place â€” "cue" read as "Q" is a spelling difference, not a
+  // dropped word, and the report has to be able to say which it is.
+  const unmatched = unheardWith(words, heard).slice(0, 40);
+
+  // The picture the words were heard over, so the gate ties the report to the
+  // delivered film rather than to a path that may hold another cut by then.
+  const pictureHash = isMaster ? videoStreamHash(findFfmpeg(), audio) : null;
 
   const pass = ratio >= threshold;
   const report = {
@@ -102,23 +109,24 @@ async function main(): Promise<void> {
     pass,
     audio: showPath(root, audio),
     audioHash: hashFile(audio),
-    videoHash: isMaster ? hashFile(audio) : null,
+    pictureHash,
     model,
     threshold,
     scriptWords: words.length,
     heardWords: heard.length,
     coverage: ratio,
-    missing: missing.slice(0, 40),
+    unmatched,
     toolVersions: status.modules,
     generatedAt: new Date().toISOString(),
   };
   writeFileSync(join(buildDir, "asr.json"), `${JSON.stringify(report, null, 2)}\n`, "utf8");
 
   console.log(`asr: ${words.length} script words, ${heard.length} heard, ${(ratio * 100).toFixed(1)}% matched (threshold ${(threshold * 100).toFixed(0)}%)`);
-  if (missing.length > 0) {
-    console.log(`asr: not heard: ${missing.slice(0, 12).join(", ")}${missing.length > 12 ? ` … +${missing.length - 12}` : ""}`);
+  if (unmatched.length > 0) {
+    const shown = unmatched.slice(0, 12).map((entry) => entry.word + (entry.heard ? " -> " + entry.heard : ""));
+    console.log(`asr: not matched: ${shown.join(", ")}${unmatched.length > 12 ? ` +${unmatched.length - 12} more` : ""}`);
   }
-  console.log(`asr: ${pass ? "PASS" : "FAIL"} → build/${score.id}/asr.json`);
+  console.log(`asr: ${pass ? "PASS" : "FAIL"} -> build/${score.id}/asr.json`);
   if (!pass) process.exit(1);
 }
 

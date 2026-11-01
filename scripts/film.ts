@@ -13,12 +13,15 @@ const styleFlag = args.indexOf("--style");
 const score = JSON.parse(readFileSync(resolve(process.cwd(), file), "utf8")) as {
   style?: string;
 };
-const styleDir = resolve(
-  process.cwd(),
-  styleFlag >= 0
-    ? (args[styleFlag + 1] ?? `styles/${score.style ?? "paper-kpop"}`)
-    : `styles/${score.style ?? "paper-kpop"}`,
-);
+// The score names its pack; `--style` overrides it for a proof. There is no
+// fallback id: validating a watercolor score against the paper pack would pass a
+// film against the wrong contract, which is worse than stopping here.
+const style = styleFlag >= 0 ? (args[styleFlag + 1] ?? score.style) : score.style;
+if (!style) {
+  console.error(`error: ${file} names no style; nothing to validate it against`);
+  process.exit(1);
+}
+const styleDir = resolve(process.cwd(), style.startsWith("styles") ? style : `styles/${style}`);
 
 try {
   const { plan, errors, warnings } = resolveFilm(score, styleDir);

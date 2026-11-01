@@ -13,7 +13,7 @@ warning.
 | G4 assets | `build/<id>/sheets/*.png` | `npm run sheet -- <score>` | seam gap 0; feet planted; contact shadow; 8 poses + 4 expressions; joint map; hand/foot/coat panels | designer, developer, QA | ready |
 | G5 shots | animated shots, `build/<id>/strips/` | `npm run render:film -- <score>` + `npm run audit:motion -- <score>` + `npm run strips -- <score>` | entry/exit match; ≥3 events; no floating part; every shot's median frame-to-frame change ≥ 0.6 and no dead stretch > 0.1 s; one strip per shot every 0.5 s on one image (from the delivered MP4) | motion, editor | **measured + strips sheet** |
 | G6 mix | master + `build/<id>/sfx/sfx.json` + `build/<id>/sfx/spectrogram-sheet.png` | `npm run sfx -- <score>` + `npm run mix -- <score>` | every cue generated in code from the kit and layered (transient, body, tail) over a material; a cue names its time once (typed `at`, or bound to its picture `event`, which derives it, snapped to the frame); **each cue passes the kit checks** - on a frame, ≥50% of its energy in its declared band, ≥60% at or above 200 Hz where a phone speaker lives, clean fade, longer than a click, band top ≤9 kHz, kind not on the banned list, and **its loudest 50 ms at the kit's level** (a cue whose gain is not its only level fails); no machine-gun repetition (any two cues of one kind may not overlap or restart within 0.3 s); **every picture event is scored or says why it is quiet** (`quiet: "<why>"` on the event — an event with neither a cue nor a reason, an event with both, an event with no cue and no reason, a cue overlapping a declared silence, a declared silence with narration over it, a hole over 2.5 s with no reason, or a cue inside the master's tail fade is an error); **each declared silence is measured on the master** (peak ≤ -50 dBFS); the mix bus is highpassed at 75 Hz and peaks at ≤ -1 dBFS; the 1-4 kHz band is ducked against the voice **and the duck the bus applied is the depth the score declared**; one shared reverb return; tail faded to silence and **measured as a monotonic slope to ≤ -60 dBFS**; **no ticks, clicks, hats, glitches or beeps (phone-speaker rule)**; a spectrogram sheet per cue on one image, each tile labelled with its measured level; master -14.0 LUFS / ≤ -1.5 dBTP from one gain and a true-peak limiter, **and the report says what the limiter took** (`limiterGainReductionDb` at the loudest sample, plus the same reduction as a distribution over 100 ms windows) | sound, editor, QA | **master ready** |
-| G7 final | MP4 + SRT + score + stills + `asr.json` + `gate-7.json` | `npm run deliver -- <score>` + `npm run asr -- <score>` + `npm run gate:7 -- <score>` | one frozen **picture** hash, and the delivered file's own audio measured inside -1.5 dBTP (not the master's); score audit, **the page's score data regenerated from the score**, frames, paint-match, motion floor, type safe area, rig seam, one-hash, hashed inputs, determinism (two renders, same bytes and same picture), mix, duck, cue levels, silence, tail, palette **and clipping over every frame**, and the final 0.5 s contact sheet all pass; the frame audit must also find the picture **described by the render's own manifest** (the renderer writes it, the audit never does); ASR of the master is a hard check once its report exists, and is named as pending (with the command) until then | all seven + director | **partial** |
+| G7 final | MP4 + SRT + score + stills + `asr.json` + `gate-7.json` | `npm run deliver -- <score>` + `npm run asr -- <score>` + `npm run gate:7 -- <score>` | one frozen **picture** hash, and the delivered file's own audio measured inside -1.5 dBTP (not the master's); score audit, **the page's score data regenerated from the score**, frames, paint-match, motion floor, type safe area, rig seam, one-hash, hashed inputs, determinism (two renders, same bytes and same picture), mix, duck, cue levels, silence, undeclared holes, a room bed under a line, tail, palette **and clipping over every frame**, and the final 0.5 s contact sheet all pass; the frame audit must also find the picture **described by the render's own manifest** (the renderer writes it, the audit never does); ASR of the master is a hard check once its report exists, and is named as pending (with the command) until then | all seven + director | **partial** |
 
 ## Paint match
 
@@ -66,16 +66,27 @@ screen; the look pass is still to come.
 `npm run audit:type -- <score> [--step 0.5] [--margin 0.06]` paints sampled times
 through the renderer with `src/engine/paint-probe.js` attached. The probe records
 the box of every text run a frame draws, mapped through the canvas transform, so
-a label on a rotated sticker is measured as the rectangle it covers. The safe
-margin is read from the style pack (`tokens.json` `layout.safeZones`, e.g.
-`title-safe 6 percent`), so a film inherits it and never hardcodes a number. A
-box more than 1 px outside the safe rectangle fails `type-audit.json`.
+a label on a rotated sticker is measured as the rectangle it covers — and a
+moving label is measured **while it moves**, so an entry that overshoots the
+frame is a finding, not a style. The safe margin is read from the style pack
+(`tokens.json` `layout.safeZones`, e.g. `title-safe 6 percent`), so a film
+inherits it and never hardcodes a number. A box more than 1 px outside the safe
+rectangle fails `type-audit.json`.
+
+It also holds the film's copy to the pack's floor: a run the painter marks
+`copy: true` must be drawn at or above `type.scale.label` scaled to the frame
+(14 px at the pack's 390 px authoring width → 69 px at 1,920). The mark is
+cross-checked against the score, so a marked run must be a piece of that shot's
+slot text and a shot with slots must show a marked run. `films/understudy` at
+`--step 0.2`: 151 frames, 348 boxes, 257 of them copy, none outside, none under
+the floor.
 
 ## Rig seam
 
-`npm run audit:rig -- <score> [--step 0.5]` wraps `solveLeg`, `limb` and
-`drawCharacter` so every painted frame reports its leg solves and the two limb
-segments each solve drew. It checks, per leg:
+`npm run audit:rig -- <score> [--step 0.5]` wraps `solveLeg`, `limb`,
+`rigAnchor` and `drawCharacter` so every painted frame reports its leg solves,
+the two limb segments each solve drew, and where each rig hung the chest, the
+head and the hair. It checks, per leg:
 
 1. the drawn thigh and shin are the lengths the solver used;
 2. the knee is a seamless joint;
@@ -83,6 +94,23 @@ segments each solve drew. It checks, per leg:
 4. the knee bends and bends the way its side owns (a sign flip is a backwards
    knee), between 0.03 and 2.6 rad;
 5. no ankle teleports between adjacent samples.
+
+And, per character:
+
+6. every anchored part keeps a fixed place **in chest space** (1.5 rig units).
+   This is the row a still cannot fake. The long hair was drawn at the rig root
+   instead of under the head, so it kept the upright head's position: on a bow
+   the face travelled ~95 units and left a vertical black slab behind it, which
+   read as a detached head. Every still that checked the head *alone* passed,
+   and the pixel audits passed, because nothing in the frame was missing — it
+   was in the wrong place.
+
+`npm run audit:rig:proof` is the proof that row 6 works: it puts the long hair
+back at the rig root, paints the bow at the audit's own 0.1 s step, and measures
+both. On the old placement the hair sits at `(-105.1, -582.7)` in chest space
+and moves **96.9 units in one step** at 25.0 s; on the fixed rig it sits at
+`(0.0, -604.0)` and moves **0.0**. The command restores the rig byte-identically
+(`sha256:fd660e88...`) in a `finally`, so it is safe to run on a clean tree.
 
 `test/cast-rig.test.ts` proves the same reachability statically, in a second,
 without a browser, so bad pose data fails before a render.
@@ -101,9 +129,19 @@ event does, and a number that conflates them hides the gap.
 
 It does **not** check rendered frames, ASR or mix. Those are G5–G7. The
 mechanical parts of G7 that are not score-level are their own commands:
-`audit:motion` (motion floor), `audit:type` (safe area), `audit:rig` (rig seam)
-and `audit:palette` (**palette and clipping, every frame**). ASR is `npm run asr`,
-a hard check once its report exists.
+`audit:motion` (motion floor), `audit:type` (safe area **and the copy floor**),
+`audit:rig` (rig seam) and `audit:palette` (**palette and clipping, every
+frame**). ASR is `npm run asr`, a hard check once its report exists.
+
+`audit:type` answers two questions, not one. Every box the frame drew must sit
+inside the pack's title-safe rectangle, **and** every box that is the film's own
+copy — a string the score puts in that shot's slots, or a wrapped piece of one —
+must be drawn at or above the pack's `type.scale.label` floor scaled to the frame
+(14 px at the pack's 390 px authoring width). Set dressing a rig draws, such as a
+costume name tag, is exempt: it is not a sentence the viewer has to read, and
+holding it to the copy floor would fail every character that wears a label. The
+probe box's height is the em size the frame actually drew, so the check cannot be
+satisfied by reporting a size in a comment.
 
 Two of those read every frame and two read a sample, and the difference is not
 hidden. `audit:frames` and `audit:palette` decode all 900 frames of the delivered
@@ -112,8 +150,8 @@ file — blank frames, cuts, holds, hue outliers and clipping are counted per fr
 and the IK solve only exist in the composition, so those two paint sampled
 instants in the same Chrome path the renderer uses. They are stronger than a pixel
 read for what they measure (a box is measured in layout units, an ankle as a
-solved target) and weaker in coverage (31 samples, not 900 frames). Both facts are
-in their reports: `sampled`, `step`, and the probe's own hash.
+solved target) and weaker in coverage (a sample at `--step`, not 900 frames). Both
+facts are in their reports: `sampled`, `step`, and the probe's own hash.
 
 `npm run film:review` chains the whole set for one film and prints one page. It
 hides no failure: every step runs even after one fails, and a row is only
@@ -139,11 +177,13 @@ recorded beside a picture it never touched — every hash agreeing, the central
 claim unchecked. Now the audit **reads** the manifest and fails
 (`describedByRender`) when the video it measured is not the picture the render
 named; `npm run deliver` refuses a source picture the manifest does not describe;
-and at gate time the `poseHashes` and `inputsHashed` rows re-hash the score, the
-generated page data, the backend and the painter, so "the code that painted this
-frame is still the code on disk" is a checked statement rather than a note.
-`audit.json` carries the hash of the score it audited, and the `scoreAudit` row
-requires it to be the current score.
+and at gate time the `inputsHashed` row re-hashes **every** input the manifest
+names — score, generated page data, backend, painter, page, captions, every
+vendor script, every font the page declares and every pose library — so "the code
+that painted this frame is still the code on disk" is a checked statement rather
+than a note. It is one rule (`inputMismatches`), so the gate and its test walk the
+same flat list. `audit.json` carries the hash of the score it audited, and the
+`scoreAudit` row requires it to be the current score.
 
 **The page's data is regenerated, not trusted.** The renderer paints from
 `films/<id>/score-data.js`, not from `score.json` — so that file is generated by
@@ -216,7 +256,13 @@ actual read:
 1. **Capture** is `recorded` (a supplied file, used as-is) or `tts` with a
    **provider** — `kokoro` locally, or `elevenlabs` fetched **once** at authoring
    time and pinned as a WAV. The render never touches the network. The spoken WAV
-   is kept unless `--force` is passed.
+   is kept unless `--force` is passed. A line is placed at the **second the
+   score's clock gives it**; the capture pads silence to that second and refuses
+   when a read would run past the next line's start. Without this the read is
+   butted end to end, and a film whose clock spreads six lines over twenty
+   seconds gets a voice that says them all in fourteen: the captions then name
+   seconds the voice never occupied, and every audit passes, because the audio is
+   present, audible and correctly spoken.
 2. **Listen.** Local Whisper (`faster-whisper small.en`) writes what it heard.
    `src/engine/words.ts` attaches those times to the **script's own spelling**, so
    "nineteen nineteen" is timed as the script's "1919" — matched words keep their
@@ -225,6 +271,16 @@ actual read:
 3. **Derive.** `build/<id>/clock.json` holds the line clock and the shot
    boundaries a snap to a phrase beat would move. It is a **proposal**; the score
    is not rewritten — the director edits it to accept a move.
+4. **Check the clock, on the audio.** For each authored start the WAV is scanned
+   for the first sample above −40 dBFS within ±0.25 s, and the drift must be
+   within **0.1 s** (`voice.json` → `clock`, `checks.clock`). The measurement is
+   on the samples rather than on Whisper's word onsets because those wobble: on
+   Understudy the read that starts at 0.50 s measures 0.53 s, and Whisper dated
+   its first word at 0.18 s. Measured on the audio the worst line is **+0.03 s**;
+   measured against the recogniser it was −0.32 s, which is the recogniser, not
+   the film. Coverage answers "are these the script's words"; the clock answers
+   "are they where the score says". They are different questions and both are
+   now asked.
 
 The speech tools are external and pinned like `ffmpeg`; `tools/README.md` has the
 one-time install. When a module is missing, `npm run voice` and `npm run asr`
@@ -460,11 +516,21 @@ A failed gate writes the failure and sends the film back one step. “Almost” 
 no. The director signs only after the full panel at G7.
 
 ASR is no longer a missing command: step 10 built it (`npm run asr`), and it is
-the only G7 row that is still **pending** on this machine, because the local
-speech model is not installed yet. The gate reads the report when it exists and
-names the command when it does not; it never passes the row by silence. See
-`docs/decisions/0016-voice-and-asr.md` and
+the last G7 row to become a hard check. The local speech model (faster-whisper
+`small.en`) is installed, `npm run asr` hears the delivered master at 93 % of the
+script and writes `asr.json` with the audio hash **and** the picture hash it
+listened to, and the gate refuses an ASR report about any other cut. When the
+report is absent the gate names the command and does not pass the row by
+silence. See `docs/decisions/0016-voice-and-asr.md` and
 `docs/decisions/0017-review-surface-audio-and-sheets.md`.
+
+**A hole in the foley is a decision or a defect.** The mix measures the windows
+the score declares silent (`silence`), and it also measures the other direction:
+any 0.15 s or more at or under −50 dBFS that the score did **not** declare
+(`undeclaredHoles`), and any room bed that stops while a line is still being
+spoken (`roomUnderLines`). Both fail the mix and therefore the `mix` row. A cut
+that loses its foley for 270 ms is the kind of defect no picture audit can see
+and no one hears as a decision.
 
 **Banned vs allowed, stated once.** Banned: generative **images or video** in the
 render path, and per-film LLM-written animation code. Allowed: local models for

@@ -68,12 +68,25 @@ def trim(audio):
     return audio[max(0, loud[0] - int(0.03 * SR)): loud[-1] + int(0.09 * SR)]
 
 
+def find_ffmpeg():
+    """The same search the engine does: env, then the vendored binary, then PATH."""
+    env = os.environ.get("FFMPEG_PATH")
+    if env and Path(env).exists():
+        return env
+    repo = Path(__file__).resolve().parent.parent
+    for candidate in ("node_modules/ffmpeg-static/ffmpeg.exe", "node_modules/ffmpeg-static/ffmpeg"):
+        path = repo / candidate
+        if path.exists():
+            return str(path)
+    return "ffmpeg"
+
+
 def write_wav(out, samples):
     """One 48 kHz stereo PCM WAV, through ffmpeg, exactly as the mixer expects."""
     peak = float(np.abs(samples).max()) or 1.0
     samples = samples / peak * 0.89
     subprocess.run(
-        ["ffmpeg", "-v", "error", "-y", "-f", "s16le", "-ar", str(SR), "-ac", "1", "-i", "-",
+        [find_ffmpeg(), "-v", "error", "-y", "-f", "s16le", "-ar", str(SR), "-ac", "1", "-i", "-",
          "-ar", "48000", "-ac", "2", str(out)],
         input=(samples * 32767).astype("<i2").tobytes(),
         check=True,
@@ -117,9 +130,26 @@ def main():
     pieces = [lead]
     position = len(lead)
     sentences = []
+    previous = None
     for line in request["lines"]:
         audio, _ = k.create(line["text"], voice=voice, speed=speed, lang=request.get("lang", "en-us"))
         audio = trim(np.asarray(audio, np.float32))
+        # The score's clock is direction: a line begins where the score says it
+        # begins. Without this the read is butted against the previous line, and
+        # a film whose clock spreads six lines over twenty seconds gets a voice
+        # that says them all in fourteen — the captions then name seconds the
+        # voice never occupied.
+        if line.get("start") is not None:
+            target = int(round(float(line["start"]) * SR))
+            if target < position:
+                where = position / SR
+                who = f"line {previous['id']}" if previous else "the lead-in"
+                sys.exit(
+                    f"line {line['id']} must start at {line['start']}s but {who} runs to {where:.2f}s; "
+                    "shorten the line, the read speed, or the clock"
+                )
+            pieces.append(np.zeros(target - position, np.float32))
+            position = target
         sentences.append({
             "id": line["id"],
             "text": line["text"],
@@ -131,6 +161,7 @@ def main():
         gap = np.zeros(int(float(line.get("hold", 0.3)) * SR), np.float32)
         pieces.append(gap)
         position += len(gap)
+        previous = line
         print(f"{sentences[-1]['start']:7.2f} {sentences[-1]['end']:7.2f}  {line['text']}", flush=True)
 
     out = Path(args.out)

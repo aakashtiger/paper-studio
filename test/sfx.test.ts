@@ -15,9 +15,12 @@ import {
   kindGain,
   kindLength,
   kindLayers,
+  kindSpec,
   loudMoment,
   phoneAudible,
   renderSfx,
+  SUSTAINED_SHAPES,
+  SUSTAINED_UNDER_DB,
   rms,
   SFX_GENERATOR,
   SFX_KINDS,
@@ -273,10 +276,14 @@ test("the kit has one loudness rule: every cue hits at one level", () => {
     const samples = renderSfx(kind, Math.round(kindLength(kind) * sr), sr, `level-${kind}`);
     const peak = samples.reduce((max, value) => Math.max(max, Math.abs(value)), 0);
     const level = 20 * Math.log10(loudMoment(samples, sr) + 1e-9);
+    // A sustained shape is the one declared exception: its energy fills its
+    // whole length, so a hit's loudest-moment level makes it the loudest thing
+    // in the film at a gain the score called quiet. See SUSTAINED_SHAPES.
+    const expected = SUSTAINED_SHAPES.has(kindSpec(kind).shape) ? target - SUSTAINED_UNDER_DB : target;
     assert.ok(peak <= 0.9801, `${kind} peaks at ${peak}, which clips`);
     assert.ok(
-      Math.abs(level - target) <= 1,
-      `${kind} hits at ${level.toFixed(1)} dBFS, target ${target.toFixed(1)}`,
+      Math.abs(level - expected) <= 1,
+      `${kind} hits at ${level.toFixed(1)} dBFS, target ${expected.toFixed(1)}`,
     );
   }
   // A sparse hit and a bed at the same gain are the same loudness: this is the

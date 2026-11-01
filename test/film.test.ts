@@ -22,9 +22,9 @@ test("the pilot score resolves to 30 s, 900 frames, nine legal shots", () => {
   assert.equal(plan.shots.length, 9);
   assert.deepEqual(
     plan.shots.map((shot) => shot.duration),
-    [2.2, 3.3, 3.4, 1.6, 2.8, 2.1, 4.1, 5.1, 5.4],
+    [3.1, 3.8, 3.5, 1.6, 1.5, 3.4, 3.4, 4.2, 5.5],
   );
-  assert.equal(plan.shots[8]?.start, 24.6);
+  assert.equal(plan.shots[8]?.start, 24.5);
   assert.equal(plan.shots[0]?.direction.events.length, 3);
 });
 
@@ -33,7 +33,15 @@ test("the shot direction survives resolution", () => {
   const shot = plan.shots[7];
   assert.ok(shot);
   assert.equal(shot.direction.spine.length > 0, true);
-  assert.equal(shot.direction.events.length, 5);
+  // The count is the score's, not a number typed twice: resolution carries the
+  // direction through untouched.
+  const authored = pilot.shots[7];
+  assert.ok(authored);
+  assert.equal(shot.direction.events.length, authored.direction.events.length);
+  assert.deepEqual(
+    shot.direction.events.map((event) => event.kind),
+    authored.direction.events.map((event) => event.kind),
+  );
 });
 
 test("a film cannot declare the old proof override", () => {
@@ -67,7 +75,9 @@ test("fewer than three events fails the schema", () => {
 
 test("a median outside the band is an error", () => {
   const score = clone();
-  score.edit.medianShot = 4.5;
+  // The film's median shot is 3.4 s; 5.2 is inside the edit's own 1.2-5.5 band
+  // and still more than 25% away from what the score actually does.
+  score.edit.medianShot = 5.2;
   const { errors } = resolveFilm(score, styleDir);
   assert.ok(errors.some((issue) => issue.code === "median_outside_band"));
 });
@@ -82,8 +92,14 @@ test("a caption that does not match its narration is an error", () => {
 });
 
 test("a recorded narration film without a voice file is an error", () => {
+  // The fixture narrates with local TTS, which needs a voice *id* and not a
+  // file. This asks the other question — a film that says its narration is a
+  // recording must name the recording — so it has to be a recorded film first.
   const score = clone();
-  if (score.audio.narration) delete score.audio.narration.voice;
+  const narration = score.audio.narration;
+  assert.ok(narration);
+  narration.source = "recorded";
+  delete narration.voice;
   const { errors } = resolveFilm(score, styleDir);
   assert.ok(errors.some((issue) => issue.code === "audio_voice_missing"));
 });

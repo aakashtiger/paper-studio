@@ -184,7 +184,13 @@ export function installSteps(status: SpeechStatus, only?: SpeechToolName[]): str
 
 export type SpeechProvider = "kokoro" | "elevenlabs";
 
-export type VoiceLine = { id: string; text: string; hold?: number };
+/**
+ * One line to speak. `start` is the score's clock: the second of the film the
+ * line must begin at. The capture places the read there rather than butting it
+ * against the previous line, so what is spoken, what is captioned and what the
+ * score says are the same second.
+ */
+export type VoiceLine = { id: string; text: string; start?: number; hold?: number };
 
 export type VoiceRequest = {
   film: string;

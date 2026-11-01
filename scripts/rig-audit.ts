@@ -15,6 +15,13 @@
  * and checks all three. Pairing is positional (solve → thigh → shin), so if the
  * pairing ever stops matching the check fails loudly instead of passing empty.
  *
+ * The fourth failure is not the leg: a body part drawn outside the transform it
+ * hangs from. The long hair was drawn at the rig root, so it kept the upright
+ * head's place and read as a second, detached head the moment a character bowed;
+ * every still that checked the head alone passed. Each rig now publishes the
+ * chest, the head pivot and the hair, and this audit holds every one of them to
+ * a fixed place in chest space across the whole film.
+ *
  * usage: npm run audit:rig -- films/understudy/score.json [--step 0.1]
  */
 import { spawn } from "node:child_process";
@@ -42,9 +49,32 @@ type Limb = {
   from: [number, number];
   to: [number, number];
 };
-type Record = Solve | Limb;
+/** A point a rig hangs a body part from, plus the transform in force there. */
+type Anchor = {
+  kind: "anchor";
+  character: string;
+  part: string;
+  local: [number, number];
+  m: [number, number, number, number, number, number];
+};
+type Matrix = [number, number, number, number, number, number];
+type Record = Solve | Limb | Anchor;
 type ProbeFile = { frames: { time: number; rigRecords: Record[] }[] };
 type Score = { id: string; duration: number; fps?: number };
+
+/** Device position of a point in the transform's own space. */
+function place(m: Matrix, x: number, y: number): [number, number] {
+  return [m[0] * x + m[2] * y + m[4], m[1] * x + m[3] * y + m[5]];
+}
+
+/** The inverse transform: device space back to the transform's own space. */
+function unplace(m: Matrix, x: number, y: number): [number, number] {
+  const det = m[0] * m[3] - m[1] * m[2];
+  if (!Number.isFinite(det) || Math.abs(det) < 1e-9) return [Number.NaN, Number.NaN];
+  const ix = (m[3] * (x - m[4]) - m[2] * (y - m[5])) / det;
+  const iy = (-m[1] * (x - m[4]) + m[0] * (y - m[5])) / det;
+  return [ix, iy];
+}
 
 function arg(name: string): string | undefined {
   const index = process.argv.indexOf(`--${name}`);
@@ -86,6 +116,10 @@ async function main(): Promise<void> {
   const landingTolerance = Number(arg("landing-tolerance") ?? 3);
   const minBend = Number(arg("min-bend") ?? 0.03);
   const maxBend = Number(arg("max-bend") ?? 2.6);
+  // Where a body part hangs from its parent is a fixed point of the rig, so the
+  // allowed drift is small: pose blending moves the anchor not at all, and a
+  // part outside its parent's transform moves it by tens of units.
+  const seamTolerance = Number(arg("seam-tolerance") ?? 1.5);
 
   const work = resolve(root, "build", score.id, "rig-probe");
   await mkdir(work, { recursive: true });
@@ -115,15 +149,48 @@ async function main(): Promise<void> {
   const data = JSON.parse(await readFile(probeFile, "utf8")) as ProbeFile;
   if (data.frames.length === 0) throw new Error("the paint probe returned no frames");
 
-  const findings: { time: number; character: string; side: number; check: string; detail: string }[] = [];
+  const findings: { time: number; character: string; side: number; part?: string; check: string; detail: string }[] = [];
   const ankles = new Map<string, { time: number; at: [number, number] }[]>();
+  // Where a part sits in its parent's space, per frame: `character|part`.
+  const seams = new Map<string, { time: number; at: [number, number] }[]>();
   let legs = 0;
   let unpaired = 0;
   let characters = 0;
+  let anchors = 0;
+  const anchored = new Set<string>();
 
   for (const frame of data.frames) {
     const records = frame.rigRecords;
     let frameCharacters = 0;
+
+    // 5 — a body part stays where it hangs from. Each rig publishes the point
+    // it hangs the chest, the head and the hair from, together with the
+    // transform in force there; the same point expressed in chest space must
+    // not move, whatever the pose does. A part drawn outside its parent's
+    // transform drifts with every lean, and this is the only check that sees it.
+    const groups = new Map<string, Anchor[]>();
+    for (const record of records) {
+      if (!record || record.kind !== "anchor") continue;
+      const list = groups.get(record.character) ?? [];
+      list.push(record);
+      groups.set(record.character, list);
+    }
+    for (const [name, list] of groups) {
+      const chest = list.find((item) => item.part === "chest");
+      if (!chest) continue;
+      anchored.add(name);
+      for (const anchor of list) {
+        if (anchor.part === "chest") continue;
+        anchors++;
+        const device = place(anchor.m, anchor.local[0], anchor.local[1]);
+        const inChest = unplace(chest.m, device[0], device[1]);
+        const key = `${name}|${anchor.part}`;
+        const samples = seams.get(key) ?? [];
+        samples.push({ time: frame.time, at: inChest });
+        seams.set(key, samples);
+      }
+    }
+
     for (let index = 0; index < records.length; index++) {
       const record = records[index];
       if (!record || record.kind !== "solve") continue;
@@ -228,9 +295,54 @@ async function main(): Promise<void> {
     }
   }
 
+  // 5 — a part that drifts inside its parent. Adjacent samples only, for the
+  // same reason as the ankle: a cut re-stages the character, and a rig defect
+  // is continuous in the pose, so it shows up between two neighbouring frames.
+  let worstSeam = { character: "", part: "", time: 0, distance: 0 };
+  let seamPairs = 0;
+  for (const [key, list] of seams) {
+    const [character, part] = key.split("|");
+    for (let index = 1; index < list.length; index++) {
+      const current = list[index];
+      const previous = list[index - 1];
+      if (!current || !previous) continue;
+      if (Math.abs(current.time - previous.time - step) > 1e-6) continue;
+      seamPairs++;
+      const shift = dist(current.at, previous.at);
+      if (!finite(shift)) {
+        findings.push({
+          time: current.time,
+          character: character ?? "?",
+          side: 0,
+          part,
+          check: "head-seam",
+          detail: `${part} anchor is not invertible (degenerate chest transform)`,
+        });
+        continue;
+      }
+      if (shift > worstSeam.distance) {
+        worstSeam = { character: character ?? "", part: part ?? "", time: current.time, distance: shift };
+      }
+      if (shift > seamTolerance) {
+        findings.push({
+          time: current.time,
+          character: character ?? "?",
+          side: 0,
+          part,
+          check: "head-seam",
+          detail: `${part} moved ${shift.toFixed(1)} units in chest space in ${step}s`,
+        });
+      }
+    }
+  }
+
+
   // Instrumentation must have caught something; an empty pass is a silent lie.
-  const instrumented = legs > 0 && characters > 0;
+  // `seamPairs` is the number of adjacent comparisons actually made: a rig that
+  // published one anchor each would otherwise pass by having nothing to compare.
+  const instrumented = legs > 0 && characters > 0 && anchored.size > 0 && seamPairs > 0;
   const pass = instrumented && findings.length === 0;
+
   const report = {
     film: score.id,
     pass,
@@ -246,7 +358,17 @@ async function main(): Promise<void> {
       distance: Math.round(worstJump.distance * 10) / 10,
       limit: jumpLimit,
     },
-    thresholds: { lengthTolerance, landingTolerance, minBend, maxBend, jumpLimit },
+    anchors,
+    anchorPairs: seamPairs,
+    anchoredCharacters: [...anchored].sort(),
+    worstSeamShift: {
+      character: worstSeam.character,
+      part: worstSeam.part,
+      time: worstSeam.time,
+      units: Math.round(worstSeam.distance * 100) / 100,
+      limit: seamTolerance,
+    },
+    thresholds: { lengthTolerance, landingTolerance, minBend, maxBend, jumpLimit, seamTolerance },
     findings,
     probe: `sha256:${createHash("sha256")
       .update(await readFile(resolve(root, "src/engine/paint-probe.js")))
@@ -256,11 +378,15 @@ async function main(): Promise<void> {
   await writeFile(reportPath, JSON.stringify(report, null, 2) + "\n", "utf8");
 
   for (const item of findings.slice(0, 12)) {
-    console.log(`  FAIL ${item.time.toFixed(2)}s ${item.character}/${item.side} ${item.check}: ${item.detail}`);
+    const who = item.part ? `${item.character}/${item.part}` : `${item.character}/${item.side}`;
+    console.log(`  FAIL ${item.time.toFixed(2)}s ${who} ${item.check}: ${item.detail}`);
   }
   if (findings.length > 12) console.log(`  ... ${findings.length - 12} more`);
   console.log(
     `rig: ${legs} legs from ${characters} character frames · worst ankle jump ${worstJump.distance.toFixed(1)}px at ${worstJump.time.toFixed(2)}s · ${unpaired} unpaired solves · ${pass ? "pass" : instrumented ? `FAIL ${findings.length}` : "FAIL not instrumented"}`,
+  );
+  console.log(
+    `rig: ${anchors} anchor samples on ${anchored.size} character(s) (${[...anchored].sort().join(", ") || "none"}) · ${seamPairs} adjacent pairs · worst in-parent shift ${worstSeam.distance.toFixed(2)} units (${worstSeam.part || "n/a"} at ${worstSeam.time.toFixed(2)}s, limit ${seamTolerance})`,
   );
   console.log(`report: ${reportPath}`);
   if (!pass) process.exit(1);

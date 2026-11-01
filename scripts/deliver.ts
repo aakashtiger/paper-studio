@@ -35,6 +35,24 @@ const MAX_PASSES = 4;
 const DELIVERY_LIMIT_DB = -2.5;
 /** Past this the limiter is paying for the encoder with the film's own peaks. */
 const DELIVERY_LIMIT_FLOOR_DB = -6;
+/**
+ * The limiter's envelope, and the reason it is this fast.
+ *
+ * A 5 ms attack with a 50 ms release is a *compressor* in disguise: it rides
+ * the gain over every loud syllable instead of catching the few samples the
+ * encode rings on, and the delivered file's words stop being words. Measured on
+ * Understudy's last line, the same master and the same 192k AAC encode:
+ *
+ *   no limiter            → "The crowd never knew."
+ *   attack 5 ms/rel 50 ms → "I've never knew."   (at −2.5 dB and at −1.0 dB)
+ *   attack 1 ms/rel 10 ms → "The crowd never knew."
+ *
+ * The threshold made no difference; the envelope did. So the delivery limiter is
+ * a peak limiter: 1 ms attack, 10 ms release, and `gate:7`'s ASR row listens to
+ * the delivered file to prove the words survived the encode.
+ */
+const DELIVERY_LIMIT_ATTACK_MS = 1;
+const DELIVERY_LIMIT_RELEASE_MS = 10;
 
 function arg(name: string): string | undefined {
   const index = process.argv.indexOf(`--${name}`);
@@ -152,7 +170,7 @@ for (; pass < MAX_PASSES; pass++) {
     "-c:v",
     "copy",
     "-af",
-    `alimiter=limit=${(10 ** (limitDb / 20)).toFixed(4)}:attack=5:release=50:level=disabled`,
+    `alimiter=limit=${(10 ** (limitDb / 20)).toFixed(4)}:attack=${DELIVERY_LIMIT_ATTACK_MS}:release=${DELIVERY_LIMIT_RELEASE_MS}:level=disabled`,
     "-c:a",
     "aac",
     "-b:a",
@@ -217,21 +235,10 @@ const report = {
 mkdirSync(buildDir, { recursive: true });
 writeFileSync(resolve(buildDir, "deliver.json"), JSON.stringify(report, null, 2) + "\n", "utf8");
 
-// The manifest is where the gate looks for "the audio this film ships". It is
-// updated here rather than being read as a promise from the render.
-const manifestPath = resolve(buildDir, "render-manifest.json");
-if (existsSync(manifestPath)) {
-  const manifest = JSON.parse(readFileSync(manifestPath, "utf8")) as Record<string, unknown>;
-  manifest.audio = {
-    path: report.output.path,
-    hash: report.output.fileHash,
-    videoHash: streamHash,
-    limitDb: report.output.audio.limitDb,
-    lufs: delivered.lufs,
-    truePeak: delivered.truePeak,
-  };
-  writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n", "utf8");
-}
+// `render-manifest.json` is **not** touched here. It is the render's record of
+// what it painted from, and the renderer is its only writer; a second writer
+// made `videoFileHash` name a file that no longer existed. The delivered audio
+// is recorded above, in `deliver.json`, which is this step's own report.
 
 console.log(`deliver: ${report.output.path}`);
 console.log(

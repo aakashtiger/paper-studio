@@ -42,12 +42,16 @@
     };
   }
 
-  function record(box, text, alpha) {
+  function record(box, text, alpha, copy) {
     // Text that is not yet visible has not been painted; it cannot leave the
     // safe area either, so it is not a finding.
     if (!(alpha > 0.05)) return;
     if (!(box.w > 0) || !(box.h > 0)) return;
-    window.__textBoxes.push({ text: String(text).slice(0, 48), ...box });
+    // `copy` marks the film's own words: a string the score put in a slot. The
+    // painter says which runs those are, so a costume name tag drawn by the rig
+    // is not held to the copy floor. `audit:type` cross-checks the mark against
+    // the score, so marking arbitrary text does not buy a pass.
+    window.__textBoxes.push({ text: String(text).slice(0, 48), copy: copy === true, ...box });
   }
 
   // `const TY` at the top level of a classic script is a global lexical
@@ -65,7 +69,7 @@
       let left = x;
       if (options.align === "center") left = x - total / 2;
       else if (options.align === "right") left = x - total;
-      record(toDevice(m, left, y - size * 0.78, left + total, y + size * 0.22), str, alpha);
+      record(toDevice(m, left, y - size * 0.78, left + total, y + size * 0.22), str, alpha, options.copy);
       return total;
     };
   }
@@ -94,6 +98,7 @@
         toDevice(m, left, top, left + width, top + size * (baseline === "alphabetic" ? 1 : 1.02)),
         str,
         options.alpha === undefined ? 1 : options.alpha,
+        options.copy,
       );
     };
   }
@@ -150,6 +155,27 @@
         to: [end[0], end[1]],
       });
       return end;
+    };
+  }
+
+  // A rig publishes where it hangs the chest and the head, together with the
+  // transform in force at that point. Both are device-space matrices, so the
+  // head's position *in chest space* is M_chest⁻¹ · head_origin: a rig that
+  // draws the head outside the torso's lean gives a different value on every
+  // lean and the audit sees it. Nothing is invented if a rig publishes no
+  // anchors; the audit reports the character as unmeasured instead.
+  const rigAnchor = window.rigAnchor;
+  if (typeof rigAnchor === "function") {
+    window.rigAnchor = function (ctx, part, x, y) {
+      const m = transform(ctx);
+      window.__rigRecords.push({
+        kind: "anchor",
+        character,
+        part: String(part || ""),
+        local: [Number(x) || 0, Number(y) || 0],
+        m: [m.a, m.b, m.c, m.d, m.e, m.f],
+      });
+      return rigAnchor.apply(this, arguments);
     };
   }
 })();

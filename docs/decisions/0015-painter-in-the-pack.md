@@ -73,6 +73,12 @@ re-sealed with `make-inputs.ts` whenever the painter changes.
 The old hash is recorded here and in `docs/decisions/0008-paper-kpop-pilot.md`;
 `gate/paper-kpop-blind/REPORT.md` carries both.
 
+**Later revision:** the painter has since been revised three more times without
+a pack contract change — score-directed staging (`fa8730bb...`), measured type
+(`eda400db...`) and the copy floor with its safe-area bounds (`fa25fe52...`).
+`PACK-HASH.txt` and `REPORT.md` carry the current one; this decision's
+`a2089bd7...` is the revision as written.
+
 ## Consequences
 
 - The S1c gate test still proves the shipped pack matches the sealed blind, and

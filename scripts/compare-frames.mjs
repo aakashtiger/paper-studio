@@ -1,11 +1,27 @@
 import { createHash } from "node:crypto";
-import { readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join, resolve } from "node:path";
 
+/**
+ * Frame-level determinism: two directories of rendered PNGs, compared frame by
+ * frame. This is the **debugging** tool when `compare-renders` says two MP4s
+ * differ; it is not the gate's determinism record, so it writes its own file.
+ * (It used to overwrite `build/understudy/determinism.json` with a shape the gate
+ * could not read at all, hardcoded to the fixture.)
+ */
 const [dirA, dirB] = process.argv.slice(2);
 if (!dirA || !dirB) {
-  console.error("usage: node scripts/compare-frames.mjs <dir-a> <dir-b>");
+  console.error("usage: node scripts/compare-frames.mjs <dir-a> <dir-b> [--out <report.json>]");
   process.exit(2);
+}
+const outIndex = process.argv.indexOf("--out");
+const out =
+  outIndex === -1 ? "build/frame-compare.json" : (process.argv[outIndex + 1] ?? "build/frame-compare.json");
+for (const dir of [dirA, dirB]) {
+  if (!existsSync(dir)) {
+    console.error(`missing: ${dir}`);
+    process.exit(2);
+  }
 }
 
 function hashes(dir) {
@@ -33,14 +49,17 @@ const digest = createHash("sha256")
   .digest("hex");
 
 const report = {
-  framesA: a.length,
-  framesB: b.length,
+  mode: "frame-pngs",
+  a: { dir: dirA, frames: a.length },
+  b: { dir: dirB, frames: b.length },
+  comparedAt: new Date().toISOString(),
   countMatch,
   mismatches: mismatches.length,
   firstMismatches: mismatches.slice(0, 20),
   frameSetHash: `sha256:${digest}`,
   pass: countMatch && mismatches.length === 0,
 };
-writeFileSync("build/understudy/determinism.json", JSON.stringify(report, null, 2) + "\n", "utf8");
-console.log(`frames ${a.length}/${b.length} · mismatches ${mismatches.length} · ${report.pass ? "MATCH" : "FAIL"}`);
+writeFileSync(out, JSON.stringify(report, null, 2) + "\n", "utf8");
+console.log(`frame-compare: ${a.length}/${b.length} frames · mismatches ${mismatches.length} · ${report.pass ? "MATCH" : "FAIL"}`);
+console.log(`report: ${resolve(out)}`);
 process.exit(report.pass ? 0 : 1);

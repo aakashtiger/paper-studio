@@ -3,7 +3,7 @@
 **Style:** `styles/paper-kpop` 0.1.0
 **Date:** 2026-10-28
 **Final run:** live `work/` — *Last Cue* (run-18), after 17 archived runs
-**Pack hash:** `sha256:a2089bd7af2d5c2e08615b9783fd431fb3e8edd7bb596b4ffaf003483be7eb27` (pack carries its painter; see **Pack revision** below)
+**Pack hash:** `sha256:fa25fe5272d79867bf3cdb9c9acadf06a03371737de7745f69502d9da70c593d` (pack carries its painter; see **Pack revision** below)
 **Pack hash at the run:** `sha256:6c5765be435bbf494bceaee6b770828c4bdd2c33d5c795287cf96435f8c211ba`
 **Result:** 6 shots · 30 s · 9:16 · 9/9 assertions · final pack and input/used copies matched · **post-build critics contract 9/10 GO · creative 9/10 GO · product 9/10 GO**
 **Author:** a fresh sub-agent given only the sealed `inputs/` copy.
@@ -86,8 +86,61 @@ style *contract* did not move, only the backend that draws it.
 
 Since the painter lives inside the pack, the revision hash moves with every
 painter edit (`55e994e8...` at the move, `a2089bd7...` after the duet and
-bow-pose passes). `make-inputs.ts` re-seals it each time; the frozen
-`6c5765be...` hash and the `work/` *Last Cue* authoring surface are unchanged.
+bow-pose passes, `fa8730bb...` after the score-directed staging pass,
+`eda400db...` after the measured-type pass, `fa25fe52...` after the copy-floor
+and safe-area pass that followed it). `make-inputs.ts` re-seals it each time; the
+frozen `6c5765be...` hash and the `work/` *Last Cue* authoring surface are
+unchanged.
+
+**Revision `fa8730bb` (2026-11-01).** The painter learned to take its staging
+from the score: who is on stage (`direction.cast`, absent meaning the recipe's
+own staging and `[]` meaning nobody), which pose each performer holds (`pose`
+events with `who`, `pose` and `breakdown`), where each beat happens (`eventTime`),
+and how the camera moves (`shotCam` reads the shot's `camera`). A pose the score
+does not name is now an error rather than a silent `poses[0]`. The type scale is
+derived from the pack's own 390 px authoring size
+(`TS(px) = round(px * W / 390)`), which is what `STYLE.md` already said larger
+frames do — before this, a 1920 px frame was set at 390 px numbers and captions
+landed under the pack's own 14 px floor. The recipe files, `tokens.json`,
+`capabilities.json`, the card, the fonts and the six reference frames are
+**byte-identical** — the authored surface a blind author reads did not move, so
+*Last Cue* remains the live blind answer and there is no run-19. What changed is
+the code that draws it, which is the pack's own backend and is hashed with it.
+
+**Revision `eda400db` → `fa25fe52` (2026-11-01).** Five defects the storyboard
+and the type audit found in the first 1920 px film, fixed in the painter only:
+
+- **Type is measured with the measure that draws it.** `fitSize` compared a
+  whole-string `measureText` (which ignores letter tracking and the fallback
+  metrics) against the box, so a caption was drawn ~100 px wider than its card
+  and ran off the right edge of the frame. It now measures with `TY.width`, the
+  same per-character measure the draw uses, keeps the pack's 14 px floor, and
+  breaks a long line into two balanced lines rather than shrinking below it.
+- **A title card is laid out at the frame, not through the camera.** The wide
+  shots' card lived inside the camera transform, so a 16% orbit scaled it past
+  the top edge. It is now a screen-space layer drawn after the camera closes,
+  inside the pack's 64 px margin.
+- **The cast clears the card.** A full-body performer is 800 px tall in a 1080
+  frame, so a card in the top corner sits over a head at any centre position.
+  The wides compose the cast on the left and the card on the right.
+- **The slam is bounded by the safe area.** The sticker entered at 155 % of its
+  resting size, which put the film's own words 80 px off both edges of the frame
+  for the first third of a second. It enters at 124 % and is fitted to 1,240 px,
+  so even with the wobble the label stays inside the safe area on every frame.
+- **The pair has room in it.** At 280 px apart the two cut-outs overlapped and
+  Mira's head sat on Nova's shoulder in the last shot of the film; the pair now
+  stands 400 px apart, which still leaves the right half clear for the end card.
+
+Again the recipe files, tokens, capabilities, card, fonts and reference frames
+are byte-identical; only `canvas/recipes.js` moved.
+
+**One more move, for the hash's sake.** The pack's hash is over bytes, and the
+repository stores text with LF endings (`* text=auto eol=lf`). `recipes.js` had
+picked up eight CRLF line endings on the new `copy: true` lines, so the sealed
+hash described this working copy rather than any checkout of the repository — a
+fresh clone would have re-hashed differently and failed the gate test. The file
+is normalized to LF and the pack re-sealed, which is why the current hash is
+`fa25fe52...` and not the `41a44b80...` that was written in the first pass.
 
 ## The discovery loop
 

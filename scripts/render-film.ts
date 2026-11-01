@@ -17,8 +17,9 @@ import { tmpdir } from "node:os";
 import { extname, join, relative, resolve, sep, dirname } from "node:path";
 import type { AddressInfo } from "node:net";
 import { findChrome as findChromePath } from "../src/engine/chrome.js";
-import { hashFile, manifestPath, renderInputs } from "../src/engine/manifest.js";
+import { hashFile, fontFaces, manifestPath, renderInputs } from "../src/engine/manifest.js";
 import type { RenderManifest } from "../src/engine/manifest.js";
+import { FilmScoreSchema } from "../src/engine/treatment.js";
 import { fileHash, videoStreamHash } from "../src/engine/video.js";
 
 const MIME: Record<string, string> = {
@@ -282,13 +283,9 @@ async function main(): Promise<void> {
 
   const cwd = process.cwd();
   const scoreFile = resolve(cwd, scorePath);
-  const score = JSON.parse(await readFile(scoreFile, "utf8")) as {
-    id: string;
-    style?: string;
-    duration: number;
-    fps?: number;
-    cast?: { character: string; poses?: string }[];
-  };
+  // The renderer paints what the score says, so it validates the score first:
+  // an invalid score should not reach a 900-frame draw loop.
+  const score = FilmScoreSchema.parse(JSON.parse(await readFile(scoreFile, "utf8")));
   const fps = Number(arg("fps") ?? score.fps ?? 30);
   const duration = Number(score.duration);
   if (!Number.isFinite(duration) || duration <= 0) throw new Error("score has no duration");
@@ -368,13 +365,17 @@ async function main(): Promise<void> {
     });
     await cdp.send("Page.navigate", { url: `${server.url}/films/${score.id}/index.html` });
     await waitForReady(cdp, 60_000);
+    // The families waited on are the ones the **page** declares, read from its
+    // `@font-face` rules: those are the only names `document.fonts.load` can
+    // resolve, so a list kept here would either be a second copy of style data
+    // or — on a pack whose page names other faces — a wait that proves nothing.
+    const faces = fontFaces(await readFile(join(filmDir, "index.html"), "utf8"));
+    const familyNames = [...new Set(faces.map((face) => face.family))];
+    if (familyNames.length === 0) {
+      throw new Error(`films/${score.id}/index.html declares no @font-face, so no font can be waited for`);
+    }
     await cdp.send("Runtime.evaluate", {
-      expression: `Promise.all([
-        document.fonts.load('16px "Anton"'),
-        document.fonts.load('16px "Archivo Black"'),
-        document.fonts.load('16px "DMMono"'),
-        document.fonts.load('16px "Permanent Marker"'),
-      ]).then(() => document.fonts.ready).then(() => {
+      expression: `Promise.all(${JSON.stringify(familyNames)}.map((name) => document.fonts.load('16px "' + name + '"'))).then(() => document.fonts.ready).then(() => {
         if (window.TY) window.TY.ready = true;
         window.__fontsReady = true;
         return true;

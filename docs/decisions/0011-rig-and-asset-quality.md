@@ -36,6 +36,15 @@ arm.
   eyelet, not left open.
 - A hand is drawn at the wrist anchor; a boot is drawn at the ankle anchor.
 - A limb that hangs from the torso inherits the torso's lean, head and shoulders.
+- **A part that hangs from a part inherits every transform between it and the
+  root** — including the torso's lean. The long hair hung from the head and was
+  drawn at the rig root; standing still it was invisible, and on a bow it stayed
+  upright while the head swung away, so the frame read as a detached head. This
+  one cannot be seen on a sheet of still poses with the head alone checked, so
+  it is measured instead: each rig publishes the chest, the head pivot and the
+  hair, and `audit:rig` holds every one of them to a fixed place in chest space.
+  The old placement fails it by 96.9 units against a 1.5-unit limit at the bow;
+  the fixed rig reads 0.0 (`npm run audit:rig:proof`).
 - The feet carry a contact shadow at the sole; the character never hovers.
 - Poses are clamped: elbows and knees cannot fold through the body.
 

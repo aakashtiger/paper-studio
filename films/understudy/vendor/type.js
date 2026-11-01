@@ -133,7 +133,10 @@ TY.sticker = function (ctx, str, x, y, size, o = {}) {
   TY.type(ctx, str, w / 2, h * .5 + size * .37, size, {
     family: fam, weight, align: 'center', color: o.text || ink, edge: o.textEdge === undefined ? null : o.textEdge,
     edgeW: o.textEdgeW ?? 0, shadow: o.textShadow === undefined ? null : o.textShadow,
-    track, charRot: .012, seed: o.seed ?? 7, jitter: o.jitter ?? 1
+    track, charRot: .012, seed: o.seed ?? 7, jitter: o.jitter ?? 1,
+    // A sticker carries the caller's copy flag down to the type it sets, so a
+    // label that is the film's words is measured as copy, not as decoration.
+    copy: o.copy
   });
   if (o.barcode) {
     ctx.save(); ctx.fillStyle = ink; ctx.globalAlpha = .8;

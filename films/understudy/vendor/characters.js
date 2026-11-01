@@ -381,6 +381,16 @@ function bangs(ctx, col) {
   ctx.beginPath(); ctx.moveTo(18, -62); ctx.quadraticCurveTo(28, -56, 34, -44); ctx.stroke();
 }
 
+/* An anchor is a point a rig hangs a body part from, published while the part is
+ * drawn: the point (x, y) is in the space in force at that moment, so the probe
+ * can turn "the head looks detached" into the distance between the head centre
+ * and the chest, in chest space. It is a no-op on its own; the probe wraps it.
+ * This is the one rig rule a still cannot check: a head drawn outside the
+ * torso's lean transform looks fine standing still and detaches on a bow. */
+function rigAnchor(ctx, part, x, y) {
+  return part;
+}
+
 /* ------------------------------------------------------------
    SOL — sunflower idol
    pose: bounce sway lean headTilt headTurn hairSwing petalDrift
@@ -412,9 +422,14 @@ function idol(ctx, x, y, s, o = {}) {
   if (shadow) shadowEllipse(ctx, 0, 0, 46 * s, 10 * s, .22);
   ctx.scale(flip * s, s);
 
-  // long hair behind everything
+  // long hair behind everything — but it hangs from the head, so it must ride
+  // the torso lean exactly like the head does. Drawn at the rig root it kept
+  // the upright head position and read as a second, detached head on a bow.
   ctx.save();
-  ctx.translate(0, HEAD + bounce); ctx.rotate(headTilt * .45 + headTurn * .1);
+  ctx.translate(0, -334 + bounce); ctx.rotate(lean); ctx.translate(0, 334);
+  ctx.save();
+  ctx.translate(0, HEAD); ctx.rotate(headTilt * .45 + headTurn * .1);
+  rigAnchor(ctx, "hair", 0, 0);
   for (let i = 0; i < 4; i++) {
     const sx = (i - 1.5) * 17;
     const len = 150 + C.hash(i * 3.3) * 46;
@@ -429,7 +444,8 @@ function idol(ctx, x, y, s, o = {}) {
     ctx.fillStyle = hair; ctx.fill();
     ctx.strokeStyle = C.rgba(PAL.ink, .5); ctx.lineWidth = 1.5; ctx.stroke();
   }
-  ctx.restore();
+  ctx.restore(); // hair rotation about the head
+  ctx.restore(); // torso lean the hair rides
 
   // far arm (behind torso); must inherit the torso lean like the near arm
   ctx.save();
@@ -464,6 +480,7 @@ function idol(ctx, x, y, s, o = {}) {
 
   // torso group (leans from waist)
   ctx.save(); ctx.translate(0, -334 + bounce); ctx.rotate(lean); ctx.translate(0, 334);
+  rigAnchor(ctx, "chest", 0, SHOULDER);
 
   // neck
   ctx.fillStyle = C.shade(skin, -8);
@@ -510,6 +527,7 @@ function idol(ctx, x, y, s, o = {}) {
   // head
   ctx.save();
   ctx.translate(0, -530); ctx.rotate(headTilt + headTurn * .16); ctx.translate(0, 530);
+  rigAnchor(ctx, "head", 0, -530);
   ctx.save(); ctx.translate(0, HEAD);
   flowerHead(ctx, { flower: F, petals: o.petals, halo: o.halo, spin: (o.petalSpin || 0) + (p.petalDrift || 0), seed: o.seed || 0, r0: o.flowerR0, r1: o.flowerR1 }, t);
   ctx.restore();
@@ -645,6 +663,7 @@ function mira(ctx, x, y, s, o = {}) {
 
   // torso
   ctx.save(); ctx.translate(0, -270 + bounce); ctx.rotate(lean); ctx.translate(0, 270);
+  rigAnchor(ctx, "chest", 0, SHOULDER);
   // tee
   ctx.fillStyle = PAL.ink;
   ctx.beginPath(); ctx.moveTo(-35, -452); ctx.quadraticCurveTo(-42, -370, -30, -268); ctx.lineTo(30, -268); ctx.quadraticCurveTo(42, -370, 35, -452); ctx.closePath(); ctx.fill();
@@ -698,6 +717,7 @@ function mira(ctx, x, y, s, o = {}) {
   // head
   ctx.save();
   ctx.translate(0, -462); ctx.rotate(headTilt); ctx.translate(0, 462);
+  rigAnchor(ctx, "head", 0, -462);
   ctx.save(); ctx.translate(0, HEAD);
   // hair back
   paper(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 48, Math.PI * .95, Math.PI * 2.05); ctx.lineTo(46, 44); ctx.quadraticCurveTo(26, 26, 0, 32); ctx.quadraticCurveTo(-26, 26, -46, 44); ctx.closePath(); }, { fill: hairCol, edge: C.rgba(PAL.ink, .55), edgeW: 2 });

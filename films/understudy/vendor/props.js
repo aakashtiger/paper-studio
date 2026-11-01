@@ -92,27 +92,37 @@ function starfield(ctx, t, n = 160, seed = 1, maxY = 720) {
   }
 }
 
-function crowd(ctx, t, y = 1034, col = '#120E0B', n = 22) {
+function crowd(ctx, t, y = 1034, col = '#120E0B', n = 16) {
   ctx.save();
   for (let i = 0; i < n; i++) {
     const x = 30 + i * (W - 60) / (n - 1) + C.hash(i * 3.3) * 26;
-    const h = 78 + C.hash(i * 7.1) * 46;
+    // A foreground paper layer, not a stencil: the nearest object in frame has
+    // to be the largest, so the heads are ~3x what they were (43 px on screen
+    // against a 670 px performer was 6 % — a distant strip, not an audience).
+    const h = 190 + C.hash(i * 7.1) * 95;
     const bob = Math.max(0, Math.sin(C.beat(t) * Math.PI + i * .6)) * 10;
+    // contact shadow onto the floor, one per figure
+    ctx.save();
+    ctx.globalAlpha = .18;
+    ctx.fillStyle = PAL.ink;
+    ctx.beginPath(); ctx.ellipse(x, y + 58, 92, 14, 0, 0, TAU); ctx.fill();
+    ctx.restore();
     ctx.fillStyle = col;
+    ctx.strokeStyle = C.rgba(PAL.cream, .5); ctx.lineWidth = 2.5;
     // torso
-    ctx.beginPath(); ctx.moveTo(x - 44, y + 60); ctx.quadraticCurveTo(x - 30, y - h * .55 + bob, x - 14, y - h * .5 + bob);
-    ctx.lineTo(x + 14, y - h * .5 + bob); ctx.quadraticCurveTo(x + 30, y - h * .55 + bob, x + 44, y + 60); ctx.closePath(); ctx.fill();
-    // head
-    ctx.beginPath(); ctx.arc(x, y - h * .72 + bob, 21, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x - 96, y + 62); ctx.quadraticCurveTo(x - 66, y - h * .55 + bob, x - 30, y - h * .5 + bob);
+    ctx.lineTo(x + 30, y - h * .5 + bob); ctx.quadraticCurveTo(x + 66, y - h * .55 + bob, x + 96, y + 62); ctx.closePath(); ctx.fill(); ctx.stroke();
+    // head, with the cut edge of a paper shape
+    ctx.beginPath(); ctx.arc(x, y - h * .72 + bob, 46, 0, TAU); ctx.fill(); ctx.stroke();
     // arm
     if (i % 3 === 0) {
-      ctx.strokeStyle = col; ctx.lineWidth = 12; ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.moveTo(x + 22, y - h * .45 + bob); ctx.lineTo(x + 38, y - h * .95 + bob + Math.sin(t * 3 + i) * 8); ctx.stroke();
+      ctx.strokeStyle = col; ctx.lineWidth = 26; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(x + 52, y - h * .45 + bob); ctx.lineTo(x + 86, y - h * .95 + bob + Math.sin(t * 3 + i) * 8); ctx.stroke();
     }
     // phone light
     if (i % 5 === 1) {
-      ctx.fillStyle = C.rgba('#FFF1C8', .85); ctx.fillRect(x + 30, y - h * .95 + bob, 7, 11);
-      ctx.fillStyle = C.rgba(PAL.gold, .1); ctx.beginPath(); ctx.arc(x + 33, y - h * .9 + bob, 28, 0, TAU); ctx.fill();
+      ctx.fillStyle = C.rgba('#FFF1C8', .85); ctx.fillRect(x + 72, y - h * .95 + bob, 14, 22);
+      ctx.fillStyle = C.rgba(PAL.gold, .1); ctx.beginPath(); ctx.arc(x + 79, y - h * .9 + bob, 56, 0, TAU); ctx.fill();
     }
   }
   ctx.restore();
@@ -137,16 +147,23 @@ function speakerStack(ctx, x, y, s, col = PAL.ink, accent = PAL.red) {
 function stageSet(ctx, t, o = {}) {
   const sky = o.sky || PAL.redD, sun = o.sun || PAL.gold, rayA = o.rayA || '#C93A20', rayB = o.rayB || '#E85A3A';
   const floor = o.floor || PAL.blue, accent = o.accent || PAL.cream;
-  paperBg(ctx, sky, o.sky2 || C.shade(sky, 18));
+  // Flat plate: paper is cut, never blended. A vertical gradient under a paper
+  // film is the one thing that made the wides read as vector rather than paper.
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, W, H);
   // rays
   sunburst(ctx, W / 2, 486, 0, 1300, 28, rayA, rayB, (o.rot || 0) + t * .04, .95);
   // giant sun, lifted off the backdrop with a hard paper shadow
   paper(ctx, () => blobPath(ctx, W / 2, 470, 436, 436, 64, .012, 4), { fill: sun, edge: C.rgba(PAL.cream, .8), edgeW: 4, shadow: C.rgba(PAL.ink, .24), sx: 14, sy: 20 });
   halftone(ctx, W / 2 - 436, 34, 872, 872, C.shade(sun, -40), 22, .5, .12);
-  // stage floor
+  // stage floor: a cut plate with a contact shadow onto the backdrop, so the
+  // floor is a piece of paper in front of the sky rather than a fill.
+  paper(ctx, () => tornRectPath(ctx, -200, 800, W + 400, H - 700, 7, 13), {
+    fill: floor, edge: C.rgba(PAL.ink, .35), edgeW: 3,
+    shadow: C.rgba(PAL.ink, .3), sx: -6, sy: -12,
+  });
   ctx.save();
   ctx.beginPath(); ctx.moveTo(-80, 800); ctx.lineTo(W + 80, 800); ctx.lineTo(W + 200, H + 80); ctx.lineTo(-200, H + 80); ctx.closePath();
-  ctx.fillStyle = floor; ctx.fill();
   ctx.clip();
   // perspective floor lines
   ctx.strokeStyle = C.rgba(PAL.cream, .18); ctx.lineWidth = 2;
@@ -160,7 +177,10 @@ function stageSet(ctx, t, o = {}) {
     const x = side < 0 ? -80 : W - 120;
     paper(ctx, () => tornRectPath(ctx, x, -30, 220, 930, 9, 31), {
       fill: PAL.red, edge: C.rgba(PAL.ink, 0.45), edgeW: 2.5,
-      shadow: C.rgba(PAL.ink, 0.3), sx: -side * 18, sy: 10,
+      // One key, from the top left: every paper shape in the set (the sun, the
+      // lip, the cards, both performers) casts down-right, so the curtains do
+      // too. The old inward offsets lit the room from both corners at once.
+      shadow: C.rgba(PAL.ink, 0.3), sx: 18, sy: 10,
     });
     for (let i = 0; i < 3; i++) {
       ctx.fillStyle = C.shade(PAL.red, -7 - i * 5);
@@ -170,9 +190,9 @@ function stageSet(ctx, t, o = {}) {
   // speakers
   speakerStack(ctx, 148, 960, 1.0, PAL.ink, PAL.red);
   speakerStack(ctx, 1772, 960, 1.0, PAL.ink, PAL.red);
-  // lights
-  spotlight(ctx, 250, -40, 1150, 40, 420, '#FFF6DC', .15, -.35);
-  spotlight(ctx, W - 250, -40, 1150, 40, 420, '#FFF6DC', .15, .35);
+  // one key light, top left — the direction every shadow in the pack already
+  // agrees with. A symmetric pair gave the room two sources and no shadow side.
+  spotlight(ctx, 250, -40, 1150, 40, 420, '#FFF6DC', .22, -.35);
   if (o.crowd !== false) crowd(ctx, t, o.crowdY ?? 1052);
   if (o.confetti) confetti(ctx, t, o.confetti, o.confettiCols || [PAL.cream, PAL.gold, PAL.blue, PAL.pink]);
   // proscenium torn edge

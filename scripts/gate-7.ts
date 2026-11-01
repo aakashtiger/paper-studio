@@ -19,6 +19,15 @@ import { videoStreamHash } from "../src/engine/video.js";
 import { packFontPath } from "../src/engine/plan.js";
 import { scoreDataPath, scoreDataText } from "../src/engine/score-data.js";
 import { cueSetText, type SfxRecordLike } from "../src/engine/sfx.js";
+import { FilmBriefSchema, mustSayGaps } from "../src/engine/film-brief.js";
+import { inputMismatches, type RenderInputs } from "../src/engine/manifest.js";
+/**
+ * The bounds the mix contract sets on the master come from `loudness.ts`, not
+ * from a copy here. The mix refuses a film past them and the gate refuses a
+ * report that claims to be inside them; when both files restated the numbers
+ * they drifted, and the gate was holding a bound the mix no longer had.
+ */
+import { LIMITER_MAX_REDUCTION as MASTER_MAX_LIMITING, MASTER_MAX_GAIN } from "../src/engine/loudness.js";
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
@@ -30,14 +39,6 @@ const scorePath: string = file;
 
 const root = process.cwd();
 
-/**
- * The bounds the mix contract sets on the master, restated here so the gate
- * reads the report against them. `MASTER_MAX_GAIN` and `LIMITER_MAX_REDUCTION`
- * in `scripts/mix.ts` are the same numbers: the mix refuses a film past them, and
- * the gate refuses a report that claims to be inside them.
- */
-const MASTER_MAX_GAIN = 8;
-const MASTER_MAX_LIMITING = 8;
 /** The delivery ceiling and loudness target `scripts/deliver.ts` holds the file to. */
 const DELIVERY_TP = -1.5;
 const DELIVERY_LUFS = -14;
@@ -47,6 +48,8 @@ const score = JSON.parse(readFileSync(resolve(root, file), "utf8")) as {
   style: string;
   duration: number;
   aspect: string;
+  clock?: { lines?: { text: string }[] };
+  shots?: { slots?: Record<string, string> }[];
 };
 const dir = resolve(root, "build", score.id);
 
@@ -147,24 +150,18 @@ async function main(): Promise<void> {
   const frames = read<{ pass: boolean; hash: string; videoHash?: string; frameCount: number }>("frame-audit.json");
   const manifest = read<{
     videoHash: string;
+    videoFileHash?: string;
     audio?: { path: string; hash: string } | null;
-    inputs: {
-      score: string | null;
-      scoreData: string | null;
-      backend: string | null;
-      backendPath?: string;
-      painter: string | null;
-      painterPath?: string;
-      poses?: Record<string, string | null>;
-    };
+    inputs: RenderInputs;
   }>("render-manifest.json");
   const determinism = read<{
     pass: boolean;
     mismatches: number;
     frameSetHash: string;
     pictureMatch?: boolean;
-    a?: { file: string; hash: string; videoHash: string | null };
-    b?: { file: string; hash: string; videoHash: string | null };
+    comparedAt?: string;
+    a?: { file: string; hash: string; bytes?: number; videoHash: string | null };
+    b?: { file: string; hash: string; bytes?: number; videoHash: string | null };
   }>("determinism.json");
   const mix = read<{
     passes: boolean;
@@ -186,6 +183,16 @@ async function main(): Promise<void> {
     };
     cueLevels?: { ok: boolean; toleranceDb: number; worst: { id: string; driftDb: number } | null };
     silence?: { ok: boolean; ceilingDb: number; windows: { from: number; to: number; peakDb: number; ok: boolean }[] };
+    undeclaredHoles?: {
+      ok: boolean;
+      minSeconds: number;
+      ceilingDb: number;
+      found: { from: number; to: number; seconds: number; peakDb: number }[];
+    };
+    roomUnderLines?: {
+      ok: boolean;
+      endedInLine: { cue: string; line: string; endsAt: number; lineEndsAt: number }[];
+    };
     tail?: { ok: boolean; ceilingDb: number; fromDb: number; endDb: number; monotonic: boolean };
     inputs?: { score: string | null; sfx: string | null; voice: string | null };
     files: { hash: string };
@@ -201,14 +208,32 @@ async function main(): Promise<void> {
   }>("palette-audit.json");
   const paint = read<{ pass: boolean; sampled: number; worst: { time: number; psnr: number }; videoHash: string | null }>("paint-match.json");
   const motion = read<{ pass: boolean; videoHash: string | null; weak: string[]; shots: { id: string; median: number }[] }>("motion-audit.json");
-  const type = read<{ pass: boolean; sampled: number; boxes: number; outside: unknown[] }>("type-audit.json");
-  const rig = read<{ pass: boolean; legs: number; unpairedSolves: number; worstAnkleJump: { distance: number } }>("rig-audit.json");
+  const type = read<{
+    pass: boolean;
+    sampled: number;
+    boxes: number;
+    copyBoxes?: number;
+    floor?: { px: number };
+    outside: unknown[];
+    belowFloor?: unknown[];
+  }>("type-audit.json");
+  const rig = read<{
+    pass: boolean;
+    legs: number;
+    unpairedSolves: number;
+    worstAnkleJump: { distance: number };
+    anchors?: number;
+    anchorPairs?: number;
+    anchoredCharacters?: string[];
+    worstSeamShift?: { units: number; limit: number };
+  }>("rig-audit.json");
   const asr = read<{
     pass: boolean;
     coverage: number;
     audio: string;
-    videoHash: string | null;
-    missing: string[];
+    audioHash: string;
+    pictureHash: string | null;
+    unmatched: { word: string; heard: string | null }[];
   }>("asr.json");
   const deliver = read<{
     ok: boolean;
@@ -280,60 +305,83 @@ async function main(): Promise<void> {
     },
     inputsHashed: (() => {
       // Hashed *and* still true: a string in a manifest proves nothing if the
-      // file it names has moved since. The score is in here for the same reason
-      // as the code: a render is a render of one score, and a manifest that
-      // names an older one describes a film that no longer exists. The page's
-      // data is in here because it is the file the painter actually reads.
-      const inputs = manifest?.inputs;
-      if (!inputs?.backendPath || !inputs?.painterPath) {
-        return { ok: false, detail: "the manifest names no backend or painter path to re-hash" };
-      }
-      const now = {
-        score: `sha256:${hashFile(resolve(root, scorePath))}`,
-        scoreData: `sha256:${hashFile(scoreDataPath(root, score.id))}`,
-        backend: `sha256:${hashFile(resolve(root, inputs.backendPath))}`,
-        painter: `sha256:${hashFile(resolve(root, inputs.painterPath))}`,
-      };
-      const stale = (Object.keys(now) as (keyof typeof now)[]).filter((key) => inputs[key] !== now[key]);
+      // file it names has moved since. **Every** input is re-hashed, not a
+      // hand-picked four: the vendor scripts draw every body and every word, the
+      // fonts shape every glyph, the pose libraries are cast data, and the page
+      // and captions are files the film is made of. `inputMismatches` is the one
+      // rule, so the gate and its test check the same list.
+      if (!manifest?.inputs) return { ok: false, detail: "no inputs in the manifest to re-hash" };
+      const stale = inputMismatches(manifest.inputs, (path) => {
+        const absolute = resolve(root, path);
+        return existsSync(absolute) ? `sha256:${hashFile(absolute)}` : null;
+      });
+      const count = manifest.inputs.files.length;
       return stale.length === 0
-        ? { ok: true, detail: "score + page data + backend + painter hashed into the manifest, and re-hashed now" }
-        : { ok: false, detail: `MOVED since the render: ${stale.join(", ")} — this picture no longer matches its inputs` };
+        ? { ok: true, detail: `${count} inputs re-hashed now: score, page data, backend, painter, page, captions, ${count - 6} more (vendor, fonts, poses)` }
+        : {
+            ok: false,
+            detail: `MOVED since the render: ${stale.join(", ")} — this picture no longer matches its ${count} inputs`,
+          };
     })(),
-    poseHashes: {
-      ok:
-        Boolean(manifest?.inputs?.poses) &&
-        Object.keys(manifest?.inputs?.poses ?? {}).length > 0 &&
-        Object.values(manifest?.inputs?.poses ?? {}).every((value) => typeof value === "string"),
-      detail: manifest?.inputs?.poses
-        ? `${Object.keys(manifest.inputs.poses).length} pose libraries hashed`
-        : "no pose hashes in the manifest",
-    },
-    determinism: {
-      ok:
-        determinism?.pass === true &&
+    determinism: (() => {
+      // Two renders are the same bytes, *and* those bytes are still the bytes on
+      // disk, *and* both produced the picture this film ships. A report that
+      // names a file the gate has not opened proves nothing: the delivered path
+      // is re-cut at delivery by design, which is exactly why the comparands
+      // must be two build copies at distinct paths.
+      const a = determinism?.a;
+      const b = determinism?.b;
+      if (!determinism || !a?.file || !b?.file) {
+        return { ok: false, detail: "no determinism report, or one that names no two files" };
+      }
+      const now = [a, b].map((side) => {
+        const absolute = resolve(root, side.file);
+        return existsSync(absolute) ? `sha256:${hashFile(absolute)}` : null;
+      });
+      const samePath = resolve(root, a.file) === resolve(root, b.file);
+      const recorded = now[0] === a.hash && now[1] === b.hash;
+      const ok =
+        determinism.pass === true &&
         determinism.mismatches === 0 &&
-        determinism.a !== undefined &&
-        determinism.b !== undefined &&
-        // Two renders of the same score are the same bytes, *and* the picture
-        // they both produced is the picture this film ships. Byte equality on
-        // two copies of one file would pass the first half only.
-        determinism.a.hash === determinism.b.hash &&
-        determinism.a.videoHash !== null &&
-        determinism.a.videoHash === frozenHash,
-      detail: determinism
-        ? `${determinism.mismatches} mismatched frames between two renders` +
-          (determinism.a?.videoHash === frozenHash ? " · same picture as the delivered film" : " · NOT the delivered picture")
-        : "no determinism report",
-    },
+        !samePath &&
+        recorded &&
+        a.hash === b.hash &&
+        a.videoHash !== null &&
+        a.videoHash === b.videoHash &&
+        a.videoHash === frozenHash;
+      const why = samePath
+        ? "both sides are the same path: a file compared with itself proves nothing"
+        : !recorded
+          ? "a file named in the report has moved since it was compared"
+          : a.videoHash !== frozenHash
+            ? "the two renders are not the delivered picture"
+            : `${determinism.mismatches} mismatched frames between two renders at different paths, re-hashed now`;
+      return { ok, detail: why };
+    })(),
     mix: {
       ok:
         mix?.passes === true &&
+        // Two checks the mix learned last: a hole nobody declared, and a bed
+        // that leaves mid-line. `passes` covers them, but a row that does not
+        // name them cannot say *why* the mix failed, and a missing section is
+        // treated as a failure rather than as a pass.
+        mix?.undeclaredHoles?.ok === true &&
+        mix?.roomUnderLines?.ok === true &&
         Boolean(mix.inputs?.sfx) &&
         mix.inputs?.sfx === (sfx ? `sha256:${sha256(cueSetText(sfx.cues))}` : "missing") &&
         mix.inputs?.score === `sha256:${hashFile(resolve(root, scorePath))}` &&
+        // The narration the mix was measured from, re-hashed: a re-recorded take
+        // with an old mix would otherwise pass three rows about a read nobody
+        // hears.
+        typeof mix.inputs?.voice === "string" &&
+        mix.inputs.voice === `sha256:${hashFile(resolve(root, "films", score.id, "voice.wav"))}` &&
         mix.files.hash === `sha256:${hashFile(resolve(dir, "mix", "master.wav"))}`,
       detail: mix
-        ? `${mix.measured.lufs.toFixed(1)} LUFS / ${mix.measured.truePeak.toFixed(1)} dBTP · inputs tied`
+        ? `${mix.measured.lufs.toFixed(1)} LUFS / ${mix.measured.truePeak.toFixed(1)} dBTP · voice, cue set, score and master tied` +
+          ` · ${mix.undeclaredHoles?.found.length ?? "?"} undeclared hole(s)` +
+          (mix.roomUnderLines?.endedInLine.length
+            ? ` · room bed ends under a line: ${mix.roomUnderLines.endedInLine.map((entry) => entry.cue).join(", ")}`
+            : "")
         : "no mix report",
     },
     // The master's level is not a number to trust, it is a number to read: the
@@ -414,6 +462,10 @@ async function main(): Promise<void> {
           deliver.ok === true &&
           deliver.output?.videoHash === frozenHash &&
           deliver.output?.fileHash === `sha256:${hashFile(file)}` &&
+          // The audio in the shipped file was measured from **this** master. Without
+          // this line a re-mix without a re-deliver ships the previous cut while
+          // the mix row reports the new one.
+          deliver.master.hash === mix?.files.hash &&
           typeof deliver.output?.audio?.truePeak === "number" &&
           deliver.output.audio.truePeak <= DELIVERY_TP &&
           typeof deliver.output.audio.lufs === "number" &&
@@ -421,7 +473,7 @@ async function main(): Promise<void> {
         );
       })(),
       detail: deliver?.output
-        ? `${deliver.output.path} · ${deliver.output.audio.lufs?.toFixed(1)} LUFS / ${deliver.output.audio.truePeak?.toFixed(1)} dBTP measured on the delivered file · picture ${deliver.output.videoHash === frozenHash ? "is the frozen one" : "is NOT the frozen one"}`
+        ? `${deliver.output.path} · ${deliver.output.audio.lufs?.toFixed(1)} LUFS / ${deliver.output.audio.truePeak?.toFixed(1)} dBTP measured on the delivered file · picture ${deliver.output.videoHash === frozenHash ? "is the frozen one" : "is NOT the frozen one"}${deliver.master.hash === mix?.files.hash ? " · from the current master" : " · NOT from the current master"}`
         : "no deliver report: run `npm run deliver -- <score>`",
     },
     palette: {
@@ -447,12 +499,19 @@ async function main(): Promise<void> {
     },
     typeSafeArea: {
       ok: type?.pass === true,
-      detail: type ? `${type.boxes} boxes in ${type.sampled} frames, ${type.outside.length} outside` : "no type-audit report",
+      detail: type
+        ? `${type.boxes} boxes in ${type.sampled} frames (${type.copyBoxes ?? 0} copy), ${type.outside.length} outside, ${type.belowFloor?.length ?? 0} under the ${type.floor?.px ?? "?"}px copy floor`
+        : "no type-audit report",
     },
     rigSeam: {
-      ok: rig?.pass === true,
+      // An empty anchor set is not a pass: it means no rig published where it
+      // hangs a part, or nothing was drawn twice to compare, and the row would
+      // be green while proving nothing.
+      ok: rig?.pass === true && (rig?.anchors ?? 0) > 0 && (rig?.anchorPairs ?? 0) > 0,
       detail: rig
-        ? `${rig.legs} legs, ${rig.unpairedSolves} unpaired, worst ankle jump ${rig.worstAnkleJump.distance}px`
+        ? `${rig.legs} legs, ${rig.unpairedSolves} unpaired, worst ankle jump ${rig.worstAnkleJump.distance}px; ` +
+          `${rig.anchors ?? 0} anchors / ${rig.anchorPairs ?? 0} pairs on ${(rig.anchoredCharacters ?? []).length} character(s), worst in-parent shift ` +
+          `${rig.worstSeamShift?.units ?? "?"} of ${rig.worstSeamShift?.limit ?? "?"} units`
         : "no rig-audit report",
     },
   };
@@ -466,15 +525,47 @@ async function main(): Promise<void> {
   // the exact command — never silently skipped.
   const pending: string[] = [];
   if (asr) {
+    // The ASR report is about a file: its audio hash and its picture hash both
+    // have to be the delivered film's, or the words were heard somewhere else.
+    // It is a hard check the moment the report exists.
     checks["asr"] = {
-      ok: asr.pass === true && (asr.videoHash === null || asr.videoHash === frozenHash),
+      ok:
+        asr.pass === true &&
+        asr.pictureHash === frozenHash &&
+        asr.audioHash === (existsSync(resolve(root, asr.audio)) ? `sha256:${hashFile(resolve(root, asr.audio))}` : "missing"),
       detail: `${(asr.coverage * 100).toFixed(1)}% of the script heard in ${asr.audio}${
-        asr.missing.length ? `, ${asr.missing.length} words missing` : ""
+        asr.unmatched.length
+          ? ` · ${asr.unmatched.length} words the recogniser spelled differently: ${asr.unmatched
+              .map((entry) => `${entry.word}${entry.heard ? `→${entry.heard}` : ""}`)
+              .join(", ")}`
+          : ""
       }`,
     };
   } else {
     pending.push("ASR of the mixed master: run `npm run asr -- <score>` (needs faster-whisper — tools/README.md)");
   }
+
+  // The brief's `mustSay` was parsed and never read by anything. This row is the
+  // command behind it: every phrase the client asked the film to say has to be
+  // in the narration, the captions or the type, word for word.
+  checks["briefSaid"] = (() => {
+    const briefPath = resolve(root, "films", score.id, "brief.json");
+    if (!existsSync(briefPath)) return { ok: false, detail: `no brief at films/${score.id}/brief.json to check against` };
+    const brief = FilmBriefSchema.parse(JSON.parse(readFileSync(briefPath, "utf8")));
+    const captionPath = resolve(root, "films", score.id, "captions.srt");
+    const texts = [
+      ...(score.clock?.lines ?? []).map((line) => line.text),
+      ...(score.shots ?? []).flatMap((shot) => Object.values(shot.slots ?? {})),
+      existsSync(captionPath) ? readFileSync(captionPath, "utf8") : "",
+    ];
+    const gaps = mustSayGaps(brief.mustSay, texts);
+    return gaps.length === 0
+      ? {
+          ok: true,
+          detail: brief.mustSay.length === 0 ? "the brief asks for no words" : `${brief.mustSay.length} phrases the brief asks for, all in the film`,
+        }
+      : { ok: false, detail: `the brief asks the film to say what it does not: ${gaps.join(", ")}` };
+  })();
 
   const failed = Object.entries(checks).filter(([, value]) => !value.ok).map(([name]) => name);
   const pass = failed.length === 0;

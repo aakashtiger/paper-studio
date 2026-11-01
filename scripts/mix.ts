@@ -13,14 +13,12 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
-import { measureLoudness, runFfmpeg } from "../src/engine/loudness.js";
+import { LIMITER_MAX_REDUCTION, MASTER_MAX_GAIN, measureLoudness, measureWithFilters, runFfmpeg } from "../src/engine/loudness.js";
 import { cueBand, cueDuckDb, cueSend, mixFilm } from "../src/engine/mix.js";
-import { CUE_LOUD, cueSetText, cueSpec, kindGain, loudMoment } from "../src/engine/sfx.js";
+import { cueSetText, cueSpec, cueTargetDb, kindLength, loudMoment } from "../src/engine/sfx.js";
 
 const TARGET_LUFS = -14;
 const TARGET_TP = -1.5;
-/** The most the master may add or take away. A mix needing more is a mix to fix. */
-const MASTER_MAX_GAIN = 8;
 /**
  * The limiter's sample ceiling, in linear full scale. -2 dBFS leaves room for
  * the inter-sample peaks that `ebur128` measures as true peak, so the limit
@@ -35,20 +33,6 @@ const MASTER_MAX_GAIN = 8;
 const LIMITER_CEILING = 0.794;
 /** How many gain/limit passes the master may take to land on the target. */
 const MASTER_PASSES = 6;
-/**
- * The most the limiter may take off the loudest sample.
- *
- * A -14 LUFS delivery gives a programme 12.5 dB between its loudness and its
- * true-peak ceiling. A hit that sits 16 dB over the film's loudness has to give
- * that difference back somewhere, and the limiter is where it goes — on the
- * loudest few milliseconds, not on the film. The bound is what separates that
- * from a mix that is simply broken: past this the film is being squashed rather
- * than mastered, and the fix belongs in the mix. `master.limiterWindows` in the
- * report says how the reduction is spread over the film, so the single number
- * can be read in context.
- */
-const LIMITER_MAX_REDUCTION = 8;
-
 /**
  * The most a declared silence may carry. A phone in a quiet room has a noise
  * floor near -60 dBFS; -50 leaves room for the encoder's own hiss and nothing
@@ -128,8 +112,10 @@ const cues = plan.cues.map((cue) => {
     duckDb: cueDuckDb(cue),
     band: cueBand(cue),
     pan: cue.pan,
-    /** The level the score's gain asks for: the kit's cue level plus the gain. */
-    levelDb: 20 * Math.log10(CUE_LOUD * (cue.gain ?? kindGain(cue.kind))),
+    /** Its own length on the film's clock, for the room-under-a-line check. */
+    duration: cue.duration ?? kindLength(cue.kind),
+    /** The level the score's gain asks for: the kit's target for that kind. */
+    levelDb: cueTargetDb(cue.kind, cue.gain),
   };
 });
 
@@ -212,6 +198,86 @@ const silences = declared.map((silence) => {
 const silenceOk = silences.every((silence) => silence.ok);
 
 /**
+ * The other direction: silence the score did **not** declare.
+ *
+ * `silences` only ever measured the windows the director wrote down, so a
+ * 270 ms hole at a cut — one foley cue decaying before the next arrives — shipped
+ * with no artifact able to see it, in the master and in the delivered MP4. The
+ * rule the repo states is that a hole in the foley is either a decision or a
+ * defect; this is the measurement behind it. Declared windows and the tail fade
+ * are exempt, because both are decisions already written down.
+ */
+const SILENCE_MIN_HOLE = 0.15;
+const holes = (() => {
+  const step = Math.max(1, Math.round(0.05 * sr));
+  const length = masterAudio.channels[0]?.length ?? 0;
+  const tailFrom = plan.duration - 0.5;
+  const found: { from: number; to: number; seconds: number; peakDb: number }[] = [];
+  let runStart: number | null = null;
+  let runPeak = 0;
+  const close = (endSample: number) => {
+    if (runStart === null) return;
+    const from = runStart / sr;
+    const to = endSample / sr;
+    const peak = runPeak;
+    runStart = null;
+    runPeak = 0;
+    if (to - from < SILENCE_MIN_HOLE - 1e-6) return;
+    if (from >= tailFrom) return;
+    if (declared.some((window) => from >= window.from - 0.02 && to <= window.to + 0.02)) return;
+    found.push({
+      from: Number(from.toFixed(3)),
+      to: Number(to.toFixed(3)),
+      seconds: Number((to - from).toFixed(3)),
+      peakDb: Number((20 * Math.log10(peak + 1e-9)).toFixed(1)),
+    });
+  };
+  for (let i = 0; i + step <= length; i += step) {
+    let peak = 0;
+    for (const channel of masterAudio.channels) {
+      for (let j = i; j < i + step; j++) peak = Math.max(peak, Math.abs(channel[j] ?? 0));
+    }
+    if (20 * Math.log10(peak + 1e-9) <= SILENCE_CEILING) {
+      if (runStart === null) runStart = i;
+      runPeak = Math.max(runPeak, peak);
+    } else {
+      close(i);
+    }
+  }
+  close(length);
+  return found;
+})();
+const holesOk = holes.length === 0;
+
+/**
+ * A room bed that stops while a line is still being spoken.
+ *
+ * The bed leaving mid-word is a mix decision nobody hears as one: the voice is
+ * alone under its most important sentence and no report says so. Either the bed
+ * runs under the line or the film declares that stretch silent.
+ */
+const roomEndsInLine = cues
+  .filter((cue) => cue.kind === "room")
+  .flatMap((cue) => {
+    const end = cue.at + (cue.duration ?? 0);
+    const lines = score.clock.mode === "narration" ? score.clock.lines : [];
+    const line = lines.find(
+      (entry) => cue.at < entry.start + entry.duration && end > entry.start && end < entry.start + entry.duration,
+    );
+    return line
+      ? [
+          {
+            cue: cue.id,
+            line: line.id,
+            endsAt: Number(end.toFixed(3)),
+            lineEndsAt: Number((line.start + line.duration).toFixed(3)),
+          },
+        ]
+      : [];
+  });
+const roomOk = roomEndsInLine.length === 0;
+
+/**
  * The film ends on a fade to nothing rather than on a cut: the last 0.5 s must
  * come down and stay down, and the final sample must be under `TAIL_CEILING`.
  */
@@ -244,6 +310,8 @@ const pass =
   duckOk &&
   levelsOk &&
   silenceOk &&
+  holesOk &&
+  roomOk &&
   tailOk;
 const report = {
   film: score.id,
@@ -302,6 +370,10 @@ const report = {
   },
   /** The score's silence claims, measured on the master that ships. */
   silence: { ok: silenceOk, ceilingDb: SILENCE_CEILING, windows: silences },
+  /** Silence the score did not declare: a decision not taken is a defect. */
+  undeclaredHoles: { ok: holesOk, minSeconds: SILENCE_MIN_HOLE, ceilingDb: SILENCE_CEILING, found: holes },
+  /** A room bed that stops under a line is a mix decision nobody hears as one. */
+  roomUnderLines: { ok: roomOk, endedInLine: roomEndsInLine },
   tail: fade,
   reverb: { room: 0.82, damp: 0.2, wet: 0.32 },
   passes: pass,
@@ -370,6 +442,20 @@ console.log(
   `tail: fade from ${fade.fromDb} dBFS to ${fade.endDb} dBFS over 0.5 s ` +
     `(${fade.monotonic ? "monotonic" : "RISES"}, ceiling ${TAIL_CEILING} dBFS)`,
 );
+if (!holesOk) {
+  console.error(
+    `error: ${holes.length} stretch(es) of silence the score does not declare ` +
+      `(>= ${SILENCE_MIN_HOLE}s at <= ${SILENCE_CEILING} dBFS): ` +
+      holes.map((hole) => `${hole.from}-${hole.to}s (${hole.seconds}s, peak ${hole.peakDb})`).join(", ") +
+      " — a hole in the foley is a decision or a defect, so declare it or fill it",
+  );
+}
+if (!roomOk) {
+  console.error(
+    `error: a room bed stops while a line is still being spoken: ` +
+      roomEndsInLine.map((entry) => `${entry.cue} ends ${entry.endsAt}s, ${entry.line} runs to ${entry.lineEndsAt}s`).join(", "),
+  );
+}
 if (!silenceOk) {
   console.error(
     `error: a declared silence carries sound above ${SILENCE_CEILING} dBFS; ` +
@@ -378,6 +464,21 @@ if (!silenceOk) {
 }
 if (!tailOk) {
   console.error(`error: the film does not fade to silence; the last 0.5 s must come down to ${TAIL_CEILING} dBFS`);
+}
+// The loudness and true-peak conditions used to be part of `pass` and print
+// nothing, so a master that landed 0.6 LU outside tolerance failed with no
+// sentence saying which number was wrong. A check that can fail silently is a
+// check the next person debugs by reading the source.
+if (Math.abs(measured.lufs - TARGET_LUFS) > 0.5) {
+  console.error(
+    `error: the master measures ${measured.lufs.toFixed(1)} LUFS; the target is ${TARGET_LUFS} ± 0.5 ` +
+      `(the master gain stopped at ${mastered.gainDb >= 0 ? "+" : ""}${mastered.gainDb} dB of a ±${MASTER_MAX_GAIN} dB bound)`,
+  );
+}
+if (measured.truePeak > TARGET_TP + 0.1) {
+  console.error(
+    `error: the master's true peak is ${measured.truePeak.toFixed(1)} dBTP; it must stay under ${TARGET_TP + 0.1} dBTP`,
+  );
 }
 if (!pass) process.exit(1);
 
@@ -526,15 +627,14 @@ function masterToTarget(ffmpeg: string, input: string, output: string): Mastered
   };
 }
 
-/** The true peak of `input` after `gainDb`, in dBTP, from the same meter as the target. */
+/**
+ * The true peak of `input` after `gainDb`, in dBTP, from the same meter as the
+ * target. The parse lives in `loudness.ts`, because one meter with two parsers
+ * is one parser too many — and this one used to default a missed match to 0,
+ * which turned the limiter bound into a passing number.
+ */
 function truePeakAfterGain(ffmpeg: string, input: string, gainDb: number): number {
-  const output = run(ffmpeg, [
-    "-hide_banner", "-i", input,
-    "-af", `volume=${gainDb.toFixed(2)}dB,ebur128=peak=true`,
-    "-f", "null", "-",
-  ]);
-  const summary = output.slice(output.lastIndexOf("Summary:"));
-  return Number(summary.match(/Peak:\s*(-?[\d.]+)\s*dBFS/)?.[1] ?? "0");
+  return measureWithFilters(ffmpeg, input, [`volume=${gainDb.toFixed(2)}dB`]).truePeak;
 }
 
 /**

@@ -7,6 +7,14 @@
  * derived clock and the shot boundaries a snap would move are written under
  * `build/<id>/clock.json` for the director to accept or ignore.
  *
+ * Two things are checked here, and they are different questions:
+ *
+ *   - **coverage** — are these the script's words? Whisper hears the WAV and the
+ *     heard words are attached to the script; a word never said fails.
+ *   - **clock** — is each line said when the score says? Measured on the audio
+ *     itself (the first sample above −40 dBFS near each authored start), because
+ *     a recogniser's word onsets wobble by a third of a second.
+ *
  * The video never waits on this, and this never runs at render time. The WAV is
  * spoken once and pinned; a later run reuses it unless `--force` is passed.
  *
@@ -43,6 +51,70 @@ async function run(command: string, argv: string[], cwd: string): Promise<number
   });
 }
 
+/**
+ * When each line actually starts in the narration WAV.
+ *
+ * The score's clock says "this line begins at 5.1 s". The only honest way to
+ * check that is to look at the samples: for each authored start, scan a short
+ * window around it for the first moment the voice rises above −40 dBFS. The
+ * capture writes 48 kHz 16-bit stereo PCM (ffmpeg's `-ar 48000 -ac 2`), so the
+ * reader is a header parse and a stride, not a decoder.
+ *
+ * A line with no authored `start`, or with no sound in its window, reports a
+ * null delta — that is a failure of the clock, not a silent pass.
+ */
+function wavOnsets(
+  path: string,
+  lines: VoiceLine[],
+): { id: string; authored: number | null; onset: number | null; delta: number | null }[] {
+  const bytes = readFileSync(path);
+  const channels = bytes.readUInt16LE(22);
+  const rate = bytes.readUInt32LE(24);
+  const bits = bytes.readUInt16LE(34);
+  let dataAt = 12;
+  while (dataAt + 8 <= bytes.length && bytes.toString("ascii", dataAt, dataAt + 4) !== "data") {
+    dataAt += 8 + bytes.readUInt32LE(dataAt + 4);
+  }
+  if (bytes.toString("ascii", dataAt, dataAt + 4) !== "data") {
+    throw new Error(`${path} has no data chunk`);
+  }
+  const asked = bits === 16 ? true : bits === 24 ? true : false;
+  if (!asked) throw new Error(`${path} is ${bits}-bit; the clock check reads 16- or 24-bit PCM`);
+  const start = dataAt + 8;
+  const end = Math.min(bytes.length, start + bytes.readUInt32LE(dataAt + 4));
+  const frameBytes = channels * (bits / 8);
+  const frames = Math.floor((end - start) / frameBytes);
+  const sample = (frame: number, channel: number): number => {
+    const at = start + frame * frameBytes + channel * (bits / 8);
+    if (bits === 16) return Math.abs(bytes.readInt16LE(at)) / 32768;
+    return Math.abs(bytes.readIntLE(at, 3)) / 8388608;
+  };
+  const loudness = (frame: number): number => {
+    let sum = 0;
+    for (let channel = 0; channel < channels; channel++) sum += sample(frame, channel);
+    return sum / channels;
+  };
+  const threshold = 0.01; // −40 dBFS
+  const window = 0.25; // seconds either side of the authored start
+  return lines.map((line) => {
+    if (line.start === undefined) return { id: line.id, authored: null, onset: null, delta: null };
+    const from = Math.max(0, Math.floor((line.start - window) * rate));
+    const to = Math.min(frames, Math.ceil((line.start + window) * rate));
+    for (let frame = from; frame < to; frame++) {
+      if (loudness(frame) > threshold) {
+        const onset = Number((frame / rate).toFixed(3));
+        return {
+          id: line.id,
+          authored: line.start,
+          onset,
+          delta: Number((onset - line.start).toFixed(3)),
+        };
+      }
+    }
+    return { id: line.id, authored: line.start, onset: null, delta: null };
+  });
+}
+
 async function main(): Promise<void> {
   const root = process.cwd();
   const scorePath = file as string;
@@ -66,6 +138,7 @@ async function main(): Promise<void> {
   const lines: VoiceLine[] = score.clock.lines.map((line) => ({
     id: line.id,
     text: line.text,
+    start: line.start,
     ...(line.hold !== undefined ? { hold: line.hold } : {}),
   }));
   const wordsOfScript = scriptWords(lines);
@@ -143,6 +216,19 @@ async function main(): Promise<void> {
 
   // 3. Derive. The clock and the boundaries a snap would move, as a proposal.
   const derived = deriveClockLines(lines, timed);
+  // The clock is a promise about when a line is *said*. Whisper proves the words
+  // are the script's, but its word onsets wobble (its first word came back 0.35 s
+  // early on a read that starts at 0.50 and measures 0.53), so timing is measured
+  // on the audio itself: the WAV is scanned for the moment the voice rises above
+  // −40 dBFS near each authored start. A film whose clock is ignored drifts by
+  // seconds; a read that keeps it lands inside a tenth.
+  const onsets = wavOnsets(narrationPath, lines);
+  const clockTolerance = 0.1;
+  const worstOnset = onsets.reduce(
+    (worst, line) => (line.delta !== null && Math.abs(line.delta) > Math.abs(worst) ? (line.delta as number) : worst),
+    0,
+  );
+  const lateLines = onsets.filter((line) => line.delta === null || Math.abs(line.delta) > clockTolerance);
   const snap = snapShots(
     plan.shots.map((shot) => ({ id: shot.id, start: shot.start, duration: shot.duration })),
     derived.map((line) => line.start),
@@ -192,6 +278,7 @@ async function main(): Promise<void> {
     heardWords: heard.length > 0,
     wordsWritten: existsSync(wordsPath) && timed.length === wordsOfScript.length,
     coverage: matched / Math.max(1, wordsOfScript.length) >= 0.9,
+    clock: lateLines.length === 0,
   };
   const pass = Object.values(checks).every(Boolean);
   writeFileSync(
@@ -211,6 +298,7 @@ async function main(): Promise<void> {
         matched,
         coverage: Number((matched / Math.max(1, wordsOfScript.length)).toFixed(4)),
         movedBoundaries: snap.moved,
+        clock: { tolerance: clockTolerance, worst: worstOnset, lines: onsets },
         toolVersions: status.modules,
         checks,
         generatedAt: new Date().toISOString(),
@@ -222,6 +310,16 @@ async function main(): Promise<void> {
   );
 
   console.log(`voice: ${matched}/${wordsOfScript.length} script words timed (${((matched / Math.max(1, wordsOfScript.length)) * 100).toFixed(1)}% heard)`);
+  console.log(
+    `voice: clock ${lateLines.length === 0 ? "kept" : `FAILED on ${lateLines.length} line(s)`} · worst line starts ` +
+      `${worstOnset >= 0 ? "+" : ""}${worstOnset.toFixed(2)}s from the score (tolerance ${clockTolerance}s)`,
+  );
+  for (const line of lateLines) {
+    console.log(
+      `  ${line.id}: the score says ${line.authored}s, ` +
+        (line.onset === null ? "and there is no sound anywhere near it" : `the voice starts at ${line.onset}s`),
+    );
+  }
   console.log(`voice: ${showPath(root, wordsPath)} · clock proposal build/${score.id}/clock.json`);
   if (snap.moved.length > 0) {
     console.log(`voice: ${snap.moved.length} shot boundaries sit within 0.35 s of a phrase beat:`);
