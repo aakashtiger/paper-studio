@@ -291,7 +291,7 @@
           "kind": "cloth",
           "event": {
             "shot": "s06",
-            "index": 4
+            "index": 5
           },
           "gain": 0.3,
           "note": "he looks up at the window"
@@ -929,7 +929,7 @@
       },
       "camera": {
         "move": "pull_back",
-        "from": 1.05,
+        "from": 1.12,
         "to": 1,
         "ease": "easeOut"
       },
@@ -973,12 +973,20 @@
             "quiet": "light has no sound"
           },
           {
+            "t": 4.7,
+            "kind": "pose",
+            "who": "Kiran",
+            "pose": "wake",
+            "breakdown": "slump",
+            "note": "he comes up out of the slump: a body starting before it turns",
+            "quiet": "a pose has no sound of its own"
+          },
+          {
             "t": 5.6,
             "kind": "pose",
             "who": "Kiran",
             "pose": "look",
-            "breakdown": "slump",
-            "note": "he looks up at the window"
+            "note": "he lifts his head to the window, over most of a second"
           }
         ]
       }

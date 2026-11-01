@@ -342,7 +342,7 @@ window.SCORE = {
       },
       "camera": {
         "move": "pull_back",
-        "from": 1.05,
+        "from": 1.12,
         "to": 1,
         "ease": "easeOut"
       },
@@ -386,12 +386,20 @@ window.SCORE = {
             "quiet": "light has no sound"
           },
           {
+            "t": 4.7,
+            "kind": "pose",
+            "note": "he comes up out of the slump: a body starting before it turns",
+            "quiet": "a pose has no sound of its own",
+            "who": "Kiran",
+            "pose": "wake",
+            "breakdown": "slump"
+          },
+          {
             "t": 5.6,
             "kind": "pose",
-            "note": "he looks up at the window",
+            "note": "he lifts his head to the window, over most of a second",
             "who": "Kiran",
-            "pose": "look",
-            "breakdown": "slump"
+            "pose": "look"
           }
         ]
       }
@@ -898,7 +906,7 @@ window.SCORE = {
           "id": "sfx-look",
           "event": {
             "shot": "s06",
-            "index": 4
+            "index": 5
           },
           "kind": "cloth",
           "note": "he looks up at the window",
@@ -1357,10 +1365,10 @@ window.SCORE = {
       "id": "sfx-look",
       "event": {
         "shot": "s06",
-        "index": 4,
+        "index": 5,
         "t": 5.6,
         "kind": "pose",
-        "note": "he looks up at the window"
+        "note": "he lifts his head to the window, over most of a second"
       },
       "kind": "cloth",
       "note": "he looks up at the window",

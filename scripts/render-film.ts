@@ -7,6 +7,7 @@
  *
  * usage: npm run render:film -- films/understudy/score.json [--out film.mp4]
  *        [--audio mix.wav] [--crf 18] [--keep-frames <dir>]
+ *        [--from <s> --to <s>]   a probe slice of one shot; writes no manifest
  */
 import { createServer } from "node:http";
 import { createServer as createNetServer } from "node:net";
@@ -436,28 +437,50 @@ async function main(): Promise<void> {
       return;
     }
 
+    // A **slice** renders a window of the film so one shot can be measured
+    // without a full pass. It is a probe, not a deliverable: it writes no
+    // manifest, because the manifest is the claim that a picture is the film,
+    // and a slice is not. The picture is identical either way — the painter is
+    // a pure function of the film's absolute time — so a shot measured here
+    // measures the same thing the full render will.
+    const fromSec = Number(arg("from") ?? 0);
+    const toSec = Number(arg("to") ?? duration);
+    const slice = fromSec > 0 || toSec < duration;
+    const firstFrame = slice ? Math.round(fromSec * fps) : 0;
+    const lastFrame = slice ? Math.min(frameCount, Math.round(toSec * fps)) : frameCount;
+    if (slice && !(lastFrame > firstFrame)) {
+      throw new Error(`--from ${fromSec} --to ${toSec} selects no frames`);
+    }
+
     const started = Date.now();
     const limit = arg("limit");
-    const total = limit === undefined ? frameCount : Math.min(frameCount, Math.max(0, Number(limit)));
-    for (let index = 0; index < total; index++) {
+    const sliceTotal = lastFrame - firstFrame;
+    const total = limit === undefined ? sliceTotal : Math.min(sliceTotal, Math.max(0, Number(limit)));
+    for (let offset = 0; offset < total; offset++) {
+      const index = firstFrame + offset;
       const time = index / fps;
       const frame = await drawFrame(cdp, time);
       const base64 = frame.data.slice(frame.data.indexOf(",") + 1);
       await writeFile(
-        join(framesDir, `frame-${String(index + 1).padStart(4, "0")}.png`),
+        join(framesDir, `frame-${String(offset + 1).padStart(4, "0")}.png`),
         Buffer.from(base64, "base64"),
       );
-      if (index === 0 || (index + 1) % 60 === 0 || index === total - 1) {
+      if (offset === 0 || (offset + 1) % 60 === 0 || offset === total - 1) {
         const seconds = (Date.now() - started) / 1000;
-        const rate = (index + 1) / seconds;
+        const rate = (offset + 1) / seconds;
         console.log(
-          `frame ${String(index + 1).padStart(4, "0")}/${total} · ${time.toFixed(2)}s · ${rate.toFixed(1)} fps`,
+          `frame ${String(offset + 1).padStart(4, "0")}/${total} · ${time.toFixed(2)}s · ${rate.toFixed(1)} fps`,
         );
       }
     }
 
     await encode({ ffmpeg: findFfmpeg(), framesDir, fps, crf, audio, output });
     console.log(`render: ${output}`);
+
+    if (slice) {
+      console.log(`slice: ${fromSec}s–${toSec}s of ${score.id} · a probe, not a deliverable · no manifest written`);
+      return;
+    }
 
     // The manifest is written **here**, by the step that painted the frames,
     // because this is the only step that knows what it painted from. Hashing the

@@ -833,6 +833,16 @@ window.PAPER_BACKEND = {
 const OFFICE = {
   ceiling: 96,
   desk: 772,
+  /**
+   * Where a seated figure's feet are, so his hands land **on** the desk.
+   *
+   * Measured from the rig, not guessed: the wrist sits 279 rig units above the
+   * feet, and the figure is drawn at 1.5, so the hands hang 418.5 px above his
+   * feet. At `figureFloor` (1180) the hands were at 762 — 10 px above the desk
+   * line, over nothing, which is why a man at a desk read as a man standing
+   * behind one. 772 + 418.5 = 1190.5.
+   */
+  seated: 1191,
   figureFloor: 1180,
   scale: 1.35,
   /** How tall the whole day of paper stands once the last row lands. */
@@ -992,6 +1002,57 @@ function officeDeskThings(x, y, s, o = {}) {
   paper(ctx, () => roundRectPath(ctx, x - 190 * s, y - 30 * s, 84 * s, o.phoneH || 22 * s, 6 * s), {
     fill: PAL.ink, edge: C.rgba(PAL.ink, 0.7), edgeW: 2, shadow: C.rgba(PAL.ink, 0.24), sx: 5, sy: 8,
   });
+}
+
+/**
+ * The work: one form, lying flat on the desk, under his hands.
+ *
+ * The desk was empty in front of him, which is why `type` and `slump` read as a
+ * man standing behind furniture — his hands had nothing to be over. This film's
+ * work is paper (the stack on the desk's right is the whole day of it), so the
+ * form he is filling in is paper too: ruled, boxed, and half ticked.
+ *
+ * It is flat on the surface, so it casts **no** shadow: the first version had
+ * the same lift shadow as a cut-out standing up, and read as an envelope pasted
+ * on the front of the desk. Its top edge is the desk's far edge, which is where
+ * his hands are (`OFFICE.seated`), so the hands rest on it.
+ */
+function officeSheet(x, y, s = 1, o = {}) {
+  const w = 340 * s;
+  const h = 84 * s;
+  ctx.save();
+  ctx.translate(x, y + h / 2);
+  ctx.rotate(o.rot === undefined ? -0.008 : o.rot);
+  paper(ctx, () => tornRectPath(ctx, -w / 2, -h / 2, w, h, 3, 11), {
+    fill: o.fill || PAL.cream,
+    edge: C.rgba(PAL.ink, 0.45), edgeW: 2,
+    shadow: null,
+  });
+  // the lines he has written on, unevenly
+  ctx.save();
+  ctx.globalAlpha = o.night ? 0.28 : 0.4;
+  ctx.fillStyle = PAL.ink;
+  for (let i = 0; i < 2; i++) {
+    ctx.fillRect(
+      -w / 2 + 22 * s,
+      -h / 2 + (22 + i * 22) * s,
+      (w - 120 * s) * (0.75 + C.hash(i + 3) * 0.25),
+      2.2 * s,
+    );
+  }
+  ctx.restore();
+  // the box he is meant to tick, and the tick
+  ctx.save();
+  ctx.globalAlpha = 0.5;
+  ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2 * s;
+  ctx.strokeRect(w / 2 - 84 * s, -h / 2 + 14 * s, 24 * s, 24 * s);
+  ctx.restore();
+  ctx.save();
+  ctx.globalAlpha = 0.8;
+  ctx.fillStyle = PAL.red;
+  ctx.fillRect(w / 2 - 80 * s, -h / 2 + 24 * s, 16 * s, 5 * s);
+  ctx.restore();
+  ctx.restore();
 }
 
 /**
@@ -1545,11 +1606,12 @@ function deskWide(shot, lt, t) {
   officeWindow(1210, 146, 600, 430, officeDaySky(shot.slots["content.caption"]), t);
   const lead = castIn(shot, 0);
   if (lead) {
-    officeChairBack(860, 1014, 1.95);
-    officeActor(shot, lt, t, lead, 860, 1180, 1.5, null, 1);
+    officeChairBack(880, 1014, 1.45);
+    officeActor(shot, lt, t, lead, 860, OFFICE.seated, 1.5, null, 1);
   }
-  officeMonitor(1040, OFFICE.desk + 4, 1.1, { glow: 0.7 });
+  officeMonitor(1190, OFFICE.desk + 4, 1.1, { glow: 0.7 });
   officeDesk();
+  officeSheet(860, OFFICE.desk + 28, 1);
   officeDeskThings(430, OFFICE.desk + 40, 1.0, {});
   officeStack(1560, OFFICE.desk + 6, rows, t);
   if (landing.length) {
@@ -1574,45 +1636,60 @@ function windowDusk(shot, lt, t) {
   officeWindow(1080, 176, 640, 540, sky, t);
   const lead = castIn(shot, 0);
   if (lead) {
-    officeChairBack(830, 1014, 1.95);
-    officeActor(shot, lt, t, lead, 830, 1180, 1.5, null, 1);
+    officeChairBack(850, 1014, 1.45);
+    officeActor(shot, lt, t, lead, 830, OFFICE.seated, 1.5, null, 1);
   }
-  officeMonitor(1080, OFFICE.desk + 4, 1.05, { glow: 0.35 });
+  officeMonitor(1160, OFFICE.desk + 4, 1.05, { glow: 0.35 });
   officeDesk({ night: sky > 0.7 });
+  officeSheet(830, OFFICE.desk + 28, 1, { night: sky > 0.7 });
   officeDeskThings(400, OFFICE.desk + 40, 1.0, {});
   officeStack(1520, OFFICE.desk + 6, rows, t);
   endCam(ctx);
   officeHourTab(shot.slots["content.caption"], t);
 }
 
-/** 16:00 — a supervisor arrives, points at the stack, and leaves. */
+/** 16:00 - a supervisor arrives, points at the stack, and leaves. */
 function supervisorPoint(shot, lt, t) {
   const d = shot.duration;
   const rows = officeBuildRows(shot, lt);
   const enter = C.clamp((lt - 0.15) / 1.3);
   const leave = C.clamp((lt - (d - 1.5)) / 1.3);
-  const vx = 2140 - C.easeOut(enter) * 800 + C.easeIn(leave) * 900;
+  // He arrives along the desk and stops between Kiran and the stack.
+  //
+  // He used to be drawn AFTER the desk, at a smaller scale than the man behind
+  // it — a figure in front of the furniture, the wrong size for the depth he
+  // was standing at, walking on a floor he was a hundred pixels below, with the
+  // paper stack behind his coat. One ground plane and one scale: he stands where
+  // his colleague sits, behind the same desk. The power in the shot is his
+  // posture, not a faked perspective.
+  const vx = 1980 - C.easeOut(enter) * 800 + C.easeIn(leave) * 900;
   shotCam(shot, lt, d, W / 2 + 40, 540, 0.2, t);
   beginCam(ctx);
   officeRoom(t);
   officeFluor(W / 2, 30, 1100, 1, t);
+  const boss = castIn(shot, 1);
   const lead = castIn(shot, 0);
+  // Both men look at the stack — the thing the scene is about. A shared eyeline
+  // on the object of the film, not two cut-outs facing the lens.
+  const stack = C.clamp((lt - 0.9) / 0.8);
   if (lead) {
-    officeChairBack(680, 1014, 1.95);
-    officeActor(shot, lt, t, lead, 680, 1180, 1.5, null, 1);
+    officeChairBack(700, 1014, 1.45);
+    officeActor(shot, lt, t, lead, 680, OFFICE.seated, 1.5, null, 1, {
+      headTurn: 0.34 * stack,
+      headTilt: 0.1 * stack,
+    });
+  }
+  if (boss) {
+    officeActor(shot, lt, t, boss, vx, OFFICE.seated, 1.5, null, -1, {
+      bounce: (value) => (value || 0) - stepBob(1.7, t, 5) * (enter < 1 || leave > 0 ? 1 : 0),
+      headTurn: 0.3 * C.clamp((lt - 1.4) / 0.7),
+      headTilt: -0.06 * C.clamp((lt - 1.4) / 0.7),
+    });
   }
   officeMonitor(1000, OFFICE.desk + 4, 1.05, { glow: 0.6 });
   officeDesk();
+  officeSheet(680, OFFICE.desk + 28, 1);
   officeStack(1440, OFFICE.desk + 6, rows, t);
-  const boss = castIn(shot, 1);
-  if (boss) {
-    const stride = Math.sin(t * 5.1);
-    officeActor(shot, lt, t, boss, vx, 1180, 1.32, null, -1, {
-      bounce: (value) => (value || 0) - stepBob(1.7, t, 5) * (enter < 1 || leave > 0 ? 1 : 0),
-      footL: () => [-22 - 15 * stride, -6 - 13 * Math.max(0, stride)],
-      footR: () => [24 + 15 * stride, -6 - 13 * Math.max(0, -stride)],
-    });
-  }
   endCam(ctx);
   officeHourTab(shot.slots["content.caption"], t);
 }
@@ -1647,11 +1724,12 @@ function deskNight(shot, lt, t) {
   ctx.beginPath(); ctx.moveTo(570, 560); ctx.lineTo(570, 780); ctx.stroke();
   const lead = castIn(shot, 0);
   if (lead) {
-    officeChairBack(930, 1014, 1.95);
-    officeActor(shot, lt, t, lead, 930, 1180, 1.5, null, 1);
+    officeChairBack(950, 1014, 1.45);
+    officeActor(shot, lt, t, lead, 930, OFFICE.seated, 1.5, null, 1);
   }
   officeMonitor(1250, OFFICE.desk + 4, 1.15, { glow: 1 });
   officeDesk({ night: true });
+  officeSheet(930, OFFICE.desk + 28, 1, { night: true });
   officeStack(1660, OFFICE.desk + 6, rows, t);
   endCam(ctx);
   officeHourTab(shot.slots["content.caption"], t);
