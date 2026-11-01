@@ -25,6 +25,16 @@ import { PoseLibrarySchema, resolvePoseLibrary } from "./pose.js";
  */
 
 export const TreatmentShotSchema = z.object({
+  /**
+   * The beat of the film's `beats.json` this shot serves.
+   *
+   * Optional because a score may be written before the film has a beat map at
+   * all (every film before decision 0025 was), but once a film *has* beats,
+   * `checkCut()` refuses a shot that is not bound to one: a cut that does not
+   * answer the beat sheet is the same defect as a beat that owns sixteen
+   * seconds of a sixty-second film without saying anything in them.
+   */
+  beat: z.string().min(1).optional(),
   recipe: z.string().min(1),
   duration: z.number().positive(),
   slots: z.record(z.string()).default({}),
@@ -69,6 +79,8 @@ export type TreatmentIssue = {
 
 export type ResolvedShot = {
   id: string;
+  /** The beat this shot serves, when the film has a beat map (decision 0025). */
+  beat?: string;
   recipe: string;
   start: number;
   duration: number;
@@ -292,6 +304,7 @@ export function resolveTreatment(
 
     const resolved: ResolvedShot = {
       id,
+      beat: shot.beat,
       recipe: shot.recipe,
       start: round(start),
       duration: round(shot.duration),

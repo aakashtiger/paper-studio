@@ -1,3 +1,4 @@
+import { checkCut, type CutBeat, type CutReport } from "./cut.js";
 import { kindLength } from "./sfx.js";
 import { type Issue, type Pace, countWords } from "./story.js";
 import type { ResolvedFilm } from "./treatment.js";
@@ -77,12 +78,14 @@ export type PreflightInput = {
    * been delivered (`reproduce`) may be re-rendered without one.
    */
   story: { errors: Issue[]; warnings: Issue[] } | null;
+  /** The beat map, when the film has one: the cut is then checked against it. */
+  beats?: CutBeat[] | null;
   cast: CastFact[];
   /** True when the film already has a delivered file: this is a reproduction, not a new film. */
   reproduce: boolean;
 };
 
-export type PreflightIssue = Issue & { check: "story" | "pacing" | "narration" | "sound" | "cast" };
+export type PreflightIssue = Issue & { check: "story" | "cut" | "pacing" | "narration" | "sound" | "cast" };
 
 export type PreflightReport = {
   film: string;
@@ -108,6 +111,8 @@ export type PreflightReport = {
     longest: { id: string; seconds: number; share: number } | null;
   };
   cast: { character: string; rig: string; poses: string }[];
+  /** The film's scenes, derived from the shots — present only when the film has beats. */
+  cut: CutReport | null;
   errors: PreflightIssue[];
   warnings: PreflightIssue[];
 };
@@ -149,6 +154,7 @@ const band = (value: [number, number]) => `${value[0]}–${value[1]}`;
 
 export function preflightFilm(input: PreflightInput): PreflightReport {
   const { plan, pace, paceSource, story, cast, reproduce } = input;
+  const beats = input.beats ?? null;
   const errors: PreflightIssue[] = [];
   const warnings: PreflightIssue[] = [];
   const add = (check: PreflightIssue["check"], issue: Issue) => errors.push({ ...issue, check });
@@ -171,7 +177,7 @@ export function preflightFilm(input: PreflightInput): PreflightReport {
     for (const issue of story.warnings) warn("story", issue);
   }
 
-  // 2 — the cut. A shot list is not a cut, and the count is where it shows.
+  // 2 — the shape of the cut. A shot list is not a cut, and the count is where it shows.
   const lengths = plan.shots.map((shot) => shot.duration);
   const mid = median(lengths);
   const shotBand = pace.medianShot;
@@ -208,7 +214,28 @@ export function preflightFilm(input: PreflightInput): PreflightReport {
     }
   }
 
-  // 3 — the narration. The clock is the measured voice, so this is what the
+  // 3 — the cut answers the beats. With a beat map, every shot is bound to the
+  // beat it serves, the beat's share of the shots is its share of the writing,
+  // its signature sound is actually played, and the shot says why it exists.
+  let cut: CutReport | null = null;
+  if (beats && beats.length > 0) {
+    cut = checkCut({
+      shots: plan.shots.map((shot) => ({
+        id: shot.id,
+        start: shot.start,
+        duration: shot.duration,
+        beat: shot.beat,
+        reason: shot.direction.spine,
+      })),
+      beats,
+      cues: plan.cues,
+      duration,
+    });
+    for (const issue of cut.errors) add("cut", issue);
+    for (const issue of cut.warnings) warn("cut", issue);
+  }
+
+  // 4 — the narration. The clock is the measured voice, so this is what the
   // audience will actually hear, not what the script hoped for.
   let narration: PreflightReport["narration"] = null;
   if (plan.clock.mode === "narration") {
@@ -260,7 +287,7 @@ export function preflightFilm(input: PreflightInput): PreflightReport {
     warn("narration", { code: "narration:none", message: "the clock is foley: the film has no spoken word" });
   }
 
-  // 4 — the sound. One cue under the whole film is not a bed, it is a wall, and
+  // 5 — the sound. One cue under the whole film is not a bed, it is a wall, and
   // it is why the delivered mix had no contrast left to land a line on.
   let longest: PreflightReport["sound"]["longest"] = null;
   for (const cue of plan.cues) {
@@ -279,7 +306,7 @@ export function preflightFilm(input: PreflightInput): PreflightReport {
     }
   }
 
-  // 5 — the cast. A rig the film's own vendor does not register draws nothing,
+  // 6 — the cast. A rig the film's own vendor does not register draws nothing,
   // and a blank character is the kind of thing the collage must never discover.
   for (const member of cast) {
     for (const problem of member.problems) add("cast", problem);
@@ -300,6 +327,7 @@ export function preflightFilm(input: PreflightInput): PreflightReport {
     narration,
     sound: { cues: plan.cues.length, longest },
     cast: cast.map(({ character, rig, poses }) => ({ character, rig, poses })),
+    cut,
     errors,
     warnings,
   };

@@ -18,6 +18,7 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { PoseLibrarySchema, resolvePoseLibrary } from "../src/engine/pose.js";
+import type { CutBeat } from "../src/engine/cut.js";
 import { preflightFilm, DEFAULT_PACE, type CastFact } from "../src/engine/preflight.js";
 import { BeatsSchema, PaceSchema, StorySchema, checkStory, type Issue, type Pace } from "../src/engine/story.js";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
@@ -113,6 +114,7 @@ const { pace, source } = readPace();
 const storyPath = resolve(filmDir, "story.json");
 const beatsPath = resolve(filmDir, "beats.json");
 let story: { errors: Issue[]; warnings: Issue[] } | null = null;
+let beatMap: CutBeat[] | null = null;
 if (existsSync(storyPath) || existsSync(beatsPath)) {
   if (!existsSync(storyPath) || !existsSync(beatsPath)) {
     const missing = existsSync(storyPath) ? "beats.json" : "story.json";
@@ -123,6 +125,12 @@ if (existsSync(storyPath) || existsSync(beatsPath)) {
   const beats = BeatsSchema.parse(JSON.parse(readFileSync(beatsPath, "utf8")));
   const check = checkStory(written, beats);
   story = { errors: check.errors, warnings: check.warnings };
+  beatMap = beats.beats.map((beat) => ({
+    id: beat.id,
+    title: beat.title,
+    share: beat.share,
+    sound: { signature: beat.sound.signature, quiet: beat.sound.quiet },
+  }));
 }
 
 const { plan, errors: resolveErrors, warnings: resolveWarnings } = resolveFilm(
@@ -144,7 +152,7 @@ for (const warning of resolveWarnings) console.error(`warning: ${warning.message
  */
 const reproduce = existsSync(resolve(root, "films", score.id, `${score.id}.mp4`));
 
-const report = preflightFilm({ plan, pace, paceSource: source, story, cast, reproduce });
+const report = preflightFilm({ plan, pace, paceSource: source, story, beats: beatMap, cast, reproduce });
 const scoreHash = `sha256:${createHash("sha256").update(readFileSync(scorePath)).digest("hex")}`;
 const written = { ...report, score: scoreHash };
 const out = resolve(root, "build", score.id);
@@ -178,6 +186,17 @@ if (json) {
   console.log(
     `  cast      ${report.cast.length > 0 ? report.cast.map((member) => `${member.character} ${member.rig}`).join(" · ") : "none"}`,
   );
+  if (report.cut) {
+    console.log(`  scenes    ${report.cut.scenes.length} scene(s) from ${report.cut.beats.length} beats`);
+    for (const scene of report.cut.scenes) {
+      const row = report.cut.beats.find((beat) => beat.beat === scene.beat);
+      console.log(
+        `            ${scene.beat}  ${scene.from.toFixed(1).padStart(5)}–${scene.to.toFixed(1)}s · ` +
+          `${scene.shots.length} shot(s) · declared ${((row?.declared ?? 0) * 100).toFixed(0)}% · ` +
+          `shot ${((row?.share ?? 0) * 100).toFixed(0)}% · ${row?.cues ?? 0} cue(s)`,
+      );
+    }
+  }
   if (report.warnings.length > 0) {
     console.log("");
     for (const warning of report.warnings) console.log(`  warn  ${warning.message}`);

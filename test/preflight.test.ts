@@ -29,8 +29,28 @@ function resolvedSameAlarm(): ResolvedFilm {
  */
 function passingPlan(): ResolvedFilm {
   const shotLength = 2.5;
+  // Twelve shots at the 2.5 s median, each bound to the beat it serves and each
+  // with a reason to exist. The assignment mirrors the beat map's shares: two
+  // shots on the hook, three on the corridor, two on the demand, three on the
+  // quiet turn, two on the button.
+  const beatOf = ["b01", "b01", "b02", "b02", "b02", "b03", "b03", "b04", "b04", "b04", "b05", "b05"];
+  const reasonOf = [
+    "the alarm starts the day",
+    "the lamp finds the phone",
+    "twelve steps on lino",
+    "the doors are all closed",
+    "a phone rings on the desk",
+    "he says yes again",
+    "the light does not change",
+    "the room empties around him",
+    "a chair rolls to a stop",
+    "he stays in the dark",
+    "the alarm again at six",
+    "no hand reaches for it",
+  ];
   const shots = Array.from({ length: 12 }, (_, index) => ({
     id: `s${String(index + 1).padStart(2, "0")}`,
+    beat: beatOf[index],
     recipe: "office_day",
     start: index * shotLength,
     duration: shotLength,
@@ -38,7 +58,7 @@ function passingPlan(): ResolvedFilm {
     camera: { move: "hold", from: 1, to: 1 },
     motion: { note: "" },
     transitionOut: "cut",
-    direction: { entry: "", exit: "", spine: "", cast: [], events: [] },
+    direction: { entry: "", exit: "", spine: reasonOf[index], cast: [], events: [] },
   }));
   // Seven lines, 2.6 s each, 1.5 s of air between them: 70 words over 30 s is
   // 140 wpm, and the longest quiet is the 2.2 s the film lands on.
@@ -61,12 +81,25 @@ function passingPlan(): ResolvedFilm {
     projectId: "test-pass",
     shots,
     clock: { mode: "narration", lines },
+    // One signature sound per scored beat, and nothing at all inside the quiet
+    // turn (17.5–25.0 s), which is what that beat promised.
     cues: [
-      { id: "sfx-1", kind: "step", at: 0.5, from: "at" },
-      { id: "sfx-2", kind: "lamp", at: 8, from: "at" },
+      { id: "sfx-alarm", kind: "hum", at: 1, from: "at" },
+      { id: "sfx-step", kind: "step", at: 6.5, from: "at" },
+      { id: "sfx-phone", kind: "slam", at: 13, from: "at" },
+      { id: "sfx-button", kind: "hum", at: 26, from: "at" },
     ],
   } as unknown as ResolvedFilm;
 }
+
+/** The beat map `fixtures/story-min/beats.json` writes, as the cut check sees it. */
+const TEST_BEATS = [
+  { id: "b01", title: "the alarm", share: 18.5, sound: { signature: "three chirps", quiet: false } },
+  { id: "b02", title: "the corridor", share: 23, sound: { signature: "twelve steps", quiet: false } },
+  { id: "b03", title: "the demand", share: 18.5, sound: { signature: "a phone rings", quiet: false } },
+  { id: "b04", title: "the lights go down", share: 20, sound: { signature: "a chair rolls", quiet: true } },
+  { id: "b05", title: "the alarm again", share: 20, sound: { signature: "no hand arrives", quiet: false } },
+];
 
 function check(overrides: Partial<PreflightInput> = {}) {
   return preflightFilm({
@@ -74,6 +107,7 @@ function check(overrides: Partial<PreflightInput> = {}) {
     pace: DEFAULT_PACE,
     paceSource: "default",
     story: { errors: [], warnings: [] },
+    beats: TEST_BEATS,
     cast: [],
     reproduce: false,
     ...overrides,
@@ -219,6 +253,24 @@ test("the writing's own refusals reach the report as story errors", () => {
   assert.equal(report.ok, false);
   assert.equal(report.errors[0]?.check, "story");
   assert.equal(report.errors[0]?.code, "story:turn");
+});
+
+test("the film's scenes are the runs of shots that serve one beat", () => {
+  const report = check();
+  assert.equal(report.cut?.scenes.length, 5);
+  assert.deepEqual(
+    report.cut?.scenes.map((scene) => scene.beat),
+    ["b01", "b02", "b03", "b04", "b05"],
+  );
+  assert.equal(report.cut?.scenes[3]?.seconds, 7.5);
+});
+
+test("a cut that does not answer its beats is refused before the render", () => {
+  const plan = passingPlan();
+  const shots = plan.shots.map((shot) => ({ ...shot, beat: undefined }));
+  const report = check({ plan: { ...plan, shots } as ResolvedFilm });
+  assert.ok(codes(report).includes("cut:unbound"), codes(report).join(", "));
+  assert.equal(report.cut?.scenes.length, 0);
 });
 
 test("the arithmetic is the arithmetic", () => {
