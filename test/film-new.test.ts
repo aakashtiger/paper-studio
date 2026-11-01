@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { FilmBriefSchema } from "../src/engine/film-brief.js";
-import { filmSkeleton, filmGaps } from "../src/engine/film-new.js";
+import { beatsSkeleton, filmGaps, filmSkeleton, storyGaps, storySkeleton } from "../src/engine/film-new.js";
 
 const root = process.cwd();
 
@@ -66,4 +66,50 @@ test("filmGaps names a shot that is missing its direction", () => {
   const gaps = filmGaps(score);
   assert.ok(gaps.some((gap) => gap.includes("#2") && gap.includes("events")));
   assert.ok(gaps.some((gap) => gap.includes("#3") && gap.includes("entry, exit and spine")));
+});
+
+/**
+ * The front door writes the film in the order it is written, not just the last
+ * document. Before 0030 it wrote only the score, which is how a film came to
+ * begin at its shot list: the only document the tool offered was the last one.
+ */
+test("the front door writes the story, the beats and the score — in that order", () => {
+  const story = storySkeleton(brief, { briefPath: "films/first-film/brief.json" });
+  const beats = beatsSkeleton(brief);
+  assert.equal(story.id, "first-film");
+  assert.equal(story.duration, 30);
+  assert.equal(beats.id, "first-film");
+  assert.deepEqual(beats.beats, []);
+});
+
+test("the story skeleton states the pace it will be judged against, and invents nothing else", () => {
+  const story = storySkeleton(brief, { briefPath: "b.json" });
+  assert.deepEqual(story.pace, { wpm: [140, 150], medianShot: [2.5, 3] });
+  assert.deepEqual(story.narration, []);
+  assert.deepEqual(story.spine, { want: "", obstacle: "", turn: "", button: "" });
+  // Nothing a person has to mean is written for them.
+  for (const field of ["title", "audience", "tone", "logline"]) assert.equal(story[field], "");
+});
+
+test("storyGaps names every sentence the director has to mean", () => {
+  const gaps = storyGaps(storySkeleton(brief, { briefPath: "b.json" }), beatsSkeleton(brief));
+  for (const field of ["title", "audience", "tone", "logline", "spine.want", "spine.obstacle", "spine.turn", "spine.button"]) {
+    assert.ok(gaps.includes(field), `${field} not in ${gaps.join(", ")}`);
+  }
+  assert.ok(gaps.some((gap) => gap.startsWith("narration")));
+  assert.ok(gaps.some((gap) => gap.startsWith("beats:")));
+});
+
+test("storyGaps is silent for a film that was written to the rules", () => {
+  const story = JSON.parse(readFileSync(resolve(root, "fixtures/story-min/story.json"), "utf8"));
+  const beats = JSON.parse(readFileSync(resolve(root, "fixtures/story-min/beats.json"), "utf8"));
+  assert.deepEqual(storyGaps(story, beats), []);
+});
+
+test("storyGaps refuses beats that do not add up to the whole film", () => {
+  const story = JSON.parse(readFileSync(resolve(root, "fixtures/story-min/story.json"), "utf8"));
+  const beats = JSON.parse(readFileSync(resolve(root, "fixtures/story-min/beats.json"), "utf8"));
+  beats.beats[0].share = beats.beats[0].share + 5;
+  const gaps = storyGaps(story, beats);
+  assert.ok(gaps.some((gap) => gap.includes("add up to")), gaps.join(", "));
 });

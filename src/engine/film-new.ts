@@ -8,11 +8,48 @@
  * fill. There is no placeholder shot, no sample line and no guessed recipe.
  */
 import type { FilmBrief } from "./film-brief.js";
+import { DEFAULT_PACE } from "./preflight.js";
+import type { Pace } from "./story.js";
 
 export type SkeletonOptions = {
   /** Repo-relative path of the brief the score points back to. */
   briefPath: string;
+  /** The tempo band this film is written to: the style's, or the default. */
+  pace?: Pace;
 };
+
+/**
+ * Stage 1 — the story, scaffolded and empty of invention.
+ *
+ * Only the facts are written: identity, length, and the tempo band the film is
+ * measured against (so the band is visible rather than implied). Every sentence
+ * a person has to mean is an empty string, and `storyGaps` names them.
+ */
+export function storySkeleton(brief: FilmBrief, options: SkeletonOptions): Record<string, unknown> {
+  return {
+    id: brief.id,
+    title: "",
+    duration: brief.duration,
+    audience: "",
+    tone: "",
+    logline: "",
+    spine: { want: "", obstacle: "", turn: "", button: "" },
+    pace: options.pace ?? DEFAULT_PACE,
+    narration: [],
+    mustSay: [],
+  };
+}
+
+/**
+ * Stage 2 — the beats, scaffolded.
+ *
+ * No beat is written for the director: a beat's share, energy and signature
+ * sound are the film's shape, and a scaffold that guessed them would be writing
+ * the film. The file exists so the stage exists.
+ */
+export function beatsSkeleton(brief: FilmBrief): Record<string, unknown> {
+  return { id: brief.id, beats: [] };
+}
 
 /** A legal-shaped score with nothing creative invented yet. */
 export function filmSkeleton(brief: FilmBrief, options: SkeletonOptions): Record<string, unknown> {
@@ -44,11 +81,68 @@ const record = (value: unknown): AnyRecord =>
   value && typeof value === "object" && !Array.isArray(value) ? (value as AnyRecord) : {};
 const list = (value: unknown): unknown[] => (Array.isArray(value) ? value : []);
 const positive = (value: unknown): boolean => typeof value === "number" && value > 0;
+const text = (value: unknown): boolean => typeof value === "string" && value.trim().length > 0;
 
 /**
- * The precise list of fields a director must fill. Derived from the score's own
- * content, so it is empty for a finished score and names every gap for a
- * scaffold — the same function drives the command and its test.
+ * The precise list of fields a director must fill in the **story and beats** —
+ * stage 1 and 2. Derived from the documents themselves, so it is empty for a
+ * written film and names every gap for a scaffold: the same function drives the
+ * command and its test.
+ */
+export function storyGaps(story: unknown, beats: unknown): string[] {
+  const gaps: string[] = [];
+  const root = record(story);
+
+  for (const field of ["title", "audience", "tone", "logline"]) {
+    if (!text(root[field])) gaps.push(field);
+  }
+  const spine = record(root.spine);
+  for (const field of ["want", "obstacle", "turn", "button"]) {
+    if (!text(spine[field])) gaps.push(`spine.${field}`);
+  }
+  if (list(root.narration).length === 0) {
+    gaps.push("narration: at least one line (id, beat, text) — a narrated film is spoken end to end");
+  } else {
+    list(root.narration).forEach((value, index) => {
+      const line = record(value);
+      const where = `narration[${index}]`;
+      if (!text(line.id) || !text(line.beat)) gaps.push(`${where}: an id and the beat it belongs to`);
+      if (!text(line.text)) gaps.push(`${where}.text`);
+    });
+  }
+
+  const map = record(beats);
+  const written = list(map.beats);
+  if (written.length === 0) {
+    gaps.push("beats: at least one beat (id, title, purpose, share, energy, sound.world, sound.signature)");
+  } else {
+    let share = 0;
+    written.forEach((value, index) => {
+      const beat = record(value);
+      const where = `beats[${index}]`;
+      if (!text(beat.id) || !text(beat.title) || !text(beat.purpose)) {
+        gaps.push(`${where}: id, title and purpose (hook / setup / escalate / turn / release / button)`);
+      }
+      if (!positive(beat.share)) gaps.push(`${where}.share: percent of the film this beat owns`);
+      if (!Number.isInteger(beat.energy)) gaps.push(`${where}.energy: 1–5`);
+      const sound = record(beat.sound);
+      if (!text(sound.world)) gaps.push(`${where}.sound.world: what the place sounds like`);
+      if (!text(sound.signature)) gaps.push(`${where}.sound.signature: the one sound that names the beat`);
+      share += typeof beat.share === "number" ? beat.share : 0;
+    });
+    if (written.length > 0 && Math.abs(share - 100) > 1e-6) {
+      gaps.push(`beats[].share: the beats add up to ${share}%, not 100%`);
+    }
+  }
+
+  return gaps;
+}
+
+/**
+ * The precise list of fields a director must fill in the **score** — stage 4.
+ * Derived from the score's own content, so it is empty for a finished score and
+ * names every gap for a scaffold — the same function drives the command and its
+ * test.
  */
 export function filmGaps(score: unknown): string[] {
   const gaps: string[] = [];

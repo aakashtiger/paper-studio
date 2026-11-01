@@ -121,16 +121,43 @@ if (existsSync(storyPath) || existsSync(beatsPath)) {
     console.error(`error: ${file} has a half-written film — ${missing} is missing beside it`);
     process.exit(1);
   }
-  const written = StorySchema.parse(JSON.parse(readFileSync(storyPath, "utf8")));
-  const beats = BeatsSchema.parse(JSON.parse(readFileSync(beatsPath, "utf8")));
-  const check = checkStory(written, beats);
-  story = { errors: check.errors, warnings: check.warnings };
-  beatMap = beats.beats.map((beat) => ({
-    id: beat.id,
-    title: beat.title,
-    share: beat.share,
-    sound: { signature: beat.sound.signature, quiet: beat.sound.quiet },
-  }));
+  // A scaffold is a real state of the work: `npm run film:new` writes the
+  // documents empty of invention on purpose. So a document that is not yet
+  // *legal* is a refusal with a sentence, not an exception with a zod path — the
+  // director reads it and fills the field it names.
+  const writtenDoc = StorySchema.safeParse(JSON.parse(readFileSync(storyPath, "utf8")));
+  const beatsDoc = BeatsSchema.safeParse(JSON.parse(readFileSync(beatsPath, "utf8")));
+  const invalid: Issue[] = [];
+  if (!writtenDoc.success) {
+    const first = writtenDoc.error.issues[0];
+    invalid.push({
+      code: "story:invalid",
+      message:
+        `story.json is not a story yet — ${first?.path.join(".") || "(root)"}: ${first?.message ?? "invalid"}` +
+        ` (${writtenDoc.error.issues.length} field(s) to fill; see \`npm run film:new\`)`,
+    });
+  }
+  if (!beatsDoc.success) {
+    const first = beatsDoc.error.issues[0];
+    invalid.push({
+      code: "beats:invalid",
+      message:
+        `beats.json is not a beat map yet — ${first?.path.join(".") || "(root)"}: ${first?.message ?? "invalid"}` +
+        ` (${beatsDoc.error.issues.length} field(s) to fill)`,
+    });
+  }
+  if (writtenDoc.success && beatsDoc.success) {
+    const check = checkStory(writtenDoc.data, beatsDoc.data);
+    story = { errors: check.errors, warnings: check.warnings };
+    beatMap = beatsDoc.data.beats.map((beat) => ({
+      id: beat.id,
+      title: beat.title,
+      share: beat.share,
+      sound: { signature: beat.sound.signature, quiet: beat.sound.quiet },
+    }));
+  } else {
+    story = { errors: invalid, warnings: [] };
+  }
 }
 
 const { plan, errors: resolveErrors, warnings: resolveWarnings } = resolveFilm(

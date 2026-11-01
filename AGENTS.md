@@ -52,7 +52,7 @@ npm install            # install
 npm run plan -- fixtures/wedding-min/brief.json   # print a shot plan
 npm run treatment -- proofs/s2-paper/plan.json    # validate a creative treatment
 npm run film -- films/understudy/score.json      # validate a scored film
-npm run film:new -- --brief films/understudy/brief.json   # scaffold a score, never invent one
+npm run film:new -- --brief films/understudy/brief.json   # scaffold story, beats and score; never invent
 npm run film:review -- films/understudy/score.json        # chain the review, one page + one sheet
 npm run captions -- films/understudy/score.json  # generate transcript + SRT
 npm run voice -- films/understudy/score.json     # capture narration + word times, derive the clock
