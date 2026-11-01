@@ -154,3 +154,58 @@ test("0.2.0 gate: a format names its recipes, so the office set cannot re-cut a 
 test("0.2.0 gate: all sixteen recipes fit their text in both aspects at the 14 px floor", () => {
   assertPackGeometry(PACK);
 });
+
+/**
+ * The office props are declared assets, and a declared footprint is only worth
+ * something if it is compared with the thing the prop is behind.
+ *
+ * The chair was drawn `192 * s` wide and passed `1.45` at four call sites, so at
+ * the desk shots it was 278 px across behind a man whose shoulders are 108 — two
+ * and a half men wide. Judged at full size it read as a slab behind the hip, and
+ * no test could see it because the width was never written in one place. Now it
+ * is, so this can compare it: a chair back may be a little wider than the man in
+ * it and no more.
+ */
+test("0.2.0 gate: every office prop declares a footprint, and the chair fits the man", () => {
+  const source = readFileSync(join(PACK, "canvas", "recipes.js"), "utf8");
+  const office = readFileSync(join(ROOT, "films", "same-alarm", "vendor", "office.js"), "utf8");
+
+  // Each entry in the PROPS table: `id: { w: n, h: n, anchor: "...", flat?: bool, draw(`.
+  const entries = [...source.matchAll(/\n {2}(\w+): \{\n([\s\S]*?)\n {2}\},/g)].map((m) => ({
+    id: m[1],
+    body: m[2] ?? "",
+  }));
+  const props = entries.filter((entry) => /\bw: \d+/.test(entry.body) && /\banchor: "/.test(entry.body));
+  assert.ok(props.length >= 2, "the PROPS table should declare the chair and the form");
+
+  const problems: string[] = [];
+  for (const prop of props) {
+    const w = Number(/w: (\d+)/.exec(prop.body)?.[1]);
+    const h = Number(/h: (\d+)/.exec(prop.body)?.[1]);
+    const anchor = /anchor: "([^"]+)"/.exec(prop.body)?.[1];
+    if (!(w > 0) || !(h > 0)) problems.push(`${prop.id} has no footprint`);
+    if (!anchor) problems.push(`${prop.id} has no anchor`);
+    if (/flat: true/.test(prop.body) && /shadow: C\.rgba/.test(prop.body)) {
+      problems.push(`${prop.id} lies flat and still casts a lift shadow`);
+    }
+  }
+
+  // A prop drawn at the call site is a prop with no footprint.
+  if (/officeChairBack\(/.test(source)) problems.push("the chair is still drawn at the call site");
+
+  // The shoulders the rig actually draws: half-width 38 at the worker's scale.
+  const shoulderPx = 38 * 2 * 1.5;
+  const chair = props.find((prop) => prop.id === "chair");
+  assert.ok(chair, "the chair is not declared in PROPS");
+  const chairW = Number(/w: (\d+)/.exec(chair.body)?.[1]);
+  const chairPx = chairW * 1.5;
+  if (chairPx > shoulderPx * 1.3) {
+    problems.push(`the chair is ${chairPx.toFixed(0)} px wide behind ${shoulderPx.toFixed(0)} px shoulders`);
+  }
+
+  // The seat is placed from the man, not typed next to him.
+  if (!/function officeSeated\(/.test(source)) problems.push("no officeSeated(): the chair can drift from the man again");
+  if (/\b258\b/.test(office) === false) problems.push("the rig does not state the hip height the seat is derived from");
+
+  assert.deepEqual(problems, []);
+});

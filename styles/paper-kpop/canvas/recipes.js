@@ -1012,47 +1012,14 @@ function officeDeskThings(x, y, s, o = {}) {
  * work is paper (the stack on the desk's right is the whole day of it), so the
  * form he is filling in is paper too: ruled, boxed, and half ticked.
  *
- * It is flat on the surface, so it casts **no** shadow: the first version had
- * the same lift shadow as a cut-out standing up, and read as an envelope pasted
- * on the front of the desk. Its top edge is the desk's far edge, which is where
- * his hands are (`OFFICE.seated`), so the hands rest on it.
+ * The plate itself is `PROPS.form`, so its footprint is declared with the other
+ * props and it is marked `flat`: a plate lying on a surface casts no lift
+ * shadow, and the first version — drawn here with the same shadow as a cut-out
+ * standing up — read as an envelope pasted on the front of the desk. `y` is the
+ * sheet's centre, which is where the recipes already put it.
  */
 function officeSheet(x, y, s = 1, o = {}) {
-  const w = 340 * s;
-  const h = 84 * s;
-  ctx.save();
-  ctx.translate(x, y + h / 2);
-  ctx.rotate(o.rot === undefined ? -0.008 : o.rot);
-  paper(ctx, () => tornRectPath(ctx, -w / 2, -h / 2, w, h, 3, 11), {
-    fill: o.fill || PAL.cream,
-    edge: C.rgba(PAL.ink, 0.45), edgeW: 2,
-    shadow: null,
-  });
-  // the lines he has written on, unevenly
-  ctx.save();
-  ctx.globalAlpha = o.night ? 0.28 : 0.4;
-  ctx.fillStyle = PAL.ink;
-  for (let i = 0; i < 2; i++) {
-    ctx.fillRect(
-      -w / 2 + 22 * s,
-      -h / 2 + (22 + i * 22) * s,
-      (w - 120 * s) * (0.75 + C.hash(i + 3) * 0.25),
-      2.2 * s,
-    );
-  }
-  ctx.restore();
-  // the box he is meant to tick, and the tick
-  ctx.save();
-  ctx.globalAlpha = 0.5;
-  ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2 * s;
-  ctx.strokeRect(w / 2 - 84 * s, -h / 2 + 14 * s, 24 * s, 24 * s);
-  ctx.restore();
-  ctx.save();
-  ctx.globalAlpha = 0.8;
-  ctx.fillStyle = PAL.red;
-  ctx.fillRect(w / 2 - 80 * s, -h / 2 + 24 * s, 16 * s, 5 * s);
-  ctx.restore();
-  ctx.restore();
+  return placeProp("form", x, y - (PROPS.form.h * s) / 2, s, o);
 }
 
 /**
@@ -1093,16 +1060,107 @@ function officeStack(x, baseY, rows, t, o = {}) {
   }
 }
 
-/** The chair the worker never gets out of. */
-function officeChairBack(x, y, s) {
-  paper(ctx, () => roundRectPath(ctx, x - 96 * s, y - 210 * s, 192 * s, 210 * s, 22 * s), {
-    fill: PAL.ink3, edge: C.rgba(PAL.ink, 0.6), edgeW: 2.6, shadow: C.rgba(PAL.ink, 0.24), sx: 8, sy: 12,
-  });
-  ctx.save(); ctx.globalAlpha = 0.35; ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2;
-  for (let i = 0; i < 3; i++) {
-    ctx.beginPath(); ctx.moveTo(x - 66 * s, y - 168 * s + i * 46 * s); ctx.lineTo(x + 66 * s, y - 168 * s + i * 46 * s); ctx.stroke();
-  }
-  ctx.restore();
+/**
+ * Props are declared assets: one draw, one footprint, one anchor, written once.
+ *
+ * The office set used to draw its furniture from the call site — the chair was
+ * `192 * s` inside a function and `1.95`, then `1.6`, then `1.45` at four places
+ * that called it. A number repeated four times cannot be corrected once, and it
+ * cannot be checked: at 1.45 the chair back was **278 px** wide behind a man
+ * whose shoulders are **108 px**, two and a half men wide, which is why it read
+ * as a slab. It also drifted the moment the man moved, because nothing connected
+ * the two.
+ *
+ * `w`/`h` are pack units at scale 1, and `anchor` says which point of the box
+ * `(x, y)` names. `flat` says the plate lies on a surface: a flat prop casts no
+ * lift shadow, and asking for one is an error rather than a drawing that reads
+ * as an envelope pasted on the front of a desk.
+ */
+const PROPS = {
+  chair: {
+    w: 84,
+    h: 152,
+    anchor: "bottom-center",
+    flat: false,
+    draw(left, bottom, s) {
+      const w = 84 * s;
+      const h = 152 * s;
+      paper(ctx, () => {
+        ctx.beginPath();
+        ctx.moveTo(left + w * 0.5, bottom - h);
+        ctx.quadraticCurveTo(left + w, bottom - h * 0.84, left + w, bottom - h * 0.3);
+        ctx.lineTo(left + w * 0.9, bottom);
+        ctx.lineTo(left + w * 0.1, bottom);
+        ctx.lineTo(left, bottom - h * 0.3);
+        ctx.quadraticCurveTo(left, bottom - h * 0.84, left + w * 0.5, bottom - h);
+        ctx.closePath();
+      }, {
+        fill: PAL.ink3, edge: C.rgba(PAL.ink, 0.6), edgeW: 2.4,
+        shadow: C.rgba(PAL.ink, 0.24), sx: 7, sy: 10,
+      });
+      // A spine slot and one seam, so it reads as a chair back and not a box.
+      ctx.save();
+      ctx.globalAlpha = 0.3;
+      ctx.strokeStyle = PAL.ink;
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.moveTo(left + w * 0.5, bottom - h * 0.9);
+      ctx.lineTo(left + w * 0.5, bottom - h * 0.16);
+      ctx.stroke();
+      ctx.restore();
+    },
+  },
+  /** The form he fills in: a flat plate, so it must not cast a lift shadow. */
+  form: {
+    w: 340,
+    h: 84,
+    anchor: "top-center",
+    flat: true,
+    draw(left, top, s, o = {}) {
+      const w = 340 * s;
+      const h = 84 * s;
+      paper(ctx, () => tornRectPath(ctx, left, top, w, h, 3, 11), {
+        fill: PAL.cream, edge: C.rgba(PAL.ink, 0.45), edgeW: 2, shadow: null,
+      });
+      // the lines he has written on, unevenly
+      ctx.save();
+      ctx.globalAlpha = o.night ? 0.28 : 0.4;
+      ctx.fillStyle = PAL.ink;
+      for (let i = 0; i < 2; i++) {
+        ctx.fillRect(left + 22 * s, top + (22 + i * 22) * s, (w - 120 * s) * (0.75 + C.hash(i + 3) * 0.25), 2.2 * s);
+      }
+      ctx.restore();
+      // the box he is meant to tick, and the tick
+      ctx.save();
+      ctx.globalAlpha = 0.5;
+      ctx.strokeStyle = PAL.ink;
+      ctx.lineWidth = 2 * s;
+      ctx.strokeRect(left + w - 84 * s, top + 14 * s, 24 * s, 24 * s);
+      ctx.restore();
+      ctx.save();
+      ctx.globalAlpha = 0.8;
+      ctx.fillStyle = PAL.red;
+      ctx.fillRect(left + w - 80 * s, top + 24 * s, 16 * s, 5 * s);
+      ctx.restore();
+    },
+  },
+};
+
+const PROP_ANCHORS = {
+  "bottom-center": (x, y, w, h) => [x - w / 2, y - h],
+  "top-center": (x, y, w) => [x - w / 2, y],
+};
+
+/** Place a prop by name. An id the table does not have is an error, never a skip. */
+function placeProp(id, x, y, s = 1, o = {}) {
+  const prop = PROPS[id];
+  if (!prop) throw new Error(`unknown prop "${id}" — a prop is declared in PROPS, not drawn at the call site`);
+  if (prop.flat && o.shadow) throw new Error(`prop "${id}" lies flat and cannot cast a lift shadow`);
+  const anchor = PROP_ANCHORS[prop.anchor];
+  if (!anchor) throw new Error(`prop "${id}" has an anchor "${prop.anchor}" the pack does not place`);
+  const [left, top] = anchor(x, y, prop.w * s, prop.h * s);
+  prop.draw(left, top, s, o);
+  return { id, left, top, w: prop.w * s, h: prop.h * s };
 }
 
 /** A cut-paper hand, palm and five digits, drawn as a prop. */
@@ -1287,6 +1345,25 @@ function officeActor(shot, lt, t, name, x, y, scale, entry, flip, extra = {}) {
   }
   drawCharacter(name, x, y, scale, "idle", flip || 1, pose, t);
   return pose;
+}
+
+/**
+ * A man in his chair, placed as one unit.
+ *
+ * The chair exists only to sit behind him, so it is placed **from him**: the
+ * same anchor, its back's base at his seat. When `OFFICE.seated` moved him 11 px
+ * down, the four recipes that placed a chair and a man on separate lines left
+ * the chair where the old floor was — that is the drift this function removes,
+ * not a better drawing of a chair.
+ */
+function officeSeated(shot, lt, t, name, x, extra = {}, o = {}) {
+  const scale = o.actorScale === undefined ? 1.5 : o.actorScale;
+  const chairScale = o.chairScale === undefined ? scale : o.chairScale;
+  // His hip, in frame px, from the rig's own proportion (the hip sits 258 units
+  // above his feet), so the seat follows the man rather than a typed number.
+  const hip = OFFICE.seated - 258 * scale;
+  placeProp("chair", x + 18, hip + 30 * chairScale, chairScale);
+  return officeActor(shot, lt, t, name, x, OFFICE.seated, scale, null, o.flip === undefined ? 1 : o.flip, extra);
 }
 
 /** A step cycle: the pose keeps its shape, the weight moves. */
@@ -1606,8 +1683,7 @@ function deskWide(shot, lt, t) {
   officeWindow(1210, 146, 600, 430, officeDaySky(shot.slots["content.caption"]), t);
   const lead = castIn(shot, 0);
   if (lead) {
-    officeChairBack(880, 1014, 1.45);
-    officeActor(shot, lt, t, lead, 860, OFFICE.seated, 1.5, null, 1);
+    officeSeated(shot, lt, t, lead, 860);
   }
   officeMonitor(1190, OFFICE.desk + 4, 1.1, { glow: 0.7 });
   officeDesk();
@@ -1636,8 +1712,7 @@ function windowDusk(shot, lt, t) {
   officeWindow(1080, 176, 640, 540, sky, t);
   const lead = castIn(shot, 0);
   if (lead) {
-    officeChairBack(850, 1014, 1.45);
-    officeActor(shot, lt, t, lead, 830, OFFICE.seated, 1.5, null, 1);
+    officeSeated(shot, lt, t, lead, 830);
   }
   officeMonitor(1160, OFFICE.desk + 4, 1.05, { glow: 0.35 });
   officeDesk({ night: sky > 0.7 });
@@ -1673,8 +1748,7 @@ function supervisorPoint(shot, lt, t) {
   // on the object of the film, not two cut-outs facing the lens.
   const stack = C.clamp((lt - 0.9) / 0.8);
   if (lead) {
-    officeChairBack(700, 1014, 1.45);
-    officeActor(shot, lt, t, lead, 680, OFFICE.seated, 1.5, null, 1, {
+    officeSeated(shot, lt, t, lead, 680, {
       headTurn: 0.34 * stack,
       headTilt: 0.1 * stack,
     });
@@ -1689,7 +1763,7 @@ function supervisorPoint(shot, lt, t) {
   officeMonitor(1000, OFFICE.desk + 4, 1.05, { glow: 0.6 });
   officeDesk();
   officeSheet(680, OFFICE.desk + 28, 1);
-  officeStack(1440, OFFICE.desk + 6, rows, t);
+  officeStack(1500, OFFICE.desk + 6, rows, t);
   endCam(ctx);
   officeHourTab(shot.slots["content.caption"], t);
 }
@@ -1724,8 +1798,7 @@ function deskNight(shot, lt, t) {
   ctx.beginPath(); ctx.moveTo(570, 560); ctx.lineTo(570, 780); ctx.stroke();
   const lead = castIn(shot, 0);
   if (lead) {
-    officeChairBack(950, 1014, 1.45);
-    officeActor(shot, lt, t, lead, 930, OFFICE.seated, 1.5, null, 1);
+    officeSeated(shot, lt, t, lead, 930);
   }
   officeMonitor(1250, OFFICE.desk + 4, 1.15, { glow: 1 });
   officeDesk({ night: true });

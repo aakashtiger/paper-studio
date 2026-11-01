@@ -58,6 +58,12 @@ function officeFigure(ctx, x, y, s, o = {}) {
   const hairCol = col.hair || PAL.ink;
   const tie = boss ? null : (col.tie === undefined ? PAL.red : col.tie);
 
+  // A dark garment on a lit wall needs a *light* rim to have a contour at all:
+  // an edge in the garment's own colour is not an edge. The blazer and the
+  // sleeve were both outlined in `PAL.ink` on a `PAL.ink` fill, which is why the
+  // supervisor's pointing arm read as a black plank and his coat as a slab.
+  const rim = jacket ? C.rgba(PAL.paper2, 0.55) : C.rgba(PAL.ink, 0.62);
+
   ctx.save();
   ctx.translate(x, y);
   if (o.shadow !== 0) shadowEllipse(ctx, 0, 0, (boss ? 44 : 40) * s, 9 * s, 0.22);
@@ -147,12 +153,12 @@ function officeFigure(ctx, x, y, s, o = {}) {
         ctx.lineTo(36, HIP + 20); ctx.lineTo(14, HIP + 10); ctx.lineTo(12, SHOULDER + 60);
         ctx.quadraticCurveTo(20, SHOULDER + 28, 12, SHOULDER - 4);
         ctx.closePath();
-      }, { fill: jacket, edge: C.rgba(PAL.ink, 0.7), edgeW: 2.4, shadow: C.rgba(PAL.ink, 0.2), sx: 4, sy: 7 });
+      }, { fill: jacket, edge: rim, edgeW: 2.2, shadow: C.rgba(PAL.ink, 0.2), sx: 4, sy: 7 });
       ctx.beginPath();
       ctx.moveTo(14, SHOULDER - 4); ctx.lineTo(36, SHOULDER + 18); ctx.lineTo(24, SHOULDER + 62); ctx.lineTo(13, SHOULDER + 50);
       ctx.closePath();
-      ctx.fillStyle = C.shade(jacket, 10); ctx.fill();
-      ctx.strokeStyle = C.rgba(PAL.ink, 0.3); ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = C.shade(jacket, 14); ctx.fill();
+      ctx.strokeStyle = rim; ctx.lineWidth = 1.2; ctx.stroke();
       ctx.restore();
     }
     // lanyard, because a supervisor's whole job is written on a card
@@ -200,12 +206,21 @@ function officeFigure(ctx, x, y, s, o = {}) {
   ctx.translate(0, HEAD);
   rigAnchor(ctx, "hair", 0, 0);
   // hair, back layer
+  //
+  // Kiran's hair falls to the jaw; the supervisor's is cut above the ear. They
+  // shared one shape, so with the same bob and a dark coat the supervisor read
+  // as the same person in a different outfit.
   paper(ctx, () => {
     ctx.beginPath();
     ctx.arc(0, 0, boss ? 46 : 48, Math.PI * 0.95, Math.PI * 2.05);
-    ctx.lineTo(44, 42);
-    ctx.quadraticCurveTo(24, 24, 0, 30);
-    ctx.quadraticCurveTo(-24, 24, -44, 42);
+    if (boss) {
+      ctx.quadraticCurveTo(34, 16, 0, 16);
+      ctx.quadraticCurveTo(-34, 16, -45, 5);
+    } else {
+      ctx.lineTo(44, 42);
+      ctx.quadraticCurveTo(24, 24, 0, 30);
+      ctx.quadraticCurveTo(-24, 24, -44, 42);
+    }
     ctx.closePath();
   }, { fill: hairCol, edge: C.rgba(PAL.ink, 0.55), edgeW: 2 });
   // face
@@ -277,10 +292,24 @@ function officeFigure(ctx, x, y, s, o = {}) {
     const sx = side * (boss ? 40 : 38);
     const sy = SHOULDER + 4;
     const sleeveCol = jacket ? (far ? C.shade(jacket, -14) : jacket) : (far ? C.shade(shirt, -14) : shirt);
-    const elbow = limb(ctx, sx, sy, 92, 20, 16, ang[0], sleeveCol, C.rgba(PAL.ink, 0.5), true);
+    const armEdge = jacket ? rim : C.rgba(PAL.ink, 0.5);
+    const elbow = limb(ctx, sx, sy, 92, 20, 16, ang[0], sleeveCol, armEdge, true);
     brad(ctx, sx, sy, 3.6);
     brad(ctx, elbow[0], elbow[1], 2.8);
-    const wrist = limb(ctx, elbow[0], elbow[1], 78, 16, 13, ang[0] + ang[1], sleeveCol, C.rgba(PAL.ink, 0.5), true);
+    const wrist = limb(ctx, elbow[0], elbow[1], 78, 16, 13, ang[0] + ang[1], sleeveCol, armEdge, true);
+    // A cuff, so the sleeve has an end and the hand has a wrist to hang from.
+    // Without it a pointing arm is one tapering bar with a square tip.
+    if (jacket) {
+      ctx.save();
+      ctx.translate(wrist[0], wrist[1]);
+      ctx.rotate(ang[0] + ang[1]);
+      ctx.fillStyle = C.shade(PAL.paper2, -4);
+      ctx.fillRect(-2, -9, 9, 18);
+      ctx.strokeStyle = rim;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(-2, -9, 9, 18);
+      ctx.restore();
+    }
     paper(ctx, () => blobPath(ctx, wrist[0], wrist[1] + 10, 9, 13, 10, 0.08, 5), {
       fill: far ? SKIN_D : SKIN, edge: C.rgba(PAL.ink, 0.45), edgeW: 1.2,
     });

@@ -1,8 +1,8 @@
 # 0021 — A prop is an asset with a declared footprint
 
-**Status:** proposed · 1 Nov 2026 (implementation blocked on the running film chain)
+**Status:** accepted and implemented for the chair and the form · 1 Nov 2026
 **Owners:** creative (`styles/paper-kpop/canvas/recipes.js` set dressing) and
-technical (`test/style-geometry.ts`, paint probe)
+technical (`test/paper-kpop-0.2.0-gate.test.ts`)
 **Pack:** `styles/paper-kpop/` 0.2.0
 
 ## Context
@@ -67,16 +67,26 @@ without being an asset.
   and position are one fact, in one place, checkable by a test. Whether it looks
   right is judged at full size, as before.
 
-## Evidence (to be filled when implemented)
+## Evidence
 
 | | |
 |---|---|
-| the chair's footprint | declared once in `PROPS.chair`; the four call sites pass a scale, not a width |
-| drift | moving `OFFICE.seated` moves chair and actor together — checked by re-painting the desk shots and diffing the chair's box |
-| unknown prop | `placeProp("no-such-prop", …)` throws; a test asserts it |
-| shadow rule | the flat plate has `shadow: null` and the probe confirms no lift shadow was drawn |
-| geometry | `test/style-geometry.ts` gains the behind/lower and no-overlap rows for the office set |
-| picture | full-size frames of s02, s04, s06, s07 re-judged before any long render is paid for, using `render:film --from --to` |
+| the chair's footprint | declared once, `PROPS.chair = { w: 84, h: 152, anchor: "bottom-center" }`; the four desk recipes pass a man's x, not a width |
+| what the old footprint hid | `192 × 1.45 = 278 px` behind shoulders of `108 px`. At `84 × 1.5` it is `126 px` |
+| drift | `officeSeated()` places the chair from the actor's own hip (`OFFICE.seated − 258 × scale`), so moving him moves the seat |
+| unknown prop | `placeProp()` throws `unknown prop "<id>"`; an unplaced anchor throws too |
+| the flat rule | `PROPS.form` is `flat: true` and its draw passes `shadow: null`; `placeProp` refuses a shadow on a flat prop |
+| the gate | `test/paper-kpop-0.2.0-gate.test.ts` — every prop declares `w`/`h`/`anchor`, no flat prop casts a lift shadow, no chair is drawn at a call site, and the chair may not exceed 1.3× the man's shoulders. Verified by mutation: `w: 192` fails the test and names the width |
+| picture | s03/`25.2 s` judged at full size before any long render was paid for, using `render:film --stills` |
+
+### Not done here
+
+- **Desk, monitor and stack still take their size at the call site.** They are
+  drawn on plates larger than any man and have not caused a defect yet; they
+  move into `PROPS` when they next change, not in a sweep.
+- **The paint probe does not record prop boxes yet**, so "a prop behind a
+  character sits lower than his head" is a rule, not a test. Recorded in
+  `docs/STATUS.md` rather than claimed.
 
 ## Consequences
 
