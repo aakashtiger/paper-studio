@@ -338,6 +338,33 @@ slump, `wake` at 4.7 s, `look` at 5.6 s with no breakdown, so the body starts
 before it turns and the head lift takes most of a second. Slice median
 **0.677** against a floor of **0.6**, where it had been 0.533.
 
+**Then the chain stopped at `audit:rig`, and it was right to.** 209 findings on
+a delivered cut: 111 knees locked at 0.005 rad, 78 ankles 3–10 px short of their
+targets, 20 seam shifts. One cause, arithmetic: the office rig drew the hip
+**272** above the floor on a `156 + 117 = 273` leg — straight by construction in
+every pose — the supervisor's hip floated 14 units above the same legs so no pose
+of his could reach the floor at all, and the walking recipes *raise* the hip by up
+to 10 more (`−2` pose bounce, `−2.2` breathing, `6` step bob). A target past the
+leg is not drawn longer: the solver clamps, the knee locks, the foot hangs above
+its shadow. That is `docs/decisions/0022`; `HIP` is now `−258` for both men, the
+supervisor is taller in the torso, and `test/cast-rig.test.ts` reads the bob
+allowance out of the painter so a faster walk fails a test instead of a film.
+The 20 seam shifts are all at a declared cut or pose key (worst 24.96 units at
+28.50 s, the s05→s06 cut); the audit now attributes those and reports how many
+it attributed, so a legal cut is not a rig defect while a dropped transform
+still is. **`audit:rig` passes: 209 findings → 0, worst undeclared shift 0.00.**
+
+**The chair is an asset now, not a number at four call sites (`0021`).** It was
+`192` wide at `1.45` — **278 px** behind a man whose shoulders are **108** — and
+nothing tied it to him, which is why it stayed where the old floor was when
+`OFFICE.seated` moved. `PROPS` declares one footprint and one anchor per prop,
+`placeProp()` throws on an unknown id, and `officeSeated()` places chair and man
+as one unit from the rig's own hip height. `test/paper-kpop-0.2.0-gate.test.ts`
+holds the footprint to the shoulders (mutation-checked: `w: 192` fails). The same
+pass gave a dark garment a light rim (a black coat outlined in black has no
+contour), a cuff and a visible hand to the pointing arm, and the supervisor a
+crop instead of Kiran's bob.
+
 **Purpose:** an honest inventory of what exists, what is weak, and what is
 missing, with a deliberately small build plan. No new architecture unless it
 removes a real blocker.
