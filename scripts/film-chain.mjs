@@ -107,6 +107,10 @@ const steps = [
   // the cast the vendor will draw even exists — and the renderer refuses to
   // paint a whole film without a fresh pass from it.
   { name: "preflight", tsx: "scripts/preflight.ts", args: [score] },
+  // The still photograph: a short window inside every shot, painted through the
+  // real painter, and one question per shot — does it travel from the first
+  // frame to the last? Two whole renders were lost to shots that did not.
+  { name: "probe:motion", tsx: "scripts/motion-probe.ts", args: [score] },
   // Stage 5: the character sheet and the collage. The sheet is the page where a
   // plank arm is obvious; the collage is one frame per shot, checked by the tool
   // (every shot present, none blank or duplicated, every staged character drawn,

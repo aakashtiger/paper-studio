@@ -20,6 +20,7 @@ import { spawn, spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
+import { availableParallelism } from "node:os";
 import { extname, join, relative, resolve, sep, dirname } from "node:path";
 import type { AddressInfo } from "node:net";
 import { findChrome as findChromePath } from "../src/engine/chrome.js";
@@ -85,6 +86,44 @@ function requireCollage(cwd: string, id: string, scoreFile: string): void {
     );
   }
 }
+
+/**
+ * Refuse to paint a whole film while any shot in it is a still photograph.
+ *
+ * *Scene 6 is a still photograph* cost a 70-minute render, and scene 7 another
+ * 72 — and both were answerable from twelve frames of the shot. The movement
+ * probe paints a short window inside every shot through the real painter, reads
+ * the 48×27 sample the probe already had, and asks one question per shot: does
+ * it travel from its first frame to its last? A shot that does not is refused
+ * here, before the browser starts a film.
+ *
+ * This is not `audit:motion`, which measures the delivered picture frame by
+ * frame. This one is cheap enough to run before every paint, which is the only
+ * place it can save a render.
+ */
+function requireMotion(cwd: string, id: string, scoreFile: string): void {
+  const reportPath = join(cwd, "build", id, "motion-probe", "motion-probe.json");
+  const run = `npm run probe:motion -- ${relative(cwd, scoreFile).replace(/\\/g, "/")}`;
+  if (!existsSync(reportPath)) {
+    throw new Error(`refusing to paint ${id}: no movement probe. Run \`${run}\` first`);
+  }
+  const written = JSON.parse(readFileSync(reportPath, "utf8")) as {
+    score?: string;
+    errors?: { code: string; message: string }[];
+  };
+  if (written.score !== fileHash(scoreFile)) {
+    throw new Error(`refusing to paint ${id}: build/${id}/motion-probe/motion-probe.json measured a different score. Run \`${run}\` again`);
+  }
+  const errors = written.errors ?? [];
+  if (errors.length > 0) {
+    throw new Error(
+      `refusing to paint ${id}: ${errors.length} shot(s) do not move:\n` +
+        errors.map((error) => `  ${error.code}  ${error.message}`).join("\n") +
+        `\n  see build/${id}/motion-probe/motion-probe.json`,
+    );
+  }
+}
+
 /**
  * Refuse to paint a whole film without a fresh, passing preflight report.
  *
@@ -139,6 +178,31 @@ function workerCount(): number {
     throw new Error(`--workers must be a whole number >= 1 (got "${raw}")`);
   }
   return Math.min(count, WORKER_CAP);
+}
+
+/**
+ * How many browsers paint a **stills** pass.
+ *
+ * A still is a pure function of time, painted from a fresh page, so a hundred
+ * independent pictures are exactly the workload N browsers are for — the same
+ * argument as decision 0023, which took a film from 33 minutes to ~10. The
+ * stills passes are where the review time actually went: `audit:rig` paints 600
+ * frames at 0.1 s steps, which was a ten-minute serial pass inside a gate that
+ * reports in seconds. An explicit `--workers` still wins; otherwise four, which
+ * is the memory budget of a laptop that is also running the film.
+ */
+function stillWorkers(): number {
+  const raw = arg("workers");
+  if (raw !== undefined) return workerCount();
+  const cores = availableParallelism();
+  return Math.max(1, Math.min(4, Math.floor(cores / 2)));
+}
+
+/** Split a list into `parts` contiguous runs, as evenly as possible. */
+function splitEven<T>(items: T[], parts: number): T[][] {
+  const out: T[][] = Array.from({ length: parts }, () => []);
+  items.forEach((item, index) => out[index % parts]?.push(item));
+  return out.filter((chunk) => chunk.length > 0);
 }
 
 function findChrome(): string {
@@ -406,10 +470,17 @@ async function attachProbe(cdp: Cdp, cwd: string): Promise<void> {
 async function drawFrame(
   cdp: Cdp,
   time: number,
-): Promise<{ data: string; drawnAt: number; textBoxes?: TextBox[]; rigRecords?: RigRecord[] }> {
+): Promise<{ data: string; drawnAt: number; textBoxes?: TextBox[]; rigRecords?: RigRecord[]; sample?: number[] }> {
   const probe = await cdp.send<{
     result: {
-      value?: { data?: string; error?: string; drawnAt?: number; textBoxes?: TextBox[]; rigRecords?: RigRecord[] };
+      value?: {
+        data?: string;
+        error?: string;
+        drawnAt?: number;
+        textBoxes?: TextBox[];
+        rigRecords?: RigRecord[];
+        sample?: number[];
+      };
     };
     exceptionDetails?: { text?: string };
   }>("Runtime.evaluate", {
@@ -422,6 +493,20 @@ async function drawFrame(
         drawnAt: window.__drawnAt,
         textBoxes: window.__paintProbe ? window.__textBoxes.slice() : undefined,
         rigRecords: window.__paintProbe ? window.__rigRecords.slice() : undefined,
+        /* A coarse 48x27 sample of the frame, so a movement pass can measure
+           "did this shot change at all?" without decoding a PNG. Only while the
+           probe is attached: the film render pays nothing for it. */
+        sample: window.__paintProbe ? (() => {
+          const src = document.getElementById("out");
+          const small = document.createElement("canvas");
+          small.width = 48; small.height = 27;
+          const ctx = small.getContext("2d");
+          ctx.drawImage(src, 0, 0, 48, 27);
+          const px = ctx.getImageData(0, 0, 48, 27).data;
+          const out = [];
+          for (let i = 0; i < px.length; i += 4) out.push(px[i], px[i + 1], px[i + 2]);
+          return out;
+        })() : undefined,
       };
     })()`,
     returnByValue: true,
@@ -439,6 +524,7 @@ async function drawFrame(
     drawnAt: Number(value.drawnAt),
     textBoxes: value.textBoxes,
     rigRecords: value.rigRecords,
+    sample: value.sample,
   };
 }
 
@@ -594,13 +680,15 @@ async function main(): Promise<void> {
   if (!stills && fullRange) {
     requirePreflight(cwd, score.id, scoreFile, scorePath);
     requireCollage(cwd, score.id, scoreFile);
+    requireMotion(cwd, score.id, scoreFile);
   }
 
   const server = await serve(cwd);
   // One browser paints one frame at a time; N browsers paint N contiguous
-  // ranges (decision 0023). A stills or probe pass is one page read once, so it
-  // takes one worker whatever `--workers` says — the parallelism is for frames.
-  const workerTotal = stills ? 1 : workerCount();
+  // ranges (decision 0023). A stills pass is N independent pictures, so it takes
+  // the same parallelism: each worker paints its own subset of the requested
+  // times into the same directory, and the probe frames are merged in time order.
+  const workerTotal = stills ? stillWorkers() : workerCount();
   const workers: Worker[] = [];
   try {
     for (let index = 0; index < workerTotal; index++) {
@@ -612,25 +700,35 @@ async function main(): Promise<void> {
     const cdp = first.cdp;
 
     const probePath = arg("probe");
-    if (probePath) await attachProbe(cdp, cwd);
+    if (probePath && !stills) await attachProbe(cdp, cwd);
 
     if (stills) {
       await mkdir(stillsDir, { recursive: true });
-      const probeFrames: { time: number; textBoxes: TextBox[]; rigRecords: RigRecord[] }[] = [];
-      for (const time of stills) {
-        const frame = await drawFrame(cdp, time);
-        const base64 = frame.data.slice(frame.data.indexOf(",") + 1);
-        const name = `t-${time.toFixed(2).padStart(5, "0")}.png`;
-        await writeFile(join(stillsDir, name), Buffer.from(base64, "base64"));
-        if (frame.textBoxes || frame.rigRecords) {
-          probeFrames.push({
-            time,
-            textBoxes: frame.textBoxes ?? [],
-            rigRecords: frame.rigRecords ?? [],
-          });
-        }
-        console.log(`still ${name}`);
-      }
+      const chunks = splitEven(stills, Math.min(workerTotal, stills.length));
+      const painted = await Promise.all(
+        chunks.map(async (times, index) => {
+          const worker = workers[index] ?? first;
+          if (probePath) await attachProbe(worker.cdp, cwd);
+          const out: { time: number; textBoxes: TextBox[]; rigRecords: RigRecord[]; sample?: number[] }[] = [];
+          for (const time of times) {
+            const frame = await drawFrame(worker.cdp, time);
+            const base64 = frame.data.slice(frame.data.indexOf(",") + 1);
+            const name = `t-${time.toFixed(2).padStart(5, "0")}.png`;
+            await writeFile(join(stillsDir, name), Buffer.from(base64, "base64"));
+            if (frame.textBoxes || frame.rigRecords) {
+              out.push({
+                time,
+                textBoxes: frame.textBoxes ?? [],
+                rigRecords: frame.rigRecords ?? [],
+                sample: frame.sample,
+              });
+            }
+            console.log(`still ${name}`);
+          }
+          return out;
+        }),
+      );
+      const probeFrames = painted.flat().sort((a, b) => a.time - b.time);
       console.log(`stills: ${stillsDir}`);
       if (probePath) {
         const probeFile = resolve(cwd, probePath);
