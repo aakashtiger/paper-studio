@@ -13,8 +13,9 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
+import { measureLoudness, runFfmpeg } from "../src/engine/loudness.js";
 import { cueBand, cueDuckDb, cueSend, mixFilm } from "../src/engine/mix.js";
-import { cueSetText, cueSpec } from "../src/engine/sfx.js";
+import { CUE_LOUD, cueSetText, cueSpec, kindGain, loudMoment } from "../src/engine/sfx.js";
 
 const TARGET_LUFS = -14;
 const TARGET_TP = -1.5;
@@ -24,6 +25,12 @@ const MASTER_MAX_GAIN = 8;
  * The limiter's sample ceiling, in linear full scale. -2 dBFS leaves room for
  * the inter-sample peaks that `ebur128` measures as true peak, so the limit
  * lands under -1.5 dBTP rather than pinning at it.
+ *
+ * The master is not mastered to the *delivery* ceiling, because the delivery is
+ * an AAC encode and AAC overshoots (this film: -1.9 dBTP master → -0.6 dBTP
+ * file, 1.3 dB of overshoot). `npm run deliver` holds the delivered file to
+ * -1.5 dBTP with a peak limiter that touches only the loudest samples, so the
+ * film keeps its loudness instead of being turned down to pay for the encoder.
  */
 const LIMITER_CEILING = 0.794;
 /** How many gain/limit passes the master may take to land on the target. */
@@ -41,6 +48,16 @@ const MASTER_PASSES = 6;
  * can be read in context.
  */
 const LIMITER_MAX_REDUCTION = 8;
+
+/**
+ * The most a declared silence may carry. A phone in a quiet room has a noise
+ * floor near -60 dBFS; -50 leaves room for the encoder's own hiss and nothing
+ * else. A window the score calls silent that measures above this is a window
+ * the score is wrong about.
+ */
+const SILENCE_CEILING = -50;
+/** The film's last 0.5 s is a slope down to nothing, and the end is inside this. */
+const TAIL_CEILING = -60;
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
@@ -111,6 +128,8 @@ const cues = plan.cues.map((cue) => {
     duckDb: cueDuckDb(cue),
     band: cueBand(cue),
     pan: cue.pan,
+    /** The level the score's gain asks for: the kit's cue level plus the gain. */
+    levelDb: 20 * Math.log10(CUE_LOUD * (cue.gain ?? kindGain(cue.kind))),
   };
 });
 
@@ -127,10 +146,105 @@ const master = resolve(outDir, "master.wav");
 const mastered = masterToTarget(ffmpeg, premaster, master);
 const measured = mastered.measured;
 
+/**
+ * Did every cue that plays under speech actually get the duck its score asked
+ * for? The mix reports what it applied; this is the row that refuses a report
+ * where a declared duck did not arrive. 1 dB of slack is the knee of the
+ * presence gate, not a licence.
+ */
+const DUCK_SLACK = 1;
+const underSpeech = mixed.cues.filter((cue) => cue.appliedDb > 0 || cue.overVoiceDb !== null);
+const shortDuck = mixed.cues.filter(
+  (cue) => cue.overVoiceDb !== null && cue.appliedDb < Math.max(0, cue.declaredDb - DUCK_SLACK),
+);
+const overVoice = mixed.cues.filter((cue) => (cue.overVoiceDb ?? -99) > 0);
+const duckOk = shortDuck.length === 0 && overVoice.length === 0;
+
+/** The level a cue's own record claims, against the level the bus gave it. */
+const levels = mixed.cues.map((cue) => {
+  const samples = cues.find((input) => input.id === cue.id)?.samples;
+  const fileDb = samples ? 20 * Math.log10(loudMoment(samples, sr) + 1e-9) : null;
+  return { id: cue.id, fileDb: fileDb === null ? null : Number(fileDb.toFixed(1)), busDb: cue.busPeakDb };
+});
+const levelDrift = levels
+  .filter((level) => level.fileDb !== null)
+  .map((level) => ({ id: level.id, drift: level.busDb - (level.fileDb as number) }))
+  .sort((a, b) => Math.abs(b.drift) - Math.abs(a.drift));
+const worstDrift = levelDrift[0] ?? { id: null, drift: 0 };
+/**
+ * How far the bus's band placement may move a cue's own level. The band is two
+ * unity edges, so anything inside it passes unchanged; a cue with real energy
+ * outside its band is the case this catches, and it should be rare and small.
+ */
+const LEVEL_DRIFT = 1;
+const levelsOk = Math.abs(worstDrift.drift) <= LEVEL_DRIFT;
+
+/**
+ * The silence the score declares, measured on the file that ships. A
+ * declaration is a claim about the master, and only the master can settle it.
+ */
+const masterAudio = readWav(master);
+const declared = plan.audio.sfx?.silences ?? [];
+const silences = declared.map((silence) => {
+  const from = Math.round(silence.from * sr);
+  const to = Math.round(silence.to * sr);
+  let peak = 0;
+  let energy = 0;
+  let counted = 0;
+  for (let i = from; i < to; i++) {
+    for (const channel of masterAudio.channels) {
+      const value = channel[i] ?? 0;
+      peak = Math.max(peak, Math.abs(value));
+      energy += value * value;
+      counted += 1;
+    }
+  }
+  const peakDb = Number((20 * Math.log10(peak + 1e-9)).toFixed(1));
+  return {
+    from: silence.from,
+    to: silence.to,
+    why: silence.why,
+    peakDb,
+    rmsDb: Number((20 * Math.log10(Math.sqrt(energy / Math.max(1, counted)) + 1e-9)).toFixed(1)),
+    ok: peakDb <= SILENCE_CEILING,
+  };
+});
+const silenceOk = silences.every((silence) => silence.ok);
+
+/**
+ * The film ends on a fade to nothing rather than on a cut: the last 0.5 s must
+ * come down and stay down, and the final sample must be under `TAIL_CEILING`.
+ */
+const fadeFrom = Math.round((plan.duration - 0.5) * sr);
+const fade = (() => {
+  const window: number[] = [];
+  const step = Math.max(1, Math.round(0.05 * sr));
+  for (let i = fadeFrom; i < masterAudio.channels[0]?.length!; i += step) {
+    let peak = 0;
+    for (const channel of masterAudio.channels) {
+      for (let j = i; j < Math.min(i + step, channel.length); j++) peak = Math.max(peak, Math.abs(channel[j] ?? 0));
+    }
+    window.push(peak);
+  }
+  const monotonic = window.every((value, index) => index === 0 || value <= (window[index - 1] ?? 0) * 1.02 + 1e-4);
+  const last = 20 * Math.log10((window[window.length - 1] ?? 0) + 1e-9);
+  return {
+    fromDb: Number((20 * Math.log10((window[0] ?? 0) + 1e-9)).toFixed(1)),
+    endDb: Number(last.toFixed(1)),
+    ceilingDb: TAIL_CEILING,
+    monotonic,
+    ok: monotonic && last <= TAIL_CEILING,
+  };
+})();
+const tailOk = fade.ok;
 const pass =
   Math.abs(measured.lufs - TARGET_LUFS) <= 0.5 &&
   measured.truePeak <= TARGET_TP + 0.1 &&
-  mastered.gainReductionDb <= LIMITER_MAX_REDUCTION;
+  mastered.gainReductionDb <= LIMITER_MAX_REDUCTION &&
+  duckOk &&
+  levelsOk &&
+  silenceOk &&
+  tailOk;
 const report = {
   film: score.id,
   target: { lufs: TARGET_LUFS, truePeak: TARGET_TP },
@@ -156,6 +270,39 @@ const report = {
   cues: cues.length,
   voice: voicePath ? relative(voicePath) : null,
   duckDb: average(cues.map((cue) => cue.duckDb)),
+  /**
+   * What the duck actually did, per cue: a score that declares 8 dB and a mix
+   * that applies 2.6 dB is a film where the declaration is decoration.
+   */
+  duck: {
+    ok: duckOk,
+    slackDb: DUCK_SLACK,
+    underSpeech: underSpeech.length,
+    short: shortDuck.map((cue) => ({
+      id: cue.id,
+      declaredDb: cue.declaredDb,
+      appliedDb: cue.appliedDb,
+      at: cue.at,
+    })),
+    overVoice: overVoice.map((cue) => ({ id: cue.id, overVoiceDb: cue.overVoiceDb })),
+    worst: mixed.cues
+      .filter((cue) => cue.appliedDb > 0)
+      .sort((a, b) => b.appliedDb - a.appliedDb)
+      .slice(0, 3)
+      .map((cue) => ({ id: cue.id, declaredDb: cue.declaredDb, appliedDb: cue.appliedDb, at: cue.at })),
+  },
+  /** The cue's level in the file against the level it reaches on the bus. */
+  cueLevels: {
+    ok: levelsOk,
+    toleranceDb: LEVEL_DRIFT,
+    worst: worstDrift.id
+      ? { id: worstDrift.id, driftDb: Number(worstDrift.drift.toFixed(2)) }
+      : null,
+    cues: levels,
+  },
+  /** The score's silence claims, measured on the master that ships. */
+  silence: { ok: silenceOk, ceilingDb: SILENCE_CEILING, windows: silences },
+  tail: fade,
   reverb: { room: 0.82, damp: 0.2, wet: 0.32 },
   passes: pass,
   inputs: {
@@ -191,6 +338,46 @@ if (mastered.gainReductionDb > LIMITER_MAX_REDUCTION) {
     `error: the limiter took ${mastered.gainReductionDb.toFixed(1)} dB off the loudest sample; ` +
       `more than ${LIMITER_MAX_REDUCTION} dB is the master compressing the film, so fix the mix`,
   );
+}
+console.log(
+  `duck: ${underSpeech.length}/${mixed.cues.length} cues meet speech · ` +
+    (shortDuck.length === 0
+      ? `every one reached its declared depth (worst: ${report.duck.worst[0]?.id ?? "none"} ${report.duck.worst[0]?.appliedDb ?? 0} of ${report.duck.worst[0]?.declaredDb ?? 0} dB)`
+      : `${shortDuck.length} short: ` +
+        shortDuck.map((cue) => `${cue.id} ${cue.appliedDb} of ${cue.declaredDb} dB at ${cue.at}s`).join(", ")),
+);
+if (overVoice.length > 0) {
+  console.error(
+    `error: ${overVoice.length} cue(s) sit above the voice in 1-4 kHz where a word is in the air: ` +
+      overVoice.map((cue) => `${cue.id} +${cue.overVoiceDb} dB`).join(", "),
+  );
+}
+if (worstDrift.id) {
+  console.log(
+    `levels: a cue's loudest 50 ms lands within ${Math.abs(worstDrift.drift).toFixed(2)} dB of its own record ` +
+      `(worst: ${worstDrift.id})`,
+  );
+}
+console.log(
+  `silence: ${silences.length} declared window(s) measured on the master · ` +
+    (silences.length === 0
+      ? "none declared"
+      : silences
+          .map((silence) => `${silence.from}–${silence.to}s peak ${silence.peakDb} dBFS ${silence.ok ? "ok" : "TOO LOUD"}`)
+          .join(" · ")),
+);
+console.log(
+  `tail: fade from ${fade.fromDb} dBFS to ${fade.endDb} dBFS over 0.5 s ` +
+    `(${fade.monotonic ? "monotonic" : "RISES"}, ceiling ${TAIL_CEILING} dBFS)`,
+);
+if (!silenceOk) {
+  console.error(
+    `error: a declared silence carries sound above ${SILENCE_CEILING} dBFS; ` +
+      `either narrow the window to what is silent or remove the sound`,
+  );
+}
+if (!tailOk) {
+  console.error(`error: the film does not fade to silence; the last 0.5 s must come down to ${TAIL_CEILING} dBFS`);
 }
 if (!pass) process.exit(1);
 
@@ -400,12 +587,7 @@ function clamp(value: number, low: number, high: number): number {
 }
 
 function measure(ffmpeg: string, input: string): { lufs: number; truePeak: number; lra: number } {
-  const output = run(ffmpeg, ["-hide_banner", "-i", input, "-af", "ebur128=peak=true", "-f", "null", "-"]);
-  const summary = output.slice(output.lastIndexOf("Summary:"));
-  const lufs = Number(summary.match(/I:\s*(-?[\d.]+)\s*LUFS/)?.[1] ?? "NaN");
-  const lra = Number(summary.match(/LRA:\s*(-?[\d.]+)\s*LU/)?.[1] ?? "NaN");
-  const truePeak = Number(summary.match(/Peak:\s*(-?[\d.]+)\s*dBFS/)?.[1] ?? "NaN");
-  return { lufs, truePeak, lra };
+  return measureLoudness(ffmpeg, input);
 }
 
 function run(binary: string, args: string[]): string {

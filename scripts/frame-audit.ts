@@ -11,6 +11,8 @@ import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
+import { readRenderManifest } from "../src/engine/manifest.js";
+import { findFfmpeg, videoStreamHash } from "../src/engine/video.js";
 
 type Score = {
   id: string;
@@ -205,66 +207,36 @@ async function main(): Promise<void> {
     : [];
 
   const hash = createHash("sha256").update(await readFile(video)).digest("hex");
-  const hashFile = async (path: string): Promise<string | null> => {
-    if (!existsSync(path)) return null;
-    return `sha256:${createHash("sha256").update(await readFile(path)).digest("hex")}`;
-  };
-  const filmDir = resolve(root, "films", score.id);
-  const style = score.style ?? "";
-  const vendorFiles = ["characters.js", "core.js", "props.js", "scene_kit.js", "type.js", "gsap.min.js"];
-  const vendor = Object.fromEntries(
-    await Promise.all(
-      vendorFiles.map(async (name) => [name, await hashFile(join(filmDir, "vendor", name))] as const),
-    ),
-  );
-  // The pose libraries are cast data, not engine data: a pose edit changes the
-  // frames without touching the code, so each file is hashed here too.
-  const cast = score.cast ?? [];
-  const poses = Object.fromEntries(
-    await Promise.all(
-      cast.map(async (entry) => {
-        const path = entry.poses ? resolve(root, entry.poses) : null;
-        return [entry.character, path ? await hashFile(path) : null] as const;
-      }),
-    ),
-  );
-  const inputs = {
-    score: await hashFile(resolve(root, scorePath)),
-    scoreData: await hashFile(join(filmDir, "score-data.js")),
-    backend: await hashFile(join(root, "styles", style, "canvas", "recipes.js")),
-    painter: await hashFile(join(filmDir, "painter.js")),
-    index: await hashFile(join(filmDir, "index.html")),
-    captions: await hashFile(join(filmDir, "captions.srt")),
-    vendor,
-    poses,
-  };
-  const audioPath = arg("audio");
-  const audioHash = audioPath ? await hashFile(resolve(root, audioPath)) : null;
-  const manifest = {
-    film: score.id,
-    renderer: "scripts/render-film.ts",
-    command: `npm run render:film -- ${scorePath}`,
-    duration: score.duration,
-    fps,
-    frames: expectedFrames,
-    video,
-    videoHash: `sha256:${hash}`,
-    audio: audioPath ? { path: audioPath, hash: audioHash } : null,
-    inputs,
-  };
-  await writeFile(resolve(root, "build", score.id, "render-manifest.json"), JSON.stringify(manifest, null, 2) + "\n", "utf8");
+  // The picture's identity is its video stream, not the container: the audio is
+  // re-cut at delivery, and a hash every frame audit hangs off must not move
+  // when a fade does. The container hash is recorded too, because the file is
+  // what ships.
+  const streamHash = videoStreamHash(findFfmpeg(root), video);
+  // The manifest is the **render's** claim about what it painted from, so the
+  // renderer writes it (`src/engine/manifest.ts`) and this audit reads it.
+  // Hashing the inputs here would describe the files as they are *now*, beside a
+  // picture that may be older than them — a manifest whose every hash agrees and
+  // whose central claim is unverified. When the video is not the picture the
+  // manifest names, the audit fails instead of writing a new manifest that makes
+  // the two agree.
+  const manifest = await readRenderManifest(root, score.id);
+  const manifestOk = manifest !== null && manifest.videoHash === streamHash;
   const checks = {
     frameCount: frameCount === expectedFrames,
     noBlankFrames: blank.length === 0,
     cutsOnShots: missedCuts.length === 0,
     noLongHolds: holds.length === 0,
+    describedByRender: manifestOk,
   };
   const pass = Object.values(checks).every(Boolean);
 
   const report = {
     film: score.id,
     video,
+    /** The container that was measured. */
     hash: `sha256:${hash}`,
+    /** The picture that was measured. This is what the gate freezes. */
+    videoHash: streamHash,
     duration: score.duration,
     fps,
     expectedFrames,
@@ -279,11 +251,11 @@ async function main(): Promise<void> {
     diff: { median: Number(medianDiff.toFixed(3)), longestRunFrames: longestRun },
     checks,
     pass,
-    pending: [
-      "clipping / palette / type-safe-area / rig-seam checks are not mechanical yet",
-      "ASR of the mixed master",
-      "two-render frame-hash comparison",
-    ],
+    // What this audit does *not* do. Palette, type safe area, rig seam and two
+    // renders are separate commands now (`audit:palette`, `audit:type`,
+    // `audit:rig`, `determinism:renders`); they are listed here so nobody reads
+    // this file as the whole gate.
+    pending: ["ASR of the mixed master (npm run asr)"],
     generatedAt: new Date().toISOString(),
   };
 
@@ -293,6 +265,15 @@ async function main(): Promise<void> {
 
   console.log(`frames ${frameCount}/${expectedFrames} · luma ${minAvg.toFixed(1)}-${maxAvg.toFixed(1)}`);
   console.log(`cuts ${cuts.length} · missed ${missedCuts.length} · blank ${blank.length} · longest hold ${(longestRun / fps).toFixed(2)}s`);
+  console.log(
+    `render manifest: ${
+      manifestOk
+        ? "this picture is the one the render wrote"
+        : manifest === null
+          ? "MISSING — the picture was not produced by npm run render:film"
+          : "MISMATCH — the render's manifest describes a different picture"
+    }`,
+  );
   console.log(`audit: ${out}`);
   if (!pass) process.exit(1);
 }

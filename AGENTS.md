@@ -67,6 +67,8 @@ npm run audit:type -- films/understudy/score.json      # text inside the safe ar
 npm run audit:rig -- films/understudy/score.json       # leg solve + contact seam
 npm run sheet -- films/understudy/score.json     # character/pose sheet PNG
 npm run sfx -- films/understudy/score.json       # code-generated SFX + mix
+npm run mix -- films/understudy/score.json       # score-level master, measured
+npm run deliver -- films/understudy/score.json   # mux the master into the frozen picture, measure the file
 npm run animatic -- films/understudy/score.json  # board animatic + voice/SFX/SRT
 npm run rough -- films/understudy/score.json     # stepped rough at 10 fps + board contact sheet
 npm run doctor         # preflight: node, ffmpeg, ffprobe, chrome, fonts (--render smoke-tests a frame)
@@ -141,7 +143,7 @@ The **contract layer and the first generators are implemented**: film brief,
 audio resolver (recorded/TTS narration, library/generated music, generated SFX),
 asset manifest, pose library, film score, derived **board**, score-level
 **audit**, the **character/pose sheet** generator and the **board animatic**
-builder. **254 tests.** The sheet has a signed **9/10 design** review. The paper
+builder. **265 tests.** The sheet has a signed **9/10 design** review. The paper
 rig has two-bone leg IK, ankle targets, foot pitch and a knee-driven bounce; the
 leg targets are now reachable, so a planted foot bends its knee and lands on its
 shadow (`test/cast-rig.test.ts`). The board animatic is **9/10 signed** (editor +
@@ -150,10 +152,11 @@ stepped rough. The seven critics and gate checklist are in `critics/` and
 `docs/GATES.md`. The SFX cues are now rendered by the kit
 (`src/engine/sfx.ts`): six materials, named layers, modal resonators, friction,
 a synthetic room, and a cue that can bind to its picture event. The score-level
-mix master is **-14.1 LUFS / -1.7 dBTP** from one measured gain and a true-peak
-limiter, and `gate:7` reads it; the delivered
-MP4 still carries the earlier audio cut — the look pass and the final master
-re-cut are next. The painter now lives in the
+mix master is **-14.1 LUFS / -1.9 dBTP** from one measured gain and a true-peak
+limiter, and `gate:7` reads it; `npm run deliver` then puts it into the frozen
+picture and measures the **delivered file's own** audio (**-14.4 LUFS / -1.9
+dBTP**), so the MP4 carries the cut that was measured rather than an earlier one.
+The painter now lives in the
 style pack (`styles/paper-kpop/canvas/recipes.js`, decision 0015); the film
 renderer and three mechanical G7 audits are built (`audit:motion`, `audit:type`,
 `audit:rig`). The **stepped rough** is built (`npm run rough`): the score painted
@@ -191,34 +194,58 @@ clock has no second cue list, the mix refuses a stale cue by spec fingerprint an
 WAV hash, review chrome is one neutral `REVIEW_CHROME`, every sheet takes its
 faces from the pack's `tokens.json`, and `film:review` never prints a report it
 did not write this run. `film:review --gate` is **PASS**: audit 32 events /
-30 cues, 30/30 SFX, `gate:7` **14 checks** with **ASR the one manual row**,
-254 tests, clean typecheck. `docs/decisions/0017` §Landed has the detail.
+30 cues, 30/30 SFX, `gate:7` **19 checks** with **ASR the one manual row**,
+265 tests, clean typecheck. `docs/decisions/0017` §Landed has the detail.
 
-The **sound pass** ran twice. The first fixed what the sound critic's 6/10 named:
-the master's tail fade was inverted, cues were peak-normalised (so the softest
-was the loudest), materials rang under 200 Hz where a phone cannot move air, a
-`crowd` repeat machine-gunned, the fixture's cues were typed near their events
-instead of bound to them, and the master was a normaliser rather than one gain and
-a true-peak limiter.
+The **sound pass** ran three times. The first fixed what the sound critic's 6/10
+named: the master's tail fade was inverted, cues were peak-normalised (so the
+softest was the loudest), materials rang under 200 Hz where a phone cannot move
+air, a `crowd` repeat machine-gunned, the fixture's cues were typed near their
+events instead of bound to them, and the master was a normaliser rather than one
+gain and a true-peak limiter.
 
 The second pass measured instead of listening and found three fixes aimed at the
 wrong quantity. Cue level moved from whole-cue RMS to the **loudest 50 ms**
 (`CUE_LOUD`), because RMS normalisation drove a decaying hit's peak into the
 limiter and `gain` stopped being its level; `checkCueSet` compares **all pairs**
-of a kind; **silences are contract surface** (`audio.sfx.silences` with a `why`,
-five audit rows); the generator's `rise()` attack removes clicks; the master's
-reported reduction was a `volumedetect` clamp and now comes from
-`ebur128=peak=true`, with a **100 ms window distribution** beside the peak so one
-sample is not read as the whole film; the bus has a `PREMASTER_CEILING` (−1 dBFS)
-headroom stage; and `gate:7` has a `master` row reading gain, reduction, window
-median and `converged`. Understudy: −14.1 LUFS / −1.7 dBTP, gain +7.5 dB, 7.5 dB
-off the loudest sample, **median window 0.03 dB**. A narration leveller was built,
-measured and **reverted** — it lowered integrated loudness more than it raised it,
-and the measurement is in the decision record so nobody rebuilds it. Still open
-and named in `docs/STATUS.md`: the MP4's earlier audio cut (the look pass re-cuts
-it), no music and narration that ends at 19.5 s (the brief's copy ends there), a
-mono field, transcript word times that say `source: "guess"` until Whisper is
-installed, and ASR pending.
+of a kind; silences became contract surface; the generator's `rise()` attack
+removes clicks; the master's reported reduction was a `volumedetect` clamp and
+now comes from `ebur128=peak=true`, with a **100 ms window distribution** beside
+the peak so one sample is not read as the whole film; the bus has a
+`PREMASTER_CEILING` (−1 dBFS) headroom stage; and `gate:7` has a `master` row.
+
+The third pass closed what the sound critic (7/10, no sign) and the QA critic
+(6.5/10, no sign) named. **The duck is the declared duck**: the sidechain used the
+film's global peak, so an 8 dB declaration arrived as 2.6 dB; it is now a
+presence gate on a **local reference**, and the mix report names the depth each
+cue actually got. **A cue's gain is its level again**: the resonant bandpass that
+cost 1–3.4 dB inside the band is two unity edges, and the bus re-levels each cue
+to `CUE_LOUD · gain` (0.00 dB drift). **Silence is measured on the master**
+(≤ −50 dBFS), and a silence with narration through it or a cue ringing into it is
+an error; unscored events carry their own `quiet` reason. **The tail is a measured
+slope** to ≤ −60 dBFS. **`npm run deliver`** muxes the master into the frozen
+picture without re-encoding it, measures the *delivered file's* loudness and true
+peak (AAC overshoots: −1.9 dBTP master → −0.6 dBTP file), brings the file inside
+−1.5 dBTP with a **peak limiter on the encode** — never a gain, because 1.1 dB of
+gain took the film to −15.3 LUFS — and records the measurement in `deliver.json`
+and the manifest. `gate:7` reads it as `deliveredAudio`. The gate also stopped
+passing on missing evidence: the `master` row no longer defaults a missing
+`limiterWindows` to 1, the `palette` row is tied to the video **and to clipping on
+every frame**, `scoreAudit` requires the audit to name the current score, and
+`inputsHashed` re-hashes the score, the backend and the painter. **The render owns
+the manifest**: `render:film` writes it, `audit:frames` refuses a video it does not
+describe, `deliver` refuses a picture it does not describe, and the gate re-hashes
+the files the render named. **Picture and container are two hashes**: `videoHash`
+is sha256 over the video stream, so
+re-cutting audio does not invalidate a frame audit, and determinism needs two
+renders with identical bytes and the same picture as the delivered film.
+Understudy: −14.1 LUFS / −1.9 dBTP, gain +6.6 dB, 6.8 dB off the loudest sample,
+**median window 0.02 dB**; delivered **−14.4 LUFS / −1.9 dBTP**. A narration
+leveller was built, measured and **reverted** — it lowered integrated loudness
+more than it raised it, and the measurement is in the decision record so nobody
+rebuilds it. Still open and named in `docs/STATUS.md`: no music, narration ending
+at 19.5 s, a mono field, transcript word times that say `source: "guess"` until
+Whisper is installed, and ASR pending.
 
 Do not build: the renderer in this phase, a video, the web app, a second product
 style, or a conversion of the other 58 Lemo styles. `styles/paper-vows` remains

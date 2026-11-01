@@ -14,9 +14,12 @@ import { spawn, spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { extname, join, resolve, sep, dirname } from "node:path";
+import { extname, join, relative, resolve, sep, dirname } from "node:path";
 import type { AddressInfo } from "node:net";
 import { findChrome as findChromePath } from "../src/engine/chrome.js";
+import { hashFile, manifestPath, renderInputs } from "../src/engine/manifest.js";
+import type { RenderManifest } from "../src/engine/manifest.js";
+import { fileHash, videoStreamHash } from "../src/engine/video.js";
 
 const MIME: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
@@ -281,8 +284,10 @@ async function main(): Promise<void> {
   const scoreFile = resolve(cwd, scorePath);
   const score = JSON.parse(await readFile(scoreFile, "utf8")) as {
     id: string;
+    style?: string;
     duration: number;
     fps?: number;
+    cast?: { character: string; poses?: string }[];
   };
   const fps = Number(arg("fps") ?? score.fps ?? 30);
   const duration = Number(score.duration);
@@ -452,6 +457,30 @@ async function main(): Promise<void> {
 
     await encode({ ffmpeg: findFfmpeg(), framesDir, fps, crf, audio, output });
     console.log(`render: ${output}`);
+
+    // The manifest is written **here**, by the step that painted the frames,
+    // because this is the only step that knows what it painted from. Hashing the
+    // inputs in the audit instead would record the files as they are after the
+    // render, so a painter edited afterwards would be described beside a picture
+    // it never touched.
+    const picture = videoStreamHash(findFfmpeg(), output);
+    const manifest: RenderManifest = {
+      film: score.id,
+      renderer: "scripts/render-film.ts",
+      command: `npm run render:film -- ${scorePath}`,
+      duration,
+      fps,
+      frames: frameCount,
+      video: relative(cwd, output).replace(/\\/g, "/"),
+      videoHash: picture,
+      videoFileHash: fileHash(output),
+      audio: audio ? { path: relative(cwd, audio).replace(/\\/g, "/"), hash: await hashFile(audio) } : null,
+      inputs: await renderInputs(cwd, score, scorePath),
+    };
+    const out = manifestPath(cwd, score.id);
+    await mkdir(dirname(out), { recursive: true });
+    await writeFile(out, JSON.stringify(manifest, null, 2) + "\n", "utf8");
+    console.log(`manifest: build/${score.id}/render-manifest.json · picture ${picture.slice(0, 19)}...`);
   } finally {
     cdp?.close();
     await stopChrome(chrome);

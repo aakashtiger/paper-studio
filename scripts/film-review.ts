@@ -50,6 +50,9 @@ const steps: Step[] = [
   { name: "storyboard", script: "scripts/storyboard.ts", detail: "one frame per shot" },
   { name: "sheet", script: "scripts/sheet.ts", detail: "character / pose sheet" },
   { name: "sfx", script: "scripts/sfx.ts", detail: "cues + spectrogram sheet" },
+  // The master is measured after the cues are regenerated: `sfx` rewrites every
+  // WAV, so a master mixed before it is a master of a different cue set.
+  { name: "mix", script: "scripts/mix.ts", detail: "master, measured" },
 ];
 if (hasVideo) {
   steps.push({ name: "strips", script: "scripts/strips.ts", detail: "per-shot strips" });
@@ -58,6 +61,10 @@ if (wantGate) {
   for (const gate of ["frame-audit", "paint-match", "motion-audit", "type-audit", "rig-audit"] as const) {
     steps.push({ name: gate, script: `scripts/${gate}.ts`, detail: "G7 mechanical audit" });
   }
+  // After the audits, because `frame-audit` rewrites the render manifest and
+  // `deliver` is what puts the measured audio back into it. Before the gate,
+  // because the gate's `deliveredAudio` row reads the delivered file.
+  steps.push({ name: "deliver", script: "scripts/deliver.ts", detail: "master into the picture, measured" });
   steps.push({ name: "gate:7", script: "scripts/gate-7.ts", detail: "the final gate" });
 }
 
@@ -80,6 +87,10 @@ function artifact(name: string): string | null {
       return `build/${id}/sfx/sfx.json`;
     case "strips":
       return `build/${id}/strips/strips.json`;
+    case "mix":
+      return `build/${id}/mix/mix-report.json`;
+    case "deliver":
+      return `build/${id}/deliver.json`;
     case "gate:7":
       return `build/${id}/gate-7.json`;
     default:
@@ -255,6 +266,27 @@ function describe(name: string): string | null {
     case "strips": {
       const report = readJson<{ strips: unknown[]; grid: { cols: number; rows: number } }>(`build/${id}/strips/strips.json`);
       return report ? `one strip per shot · ${report.strips.length} shots · ${report.grid.cols}×${report.grid.rows}` : null;
+    }
+    case "mix": {
+      const report = readJson<{
+        passes: boolean;
+        measured: { lufs: number; truePeak: number };
+        master?: { gainDb: number; limiterGainReductionDb: number };
+      }>(`build/${id}/mix/mix-report.json`);
+      if (!report) return null;
+      if (!report.passes) return "FAIL · the mix report does not pass";
+      return `${report.measured.lufs.toFixed(1)} LUFS / ${report.measured.truePeak.toFixed(1)} dBTP${report.master ? ` · gain ${report.master.gainDb >= 0 ? "+" : ""}${report.master.gainDb.toFixed(1)} dB` : ""}`;
+    }
+    case "deliver": {
+      const report = readJson<{
+        ok: boolean;
+        passes: number;
+        conflict: string | null;
+        output: { audio: { lufs: number; truePeak: number; limitDb: number } };
+      }>(`build/${id}/deliver.json`);
+      if (!report) return null;
+      if (!report.ok) return `FAIL · ${report.conflict ?? "the delivered file is out of contract"}`;
+      return `${report.output.audio.lufs.toFixed(1)} LUFS / ${report.output.audio.truePeak.toFixed(1)} dBTP measured on the delivered file · ${report.passes} pass(es)`;
     }
     case "frame-audit": {
       const report = readJson<{ frameCount: number; blankCount: number }>(`build/${id}/frame-audit.json`);

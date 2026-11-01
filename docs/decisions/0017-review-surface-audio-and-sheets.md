@@ -136,8 +136,9 @@ generator, not the sourcing, was the problem:
 Steps `0`–`10e` are built and each ships a command: `style:sheet`, `stills`,
 `strips` (G5), the spectrogram sheet written by `sfx` (G6), the final sheet
 written by `gate:7` (G7), `film:new`, `film:review`, `voice`, `asr` and the SFX
-kit. `gate:7` is 13 checks and names ASR as the one pending check until its
-report exists.
+kit. When this change set first landed, `gate:7` was 13 checks and named ASR as
+the one pending check; the third pass below took it to **19 checks, ASR still the
+one manual row**, on the same film.
 
 Step `10e` landed as §8 describes: `src/engine/sfx.ts` is the kit (six
 materials, named layers, modal resonators, friction, a synthetic room, ambience)
@@ -224,9 +225,9 @@ Fixed in the engine:
 
 Not fixed here, and why:
 
-- **The delivered MP4 still carries the earlier audio cut.** It is re-cut with
-  the look pass, not in an audio change; the score-level master is the current
-  artifact and `gate:7` ties to it.
+- **The delivered MP4 still carries the earlier audio cut** — *closed by the third
+  pass below*: `npm run deliver` now puts the measured master into the frozen
+  picture, and the gate reads the delivered file's own measurement.
 - **No music, and the narration stops at 19.5 s.** The fixture's script ends
   there — the brief's copy is the contract and inventing a seventh line to fill
   ten seconds would be inventing a fact. Music is staged (§7). The last third is
@@ -301,3 +302,168 @@ after compression as before, with its quiet passages quieter. The code, the repo
 field and the tests are gone; the measurement stays here so the next person does
 not rebuild it. Crest is handled by the gain and the limiter, and disclosed by the
 window distribution.
+
+### The third pass — the duck, the level, the silence and the delivered file
+
+Two critics re-read the same artifacts after the second pass and both withheld a
+sign: sound **7/10**, QA **6.5/10**. Each named a place where the engine was true
+about the wrong thing. This is the pass that made the claims measurable at the
+point they are made.
+
+**The duck was a fraction of itself.** The sidechain was the voice presence
+envelope normalised by the film's single loudest sample. Only ~257 ms of a 29.5 s
+take reach that peak, so an 8 dB declaration arrived as **2.6 dB** at the hit it
+was written for, and at 9.00 s the slam measured **2.3 dB above** the word it was
+supposed to make room for. The key is now `duckKey`: a **presence gate on a local
+reference** — `1` where the voice is within 12 dB of its own loudest moment in the
+surrounding 1 s, ramping to `0` over a 6 dB knee, with a `MIN_LEVEL` floor so a
+gap is not "12 dB under its own silence". The mix report records, per cue,
+`declaredDb`, `appliedDb`, where (`at`), and `overVoiceDb` averaged over the words
+the cue shares. `npm run mix` fails a cue that did not reach its declared depth
+within 1 dB, or one that sits above the voice in 1–4 kHz. Understudy: 16 cues meet
+speech, every one at depth, the slam at 8 of 8 dB.
+
+**The band was stealing the level it was meant only to shape.** A cue was placed
+by one resonant bandpass centred on `sqrt(lo·hi)`; a `[200, 9000]` cue lost
+1–3.4 dB at its own loudest moment, so the score's `gain` stopped being the level
+the cue reached in the film — 24 of 30 cues sat 0.5–3.7 dB under their record.
+`bandEdges` is a highpass at `lo` and a lowpass at `hi`, each at unity inside the
+band, and the bus then **re-levels** to `20·log10(CUE_LOUD · gain)` under a 0.98
+peak guard. Report row `cueLevels`: worst drift, and the drift per cue. Now
+**0.00 dB**.
+
+**A declared silence was a window with no cue *starting* in it.** It never looked
+at the voice or at a cue tail, so 4 of the 5 declared windows were false of the
+audio (two carried narration, one a reverb tail). The contract split in two:
+
+- `audio.sfx.silences` is a claim about the **master**: peak ≤ −50 dBFS, measured
+  on the file that ships (`silence.windows` in `mix-report.json`). The audit
+  refuses a declared silence with a narration line running through it
+  (`silence_over_voice`) or a cue overlapping it, start or tail
+  (`sfx_in_silence`).
+- An unscored picture event carries its own **`quiet: "<why>"`** on the event,
+  because a window of time cannot say why *that* beat is silent. An event with
+  both a cue and a reason is `sfx_quiet_scored`; an event with neither is
+  `sfx_unscored`.
+
+Understudy now declares **2** windows (0–0.5 s, 19.55–19.85 s), measured at −65.2
+and −61.4 dBFS; five events carry a `quiet` reason instead of hiding behind a
+window.
+
+**The tail is measured as a slope.** The last 0.5 s must fall monotonically to
+≤ −60 dBFS; the master reads −48.4 → −180 dBFS.
+
+**The delivered MP4 carried an audio cut nobody had measured.** `render-manifest`
+recorded `"audio": null`, and the film shipped at **−1.3 dBTP** — inside the mix
+contract, outside the delivery contract, because AAC overshoots the master's true
+peak. `npm run deliver` is now the step that makes the deliverable: it copies the
+video stream (no re-encode), encodes the master beside it, and measures the
+**delivered file's own** loudness and true peak (`deliver.json`: passes, limit,
+hashes, measurement). It patches the manifest's `audio` block, and `gate:7` reads
+a `deliveredAudio` row that requires the delivered file's hash to match and its
+measured peak and loudness to be inside the bounds. The encode is written to a
+temp file and renamed into place, because `--out` is usually the source: ffmpeg
+truncates its output before it reads its input.
+
+**The first fix for that was the wrong knob, and the measurement said so.** With
+no processing, this master's −1.9 dBTP arrives in the file as −0.6 dBTP: AAC
+overshoots by **1.3 dB**. The first delivery walked the gain down by the
+overshoot, which passes the peak check by turning the whole film down — 1.1 dB of
+gain took Understudy to **−15.3 LUFS**, outside −14 ± 1. Two bounds, one gain, no
+solution. The overshoot is a *peak* problem, so it now gets a peak solution: an
+`alimiter` on the encode starting at −2.5 dBFS, tightened by the measured
+overshoot, floored at −6 dBFS, touching only the loudest samples. The delivered
+file lands at **−14.4 LUFS / −1.9 dBTP in one pass**, with the limit recorded. A
+build that measured −1.9 in and −0.6 out at unity, and a gain walk that cost
+1.1 dB of loudness to buy 1.3 dB of peak, are both in this record so neither is
+rebuilt. When the peak fits and the loudness does not, `deliver` stops and names
+the **conflict** rather than choosing one bound.
+
+**Mastering for the encoder was tried and reverted.** The next idea was to make
+`mix` aim its true peak 1.5 dB under the delivery ceiling so the file would arrive
+inside it untouched. It works — and it drove the master's limiter to **9.5 dB** of
+reduction on the loudest sample, over the 8 dB bound, because a −1.9 dBTP master
+is already the peak the film can carry at −14 LUFS. Reverted, with the number
+here.
+
+**Coverage is stated, not implied.** QA asked whether all 900 frames are checked
+for blank, clipping, palette, type and rig seam, or only sampled stills. The
+honest answer is two of five by decode, and the docs now say so with the numbers:
+`audit:frames` and `audit:palette` read **every frame** of the delivered file
+(blank, cuts, holds, hue outliers, clipping — and `frames === expectedFrames`, so
+a truncated decode is a failed row); `audit:type` and `audit:rig` read 31 painted
+instants, because a text box and an IK solve exist in the live page, not in
+pixels. Clipping was the gap with no command at all. It is now counted in the
+palette decode at both ends of the scale (all three channels ≥ 250 blown, ≤ 4
+crushed): Understudy's worst frame clips **0.59%** (frame 51, a black card that is
+meant to be black) and **no frame has a blown pixel at all**.
+
+**The gate could pass on evidence it did not have.** QA named three: the `master`
+row read `limiterWindows?.p50 ?? 1` — a missing distribution "passed"; the
+`palette` row had no video tie and its report was 26 minutes older than the MP4;
+`inputsHashed` never re-hashed. Fixes: the `master` row requires the
+distribution; `palette-audit.json` carries `videoHash` and the row requires
+`=== frozenHash`; `inputsHashed` re-hashes `inputs.backendPath` and
+`inputs.painterPath`, which the manifest now records — and the **score**, because
+a render is a render of one score: a manifest naming an older one describes a film
+that no longer exists. `audit.json` records the score it audited for the same
+reason, so a stale audit cannot pass a gate about a film nobody audited. `frame-audit.json`'s
+`pending` list no longer claims four checks are "not mechanical" when they are
+separate commands. Two smaller versions of the same lie went with them: the final
+contact sheet was labelled with the manifest's hash rather than the hash of the
+file it tiled, and `deliver` walked its gain *down* when the loudness was low and
+the peak was fine — turning a conflict into a quieter film. The sheet hashes what
+it decodes, and `deliver` stops and reports the conflict.
+
+**The manifest was written by the audit, which made it a claim and not
+evidence.** The deepest version of that lie surfaced last: `audit:frames` built
+`render-manifest.json` by hashing the files on disk *at audit time*. So the
+manifest's every hash agreed with the disk — and said nothing about the render.
+Edit the painter after a render, run the audit, and the manifest describes the new
+painter beside the old picture: a perfect report of the wrong thing. Now
+`render:film` writes the manifest at encode time (`src/engine/manifest.ts`, shared
+by both steps), `audit:frames` **reads** it and fails `describedByRender` when the
+video it measured is not the picture the manifest names, and `deliver` refuses a
+source picture the manifest does not describe. The gate's `inputsHashed` row is
+now worth what it says: those paths were hashed *by the step that painted the
+frame*, and are re-hashed by the gate. Both refusals were run, not assumed: a
+manifest with a false `videoHash` stopped `deliver` ("not the picture the render
+wrote"), and a missing manifest made `audit:frames` exit non-zero with
+`describedByRender: false`. With the manifest restored, both pass.
+
+**Picture and container are two hashes.** `videoHash` was sha256 of the MP4 file,
+so re-cutting the audio moved the hash every frame audit hangs off. It is now
+sha256 over the **video stream** (`src/engine/video.ts`: `streamhash` over copied
+packets — instant, no decode), with the container hash recorded beside it as
+`videoFileHash`. The determinism row changed with it: two renders must be
+byte-identical *and* produce the picture the film ships. The previous
+`determinism.json` compared two paths with the same hash and could not tell two
+independent renders from one file copied twice; the report now carries each
+file's picture hash, so the row can.
+
+**One place measures loudness.** `src/engine/loudness.ts` is the only parser of
+`ebur128` output; `mix` and `deliver` both call it, so the two numbers the gate
+compares cannot drift apart by transcription.
+
+**`ffmpeg-static` is now a declared dependency.** The four steps that mux or
+measure a file (`deliver`, `audit:frames`, the audits' picture hash, `mix`) had
+been importing a binary that only resolved from `../node_modules`: the studio
+package.json never named it. That works on one machine and fails on a clone, and
+a dependency the code cannot run without is a dependency to declare. It is a
+dev dependency — nothing the renderer draws needs it — and it is the same 5.3.0
+binary (identical sha256) the parent install already provided, so the frozen
+picture hash is unchanged. Known and open: `npm audit` reports `zod < 4.6.6`
+(GHSA-mrhx-c7xc-m3w5, memory exhaustion on oversized constrained collections).
+The fix is zod 4.x, a schema migration; the schemas here validate authored files
+in this repository, not untrusted input, so it is deferred rather than smuggled
+into a sound pass.
+
+Evidence: `sfx` 30/30 ok, all −14 dBFS loud · `audit` 32 events / 27 scored / 5
+bare / 30 cues / 2 silences / longest hole 1.07 s · `mix` −14.1 LUFS / −1.9 dBTP,
+gain +6.6 dB, limiter 6.8 dB at the peak, median window 0.02 dB (33/293 over
+3 dB) · `deliver` −14.4 LUFS / −1.9 dBTP measured on the file, one pass, limit
+−2.50 dBFS · `gate:7` **PASS, 19 checks, 1 manual (ASR)** · `film:review --gate`
+**PASS** · determinism: two renders, 21,496,587 bytes each, byte-identical, one
+picture hash `sha256:342fb37f…` · **265 tests**, clean typecheck. Tests cover
+`duckKey`, `bandEdges`, the re-level, the tail slope, `silence_over_voice`,
+`sfx_quiet_scored`, and a cue ringing through a silence.

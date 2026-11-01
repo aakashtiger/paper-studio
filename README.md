@@ -19,20 +19,31 @@ The engine is deterministic: the same project, style version and seed always pro
 
 Working today:
 
-- wedding brief schema and validator
-- deterministic shot planner
+- wedding brief schema and validator; deterministic shot planner (`npm run plan`)
 - the S1a style definition system: 27 decisions, six artifacts, validator, resolver, approval, seal
 - the `keepsake` control style
 - the S1b watercolor pilot and the S1c.1 Watercolor 0.2.0 card/process revision
 - the S1c Paper K-pop pack: 8 recipes, 2 formats, geometry gate, plan-valid blind
-- 110 tests, including the geometry and card-height gates
+- the **film pipeline**: one authored `score.json` → derived board, score audit,
+  generated SFX (`npm run sfx`), a measured master (`npm run mix`), a code-drawn
+  render (`npm run render:film`), delivery into the frozen picture
+  (`npm run deliver`), and `npm run gate:7`
+- **265 tests** (`npm test`), clean `npm run typecheck`
 
-Not built yet: renderer, web app, review room, payments, creator studio.
+The pipeline is proven end to end on one fixture, *The Understudy*
+(`films/understudy/score.json` → `films/understudy/understudy.mp4`):
+−14.4 LUFS / −1.9 dBTP measured on the delivered file, 900 frames, gate **PASS
+19 checks, 1 manual** (ASR, which needs a local speech model — `tools/README.md`).
+Two independent renders are byte-identical and share one picture hash.
+
+Not built yet: the web app, review room, payments, creator studio, music for a
+film, and the ASR run (the command exists; the model is not installed).
+
+*The Understudy* is a **fixture for contract tests**, not the first real film.
 
 A first **S2 visual proof** is in `proofs/s2-paper/`: a 15-second, three-shot
 Paper K-pop proof built with HyperFrames. Preview with
-`npx hyperframes preview proofs/s2-paper`. It is a visual proof, not yet the
-plan-driven renderer.
+`npx hyperframes preview proofs/s2-paper`. It predates the plan-driven renderer.
 
 ## Quick start
 

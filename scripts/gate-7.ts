@@ -15,6 +15,7 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { findFfmpeg, renderGrid, runBinary } from "../src/engine/grid.js";
+import { videoStreamHash } from "../src/engine/video.js";
 import { packFontPath } from "../src/engine/plan.js";
 import { cueSetText, type SfxRecordLike } from "../src/engine/sfx.js";
 
@@ -36,6 +37,10 @@ const root = process.cwd();
  */
 const MASTER_MAX_GAIN = 8;
 const MASTER_MAX_LIMITING = 8;
+/** The delivery ceiling and loudness target `scripts/deliver.ts` holds the file to. */
+const DELIVERY_TP = -1.5;
+const DELIVERY_LUFS = -14;
+const DELIVERY_LUFS_TOLERANCE = 1;
 const score = JSON.parse(readFileSync(resolve(root, file), "utf8")) as {
   id: string;
   style: string;
@@ -71,6 +76,12 @@ function aspectRatio(aspect: string): number {  const [w, h] = aspect.split(":")
 async function finalSheet(videoHash: string | null): Promise<{ ok: boolean; detail: string }> {
   const video = resolve(root, "films", score.id, `${score.id}.mp4`);
   if (!existsSync(video)) return { ok: false, detail: `no delivered video at films/${score.id}/${score.id}.mp4` };
+
+  // The sheet is a picture of *this* file. Hash the file the tiles came from
+  // rather than repeating the manifest's claim: a sheet labelled with a hash it
+  // does not show is a review aid that can be reviewed against the wrong film.
+  const measured = videoStreamHash(findFfmpeg(), video);
+  const matches = Boolean(videoHash) && measured === videoHash;
 
   const step = 0.5;
   const framesDir = resolve(dir, "final-frames");
@@ -112,7 +123,7 @@ async function finalSheet(videoHash: string | null): Promise<{ ok: boolean; deta
       {
         film: score.id,
         video: `films/${score.id}/${score.id}.mp4`,
-        videoHash,
+        videoHash: measured,
         frames: files.length,
         step,
         grid: { cols: grid.cols, rows: grid.rows, width: grid.width, height: grid.height },
@@ -124,17 +135,35 @@ async function finalSheet(videoHash: string | null): Promise<{ ok: boolean; deta
     )}\n`,
     "utf8",
   );
-  return { ok: existsSync(sheet), detail: `${files.length} frames every ${step}s on one sheet` };
+  return {
+    ok: existsSync(sheet) && matches,
+    detail: `${files.length} frames every ${step}s on one sheet${matches ? "" : " · the sheet's video is NOT the frozen picture"}`,
+  };
 }
 
 async function main(): Promise<void> {
-  const scoreAudit = read<{ ok: boolean }>("audit.json");
-  const frames = read<{ pass: boolean; hash: string; frameCount: number }>("frame-audit.json");
+  const scoreAudit = read<{ ok: boolean; score?: string }>("audit.json");
+  const frames = read<{ pass: boolean; hash: string; videoHash?: string; frameCount: number }>("frame-audit.json");
   const manifest = read<{
     videoHash: string;
-    inputs: { backend: string | null; painter: string | null; poses?: Record<string, string | null> };
+    audio?: { path: string; hash: string } | null;
+    inputs: {
+      score: string | null;
+      backend: string | null;
+      backendPath?: string;
+      painter: string | null;
+      painterPath?: string;
+      poses?: Record<string, string | null>;
+    };
   }>("render-manifest.json");
-  const determinism = read<{ pass: boolean; mismatches: number; frameSetHash: string }>("determinism.json");
+  const determinism = read<{
+    pass: boolean;
+    mismatches: number;
+    frameSetHash: string;
+    pictureMatch?: boolean;
+    a?: { file: string; hash: string; videoHash: string | null };
+    b?: { file: string; hash: string; videoHash: string | null };
+  }>("determinism.json");
   const mix = read<{
     passes: boolean;
     measured: { lufs: number; truePeak: number };
@@ -146,11 +175,28 @@ async function main(): Promise<void> {
       converged: boolean;
       usedAllPasses: boolean;
     };
+    duck?: {
+      ok: boolean;
+      slackDb: number;
+      underSpeech: number;
+      short: { id: string; declaredDb: number; appliedDb: number; at: number | null }[];
+      overVoice: { id: string; overVoiceDb: number | null }[];
+    };
+    cueLevels?: { ok: boolean; toleranceDb: number; worst: { id: string; driftDb: number } | null };
+    silence?: { ok: boolean; ceilingDb: number; windows: { from: number; to: number; peakDb: number; ok: boolean }[] };
+    tail?: { ok: boolean; ceilingDb: number; fromDb: number; endDb: number; monotonic: boolean };
     inputs?: { score: string | null; sfx: string | null; voice: string | null };
     files: { hash: string };
   }>("mix/mix-report.json");
   const sfx = read<{ cues: SfxRecordLike[] }>("sfx/sfx.json");
-  const palette = read<{ pass: boolean; maxOutlierFraction: number }>("palette-audit.json");
+  const palette = read<{
+    pass: boolean;
+    maxOutlierFraction: number;
+    videoHash: string | null;
+    frames?: number;
+    expectedFrames?: number;
+    clipping?: { pass: boolean; worst: { fraction: number; time: number | null } };
+  }>("palette-audit.json");
   const paint = read<{ pass: boolean; sampled: number; worst: { time: number; psnr: number }; videoHash: string | null }>("paint-match.json");
   const motion = read<{ pass: boolean; videoHash: string | null; weak: string[]; shots: { id: string; median: number }[] }>("motion-audit.json");
   const type = read<{ pass: boolean; sampled: number; boxes: number; outside: unknown[] }>("type-audit.json");
@@ -162,13 +208,38 @@ async function main(): Promise<void> {
     videoHash: string | null;
     missing: string[];
   }>("asr.json");
+  const deliver = read<{
+    ok: boolean;
+    source: { path: string; videoHash: string };
+    master: { path: string; hash: string; measured: { lufs: number; truePeak: number } };
+    output?: {
+      path: string;
+      fileHash: string;
+      videoHash: string;
+      audio: { codec: string; limitDb: number; lufs: number; truePeak: number; lra: number };
+    };
+    checks: { pictureUnchanged: boolean; truePeak: boolean; loudness: boolean };
+  }>("deliver.json");
 
-  const frozenHash = frames?.hash ?? manifest?.videoHash ?? null;
+  // The frozen thing is the picture, not the container: the audio is re-cut at
+  // delivery, and every video audit is tied to frames that did not move.
+  const frozenHash = frames?.videoHash ?? manifest?.videoHash ?? null;
   const checks: Record<string, { ok: boolean; detail: string }> = {
-    scoreAudit: { ok: scoreAudit?.ok === true, detail: "npm run audit" },
+    scoreAudit: {
+      // The audit has to describe *this* score: an audit.json from before a
+      // score edit would otherwise pass a gate about a film nobody audited.
+      ok:
+        scoreAudit?.ok === true &&
+        scoreAudit?.score === `sha256:${hashFile(resolve(root, scorePath))}`,
+      detail: scoreAudit?.ok
+        ? scoreAudit.score === `sha256:${hashFile(resolve(root, scorePath))}`
+          ? "audited this score"
+          : "audited a DIFFERENT score"
+        : "no passing audit",
+    },
     frames: { ok: frames?.pass === true, detail: `${frames?.frameCount ?? 0} frames` },
     oneHash: {
-      ok: Boolean(frozenHash) && frames?.hash === manifest?.videoHash,
+      ok: Boolean(frozenHash) && frames?.videoHash === manifest?.videoHash,
       detail: frozenHash ? `${frozenHash.slice(0, 18)}...` : "no hash",
     },
     paintMatch: {
@@ -178,8 +249,21 @@ async function main(): Promise<void> {
         : "no paint-match report",
     },
     inputsHashed: {
-      ok: Boolean(manifest?.inputs?.backend && manifest?.inputs?.painter),
-      detail: "backend + painter hashed into the manifest",
+      ok: (() => {
+        // Hashed *and* still true: a string in a manifest proves nothing if the
+        // file it names has moved since. The score is in here for the same
+        // reason as the code: a render is a render of one score, and a manifest
+        // that names an older one describes a film that no longer exists.
+        const backendPath = manifest?.inputs?.backendPath;
+        const painterPath = manifest?.inputs?.painterPath;
+        if (!backendPath || !painterPath) return false;
+        return (
+          manifest?.inputs?.score === `sha256:${hashFile(resolve(root, scorePath))}` &&
+          manifest?.inputs?.backend === `sha256:${hashFile(resolve(root, backendPath))}` &&
+          manifest?.inputs?.painter === `sha256:${hashFile(resolve(root, painterPath))}`
+        );
+      })(),
+      detail: "score + backend + painter hashed into the manifest, and re-hashed now",
     },
     poseHashes: {
       ok:
@@ -193,10 +277,18 @@ async function main(): Promise<void> {
     determinism: {
       ok:
         determinism?.pass === true &&
-        Boolean(frozenHash) &&
-        determinism?.frameSetHash === frozenHash,
+        determinism.mismatches === 0 &&
+        determinism.a !== undefined &&
+        determinism.b !== undefined &&
+        // Two renders of the same score are the same bytes, *and* the picture
+        // they both produced is the picture this film ships. Byte equality on
+        // two copies of one file would pass the first half only.
+        determinism.a.hash === determinism.b.hash &&
+        determinism.a.videoHash !== null &&
+        determinism.a.videoHash === frozenHash,
       detail: determinism
-        ? `${determinism.mismatches} mismatched frames between two runs`
+        ? `${determinism.mismatches} mismatched frames between two renders` +
+          (determinism.a?.videoHash === frozenHash ? " · same picture as the delivered film" : " · NOT the delivered picture")
         : "no determinism report",
     },
     mix: {
@@ -219,15 +311,99 @@ async function main(): Promise<void> {
         mix?.master !== undefined &&
         mix.master.gainDb <= MASTER_MAX_GAIN &&
         mix.master.limiterGainReductionDb <= MASTER_MAX_LIMITING &&
-        (mix.master.limiterWindows?.p50 ?? 1) <= 1 &&
+        // No default: a report without the distribution is a report this row
+        // cannot read, and an unreadable row is a failed row.
+        mix.master.limiterWindows !== undefined &&
+        mix.master.limiterWindows.p50 <= 1 &&
+        mix.master.limiterWindows.windows > 0 &&
         mix.master.converged === true,
       detail: mix?.master
-        ? `gain ${mix.master.gainDb >= 0 ? "+" : ""}${mix.master.gainDb.toFixed(1)} dB · limiter up to ${mix.master.limiterGainReductionDb.toFixed(1)} dB, median window ${(mix.master.limiterWindows?.p50 ?? 0).toFixed(2)} dB · ${mix.master.usedAllPasses ? "used every pass" : "converged early"}`
+        ? `gain ${mix.master.gainDb >= 0 ? "+" : ""}${mix.master.gainDb.toFixed(1)} dB · limiter up to ${mix.master.limiterGainReductionDb.toFixed(1)} dB, median window ${(mix.master.limiterWindows?.p50 ?? 0).toFixed(2)} dB over ${mix.master.limiterWindows?.windows ?? 0} windows · ${mix.master.usedAllPasses ? "used every pass" : "converged early"}`
         : "no master section in the mix report",
     },
+    // A duck the score declares and a duck the bus applies are two different
+    // numbers, and only the mix can tell them apart. This row reads the one the
+    // signal got.
+    duck: {
+      ok:
+        mix?.duck !== undefined &&
+        mix.duck.ok === true &&
+        mix.duck.short.length === 0 &&
+        mix.duck.overVoice.length === 0,
+      detail: mix?.duck
+        ? `${mix.duck.underSpeech} cues meet speech, every one at its declared depth` +
+          (mix.duck.overVoice.length
+            ? ` · ${mix.duck.overVoice.length} sit over the voice: ${mix.duck.overVoice
+                .map((cue) => `${cue.id} +${cue.overVoiceDb} dB`)
+                .join(", ")}`
+            : "")
+        : "no duck section in the mix report",
+    },
+    // The band placed the cue; the bus put it back on the level the score's
+    // `gain` asks for. If those disagree, a cue's gain stopped being its level.
+    cueLevels: {
+      ok: mix?.cueLevels?.ok === true,
+      detail: mix?.cueLevels
+        ? `worst drift ${Math.abs(mix.cueLevels.worst?.driftDb ?? 0).toFixed(2)} dB from the cue's own level (tolerance ${mix.cueLevels.toleranceDb} dB)`
+        : "no cue-level section in the mix report",
+    },
+    // A declared silence is a claim about the master: measure the master.
+    silence: {
+      ok:
+        mix?.silence !== undefined &&
+        mix.silence.ok === true &&
+        mix.silence.windows.every((window) => window.ok),
+      detail: mix?.silence
+        ? mix.silence.windows.length === 0
+          ? "no silences declared"
+          : mix.silence.windows
+              .map((window) => `${window.from}–${window.to}s ${window.peakDb} dBFS`)
+              .join(" · ") + ` (ceiling ${mix.silence.ceilingDb} dBFS)`
+        : "no silence section in the mix report",
+    },
+    // The film has to end, not stop: the last half second is measured as a slope.
+    tail: {
+      ok: mix?.tail !== undefined && mix.tail.ok === true && mix.tail.monotonic === true,
+      detail: mix?.tail
+        ? `${mix.tail.fromDb} → ${mix.tail.endDb} dBFS over the last 0.5 s${mix.tail.monotonic ? "" : " (RISES)"} (ceiling ${mix.tail.ceilingDb} dBFS)`
+        : "no tail section in the mix report",
+    },
+    // The master is a file on disk; the film is an MP4. This row reads the audio
+    // the delivered file actually has, against the same ceiling, and refuses a
+    // delivery whose picture is not the frozen one.
+    deliveredAudio: {
+      ok: (() => {
+        if (!deliver || !frozenHash) return false;
+        const file = resolve(root, deliver.output?.path ?? "");
+        if (!existsSync(file)) return false;
+        return (
+          deliver.ok === true &&
+          deliver.output?.videoHash === frozenHash &&
+          deliver.output?.fileHash === `sha256:${hashFile(file)}` &&
+          typeof deliver.output?.audio?.truePeak === "number" &&
+          deliver.output.audio.truePeak <= DELIVERY_TP &&
+          typeof deliver.output.audio.lufs === "number" &&
+          Math.abs(deliver.output.audio.lufs - DELIVERY_LUFS) <= DELIVERY_LUFS_TOLERANCE
+        );
+      })(),
+      detail: deliver?.output
+        ? `${deliver.output.path} · ${deliver.output.audio.lufs?.toFixed(1)} LUFS / ${deliver.output.audio.truePeak?.toFixed(1)} dBTP measured on the delivered file · picture ${deliver.output.videoHash === frozenHash ? "is the frozen one" : "is NOT the frozen one"}`
+        : "no deliver report: run `npm run deliver -- <score>`",
+    },
     palette: {
-      ok: palette?.pass === true,
-      detail: palette ? `worst outlier ${(palette.maxOutlierFraction * 100).toFixed(2)}%` : "no palette report",
+      // One decode, every frame, both answers: the hue outlier count and the
+      // clipping count come from the same pass, and a report missing the
+      // clipping half is a report this row cannot read.
+      ok:
+        palette?.pass === true &&
+        palette?.clipping?.pass === true &&
+        palette?.frames !== undefined &&
+        palette.frames === palette.expectedFrames &&
+        Boolean(frozenHash) &&
+        palette?.videoHash === frozenHash,
+      detail: palette
+        ? `worst outlier ${(palette.maxOutlierFraction * 100).toFixed(2)}% · worst clipping ${((palette.clipping?.worst.fraction ?? 0) * 100).toFixed(2)}% at ${palette.clipping?.worst.time ?? "?"}s · ${palette.frames ?? 0}/${palette.expectedFrames ?? 0} frames decoded${palette.videoHash === frozenHash ? " · tied to the frozen video" : " · NOT tied to the frozen video"}`
+        : "no palette report",
     },
     motionFloor: {
       ok: motion?.pass === true && Boolean(frozenHash) && motion?.videoHash === frozenHash,
@@ -283,7 +459,14 @@ async function main(): Promise<void> {
   for (const [name, value] of Object.entries(checks)) {
     console.log(`${value.ok ? "ok  " : "FAIL"} ${name.padEnd(14)} ${value.detail}`);
   }
-  console.log(`gate-7: ${pass ? "PASS" : "FAIL"}${pass ? "" : ` (${failed.join(", ")})`} · ${pending.length} checks still manual`);
+  if (pending.length > 0) {
+    for (const row of pending) console.log(`todo ${row}`);
+  }
+  console.log(
+    `gate-7: ${pass ? "PASS" : "FAIL"}${pass ? "" : ` (${failed.join(", ")})`} · ${Object.keys(checks).length} checks · ${
+      pending.length === 0 ? "nothing manual" : `${pending.length} still manual`
+    }`,
+  );
   if (!pass) process.exit(1);
 }
 

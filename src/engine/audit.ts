@@ -52,7 +52,6 @@ export function auditFilm(plan: ResolvedFilm, options: { root: string }): AuditR
   const frame = (value: number) => Math.round(value * plan.fps);
   const aligned = (value: number) => Math.abs(value * plan.fps - frame(value)) <= 0.001;
   const silences = plan.audio.sfx?.silences ?? [];
-  const inSilence = (at: number) => silences.find((silence) => at >= silence.from && at < silence.to);
   const cueShots = new Set(
     plan.cues.filter((cue) => cue.event).map((cue) => `${cue.event?.shot}#${cue.event?.index}`),
   );
@@ -68,15 +67,24 @@ export function auditFilm(plan: ResolvedFilm, options: { root: string }): AuditR
           shot: shot.id,
         });
       }
-      // Every picture event either makes a sound or the film says it is quiet:
-      // an event nobody scored is the difference between a film and a slideshow
-      // with a soundtrack next to it.
-      if (cueShots.has(`${shot.id}#${index}`)) scored += 1;
-      else if (inSilence(at)) bare += 1;
+      // Every picture event either makes a sound or says why it does not: an
+      // event nobody scored is the difference between a film and a slideshow
+      // with a soundtrack next to it. The reason lives on the event, because
+      // the event is the thing that has no sound — a window of time cannot say
+      // why *that* beat is quiet.
+      const scoredHere = cueShots.has(`${shot.id}#${index}`);
+      if (scoredHere && event.quiet) {
+        errors.push({
+          code: "sfx_quiet_scored",
+          message: `${shot.id}#${index} "${event.note}" at ${at.toFixed(2)}s has a cue and a quiet reason ("${event.quiet}"); it cannot be both`,
+          shot: shot.id,
+        });
+      } else if (scoredHere) scored += 1;
+      else if (event.quiet) bare += 1;
       else {
         errors.push({
           code: "sfx_unscored",
-          message: `${shot.id}#${index} "${event.note}" at ${at.toFixed(2)}s has no cue and no silence to sit in`,
+          message: `${shot.id}#${index} "${event.note}" at ${at.toFixed(2)}s has no cue and no \`quiet\` reason`,
           shot: shot.id,
         });
       }
@@ -93,15 +101,33 @@ export function auditFilm(plan: ResolvedFilm, options: { root: string }): AuditR
     }
   }
 
-  // A cue may not start inside a declared silence: a hole with a sound at the
-  // top of it is not a hole, and the film would be lying in its own plan.
+  // A declared silence is a claim about the film, and the loudest thing in the
+  // film is the narration: three of this film's first five declared windows sat
+  // on top of a spoken line, which the cue sheet alone can never see.
+  const lines = plan.clock.mode === "narration" ? plan.clock.lines : [];
+  for (const silence of silences) {
+    for (const line of lines) {
+      const lineTo = line.start + line.duration;
+      if (line.start < silence.to && lineTo > silence.from) {
+        errors.push({
+          code: "silence_over_voice",
+          message: `declared silence ${silence.from}–${silence.to}s ("${silence.why}") has narration "${line.id}" running through it (${line.start.toFixed(2)}–${lineTo.toFixed(2)}s)`,
+        });
+      }
+    }
+  }
+
+  // A cue may not be inside a declared silence — and "inside" means overlapping,
+  // not merely starting there: a cue that starts before the window and rings
+  // through it is the same lie as one that starts in it.
   for (const span of spans) {
-    const hole = inSilence(span.at);
-    if (hole) {
-      errors.push({
-        code: "sfx_in_silence",
-        message: `sfx "${span.id}" starts at ${span.at.toFixed(2)}s inside the declared silence ${hole.from}–${hole.to}s ("${hole.why}")`,
-      });
+    for (const hole of silences) {
+      if (span.at < hole.to && span.end > hole.from) {
+        errors.push({
+          code: "sfx_in_silence",
+          message: `sfx "${span.id}" runs ${span.at.toFixed(2)}–${span.end.toFixed(2)}s through the declared silence ${hole.from}–${hole.to}s ("${hole.why}")`,
+        });
+      }
     }
   }
 
@@ -176,7 +202,7 @@ export function auditFilm(plan: ResolvedFilm, options: { root: string }): AuditR
     }
   }
 
-  const lines =
+  const lineById =
     plan.clock.mode === "narration"
       ? new Map(plan.clock.lines.map((line) => [line.id, line]))
       : new Map();
@@ -194,7 +220,7 @@ export function auditFilm(plan: ResolvedFilm, options: { root: string }): AuditR
       }
     }
 
-    const line = lines.get(caption.id);
+    const line = lineById.get(caption.id);
     if (line) {
       const hold = caption.end - caption.start;
       const required = Math.max(1.8, line.duration + 0.6);
@@ -207,10 +233,10 @@ export function auditFilm(plan: ResolvedFilm, options: { root: string }): AuditR
     }
   }
 
-  if (lines.size > 0 && plan.captions.lines.length !== lines.size) {
+  if (lineById.size > 0 && plan.captions.lines.length !== lineById.size) {
     errors.push({
       code: "caption_count",
-      message: `${plan.captions.lines.length} captions for ${lines.size} narration lines`,
+      message: `${plan.captions.lines.length} captions for ${lineById.size} narration lines`,
     });
   }
 

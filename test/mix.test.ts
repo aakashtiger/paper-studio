@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { freeverb, highpassCoeffs, applyBiquad, mixFilm, PREMASTER_CEILING } from "../src/engine/mix.js";
+import { bandEdges, duckKey, freeverb, highpassCoeffs, applyBiquad, mixFilm, PREMASTER_CEILING } from "../src/engine/mix.js";
 
 const SR = 48_000;
 
@@ -74,6 +74,72 @@ test("a cue with a send leaves a reverb tail after it ends", () => {
   const mix = mixFilm({ sampleRate: SR, duration: 0.6, voice: null, cues: [cue] });
   const tail = mix.left.subarray(Math.round(0.12 * SR), Math.round(0.4 * SR));
   assert.ok(rms(tail) > 1e-4, "the shared reverb return should still be ringing");
+});
+
+test("a declared duck is the duck the cue gets, wherever the word sits", () => {
+  // The bug this catches: the sidechain used to be normalised by the film's one
+  // loudest sample, so a hit that shared a frame with a quiet word got a
+  // fraction of its 8 dB. A voice that is loud at the top and ordinary at the
+  // hit is exactly that case.
+  const voice = new Float32Array(SR);
+  const loud = sine(2000, 0.1, 0.9);
+  for (let i = 0; i < loud.length; i++) voice[i] = loud[i] ?? 0;
+  const speech = sine(2000, 0.9, 0.25);
+  for (let i = 0; i < speech.length; i++) voice[Math.round(0.1 * SR) + i] = speech[i] ?? 0;
+  const cue = {
+    id: "c",
+    kind: "snap",
+    at: 0.3,
+    samples: sine(2000, 0.5, 0.4),
+    send: 0,
+    duckDb: 8,
+    band: [1000, 4000] as [number, number],
+  };
+  const mix = mixFilm({ sampleRate: SR, duration: 1, voice, cues: [cue] });
+  const report = mix.cues[0];
+  assert.ok(report, "the mix should report its cues");
+  assert.equal(report.declaredDb, 8);
+  assert.ok(report.appliedDb >= 7, `a declared 8 dB duck applied ${report.appliedDb} dB`);
+});
+
+test("a cue's band placement leaves its level where the score put it", () => {
+  // A resonant bandpass used to cost 1-3.4 dB at the loudest moment, so `gain`
+  // stopped being the level the cue reached. The bus now re-levels after the
+  // band, and reports what it got.
+  const cue = {
+    id: "c",
+    kind: "snap",
+    at: 0,
+    samples: sine(2000, 0.4, 0.3),
+    send: 0,
+    duckDb: 0,
+    band: [200, 9000] as [number, number],
+    levelDb: -20,
+  };
+  const mix = mixFilm({ sampleRate: SR, duration: 0.4, voice: null, cues: [cue] });
+  const report = mix.cues[0];
+  assert.ok(report);
+  assert.ok(Math.abs(report.busPeakDb - -20) < 0.6, `the cue reached ${report.busPeakDb} dBFS, not -20`);
+});
+
+test("the duck key is a presence gate, and a silence is not a word", () => {
+  // Without a floor, a silent stretch is "-12 dB under its own silence" and the
+  // key reads as a full duck in every gap after narration stops — the opposite
+  // of what a duck is for.
+  const voice = new Float32Array(SR);
+  const speech = sine(2000, 0.5, 0.4);
+  for (let i = 0; i < speech.length; i++) voice[i] = speech[i] ?? 0;
+  const key = duckKey(voice, SR);
+  const during = key[Math.round(0.25 * SR)] ?? 0;
+  const after = key[Math.round(0.8 * SR)] ?? 0;
+  assert.ok(during > 0.8, `the key should be open under a word, got ${during}`);
+  assert.ok(after < 0.2, `the key should be closed in the gap, got ${after}`);
+});
+
+test("band edges pass a signal inside the band unchanged", () => {
+  const tone = sine(2000, 0.2, 0.4);
+  const edges = bandEdges(tone, [200, 9000], SR);
+  assert.ok(rms(edges) > rms(tone) * 0.95, "a 2 kHz tone is inside [200, 9000] and should pass");
 });
 
 test("the tail fades out to silence and never swells back", () => {

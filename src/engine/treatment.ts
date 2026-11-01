@@ -149,6 +149,13 @@ export const DirectionSchema = z.object({
         t: z.number().nonnegative(),
         kind: z.string().min(1),
         note: z.string().min(1),
+        /**
+         * Why this event has no sound. An unscored event is a deliberate
+         * choice, and the choice is written where the event is: a reason on
+         * the event, not a hole in the cue sheet. The audit accepts an event
+         * with a cue or with a reason, and refuses one that claims both.
+         */
+        quiet: z.string().min(1).optional(),
       }),
     )
     .min(3),

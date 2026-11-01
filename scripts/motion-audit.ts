@@ -9,10 +9,10 @@
  * usage: npm run audit:motion -- films/understudy/score.json [--video <mp4>] [--floor 0.6]
  */
 import { spawn } from "node:child_process";
-import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
+import { videoStreamHash } from "../src/engine/video.js";
 
 type Score = {
   id: string;
@@ -141,9 +141,11 @@ async function main(): Promise<void> {
 
   const weak = shots.filter((shot) => shot.median < floor);
   const pass = weak.length === 0;
-  // Tie the measurement to the exact video it measured, so gate 7 knows this
-  // report describes the frozen file and not a stale render.
-  const videoHash = `sha256:${createHash("sha256").update(await readFile(video)).digest("hex")}`;
+  // Tie the measurement to the exact picture it measured, so gate 7 knows this
+  // report describes the frozen frames and not a stale render. The hash is the
+  // video *stream*, so re-cutting the audio does not invalidate a motion
+  // measurement taken on the same frames.
+  const videoHash = videoStreamHash(ffmpeg, video);
 
   await mkdir(join(root, "build", score.id), { recursive: true });
   const reportPath = join(root, "build", score.id, "motion-audit.json");

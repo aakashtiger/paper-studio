@@ -1,9 +1,11 @@
 # Paper Studio — status audit
 
 **Date:** 2026-10-29
-**Update 2026-10-31:** The core system is now real. The contract layer, audio
-resolver, asset manifest, pose library, film score, derived **board**,
-score-level **audit**, character/pose **sheet** and board **animatic** all exist.
+**Update 2026-10-31 (historical — the counts and the audio cut here are
+superseded by the 2026-11-01 blocks below):** The core system is now real. The
+contract layer, audio resolver, asset manifest, pose library, film score, derived
+**board**, score-level **audit**, character/pose **sheet** and board **animatic**
+all exist.
 The paper rig has two-bone leg IK with ankle targets, foot pitch and a
 knee-driven bounce; every foot target is reachable, so a planted foot bends its
 knee and lands on its shadow. The film renderer paints from the score and the
@@ -15,14 +17,15 @@ hashed inputs, determinism, mix, palette and the one-image final contact sheet t
 a single frozen MP4. The review surface is one look per artifact: a board sheet,
 a derived style sheet, a stills sheet, the storyboard (one frame per shot), a
 per-shot strips sheet from the delivered MP4, and a spectrogram sheet per cue.
-**237 tests pass**, typecheck is clean, and `gate:7` passes 13 checks. The SFX
+**237 tests passed on that date**, typecheck was clean, and `gate:7` passed 13
+checks. The SFX
 kit is built (`src/engine/sfx.ts`): six materials, layered shapes, one
 `send`/`duckDb`/`band` table shared with the mix, and a cue that can bind its
 time to its picture event; `npm run sfx` writes one WAV per cue, a stem mix and
 `sfx.json`, and fails on a click, a banned kind or a cue outside its band
-(`test/sfx.test.ts`). The score-level master measures **-14.3 LUFS / -1.5 dBTP**;
-the delivered MP4 still carries the earlier audio cut, and the final master
-re-cut belongs to the look pass. The voice
+(`test/sfx.test.ts`). The score-level master measured **-14.3 LUFS / -1.5 dBTP**
+then; **both the master and the delivered MP4 have been re-cut since** (see the
+third-pass block below). The voice
 pipeline is built (`npm run voice`, `npm run asr`): capture is a recording or
 Kokoro TTS, word times come from local Whisper re-attached to the script's
 spelling (`src/engine/words.ts`), the clock is derived and the shot boundaries a
@@ -80,34 +83,82 @@ no music and narration that stops at 19.5 s (the brief's copy ends there; music
 is staged), a mono field (the fixture's events carry no screen position), and
 transcript word times that still say `source: "guess"` until Whisper is installed.
 
-**Update 2026-11-01 — the second sound pass.** The first pass fixed what the
-critic named; a second pass read the artifacts with meters and found several
-fixes were true statements about the wrong quantity. The cue level rule moved
-from whole-cue RMS to the **loudest 50 ms** (`CUE_LOUD = 0.2`, −14 dBFS) under a
-soft knee: RMS normalisation made a decaying hit measure quiet, drove its peak
-into the limiter and cost up to 11 dB, so `gain` stopped being the only level.
-`checkCue` fails a cue more than 2 dB under the kit's level; `checkCueSet`
-compares **all pairs** of a kind, not adjacent rows. Silences became contract
-surface (`audio.sfx.silences` with a `why`, validated and read by the audit):
-an unscored event, a cue in a silence, a hole over 2.5 s, a cue inside the tail
-fade or an unducked cue under narration is an error. The generator stopped
-clicking (a `rise()` attack per layer, transients scaled to their body). The
-master's reported reduction was an artefact of `volumedetect` clamping to 16-bit;
-both peaks now come from `ebur128=peak=true`, and the report carries the same
-reduction as a **100 ms window distribution** so one sample cannot be read as the
-whole film. The bus gained a `PREMASTER_CEILING` (−1 dBFS) headroom stage, and
-`gate:7` gained a `master` row that reads gain, reduction, window median and
-`converged` against the mix contract's bounds. A narration leveller was built,
-measured and **reverted**: at 2:1 over −18 dBFS the premaster fell from −18.3 to
-−21.4 LUFS, and at 3:1 over −24 dBFS the limiter's reduction rose from 7.0 to
-8.9 dB, because peak-restoring makeup cannot beat crest physics. Evidence: `sfx`
-**30/30 ok, all −14 dBFS loud**, `audit` 32 events / 27 scored / 5 bare / 30 cues
-/ 5 silences / longest hole 1.07 s, `mix` **−14.1 LUFS / −1.7 dBTP**, gain
-+7.5 dB, limiter 7.5 dB at the peak but a **median window of 0.03 dB** (47/293
-over 3 dB), `gate:7` **PASS 14 checks / 1 manual (ASR)**, `film:review --gate`
-**PASS**, **254 tests**, typecheck clean. Still open: the MP4's earlier audio cut
-(look pass), no music, narration ending at 19.5 s, a mono field, guessed word
-times, and ASR pending.
+**Update 2026-11-01 — the third sound pass, and the review-surface close.** The
+second sound pass fixed real things; the sound critic still withheld the sign at
+**7/10**, because two of the fixes described the wrong quantity and the QA critic
+found the final gate described a master, not the film. Both reviews were right on
+the substance. This pass measures everything it claims:
+
+- **The duck is real.** The sidechain was the voice envelope normalised by the
+  film's single loudest sample. Only 257 ms of a 29.5 s take reach that peak, so
+  an 8 dB declaration arrived as **2.6 dB** at the hit it was written for, and at
+  9.0 s the slam sat 2.3 dB *above* the word. The key is now a presence gate on a
+  **local reference** (the voice's own presence within ±1 s), and the mix report
+  names, per cue, the duck it applied, where, and how the cue sat against the
+  word. Understudy: **16 cues meet speech, every one at its declared depth** (the
+  slam gets its full 8 dB).
+- **A cue's gain is its level again.** One resonant bandpass centred on
+  `sqrt(lo·hi)` cost 1–3.4 dB at the loudest moment, so the score's `gain` stopped
+  being the level the cue reached. The band is now a highpass and a lowpass at
+  unity inside it, and the bus **re-levels** each cue to
+  `20·log10(CUE_LOUD · gain)`: **0.00 dB drift** across all 30 cues.
+- **Silence means silent, and it is measured on the master.** `silences` used to
+  be satisfied by "no cue starts here", so 4 of 5 declared windows carried a
+  voice or a reverb tail. A declared silence is now a claim about the master
+  (peak ≤ −50 dBFS) and the audit refuses one with narration through it or a cue
+  ringing into it. The fixture now declares **2** windows that are actually silent
+  (0–0.5 s, 19.55–19.85 s), and each unscored picture event carries its own
+  `quiet` reason instead.
+- **The tail is a measured slope.** The last 0.5 s must be monotonic and end
+  ≤ −60 dBFS; the master measures −48.4 → −180 dBFS.
+- **The film's audio is finally the film's audio.** `npm run deliver` copies the
+  video stream (no re-encode), encodes the master beside it, and measures the
+  **delivered file's own** loudness and true peak. The AAC encoder overshoots
+  (−1.9 dBTP master → −0.6 dBTP file at unity), and the first fix for that was a
+  gain walk — which passed the peak check by turning the film down: 1.1 dB of gain
+  took Understudy to −15.3 LUFS, outside −14 ± 1. The overshoot is a *peak*
+  problem, so it now gets a peak solution: `alimiter` on the encode, tightened by
+  the measured overshoot, touching only the loudest samples. `deliver.json` and
+  the render manifest carry the measurement and the limit, and `gate:7` reads it
+  as `deliveredAudio`. Understudy delivers **−14.4 LUFS / −1.9 dBTP**.
+- **The gate can no longer pass on missing evidence.** The `master` row required
+  a `limiterWindows` median defaulting to 1 ("passes"); the `palette` row had no
+  video tie (its report was 26 minutes older than the MP4); `inputsHashed` never
+  re-hashed the files; `scoreAudit` accepted an audit of a different score; the
+  final contact sheet was labelled with the manifest's hash rather than the hash
+  of the file it tiled. Now: no default, `videoHash` in every audit report,
+  score + backend + painter re-hashed at gate time, `audit.json` naming the score
+  it audited, and a sheet that hashes what it decodes. Clipping, which had no
+  command at all, is counted in the palette decode over **every frame**.
+- **The render owns the manifest.** `audit:frames` used to write
+  `render-manifest.json` by hashing the files on disk *at audit time* — a perfect
+  report of the wrong thing, because a painter edited after a render was then
+  described beside a picture it never touched. `render:film` writes it now
+  (`src/engine/manifest.ts`), `audit:frames` fails `describedByRender` when the
+  video is not the picture the manifest names, and `deliver` refuses a source
+  picture the manifest does not describe. Probed, not assumed: a false
+  `videoHash` stopped `deliver`; a missing manifest failed `audit:frames`.
+- **Picture and container are two hashes.** `videoHash` is sha256 over the video
+  *stream*; the container hash is recorded beside it. A re-cut audio no longer
+  invalidates a frame audit for a change not one of them measured, and the
+  determinism row requires two renders with **identical bytes and the same
+  picture** as the delivered film — not two copies of one file.
+
+Evidence: `sfx` 30/30 ok, all −14 dBFS loud · `audit` 32 events / 27 scored / 5
+bare / 30 cues / 2 silences / longest hole 1.07 s · `mix` **−14.1 LUFS / −1.9
+dBTP**, gain +6.6 dB, limiter 6.8 dB at the peak, **median window 0.02 dB**
+(33/293 over 3 dB) · `deliver` **−14.4 LUFS / −1.9 dBTP measured on the file** ·
+`gate:7` **PASS, 19 checks · 1 manual (ASR)** · **265 tests**, typecheck clean.
+Still open: no music, narration ending at 19.5 s (the brief's copy ends there), a
+mono field, guessed word times, and ASR pending the local speech models. The
+MP4's earlier audio cut is **closed**: the delivered MP4 now carries the measured
+master.
+
+**The counts above are the current ones; the blocks before this were written
+against earlier builds.** Where an older block says "13 checks" or "237 tests",
+it is describing the state on that date, not today's. The gate now has **19
+checks** and the suite **265 tests**; the commands are the source of truth
+(`npm run gate:7 -- films/understudy/score.json`, `npm test`).
 
 **Update:** `docs/PRODUCTION-PLAN.md` v1.4 is accepted. The contract layer and
 the first generators exist: film brief, audio resolver (recorded/TTS narration,
@@ -140,12 +191,16 @@ removes a real blocker.
 
 ## Verdict in one paragraph
 
-We have a strong **look** and a working **single-film proof**: the Paper K-pop
-style, a 15-second 1080p film, a preview timeline, a deterministic renderer, a
-repaired character rig, a treatment validator, 122 tests and green CI. We do not
-have the **production system** that turns a script into a scored film, builds
-per-film assets, renders from that score, and audits every frame. The gap is
-process, not paint.
+**Verdict in one paragraph (as of 2026-11-01).** We have a strong **look** and a
+**production pipeline proven end to end on one fixture**: a scored film
+(`films/understudy/score.json`) becomes a derived board, an audited cue sheet,
+generated SFX, a measured master, 900 code-drawn frames, a delivered MP4 whose
+audio is measured on the file, and a gate that reads 19 checks — with two
+byte-identical renders behind it. What we do not have is a **real film** (the
+brief/idea is the user's, and `The Understudy` is a fixture), **music**, **ASR**
+(the command exists; the local speech model is not installed), or the **app**
+that a non-programmer would use in place of the commands. The gap is now
+direction and audience surface, not the engine.
 
 ## 1. What we have
 

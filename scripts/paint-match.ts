@@ -12,11 +12,11 @@
  *                              [--step 1] [--min 30]
  */
 import { spawn, spawnSync } from "node:child_process";
-import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { mkdir, mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { videoStreamHash } from "../src/engine/video.js";
 
 type Score = { id: string; duration: number; fps?: number };
 
@@ -130,7 +130,7 @@ async function main(): Promise<void> {
 
     await mkdir(join(root, "build", score.id), { recursive: true });
     const reportPath = join(root, "build", score.id, "paint-match.json");
-    const videoHash = `sha256:${createHash("sha256").update(await readFile(video)).digest("hex")}`;
+    const videoHash = videoStreamHash(ffmpeg, video);
     const report = {
       film: score.id,
       video,
