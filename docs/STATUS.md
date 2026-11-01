@@ -314,6 +314,30 @@ the sealed 0.1.0 pack, `paper-kpop-0.2.0-gate` 4/4 against the live pack,
 150 copy / pass. 0.2.0 is **not sealed** and has **no fresh blind**: the pack is
 still moving under the film, and its evidence is the film's gate.
 
+**The staging pass (same day, after judging full-size frames).** The desk shots
+were not wrong in the recipe list; they were wrong in depth. The supervisor was
+drawn *after* the desk at `1.32` while the man behind it was `1.5` — a figure in
+front of the furniture, a hundred pixels below the floor, with the stack behind
+his coat; he now stands where his colleague sits, behind the same desk, at the
+same scale. A seated figure's hands sat **10 px above the desk over nothing**, so
+`OFFICE.seated` is now measured from the rig rather than nudged
+(`772 + 279 × 1.5 = 1191`), and `officeSheet()` puts the form he is filling in
+flat on the surface — the first version carried a lift shadow and read as an
+envelope pasted on the desk front. `deskWide`/`windowDusk` monitors moved off the
+actor and the chair back was narrowed from `1.95` to `1.45`. The rule is in
+`docs/decisions/0020` §6: **a recipe may stage depth with position and scale, but
+two characters in one shot stand on one floor at one scale.**
+
+Two instruments came out of it. `render:film --from <s> --to <s>` renders a
+window of frames and writes **no** manifest, so a 3.5-minute slice can be
+judged before a 30-minute render is paid for; `build/slice-motion.mjs` measures
+that slice with `audit:motion`'s own metric and reproduced the audit (0.533 on
+the slice, 0.555 on the full shot). s06 was fixed with them: its camera pull-back
+was widened to `1.12 → 1.0` **and** the shot got a real acting beat — a 0.1 s
+slump, `wake` at 4.7 s, `look` at 5.6 s with no breakdown, so the body starts
+before it turns and the head lift takes most of a second. Slice median
+**0.677** against a floor of **0.6**, where it had been 0.533.
+
 **Purpose:** an honest inventory of what exists, what is weak, and what is
 missing, with a deliberately small build plan. No new architecture unless it
 removes a real blocker.

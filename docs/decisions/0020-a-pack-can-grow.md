@@ -91,6 +91,34 @@ office recipes pass `null` and let the score's pose events direct the
 performance. A fallback that quietly plays `idle` looks like a performance and is
 not one.
 
+### 6. One ground plane, one scale per depth
+
+The desk shots were judged at full size, not from the sheet, and three defects
+turned out to be the same mistake: a second ground plane.
+
+- The supervisor was drawn **after** the desk at `1.32` while the man behind it
+  was `1.5`, walking on a floor a hundred pixels below the frame with the paper
+  stack behind his coat. He now stands where his colleague sits — behind the
+  same desk, at the same scale, on the same floor — and the shot's power is his
+  posture, not a faked perspective.
+- A seated figure's hands sat **10 px above the desk**, over nothing. The wrist
+  is 279 rig units above the feet and the figure is drawn at 1.5, so the hands
+  hang 418.5 px above the feet: `OFFICE.seated = 772 + 418.5 = 1191`. That is a
+  measurement, not a nudge, so it is one named constant and not four literals.
+- The work he is doing is on the desk. `officeSheet()` is the form he fills in,
+  and it is **flat on the surface, so it casts no shadow**: the first version had
+  the same lift shadow as a cut-out standing up and read as an envelope pasted on
+  the front of the desk. A plate lying down is drawn as a plate lying down.
+
+Two smaller rules came with it: a prop that must not compete with an actor moves
+off him (`deskWide` monitor 1040 → 1190, `windowDusk` 1080 → 1160), and a chair
+back is a shape behind a hip, not a slab (`1.95` → `1.45`, offset `+20`).
+
+The rule this leaves behind: **a recipe may stage depth with position and scale,
+but two characters in one shot stand on one floor at one scale.** Depth is
+expressed by the set, never by drawing one figure smaller than another at the
+same distance.
+
 ## What this does not claim
 
 - **0.2.0 is not sealed.** There is no `gate/paper-kpop-0.2.0/` and no fresh
