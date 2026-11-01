@@ -150,8 +150,12 @@ probe box's height is the em size the frame actually drew, so the check cannot b
 satisfied by reporting a size in a comment.
 
 Two of those read every frame and two read a sample, and the difference is not
-hidden. `audit:frames` and `audit:palette` decode all 900 frames of the delivered
+hidden. `audit:frames` and `audit:palette` decode **every** frame of the delivered
 file — blank frames, cuts, holds, hue outliers and clipping are counted per frame.
+The frame audit decodes shot by shot (decision 0034), which measures the same
+pixels for a third of the cost; a frame is blank when it sits at either end of
+the video's own range *and* is uniform, so a black frame fails the audit instead
+of passing it.
 `audit:type` and `audit:rig` need the *live* page, not the pixels: the text boxes
 and the IK solve only exist in the composition, so those two paint sampled
 instants in the same Chrome path the renderer uses. They are stronger than a pixel

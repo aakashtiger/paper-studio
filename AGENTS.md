@@ -140,6 +140,7 @@ What each decision bought, measured on *Same Alarm* (60 s, 10 shots):
 | 0031 draft | the first moving look was the film itself | **3 min 52 s** for a 10 fps cut with the master |
 | 0032 determinism | the film painted twice to prove it, 2 × ~12 min | **48 s**, 30 frames, and the twin now tests worker order |
 | 0033 review reuse | the review re-ran five audits the chain had just run | **62 s**, all five printed from reports tied to this picture/score |
+| 0034 frame audit | 134 s, four whole-film decodes, and a blank check that could not fail | **38.5 s** per shot, same values, and the blank rule fires |
 
 `render:film` refuses a whole-film paint without a passing preflight, collage
 and movement report, each carrying the sha256 of the score it describes. Probes
@@ -171,11 +172,20 @@ reuse is about freshness, never leniency.
 `transcript.json` carry `source: "asr"` with real word times rather than a guess.
 `gate:7` on *Same Alarm* is **PASS · 21 checks · nothing pending**.
 
-**Still open, and named:** the frame audit (~134 s) and the paint match (~74 s)
-each decode the delivered film, so one shared decode could serve both; the
-collage and the storyboard each paint their own ten frames (they could read the
-frames `inspect` already painted); and assets are not yet derived from the shots.
-No new film starts until the user says so.
+**The frame audit measures per shot, and its blank check can fail.** 1,800 frames
+cost **38.5 s** instead of 134.4 s, with every brightness sample and every
+within-shot difference proved identical; only the diff across a cut is absent,
+and a cut is not a hold. The blank rule was `YAVG < 8 || YAVG > 247`, which
+cannot fire on limited-range video — legal black is 16 — so `noBlankFrames` could
+never fail. It now requires a frame at either end of the video's own range **and**
+uniform, and a clip with half a second of black inserted is caught (15 blank
+frames, exit 1). The chain tail fell from 6.6 to **5.0 min**.
+
+**Still open, and named:** the collage and the storyboard each paint their own ten
+frames (they could read the frames `inspect` already painted); `paint-match`
+repaints 61 frames in fresh browsers (~73 s), which is the price of that proof
+rather than waste; and assets are not yet derived from the shots. No new film
+starts until the user says so.
 
 ---
 
@@ -249,7 +259,7 @@ The **contract layer and the first generators are implemented**: film brief,
 audio resolver (recorded/TTS narration, library/generated music, generated SFX),
 asset manifest, pose library, film score, derived **board**, score-level
 **audit**, the **character/pose sheet** generator and the **board animatic**
-builder. **377 tests.** The sheet has a signed **9/10 design** review. The paper
+builder. **388 tests.** The sheet has a signed **9/10 design** review. The paper
 rig has two-bone leg IK, ankle targets, foot pitch and a knee-driven bounce; the
 leg targets are now reachable, so a planted foot bends its knee and lands on its
 shadow (`test/cast-rig.test.ts`). The board animatic is **9/10 signed** (editor +
