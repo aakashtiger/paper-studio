@@ -1,0 +1,61 @@
+{
+  "id": "story-min",
+  "beats": [
+    {
+      "id": "b01",
+      "title": "the alarm",
+      "purpose": "hook",
+      "share": 18.5,
+      "energy": 2,
+      "sound": {
+        "world": "a small bedroom at dawn: a fridge two rooms away, traffic under it",
+        "signature": "the phone alarm, three chirps and a stop"
+      }
+    },
+    {
+      "id": "b02",
+      "title": "the corridor",
+      "purpose": "setup",
+      "share": 23,
+      "energy": 3,
+      "sound": {
+        "world": "an office corridor: strip lights, a door closer, one pair of shoes",
+        "signature": "twelve identical steps on lino"
+      }
+    },
+    {
+      "id": "b03",
+      "title": "the demand",
+      "purpose": "escalate",
+      "share": 18.5,
+      "energy": 4,
+      "sound": {
+        "world": "the same corridor, crowded now: chairs, a printer, a phone on vibrate",
+        "signature": "a desk phone ringing three times and being picked up on the third"
+      }
+    },
+    {
+      "id": "b04",
+      "title": "the lights go down",
+      "purpose": "turn",
+      "share": 20,
+      "energy": 1,
+      "sound": {
+        "world": "the office after hours, air handling only, no voices",
+        "signature": "a chair rolling to a stop",
+        "quiet": true
+      }
+    },
+    {
+      "id": "b05",
+      "title": "the alarm again",
+      "purpose": "button",
+      "share": 20,
+      "energy": 3,
+      "sound": {
+        "world": "the bedroom again, the same fridge, the same traffic",
+        "signature": "the phone alarm, three chirps — and no hand arrives to stop it"
+      }
+    }
+  ]
+}
