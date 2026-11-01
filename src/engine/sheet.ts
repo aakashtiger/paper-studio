@@ -16,7 +16,45 @@ export type SheetOptions = {
   library: PoseLibrary;
   vendor: string;
   fonts: SheetFonts;
+  /**
+   * Scripts beside the five the pack always has, in load order.
+   *
+   * A film registers its own rigs in its own vendor file (`office.js` registers
+   * `worker@0.1.0` and `supervisor@0.1.0`), and a sheet that draws those rigs has
+   * to load the file that defines them. They are passed in rather than assumed,
+   * because the sheet must not care which file a film put its cast in.
+   */
+  extra: string[];
 };
+
+/**
+ * Which rig the sheet is drawing, from the rig id alone.
+ *
+ * The pack ships two rigs and the sheet knows their joint numbers, so it can
+ * draw a joint map, four detail zooms and a face crop without measuring
+ * anything. A **film** brings its own cast, drawn by the film's pinned vendor
+ * under a rig id the pack has never seen (`worker@0.1.0`); the sheet draws it
+ * through `window.CHARACTERS[rig]` and asks the rig where its parts are, because
+ * an assumption about someone else's rig is how a sheet ends up showing a
+ * character that the film does not draw.
+ */
+export type SheetKind = "idol" | "mira" | "film";
+
+/**
+ * The pack's two rigs by id; anything else is a film-local rig.
+ *
+ * This no longer throws on an unknown rig. It did, and the first real film —
+ * whose cast is `worker@0.1.0` and `supervisor@0.1.0` — could not produce a pose
+ * sheet at all, so the review surface refused a legitimate film. Whether the
+ * film's vendor actually registers the rig is checked by `scripts/sheet.ts`
+ * against the vendor it pins, which is a better place for it: that is the file
+ * the film will draw with.
+ */
+export function sheetRigKind(rig: string): SheetKind {
+  if (rig.startsWith("idol@")) return "idol";
+  if (rig.startsWith("mira@")) return "mira";
+  return "film";
+}
 
 const FACE: Record<string, Record<string, unknown>> = {
   neutral: { eyes: "normal", mouth: "smile", blush: 0.35 },
@@ -37,9 +75,12 @@ const EXPR_H = 260;
 const X0 = 64;
 const COLS = 4;
 
-export function sheetHeight(library: PoseLibrary): number {
+export function sheetHeight(library: PoseLibrary, kind: SheetKind = "idol"): number {
   const poseRows = Math.ceil(library.poses.length / COLS);
   const exprRows = Math.ceil(library.expressions.length / COLS);
+  // The detail row zooms on joints the sheet can only place for the pack's own
+  // rigs. A film-local rig gets the space back rather than an empty band.
+  const details = kind === "film" ? 0 : DETAIL_H + GAP;
   return (
     HEADER +
     poseRows * (POSE_H + GAP) +
@@ -48,16 +89,15 @@ export function sheetHeight(library: PoseLibrary): number {
     GAP +
     VIEW_H +
     GAP +
-    DETAIL_H +
-    GAP +
+    details +
     exprRows * (EXPR_H + GAP) +
     40
   );
 }
 
 export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: string; height: number } {
-  const height = sheetHeight(library);
-  const kind = rigKind(options.rig);
+  const kind = sheetRigKind(options.rig);
+  const height = sheetHeight(library, kind);
   const poses = safeJson(library.poses);
   const expressions = safeJson(library.expressions);
   const face = safeJson(FACE);
@@ -82,6 +122,7 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
 <script src="${options.vendor}/characters.js"></script>
 <script src="${options.vendor}/props.js"></script>
 <script src="${options.vendor}/scene_kit.js"></script>
+${options.extra.map((name) => `<script src="${options.vendor}/${name}"></script>`).join("\n")}
 <script>
   const POSES = ${poses};
   const EXPRS = ${expressions};
@@ -89,6 +130,7 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
   const RAW_COLORS = ${colors};
   const ANCHORS = ${anchors};
   const KIND = ${JSON.stringify(kind)};
+  const PACK = KIND !== "film";
   const CHARACTER = ${JSON.stringify(options.character)};
   const RIG = ${JSON.stringify(options.rig)};
   const HEIGHT = ${height};
@@ -100,13 +142,15 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
   const c = document.getElementById("sheet");
   const ctx = c.getContext("2d", { alpha: false });
 
-  const ROLES = {
-    paper: PAL.paper, cream: PAL.cream, ink: PAL.ink, red: PAL.red,
-    blue: PAL.blue, acid: PAL.acid, gold: PAL.gold, pink: PAL.pink,
-    mint: PAL.mint, violet: PAL.violet, sky: PAL.sky, green: PAL.green,
-  };
   const COLORS = {};
-  for (const [key, value] of Object.entries(RAW_COLORS)) COLORS[key] = ROLES[value] || value;
+  for (const [key, value] of Object.entries(RAW_COLORS)) {
+    // A pose library names palette *roles* ("blueL"), not colours, and every
+    // pack names its own. Resolving against the vendor's own PAL is the only
+    // mapping that cannot drift from the film: a hardcoded list of pack role
+    // names drew this film's worker in a cream shirt because "blueL" was not on
+    // it, which is a sheet showing a character the film does not draw.
+    COLORS[key] = typeof PAL[value] === "string" ? PAL[value] : value;
+  }
 
   function elbow(x, y, len, ang) {
     return { x: x - Math.sin(ang) * len, y: y + Math.cos(ang) * len };
@@ -158,21 +202,70 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
     if (!noShadow) shadowEllipse(ctx, x, y, 58 * scale, 13 * scale, 0.34);
     if (KIND === "mira") {
       mira(ctx, x, y, scale, { pose: pose || {}, ...COLORS, face: expr || {}, shadow: noShadow ? 0 : 1 });
-    } else {
+    } else if (KIND === "idol") {
       idol(ctx, x, y, scale, {
         pose: pose || {}, outfit: "stage", colors: COLORS, face: expr || {},
         t: 0, petals: 0, earrings: true, shadow: noShadow ? 0 : 1,
       });
+    } else {
+      // A film-local rig: draw it with the film's own vendor, at the film's own
+      // convention — the origin is the feet, so the sheet grounds it by putting
+      // that origin on the floor line. The sheet drew its own shadow above, so
+      // the rig is asked for none.
+      DRAW(ctx, x, y, scale, { pose: pose || {}, colors: COLORS, face: expr || {}, t: 0, shadow: 0 });
     }
   }
 
+  const DRAW = (window.CHARACTERS || {})[RIG];
+  if (typeof DRAW !== "function") {
+    throw new Error('this vendor does not register CHARACTERS["' + RIG + '"]; it has ' +
+      (Object.keys(window.CHARACTERS || {}).join(", ") || "nothing"));
+  }
+
+  /**
+   * Where a film-local rig puts the parts it publishes, for one pose.
+   *
+   * The pack's rigs have their joints written into this file; someone else's rig
+   * does not, and guessing them is how a sheet shows a figure the film never
+   * draws. So the sheet asks the rig: rigAnchor is called with the point each
+   * part hangs from and the transform in force there, exactly as the rig audit
+   * reads it off a rendered frame. Wrapping it for one scratch draw collects
+   * those points in rig units with the origin at the feet, and every mark on the
+   * sheet is then a place the rig actually drew — no file is edited, no number
+   * is assumed, and this works for a cast the pack has never seen.
+   */
+  function parts(pose) {
+    const at = {};
+    const original = window.rigAnchor;
+    window.rigAnchor = function (c, part, ax, ay) {
+      const m = c.getTransform();
+      at[part] = { x: m.a * ax + m.c * ay + m.e, y: m.b * ax + m.d * ay + m.f };
+      return part;
+    };
+    try {
+      DRAW(document.createElement("canvas").getContext("2d"), 0, 0, 1, { pose: pose || {}, colors: COLORS, t: 0, shadow: 0 });
+    } finally {
+      window.rigAnchor = original;
+    }
+    return at;
+  }
+
   function grounded(pose, x, ground, scale) {
-    const ch = chain(pose);
-    const support = ch.legL.ankle.y >= ch.legR.ankle.y ? ch.legL : ch.legR;
-    const sole = support.ankle.y + (KIND === "mira" ? 8 : 39);
+    // The pack's rigs draw from a hip, so the sheet has to find the sole and the
+    // support foot from the leg chain. A film-local rig draws from the feet —
+    // the way the film's painter places it — so its origin *is* the sole, and the
+    // cast shadow sits under both feet rather than under the planted one.
+    let sole = 0;
+    let supportX = 0;
+    if (PACK) {
+      const ch = chain(pose);
+      const support = ch.legL.ankle.y >= ch.legR.ankle.y ? ch.legL : ch.legR;
+      sole = support.ankle.y + (KIND === "mira" ? 8 : 39);
+      supportX = support.ankle.x;
+    }
     ctx.fillStyle = C.rgba(PAL.ink, 0.3);
     ctx.beginPath();
-    ctx.ellipse(x + support.ankle.x * scale, ground + 2, 52 * scale, 8 * scale, 0, 0, TAU);
+    ctx.ellipse(x + supportX * scale, ground + 2, 52 * scale, 8 * scale, 0, 0, TAU);
     ctx.fill();
     figure(pose, x, ground - sole * scale, scale, null, true);
   }
@@ -193,7 +286,7 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
     label(labelText, x + 24, y + 38);
     ctx.save();
     ctx.beginPath(); ctx.rect(x + 8, y + 44, POSE_W - 16, POSE_H - 52); ctx.clip();
-    const scale = KIND === "mira" ? 0.68 : 0.6;
+    const scale = KIND === "mira" ? 0.68 : PACK ? 0.6 : 0.62;
     const ground = y + POSE_H - 24;
     ctx.fillStyle = C.rgba(PAL.ink, 0.16);
     ctx.fillRect(x + 40, ground + 1, POSE_W - 80, 1);
@@ -211,29 +304,44 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
     ctx.fillRect(x + 60, fy + 1, 340, 1);
     shadowEllipse(ctx, fx, fy, 40 * s, 8 * s, 0.25);
     figure(pose, fx, fy, s, null);
-    const ch = chain(pose);
-    const P = (p) => [fx + p.x * s, fy + p.y * s];
-    const dot = (p, col) => {
-      const [dx, dy] = P(p);
-      ctx.strokeStyle = col; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(dx - 5, dy); ctx.lineTo(dx + 5, dy); ctx.moveTo(dx, dy - 5); ctx.lineTo(dx, dy + 5); ctx.stroke();
-    };
-    const line = (a, b) => {
-      const [ax, ay] = P(a), [bx, by] = P(b);
-      ctx.strokeStyle = C.rgba(PAL.ink, 0.35); ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
-    };
-    line({ x: ch.armL.sx, y: ch.armL.sy }, ch.armL.elbow); line(ch.armL.elbow, ch.armL.wrist);
-    line({ x: ch.armR.sx, y: ch.armR.sy }, ch.armR.elbow); line(ch.armR.elbow, ch.armR.wrist);
-    line(ch.legL.hip, ch.legL.knee); line(ch.legL.knee, ch.legL.ankle);
-    line(ch.legR.hip, ch.legR.knee); line(ch.legR.knee, ch.legR.ankle);
-    for (const p of [ch.armL.elbow, ch.armL.wrist, ch.armR.elbow, ch.armR.wrist, ch.legL.knee, ch.legL.ankle, ch.legR.knee, ch.legR.ankle]) dot(p, PAL.red);
-    for (const p of [{ x: 0, y: -604 }, { x: 0, y: -450 }, { x: 0, y: -334 }]) dot(p, PAL.blue);
     const tx = x + 460;
     TY.text(ctx, "ANCHORS", tx, y + 78, 14, { family: FONT_MONO, color: PAL.ink, letter: 2 });
     TY.text(ctx, ANCHORS.join("  ·  "), tx, y + 104, 15, { family: FONT_MONO, color: C.rgba(PAL.ink, 0.7) });
-    TY.text(ctx, "11 joints  ·  brass brads  ·  seam gap 0 (rig test)", tx, y + 140, 15, { family: FONT_MONO, color: C.rgba(PAL.ink, 0.7) });
-    TY.text(ctx, "red: limb joints    blue: face / chest / waist", tx, y + 166, 13, { family: FONT_MONO, color: C.rgba(PAL.ink, 0.55) });
+
+    if (PACK) {
+      const ch = chain(pose);
+      const P = (p) => [fx + p.x * s, fy + p.y * s];
+      const dot = (p, col) => {
+        const [dx, dy] = P(p);
+        ctx.strokeStyle = col; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(dx - 5, dy); ctx.lineTo(dx + 5, dy); ctx.moveTo(dx, dy - 5); ctx.lineTo(dx, dy + 5); ctx.stroke();
+      };
+      const line = (a, b) => {
+        const [ax, ay] = P(a), [bx, by] = P(b);
+        ctx.strokeStyle = C.rgba(PAL.ink, 0.35); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+      };
+      line({ x: ch.armL.sx, y: ch.armL.sy }, ch.armL.elbow); line(ch.armL.elbow, ch.armL.wrist);
+      line({ x: ch.armR.sx, y: ch.armR.sy }, ch.armR.elbow); line(ch.armR.elbow, ch.armR.wrist);
+      line(ch.legL.hip, ch.legL.knee); line(ch.legL.knee, ch.legL.ankle);
+      line(ch.legR.hip, ch.legR.knee); line(ch.legR.knee, ch.legR.ankle);
+      for (const p of [ch.armL.elbow, ch.armL.wrist, ch.armR.elbow, ch.armR.wrist, ch.legL.knee, ch.legL.ankle, ch.legR.knee, ch.legR.ankle]) dot(p, PAL.red);
+      for (const p of [{ x: 0, y: -604 }, { x: 0, y: -450 }, { x: 0, y: -334 }]) dot(p, PAL.blue);
+      TY.text(ctx, "11 joints  ·  brass brads  ·  seam gap 0 (rig test)", tx, y + 140, 15, { family: FONT_MONO, color: C.rgba(PAL.ink, 0.7) });
+      TY.text(ctx, "red: limb joints    blue: face / chest / waist", tx, y + 166, 13, { family: FONT_MONO, color: C.rgba(PAL.ink, 0.55) });
+    } else {
+      // The rig publishes the points it hangs its parts from; these marks are
+      // where it actually drew them, in the same pose above.
+      const at = parts(pose);
+      for (const [part, point] of Object.entries(at)) {
+        const dx = fx + point.x * s, dy = fy + point.y * s;
+        ctx.strokeStyle = PAL.blue; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(dx - 5, dy); ctx.lineTo(dx + 5, dy); ctx.moveTo(dx, dy - 5); ctx.lineTo(dx, dy + 5); ctx.stroke();
+        TY.text(ctx, part, dx + 8, dy - 6, 11, { family: FONT_MONO, color: C.rgba(PAL.ink, 0.6) });
+      }
+      TY.text(ctx, RIG + "  ·  drawn by the film's vendor  ·  origin at the feet", tx, y + 140, 15, { family: FONT_MONO, color: C.rgba(PAL.ink, 0.7) });
+      TY.text(ctx, "blue: the parts this rig publishes  ·  legs measured by the rig audit", tx, y + 166, 13, { family: FONT_MONO, color: C.rgba(PAL.ink, 0.55) });
+    }
   }
 
   function viewCard(x, y, w, h, labelText, turn) {
@@ -264,13 +372,22 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
   function expressionCard(x, y, labelText, expr) {
     card(x, y, POSE_W, EXPR_H);
     label(labelText, x + 24, y + 38);
-    const mapped = FACE[expr.name] || FACE.neutral;
+    const mapped = PACK ? (FACE[expr.name] || FACE.neutral) : (expr.params || {});
     const headY = KIND === "mira" ? -536 : -604;
+    // A film-local rig does not say where its face is, so the face crop is
+    // centred on the part it publishes highest on the figure — the head anchor,
+    // or the hair when the rig draws its hair at the face, which the office rig
+    // does. Both are measured from the draw, so the crop cannot miss.
+    const at = PACK ? null : parts(POSES[0].params);
+    const face = at ? (at.hair || at.head || at.face) : null;
+    const zoomY = face ? face.y : headY;
     ctx.save();
     ctx.beginPath(); ctx.rect(x + 8, y + 44, POSE_W - 16, EXPR_H - 52); ctx.clip();
     ctx.translate(x + POSE_W / 2, y + 150);
     ctx.scale(2.2, 2.2);
-    ctx.translate(0, -headY);
+    // The pack's crop puts the head on the card's centre line; a measured crop
+    // leaves room for the chin, so the face sits a little above it.
+    ctx.translate(0, -zoomY - (PACK ? 0 : 36));
     figure(POSES[0].params, 0, 0, 1, mapped, true);
     ctx.restore();
   }
@@ -299,14 +416,16 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
     y += VIEW_H + GAP;
 
     const idle = POSES[0].params;
-    const leftPose = (POSES.find((p) => /point|duet-left/i.test(p.name)) || POSES[0]).params;
-    const rightPose = (POSES.find((p) => /duet-right|turn/i.test(p.name)) || POSES[0]).params;
-    const rightChain = chain(rightPose);
-    detailCard(X0, y, "HAND LEFT", leftPose, chain(leftPose).armL.wrist);
-    detailCard(X0 + POSE_W + GAP, y, "HAND RIGHT", rightPose, rightChain.armR.wrist);
-    detailCard(X0 + 2 * (POSE_W + GAP), y, "BOOT", idle, chain(idle).legL.ankle);
-    detailCard(X0 + 3 * (POSE_W + GAP), y, "COAT / TORSO", idle, { x: 0, y: -430 });
-    y += DETAIL_H + GAP;
+    if (PACK) {
+      const leftPose = (POSES.find((p) => /point|duet-left/i.test(p.name)) || POSES[0]).params;
+      const rightPose = (POSES.find((p) => /duet-right|turn/i.test(p.name)) || POSES[0]).params;
+      const rightChain = chain(rightPose);
+      detailCard(X0, y, "HAND LEFT", leftPose, chain(leftPose).armL.wrist);
+      detailCard(X0 + POSE_W + GAP, y, "HAND RIGHT", rightPose, rightChain.armR.wrist);
+      detailCard(X0 + 2 * (POSE_W + GAP), y, "BOOT", idle, chain(idle).legL.ankle);
+      detailCard(X0 + 3 * (POSE_W + GAP), y, "COAT / TORSO", idle, { x: 0, y: -430 });
+      y += DETAIL_H + GAP;
+    }
 
     TY.text(ctx, "EXPRESSIONS", X0, y - 8, 18, { family: FONT_MONO, color: PAL.acid, letter: 3 });
     EXPRS.forEach((expr, i) => {
@@ -335,12 +454,6 @@ export function sheetHtml(library: PoseLibrary, options: SheetOptions): { html: 
 
 export function sheetSlug(character: string): string {
   return character.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-}
-
-function rigKind(rig: string): "idol" | "mira" {
-  if (rig.startsWith("idol@")) return "idol";
-  if (rig.startsWith("mira@")) return "mira";
-  throw new Error(`unknown paper rig "${rig}" (expected idol@… or mira@…)`);
 }
 
 function safeJson(value: unknown): string {

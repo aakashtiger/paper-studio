@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { autoCols, gridGraph, planGrid, planGridRows } from "../src/engine/grid.js";
+import { autoCols, chunkRows, gridGraph, planGrid, planGridRows } from "../src/engine/grid.js";
 
 test("autoCols stays square-ish and capped", () => {
   assert.equal(autoCols(1), 1);
@@ -64,4 +64,48 @@ test("gridGraph stacks two or more tiles with xstack", () => {
   const two = gridGraph(["a", "b"], "0_0|640_0", "0x101010");
   assert.equal(two.graph, "[0:v]a[v0];[1:v]b[v1];[v0][v1]xstack=inputs=2:layout=0_0|640_0:fill=0x101010");
   assert.deepEqual(two.map, []);
+});
+
+/**
+ * A sheet wider than one command line is composed from row strips, so the number
+ * of tiles a film has is not a limit on what can be reviewed.
+ *
+ * Windows refuses a spawned process past ~32,000 characters of command line and
+ * every tile costs an `-i` plus a filter chain: 120 tiles is ~44,000 and the G5
+ * strips sheet and the G7 final sheet both died with ENAMETOOLONG on the first
+ * 60 s film, after passing on a 30 s one. The split has to be **whole rows, in
+ * order**, or the sheet a long film gets stops being the sheet a short one gets.
+ */
+test("chunkRows keeps every group inside the limit, in order", () => {
+  assert.deepEqual(chunkRows([10, 10, 10], 24), [[10, 10], [10]]);
+  assert.deepEqual(chunkRows([13, 13, 13, 13], 24), [[13], [13], [13], [13]]);
+  assert.deepEqual(chunkRows([6, 6, 6, 6, 6], 24), [[6, 6, 6, 6], [6]]);
+});
+
+test("chunkRows leaves a sheet that already fits in one group", () => {
+  // One group means one ffmpeg pass: no intermediate files, no second encode.
+  assert.deepEqual(chunkRows([5, 5, 5, 5], 24), [[5, 5, 5, 5]]);
+  assert.deepEqual(chunkRows([1], 24), [[1]]);
+});
+
+test("chunkRows keeps a row wider than the limit whole instead of splitting it", () => {
+  // A row cannot be split without ceasing to be a row: G5's strip for one shot
+  // is one row by definition, so an over-wide row is its own group.
+  assert.deepEqual(chunkRows([30, 2], 24), [[30], [2]]);
+});
+
+test("chunkRows never loses or reorders a row", () => {
+  const counts = [12, 13, 7, 9, 13, 13, 13, 11, 13, 4];
+  const groups = chunkRows(counts, 24);
+  assert.deepEqual(groups.flat(), counts);
+  for (const group of groups) {
+    const total = group.reduce((sum, count) => sum + count, 0);
+    assert.ok(total <= 24 || group.length === 1, `group ${group} is ${total} tiles`);
+  }
+});
+
+test("chunkRows rejects a limit or a count it cannot honour", () => {
+  assert.throws(() => chunkRows([], 24), /no rows/);
+  assert.throws(() => chunkRows([3], 0), /at least one tile/);
+  assert.throws(() => chunkRows([3, 0], 24), /bad row count/);
 });

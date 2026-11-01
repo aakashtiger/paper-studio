@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { PoseLibrarySchema } from "../src/engine/pose.js";
-import { sheetHeight, sheetHtml, sheetSlug } from "../src/engine/sheet.js";
+import { sheetHeight, sheetHtml, sheetRigKind, sheetSlug } from "../src/engine/sheet.js";
 
 const root = process.cwd();
 const nova = PoseLibrarySchema.parse(
@@ -16,6 +16,7 @@ const options = {
   anchors: nova.anchors,
   library: nova,
   vendor: "../../../films/understudy/vendor",
+  extra: [],
   fonts: {
     dir: "../../../styles/test",
     display: { family: "Display Face", file: "fonts/display.ttf" },
@@ -61,6 +62,37 @@ test("script-breaking pose names are escaped out of the JSON block", () => {
   assert.ok(html.includes("\\u003c/script"));
 });
 
-test("an unknown rig fails loudly", () => {
-  assert.throws(() => sheetHtml(nova, { ...options, rig: "unknown@1" }));
+test("a rig the pack has never seen is drawn, not refused", () => {
+  // The first real film's cast is worker@0.1.0 and supervisor@0.1.0. The sheet
+  // used to throw on any rig that was not idol@ or mira@, so the one film that
+  // needed a pose sheet could not have one: the reviewer's first look at the
+  // characters was 60 s of painted film. A film-local rig is now drawn through
+  // window.CHARACTERS[rig] in the film's own vendor, and the page names the rig
+  // it could not find instead of the engine failing before a page exists.
+  assert.equal(sheetRigKind("worker@0.1.0"), "film");
+  assert.equal(sheetRigKind("idol@0.1.0"), "idol");
+  assert.equal(sheetRigKind("mira@0.1.0"), "mira");
+  const { html } = sheetHtml(nova, { ...options, rig: "worker@0.1.0" });
+  assert.ok(html.includes('const RIG = "worker@0.1.0"'));
+  assert.ok(html.includes("does not register CHARACTERS"));
+});
+
+test("a film-local rig gets the panels its joints can support", () => {
+  // The detail zooms place a wrist, a boot and a torso from the pack's chain
+  // numbers; for someone else's rig those numbers are fiction, so the row is
+  // not drawn at all and the sheet is shorter by exactly that row.
+  const pack = sheetHeight(nova, "idol");
+  const film = sheetHeight(nova, "film");
+  assert.equal(pack - film, 240 + 20);
+  const { html } = sheetHtml(nova, { ...options, rig: "worker@0.1.0" });
+  assert.ok(html.includes("origin at the feet"));
+  assert.ok(html.includes("drawn by the film's vendor"));
+});
+
+test("a film's extra vendor scripts are loaded after the pack's", () => {
+  const { html } = sheetHtml(nova, { ...options, rig: "worker@0.1.0", extra: ["office.js"] });
+  const core = html.indexOf("core.js");
+  const office = html.indexOf("office.js");
+  assert.ok(core > 0 && office > core, "office.js must load after core.js");
+  assert.ok(html.includes('src="../../../films/understudy/vendor/office.js"'));
 });

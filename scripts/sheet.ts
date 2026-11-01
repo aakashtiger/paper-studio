@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
 import { PoseLibrarySchema, resolvePoseLibrary } from "../src/engine/pose.js";
@@ -49,6 +49,31 @@ if (!existsSync(resolve(root, "films", score.id, "vendor"))) {
   process.exit(1);
 }
 
+/**
+ * The sheet draws a character through `window.CHARACTERS[rig]` in the film's own
+ * vendor, so the rig id has to be one that vendor registers. Asking the files —
+ * the ones the film will actually draw with — catches a typo at the top of the
+ * command instead of at the bottom of a blank sheet.
+ */
+function registeredRigs(dir: string): string[] {
+  const rigs = new Set<string>();
+  for (const name of readdirSync(dir)) {
+    if (!name.endsWith(".js")) continue;
+    const text = readFileSync(resolve(dir, name), "utf8");
+    for (const match of text.matchAll(/CHARACTERS\[["']([^"']+)["']\]\s*=/g)) {
+      if (match[1]) rigs.add(match[1]);
+    }
+  }
+  return [...rigs].sort();
+}
+const rigs = registeredRigs(resolve(root, "films", score.id, "vendor"));
+// The five the pack always has; anything else in the vendor is the film's own
+// cast, props or scene code and has to be loaded too or its rigs do not exist.
+const PACK_SCRIPTS = ["core.js", "type.js", "characters.js", "props.js", "scene_kit.js"];
+const extra = readdirSync(resolve(root, "films", score.id, "vendor"))
+  .filter((name) => name.endsWith(".js") && !PACK_SCRIPTS.includes(name) && name !== "gsap.min.js")
+  .sort();
+
 if (!render && !args.includes("--no-render")) {
   console.error("warning: Chrome not found; writing HTML sheets only");
 }
@@ -68,6 +93,13 @@ for (const entry of plan.cast) {
     console.error(`error: character "${library.character}" has no usable file slug`);
     process.exit(1);
   }
+  if (!rigs.includes(library.rig)) {
+    console.error(
+      `error: films/${score.id}/vendor does not register the rig "${library.rig}"` +
+        (rigs.length > 0 ? `; it registers ${rigs.join(", ")}` : "; it registers nothing"),
+    );
+    process.exit(1);
+  }
   if (usedSlugs.has(slug)) {
     console.error(`error: two characters map to the same sheet "${slug}"`);
     process.exit(1);
@@ -84,6 +116,7 @@ for (const entry of plan.cast) {
       library,
       vendor,
       fonts,
+      extra,
     });
     html = sheet.html;
     height = sheet.height;

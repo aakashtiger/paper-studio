@@ -11,7 +11,8 @@
  * never enters a render manifest or a frame hash. Its fill and label colours are
  * neutral review chrome, not a film palette; the caller names the font.
  */
-import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { basename, extname, join } from "node:path";
 import { spawn } from "node:child_process";
 
@@ -211,6 +212,52 @@ export function ffColor(hex: string): string {
 }
 
 /**
+ * How many tiles one ffmpeg command may carry.
+ *
+ * Windows gives a spawned process about 32,000 characters of command line, and
+ * every tile costs an `-i <path>` plus a ~300-character filter chain. A 120-tile
+ * sheet is ~44,000 and `spawn` refuses it (`ENAMETOOLONG`) — which is how the G5
+ * strips sheet and the G7 final sheet both failed on the first 60 s film after
+ * passing on a 30 s one. Sheets larger than this are composed from row strips
+ * (see `renderGrid`), so the number of tiles a film has is not a limit on what
+ * can be reviewed.
+ */
+const TILES_PER_INVOCATION = 24;
+
+/**
+ * Split per-row tile counts into groups whose total fits one ffmpeg command.
+ *
+ * Groups are whole rows, in order, so a sheet composed from them stacks back
+ * into the sheet it would have been in one call. A single row wider than the
+ * limit is its own group: it cannot be split without breaking the row.
+ */
+export function chunkRows(counts: number[], limit = TILES_PER_INVOCATION): number[][] {
+  if (limit < 1) throw new Error("chunkRows: the limit must be at least one tile");
+  if (counts.length === 0) throw new Error("chunkRows: no rows");
+  const groups: number[][] = [];
+  let current: number[] = [];
+  let total = 0;
+  for (const count of counts) {
+    if (!Number.isInteger(count) || count < 1) throw new Error(`chunkRows: bad row count ${count}`);
+    if (current.length > 0 && total + count > limit) {
+      groups.push(current);
+      current = [];
+      total = 0;
+    }
+    current.push(count);
+    total += count;
+  }
+  if (current.length > 0) groups.push(current);
+  return groups;
+}
+
+/** The per-row tile counts a grid implies, so a sheet can be cut into row strips. */
+function rowCounts(count: number, cols: number): number[] {
+  const rows = Math.ceil(count / cols);
+  return Array.from({ length: rows }, (_, row) => Math.min(cols, count - row * cols));
+}
+
+/**
  * Tile images into one labelled sheet.
  *
  * Label and font paths are written as repo-relative paths (forward slashes) and
@@ -238,6 +285,7 @@ export async function renderGrid(options: GridOptions): Promise<GridPlan & { pat
   if (options.rows && options.rows.reduce((sum, count) => sum + count, 0) !== tiles.length) {
     throw new Error(`renderGrid: rows describes ${options.rows.reduce((sum, count) => sum + count, 0)} tiles, not ${tiles.length}`);
   }
+  const counts = options.rows ?? rowCounts(tiles.length, grid.cols);
 
   const missing = tiles.filter((tile) => !existsSync(tile.image)).map((tile) => tile.image);
   if (missing.length > 0) throw new Error(`renderGrid: missing tiles: ${missing.join(", ")}`);
@@ -265,11 +313,72 @@ export async function renderGrid(options: GridOptions): Promise<GridPlan & { pat
   });
 
   const inputs = tiles.flatMap((tile) => ["-i", tile.image]);
-  const { graph, map } = gridGraph(filters, grid.layout, background);
-
   // A stale sheet must never masquerade as a fresh one.
   if (existsSync(out)) rmSync(out);
   const ffmpeg = options.ffmpeg ?? findFfmpeg();
+
+  // A sheet too wide for one command line is composed in two passes: each group
+  // of rows becomes a strip, and the strips stack into the sheet. The pixels are
+  // the same pixels — a tile is scaled and padded to its final size either way,
+  // and xstack places it at the same coordinates — so a long film gets the same
+  // sheet a short one does, rather than a refusal.
+  const groups = chunkRows(counts);
+  if (groups.length > 1) {
+    const chunksDir = mkdtempSync(join(tmpdir(), "paper-grid-"));
+    try {
+      const strips: string[] = [];
+      let offset = 0;
+      for (const [index, group] of groups.entries()) {
+        const stripRows = planGridRows(group, tileWidth, tileHeight);
+        const stripFilters = filters.slice(offset, offset + group.reduce((sum, count) => sum + count, 0));
+        const stripInputs = inputs.slice(offset * 2, (offset + group.reduce((sum, count) => sum + count, 0)) * 2);
+        const stripPath = join(chunksDir, `strip-${String(index).padStart(3, "0")}.png`);
+        const { graph: stripGraph, map: stripMap } = gridGraph(stripFilters, stripRows.layout, background);
+        await runBinary(
+          ffmpeg,
+          [
+            "-y", "-hide_banner", "-loglevel", "error",
+            ...stripInputs,
+            "-filter_complex", stripGraph,
+            ...stripMap,
+            "-frames:v", "1",
+            stripPath,
+          ],
+          { cwd: root },
+        );
+        strips.push(stripPath);
+        offset += stripFilters.length;
+      }
+      // One input per strip, all the same width, stacked top to bottom.
+      let y = 0;
+      const layout = strips
+        .map((_, index) => {
+          const rows = groups[index]?.length ?? 0;
+          const at = `0_${y}`;
+          y += rows * tileHeight;
+          return at;
+        })
+        .join("|");
+      const { graph, map } = gridGraph(strips.map(() => "null"), layout, background);
+      await runBinary(
+        ffmpeg,
+        [
+          "-y", "-hide_banner", "-loglevel", "error",
+          ...strips.flatMap((strip) => ["-i", strip]),
+          "-filter_complex", graph,
+          ...map,
+          "-frames:v", "1",
+          out,
+        ],
+        { cwd: root },
+      );
+    } finally {
+      rmSync(chunksDir, { recursive: true, force: true });
+    }
+    return { ...grid, path: out };
+  }
+
+  const { graph, map } = gridGraph(filters, grid.layout, background);
   await runBinary(
     ffmpeg,
     [
