@@ -679,7 +679,11 @@ async function main(): Promise<void> {
 
   // The gate comes before the browser, not after the film.
   const fullRange = Number(arg("from") ?? 0) <= 0 && Number(arg("to") ?? duration) >= duration;
-  if (!stills && fullRange) {
+  // A draft is an instrument, like a stills pass: it exists so a person can judge
+  // the film before it is painted, so it is not gated by the checks that exist to
+  // stop a *film* being painted. It writes no manifest, so it can never be
+  // mistaken for the deliverable.
+  if (!stills && fullRange && !has("draft")) {
     requirePreflight(cwd, score.id, scoreFile, scorePath);
     requireCollage(cwd, score.id, scoreFile);
     requireMotion(cwd, score.id, scoreFile);
@@ -760,6 +764,12 @@ async function main(): Promise<void> {
     const fromSec = Number(arg("from") ?? 0);
     const toSec = Number(arg("to") ?? duration);
     const slice = fromSec > 0 || toSec < duration;
+    // A **draft** is the whole film at a lower frame rate, with its sound, so a
+    // director can watch and listen before paying for the film. It is not the
+    // film: the manifest is the claim that a picture *is* the deliverable, and
+    // 10 fps is not 30. Same painter, same absolute times — every frame it does
+    // paint is the frame the film will have (decision 0023).
+    const draft = has("draft");
     const firstFrame = slice ? Math.round(fromSec * fps) : 0;
     const lastFrame = slice ? Math.min(frameCount, Math.round(toSec * fps)) : frameCount;
     if (slice && !(lastFrame > firstFrame)) {
@@ -781,6 +791,12 @@ async function main(): Promise<void> {
 
     if (slice) {
       console.log(`slice: ${fromSec}s–${toSec}s of ${score.id} · a probe, not a deliverable · no manifest written`);
+      return;
+    }
+    if (draft) {
+      console.log(
+        `draft: ${output} · ${fps} fps (the film is ${score.fps ?? 30}) · a preview, not the deliverable · no manifest written`,
+      );
       return;
     }
 

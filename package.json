@@ -52,7 +52,8 @@
     "preflight": "tsx scripts/preflight.ts",
     "collage": "tsx scripts/collage.ts",
     "probe:motion": "tsx scripts/motion-probe.ts",
-    "inspect": "tsx scripts/inspect.ts"
+    "inspect": "tsx scripts/inspect.ts",
+    "draft": "tsx scripts/draft.ts"
   },
   "dependencies": {
     "zod": "^3.24.1"

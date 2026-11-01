@@ -64,6 +64,7 @@ npm run strips -- films/understudy/score.json    # one strip per shot from the d
 npm run preflight -- films/understudy/score.json  # every cheap check, before frame 1
 npm run probe:motion -- films/understudy/score.json   # does every shot move? before the paint
 npm run inspect -- films/understudy/score.json    # one pass: movement, type and rig together
+npm run draft -- films/understudy/score.json      # watch and listen, at 10 fps, before the film
 npm run collage -- films/understudy/score.json    # one frame per shot, self-checked
 npm run audit -- films/understudy/score.json     # score-level audit
 npm run audit:motion -- films/understudy/score.json   # per-shot motion floor
