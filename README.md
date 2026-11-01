@@ -28,12 +28,14 @@ Working today:
   generated SFX (`npm run sfx`), a measured master (`npm run mix`), a code-drawn
   render (`npm run render:film`), delivery into the frozen picture
   (`npm run deliver`), and `npm run gate:7`
-- **265 tests** (`npm test`), clean `npm run typecheck`
+- generated page data (`npm run embed` → `films/<id>/score-data.js`): the renderer
+  paints from it, and `gate:7` regenerates it from the score and compares bytes
+- **269 tests** (`npm test`), clean `npm run typecheck`
 
 The pipeline is proven end to end on one fixture, *The Understudy*
 (`films/understudy/score.json` → `films/understudy/understudy.mp4`):
 −14.4 LUFS / −1.9 dBTP measured on the delivered file, 900 frames, gate **PASS
-19 checks, 1 manual** (ASR, which needs a local speech model — `tools/README.md`).
+20 checks, 1 manual** (ASR, which needs a local speech model — `tools/README.md`).
 Two independent renders are byte-identical and share one picture hash.
 
 Not built yet: the web app, review room, payments, creator studio, music for a

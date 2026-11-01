@@ -143,12 +143,23 @@ the substance. This pass measures everything it claims:
   invalidates a frame audit for a change not one of them measured, and the
   determinism row requires two renders with **identical bytes and the same
   picture** as the delivered film — not two copies of one file.
+- **The page's score data is generated and regenerated.** The renderer paints
+  from `films/<id>/score-data.js`, and Understudy's had gone stale: the score had
+  gained five `quiet` reasons and the cue → event bindings, and the page still
+  carried the older plan. No report saw it, because no report was about that
+  file. `src/engine/score-data.ts` is now the one implementation, `npm run embed`
+  writes it, and the `scoreData` gate row rebuilds it from the score and compares
+  byte for byte. A manifest naming the old data failed `inputsHashed` and said
+  which file had moved; re-rendered, both pass, picture hash unchanged. Probing
+  the row itself: one line appended to `score-data.js` failed both rows, and
+  `npm run embed` restored the same bytes and the PASS. That is the point: a
+  stale data file is invisible in the pixels.
 
 Evidence: `sfx` 30/30 ok, all −14 dBFS loud · `audit` 32 events / 27 scored / 5
 bare / 30 cues / 2 silences / longest hole 1.07 s · `mix` **−14.1 LUFS / −1.9
 dBTP**, gain +6.6 dB, limiter 6.8 dB at the peak, **median window 0.02 dB**
 (33/293 over 3 dB) · `deliver` **−14.4 LUFS / −1.9 dBTP measured on the file** ·
-`gate:7` **PASS, 19 checks · 1 manual (ASR)** · **265 tests**, typecheck clean.
+`gate:7` **PASS, 20 checks · 1 manual (ASR)** · **269 tests**, typecheck clean.
 Still open: no music, narration ending at 19.5 s (the brief's copy ends there), a
 mono field, guessed word times, and ASR pending the local speech models. The
 MP4's earlier audio cut is **closed**: the delivered MP4 now carries the measured
@@ -157,7 +168,7 @@ master.
 **The counts above are the current ones; the blocks before this were written
 against earlier builds.** Where an older block says "13 checks" or "237 tests",
 it is describing the state on that date, not today's. The gate now has **19
-checks** and the suite **265 tests**; the commands are the source of truth
+checks** and the suite **269 tests**; the commands are the source of truth
 (`npm run gate:7 -- films/understudy/score.json`, `npm test`).
 
 **Update:** `docs/PRODUCTION-PLAN.md` v1.4 is accepted. The contract layer and
@@ -195,7 +206,7 @@ removes a real blocker.
 **production pipeline proven end to end on one fixture**: a scored film
 (`films/understudy/score.json`) becomes a derived board, an audited cue sheet,
 generated SFX, a measured master, 900 code-drawn frames, a delivered MP4 whose
-audio is measured on the file, and a gate that reads 19 checks — with two
+audio is measured on the file, and a gate that reads 20 checks — with two
 byte-identical renders behind it. What we do not have is a **real film** (the
 brief/idea is the user's, and `The Understudy` is a fixture), **music**, **ASR**
 (the command exists; the local speech model is not installed), or the **app**

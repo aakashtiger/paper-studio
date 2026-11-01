@@ -143,7 +143,7 @@ The **contract layer and the first generators are implemented**: film brief,
 audio resolver (recorded/TTS narration, library/generated music, generated SFX),
 asset manifest, pose library, film score, derived **board**, score-level
 **audit**, the **character/pose sheet** generator and the **board animatic**
-builder. **265 tests.** The sheet has a signed **9/10 design** review. The paper
+builder. **269 tests.** The sheet has a signed **9/10 design** review. The paper
 rig has two-bone leg IK, ankle targets, foot pitch and a knee-driven bounce; the
 leg targets are now reachable, so a planted foot bends its knee and lands on its
 shadow (`test/cast-rig.test.ts`). The board animatic is **9/10 signed** (editor +
@@ -194,8 +194,8 @@ clock has no second cue list, the mix refuses a stale cue by spec fingerprint an
 WAV hash, review chrome is one neutral `REVIEW_CHROME`, every sheet takes its
 faces from the pack's `tokens.json`, and `film:review` never prints a report it
 did not write this run. `film:review --gate` is **PASS**: audit 32 events /
-30 cues, 30/30 SFX, `gate:7` **19 checks** with **ASR the one manual row**,
-265 tests, clean typecheck. `docs/decisions/0017` §Landed has the detail.
+30 cues, 30/30 SFX, `gate:7` **20 checks** with **ASR the one manual row**,
+269 tests, clean typecheck. `docs/decisions/0017` §Landed has the detail.
 
 The **sound pass** ran three times. The first fixed what the sound critic's 6/10
 named: the master's tail fade was inverted, cues were peak-normalised (so the
@@ -232,10 +232,16 @@ and the manifest. `gate:7` reads it as `deliveredAudio`. The gate also stopped
 passing on missing evidence: the `master` row no longer defaults a missing
 `limiterWindows` to 1, the `palette` row is tied to the video **and to clipping on
 every frame**, `scoreAudit` requires the audit to name the current score, and
-`inputsHashed` re-hashes the score, the backend and the painter. **The render owns
+`inputsHashed` re-hashes the score, the generated page data, the backend and the
+painter. **The render owns
 the manifest**: `render:film` writes it, `audit:frames` refuses a video it does not
 describe, `deliver` refuses a picture it does not describe, and the gate re-hashes
-the files the render named. **Picture and container are two hashes**: `videoHash`
+the files the render named. **The page's data is regenerated, not trusted**: the
+renderer paints from `films/<id>/score-data.js`, so `src/engine/score-data.ts` is
+the one implementation of it and the `scoreData` gate row rebuilds it from the
+score and compares bytes — Understudy had shipped one stale, and no report could
+see it because no report was about that file. **Picture and container are two
+hashes**: `videoHash`
 is sha256 over the video stream, so
 re-cutting audio does not invalidate a frame audit, and determinism needs two
 renders with identical bytes and the same picture as the delivered film.
