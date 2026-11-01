@@ -232,9 +232,13 @@ draw order (hair behind the torso). The new evidence is mechanical:
 
 - `audit:rig` now wraps a new `rigAnchor` helper. Each rig publishes the chest,
   the head pivot and the hair, and the audit holds each of them to a **fixed
-  place in chest space** (1.5 rig units) across every sampled frame — a part in
-  the wrong transform drifts, a part in the right one cannot. Understudy:
-  **435 anchor samples, 0.00 units worst shift, pass.**
+  place in the space of the part it hangs from** (1.5 rig units) across every
+  sampled frame — a part in the wrong transform drifts, a part in the right one
+  cannot. Understudy: **435 anchor samples, 0.00 units worst shift, pass.**
+  *(0024: the row measured everything against the chest until the first real film
+  turned a head at 6–8° per 0.1 s, which put the hair's arc over the tolerance and
+  produced 18 findings on a correct rig. The probe read the hair at
+  `(0.00, −518.00)` in head space in every frame of the beat.)*
 - `npm run audit:rig:proof` proves the row catches the defect rather than
   describing it: it puts the hair back at the rig root, and on that placement the
   hair moves **96.9 units in one 0.1 s step** at 25.0 s against a 1.5 limit, while

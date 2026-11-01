@@ -42,7 +42,10 @@ arm.
   upright while the head swung away, so the frame read as a detached head. This
   one cannot be seen on a sheet of still poses with the head alone checked, so
   it is measured instead: each rig publishes the chest, the head pivot and the
-  hair, and `audit:rig` holds every one of them to a fixed place in chest space.
+  hair, and `audit:rig` holds every one of them to a fixed place in the space of
+  the part it hangs from *(0024 corrected the space: this decision measured all
+  three against the chest, which cannot tell a head turning from a part coming
+  off)*.
   The old placement fails it by 96.9 units against a 1.5-unit limit at the bow;
   the fixed rig reads 0.0 (`npm run audit:rig:proof`).
 - The feet carry a contact shadow at the sole; the character never hovers.

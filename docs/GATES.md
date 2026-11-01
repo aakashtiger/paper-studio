@@ -97,13 +97,19 @@ head and the hair. It checks, per leg:
 
 And, per character:
 
-6. every anchored part keeps a fixed place **in chest space** (1.5 rig units).
-   This is the row a still cannot fake. The long hair was drawn at the rig root
-   instead of under the head, so it kept the upright head's position: on a bow
-   the face travelled ~95 units and left a vertical black slab behind it, which
-   read as a detached head. Every still that checked the head *alone* passed,
-   and the pixel audits passed, because nothing in the frame was missing — it
-   was in the wrong place.
+6. every anchored part keeps a fixed place **in the space of the part it hangs
+   from** (1.5 rig units) — the head pivot against the chest, the hair against the
+   head. This is the row a still cannot fake. The long hair was drawn at the rig
+   root instead of under the head, so it kept the upright head's position: on a
+   bow the face travelled ~95 units and left a vertical black slab behind it,
+   which read as a detached head. Every still that checked the head *alone*
+   passed, and the pixel audits passed, because nothing in the frame was missing
+   — it was in the wrong place.
+   *(0024: this row measured every part against the chest until 2 Nov 2026, which
+   makes a head that turns indistinguishable from a part that comes off — the
+   hair travels an arc and reads as a seam on every frame of every turn. Same
+   Alarm's head-drop beat produced 18 findings on a rig that the probe showed was
+   rigid: the hair sits at `(0.00, −518.00)` in head space in every frame.)*
 
 `npm run audit:rig:proof` is the proof that row 6 works: it puts the long hair
 back at the rig root, paints the bow at the audit's own 0.1 s step, and measures
