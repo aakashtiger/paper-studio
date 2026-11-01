@@ -21,7 +21,7 @@
  *   npm run film:chain -- <score> --workers 1     (force a serial render)
  */
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
 import { cpus } from "node:os";
 import { resolve } from "node:path";
 
@@ -73,12 +73,27 @@ const delivered = `films/${id}/${id}.mp4`;
 const master = `${build}/mix/master.wav`;
 
 /**
+ * The unit suite, as files rather than as a shell glob: `test/*.test.ts` needs a
+ * shell to expand on Windows, and the chain spawns node directly.
+ */
+const testFiles = readdirSync(resolve(root, "test"))
+  .filter((name) => name.endsWith(".test.ts"))
+  .sort()
+  .map((name) => `test/${name}`);
+
+/**
  * A step is a name and a command. `tsx` marks the TypeScript entry points,
  * which are run through the same node that runs this script — spawning
  * `npm.cmd` on Windows needs a shell, and Node 24 refuses that.
  */
 const steps = [
   { name: "embed", tsx: "scripts/embed.ts", args: [score] },
+  // The unit suite is 14 s and it already knew. Chain B spent 81 minutes
+  // rendering a cut whose legs were measurably unreachable, then reported 209
+  // rig findings — while `test/cast-rig.test.ts`, which asserts exactly that,
+  // would have failed in a fourteenth of a second… if anything had run it. A
+  // check that can refuse a render has to run before the render.
+  { name: "tests", argv: ["--import", "tsx", "--test", ...testFiles] },
   // The score audit costs 0.4 s and the render costs 34 minutes, so the audit
   // runs first. It was the other way round, and a contradiction in one event
   // (`quiet` on an event a cue was bound to) was reported by the audit *after*
@@ -117,9 +132,11 @@ const steps = [
 
 function run(step) {
   const began = Date.now();
-  const argv = step.tsx
-    ? [process.execPath, ["--import", "tsx", step.tsx, ...step.args]]
-    : [process.execPath, [step.node, ...step.args]];
+  const argv = step.argv
+    ? [process.execPath, step.argv]
+    : step.tsx
+      ? [process.execPath, ["--import", "tsx", step.tsx, ...step.args]]
+      : [process.execPath, [step.node, ...step.args]];
   console.log(`\n=== ${step.name}`);
   const child = spawnSync(argv[0], argv[1], { cwd: root, stdio: "inherit" });
   const seconds = ((Date.now() - began) / 1000).toFixed(1);
