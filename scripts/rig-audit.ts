@@ -394,8 +394,13 @@ async function main(): Promise<void> {
   const instrumented = legs > 0 && characters > 0 && anchored.size > 0 && seamPairs > 0;
   const pass = instrumented && findings.length === 0;
 
+  // The tie that lets a review reuse this report (decision 0033): the score it
+  // measured. The paint code is tied by mtime, because a rig reading depends on
+  // the painter as well as the score.
+  const scoreHash = `sha256:${createHash("sha256").update(await readFile(resolve(root, scorePath), "utf8")).digest("hex")}`;
   const report = {
     film: score.id,
+    score: scoreHash,
     pass,
     instrumented,
     sampled: data.frames.length,

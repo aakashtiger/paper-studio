@@ -140,7 +140,11 @@ const steps = [
   { name: "deliver", tsx: "scripts/deliver.ts", args: [score, "--video", deliverable, "--out", delivered] },
   { name: "asr", tsx: "scripts/asr.ts", args: [score] },
   { name: "gate", tsx: "scripts/gate-7.ts", args: [score] },
-  { name: "review", tsx: "scripts/film-review.ts", args: [score, "--gate"] },
+  // `--reuse`: the chain has just run every one of these audits, so the review
+  // prints them from their reports instead of re-measuring them — but only when
+  // a report is verifiably about this picture or this score (decision 0033).
+  // Re-running them cost ~5 minutes to re-derive verdicts already in hand.
+  { name: "review", tsx: "scripts/film-review.ts", args: [score, "--gate", "--reuse"] },
 ];
 
 function run(step) {

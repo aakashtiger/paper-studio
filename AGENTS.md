@@ -54,6 +54,7 @@ npm run treatment -- proofs/s2-paper/plan.json    # validate a creative treatmen
 npm run film -- films/understudy/score.json      # validate a scored film
 npm run film:new -- --brief films/understudy/brief.json   # scaffold story, beats and score; never invent
 npm run film:review -- films/understudy/score.json        # chain the review, one page + one sheet
+npm run film:review -- <score> --gate --reuse             # print audits the chain just ran, when they are tied to this film (0033)
 npm run captions -- films/understudy/score.json  # generate transcript + SRT
 npm run voice -- films/understudy/score.json     # capture narration + word times, derive the clock
 npm run asr -- films/understudy/score.json       # listen to the master; the G7 ASR gate
@@ -103,13 +104,13 @@ npx hyperframes render proofs/s2-paper -o proofs/s2-paper/paper-proof.mp4 --fps 
 
 ## Current phase
 
-**The loop is fixed before the next film is made (decisions 0025–0031).**
+**The loop is fixed before the next film is made (decisions 0025–0033).**
 
 The user's instruction, after *Same Alarm* was rejected: fix the whole system
 first, then make another film. What was wrong was not the painter — it was the
 **order** and the **cost** of the work. Nine full renders produced seven cuts a
 one-second check had already rejected; the film that shipped had never been
-written; the first time anyone saw the cut move was after paying for it. Six
+written; the first time anyone saw the cut move was after paying for it. Nine
 decisions changed that, and the pipeline a film now takes is:
 
 ```
@@ -124,6 +125,7 @@ score.json   the shots, each bound to a beat, with a reason to exist       (0025
    ↓ npm run draft         ~4 min  watch and listen at 10 fps, with the master
    ↓ npm run render:film   ~12 min the film, ONCE, refused without every check passing
    ↓ npm run deliver + gate        the delivered file, measured
+   ↓ npm run film:review   ~1 min  one page; audits the chain just ran are not repeated (0033)
 ```
 
 What each decision bought, measured on *Same Alarm* (60 s, 10 shots):
@@ -137,6 +139,7 @@ What each decision bought, measured on *Same Alarm* (60 s, 10 shots):
 | 0030 front door | `film:new` wrote only the score — a film could start at its shot list | writes **story, beats, score**, in order, and names every gap |
 | 0031 draft | the first moving look was the film itself | **3 min 52 s** for a 10 fps cut with the master |
 | 0032 determinism | the film painted twice to prove it, 2 × ~12 min | **48 s**, 30 frames, and the twin now tests worker order |
+| 0033 review reuse | the review re-ran five audits the chain had just run | **62 s**, all five printed from reports tied to this picture/score |
 
 `render:film` refuses a whole-film paint without a passing preflight, collage
 and movement report, each carrying the sha256 of the score it describes. Probes
@@ -153,11 +156,26 @@ timelines, so the guarantee is structural rather than observed.
 `npm run determinism:renders` still compares two complete renders when a release
 wants the full proof.
 
-**Still open, and named:** the collage and the storyboard each paint their own
-ten frames (they could read the frames `inspect` already painted); narration
-word times still say `source: "guess"` until the local Whisper model is
-installed, so ASR is the one manual gate row. No new film starts until the user
-says so.
+**A report is trusted because it is about this film, not because it is new.**
+`film:review` used to re-run the five audits the chain had just run — 363 s, two
+of them repainting every frame they judged. It may now print a report it did not
+write this run only when the report is *tied to this film*: a video audit by the
+`videoHash` of the picture it read, a paint-probe audit by the `score` it measured
+plus the mtime of the paint code. `--gate --reuse` is what the chain runs
+(**62 s**, five of five reused, against 363 s); plain `--gate` still re-runs
+everything. A reused report that says `pass: false` still fails the review —
+reuse is about freshness, never leniency.
+
+**ASR is no longer the manual row.** Whisper `small.en` is installed locally:
+`npm run asr` heard all 26 script words (100.0% matched), and `words.json` and
+`transcript.json` carry `source: "asr"` with real word times rather than a guess.
+`gate:7` on *Same Alarm* is **PASS · 21 checks · nothing pending**.
+
+**Still open, and named:** the frame audit (~134 s) and the paint match (~74 s)
+each decode the delivered film, so one shared decode could serve both; the
+collage and the storyboard each paint their own ten frames (they could read the
+frames `inspect` already painted); and assets are not yet derived from the shots.
+No new film starts until the user says so.
 
 ---
 
@@ -231,7 +249,7 @@ The **contract layer and the first generators are implemented**: film brief,
 audio resolver (recorded/TTS narration, library/generated music, generated SFX),
 asset manifest, pose library, film score, derived **board**, score-level
 **audit**, the **character/pose sheet** generator and the **board animatic**
-builder. **367 tests.** The sheet has a signed **9/10 design** review. The paper
+builder. **377 tests.** The sheet has a signed **9/10 design** review. The paper
 rig has two-bone leg IK, ankle targets, foot pitch and a knee-driven bounce; the
 leg targets are now reachable, so a planted foot bends its knee and lands on its
 shadow (`test/cast-rig.test.ts`). The board animatic is **9/10 signed** (editor +
@@ -280,9 +298,10 @@ that gap is recorded rather than papered over. The blockers are fixed: an unknow
 SFX kind is a contract error, a derived cue snaps to the frame grid, the `sfx`
 clock has no second cue list, the mix refuses a stale cue by spec fingerprint and
 WAV hash, review chrome is one neutral `REVIEW_CHROME`, every sheet takes its
-faces from the pack's `tokens.json`, and `film:review` never prints a report it
-did not write this run. `film:review --gate` is **PASS**: audit 32 events /
-30 cues, 30/30 SFX, `gate:7` **20 checks** with **ASR the one manual row**,
+faces from the pack's `tokens.json`, and `film:review` never printed a report it
+had not written this run (0033 later allows one that is provably about this film).
+`film:review --gate` was **PASS**: audit 32 events / 30 cues, 30/30 SFX,
+`gate:7` **20 checks** with ASR then the one manual row — since automated —
 269 tests, clean typecheck. `docs/decisions/0017` §Landed has the detail.
 
 The **sound pass** ran three times. The first fixed what the sound critic's 6/10
@@ -331,15 +350,17 @@ score and compares bytes — Understudy had shipped one stale, and no report cou
 see it because no report was about that file. **Picture and container are two
 hashes**: `videoHash`
 is sha256 over the video stream, so
-re-cutting audio does not invalidate a frame audit, and determinism needs two
-renders with identical bytes and the same picture as the delivered film.
+re-cutting audio does not invalidate a frame audit, and determinism must describe
+the picture the film ships — the twin sample now carries the manifest's
+`videoHash` instead of painting the film twice (0032).
 Understudy: −14.1 LUFS / −1.9 dBTP, gain +6.6 dB, 6.8 dB off the loudest sample,
 **median window 0.02 dB**; delivered **−14.4 LUFS / −1.9 dBTP**. A narration
 leveller was built, measured and **reverted** — it lowered integrated loudness
 more than it raised it, and the measurement is in the decision record so nobody
 rebuilds it. Still open and named in `docs/STATUS.md`: no music, narration ending
-at 19.5 s, a mono field, transcript word times that say `source: "guess"` until
-Whisper is installed, and ASR pending.
+at 19.5 s, and a mono field. The word times and ASR are no longer open: local
+Whisper `small.en` produced `source: "asr"` word times for both films, and
+`npm run asr` passes on the master.
 
 Do not build: the renderer in this phase, a video, the web app, a second product
 style, or a conversion of the other 58 Lemo styles. `styles/paper-vows` remains

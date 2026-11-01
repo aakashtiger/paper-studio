@@ -7,7 +7,7 @@ warning.
 | Gate | Artifact | Command | Pass condition | Critics | Status |
 |---|---|---|---|---|---|
 | G0 brief | `brief.json` | `npm run film -- <score>` | fields complete; style, aspect, duration, fps and audio mode match the score | architect, editor | ready |
-| G1 audio | voice, `transcript.json`, `captions.srt`, cue list | `npm run voice -- <score>` + `npm run captions -- <score>` | files exist and hash; word times come from the actual read (`words.json`), not a guess from word length; transcript covers the script; SRT cues match; read-time holds | editor, sound, QA | **partial** — `words.json` needs the local Whisper install; until then `transcript.json` says `source: "guess"` and the ASR row is the one manual check |
+| G1 audio | voice, `transcript.json`, `captions.srt`, cue list | `npm run voice -- <score>` + `npm run captions -- <score>` | files exist and hash; word times come from the actual read (`words.json`), not a guess from word length; transcript covers the script; SRT cues match; read-time holds | editor, sound, QA | **pass** - local Whisper `small.en` is installed: `words.json` and `transcript.json` say `source: "asr"` (Same Alarm: 26/26 script words, 100.0% matched), so no word time is a guess |
 | G2 direction + look | score, `build/<id>/board/`, `build/<id>/board/board-sheet.png`, `build/<id>/storyboard/storyboard.png`, hero frames | `npm run board -- <score>` + `npm run storyboard -- <score>` | all shots inside the envelope; median in band; board covers every shot and marked beat; the board sheet shows every card on one image; the storyboard shows one code-drawn frame per shot, in order, on one sheet; look table complete | designer, editor | ready |
 | G3 animatic | board pass + stepped rough | `npm run animatic -- <score>` + `npm run rough -- <score>` | board pass signed 9/10; stepped rough paints the score at 10 fps; every board time paired to its frame; every shot's median frame-to-frame change ≥ 0.6 and no hold >0.4 s; no camera-only shot; ≥2 breakdowns per transition | motion, editor, QA | **board pass signed; stepped rough measures pass** |
 | G4 assets | `build/<id>/sheets/*.png` | `npm run sheet -- <score>` | seam gap 0; feet planted; contact shadow; 8 poses + 4 expressions; joint map; hand/foot/coat panels | designer, developer, QA | ready |
@@ -160,15 +160,21 @@ solved target) and weaker in coverage (a sample at `--step`, not 900 frames). Bo
 facts are in their reports: `sampled`, `step`, and the probe's own hash.
 
 `npm run film:review` chains the whole set for one film and prints one page. It
-hides no failure: every step runs even after one fails, and a row is only
-summarised from a report **this run wrote**. A failed step shows its own error
-line, never last week's "ok" next to today's FAIL, and what was not run is
-printed as skipped. The chain is `audit → board → storyboard → sheet → sfx → mix →
-strips →` (with `--gate`) `frame-audit → paint-match → motion-audit → type-audit →
-rig-audit → deliver → gate:7`: `mix` comes after `sfx` because `sfx` rewrites every
-cue WAV, and `deliver` comes after `frame-audit` because the audit proves the
-delivered picture is the render's (the manifest check) and `deliver` is what puts
-the measured audio into the manifest.
+hides no failure: every step runs even after one fails, and a row is summarised
+from a report this run wrote **or from one provably about this film** (0033). A
+gate report is reused only when it is tied: a video audit by the `videoHash` of
+the picture it read, a paint-probe audit by the `score` it measured plus a
+report newer than the newest change to the paint code. A reused row says so
+(`measured on this picture (...), not repainted`), and a reused `pass: false`
+still fails the review. `--gate --reuse` is what the chain runs — five of five
+reused in 62 s against 363 s re-measured; plain `--gate` re-runs everything. A
+failed step shows its own error line, never last week's "ok" next to today's
+FAIL, and what was not run is printed as skipped. The chain is `audit → board →
+storyboard → sheet → sfx → mix → strips →` (with `--gate`) `frame-audit →
+paint-match → motion-audit → type-audit → rig-audit → deliver → gate:7`: `mix`
+comes after `sfx` because `sfx` rewrites every cue WAV, and `deliver` comes after
+`frame-audit` because the audit proves the delivered picture is the render's (the
+manifest check) and `deliver` is what puts the measured audio into the manifest.
 
 **The render writes the manifest, because only the render knows.** The manifest
 hashes the score, the generated score data, the style backend

@@ -239,8 +239,12 @@ async function main(): Promise<void> {
     misMarked.length === 0 &&
     copyBoxes > 0 &&
     unmarked.length === 0;
+  // The tie that lets a review reuse this report (decision 0033): the score it
+  // measured, so a report about a different edit cannot be mistaken for fresh.
+  const scoreHash = `sha256:${createHash("sha256").update(await readFile(resolve(root, scorePath), "utf8")).digest("hex")}`;
   const report = {
     film: score.id,
+    score: scoreHash,
     pass,
     frame: { width, height },
     safe,

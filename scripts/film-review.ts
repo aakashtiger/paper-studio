@@ -10,7 +10,9 @@
  */
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { resolve } from "node:path";
+import { createHash } from "node:crypto";
 import { spawn } from "node:child_process";
+import { mayReuse, type ReportTie } from "../src/engine/review.js";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
 
 const args = process.argv.slice(2);
@@ -27,6 +29,20 @@ function arg(name: string): string | undefined {
 
 type StepResult = { name: string; ok: boolean; detail: string; output: string };
 
+/** A gate step whose report can be tie-verified rather than re-measured. */
+const GATE_TIES: Record<string, { tie: ReportTie; report: (id: string) => string }> = {
+  // These read the delivered picture, so the picture hash is the tie.
+  "frame-audit": { tie: "picture", report: (id) => `build/${id}/frame-audit.json` },
+  "paint-match": { tie: "picture", report: (id) => `build/${id}/paint-match.json` },
+  "motion-audit": { tie: "picture", report: (id) => `build/${id}/motion-audit.json` },
+  // These paint their own frames, so the score is the tie — plus the mtime of
+  // the paint code, because the painter is an input too.
+  "type-audit": { tie: "score", report: (id) => `build/${id}/type-audit.json` },
+  "rig-audit": { tie: "score", report: (id) => `build/${id}/rig-audit.json` },
+};
+
+type Step = { name: string; script: string; detail: string; tie?: ReportTie; report?: string };
+
 const root = process.cwd();
 const scorePath = file as string;
 const score = FilmScoreSchema.parse(JSON.parse(readFileSync(resolve(root, scorePath), "utf8")));
@@ -42,8 +58,12 @@ const startedAt = Date.now();
 const video = resolve(root, "films", id, `${id}.mp4`);
 const hasVideo = existsSync(video);
 const wantGate = args.includes("--gate");
+// `--reuse` trusts a gate report that is *verifiably about this film* instead of
+// re-measuring it (decision 0033). The chain has just run every one of these
+// audits; re-running them costs ~5 minutes to re-derive the same verdicts. A
+// report that cannot be tied to this picture or this score is still re-run.
+const mayReuseReports = args.includes("--reuse");
 
-type Step = { name: string; script: string; detail: string };
 const steps: Step[] = [
   { name: "audit", script: "scripts/audit.ts", detail: "score-level contracts" },
   { name: "board", script: "scripts/board.ts", detail: "cards, one image" },
@@ -59,7 +79,13 @@ if (hasVideo) {
 }
 if (wantGate) {
   for (const gate of ["frame-audit", "paint-match", "motion-audit", "type-audit", "rig-audit"] as const) {
-    steps.push({ name: gate, script: `scripts/${gate}.ts`, detail: "G7 mechanical audit" });
+    const tie = GATE_TIES[gate];
+    steps.push({
+      name: gate,
+      script: `scripts/${gate}.ts`,
+      detail: "G7 mechanical audit",
+      ...(tie ? { tie: tie.tie, report: tie.report(id) } : {}),
+    });
   }
   // After the audits, because `deliver` puts the measured master into the
   // picture — and the picture must already have passed its frame audit. Before
@@ -121,8 +147,39 @@ function stamp(name: string): number | null {
   }
 }
 
-async function runStep(step: Step): Promise<StepResult> {
-  const before = stamp(step.name);
+/** When a file was last written, or null. */
+function mtime(path: string): number | null {
+  try {
+    return statSync(path).mtimeMs;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The newest change to anything the painter draws with: the pack's canvas, the
+ * film's painter and its generated score data, and the page. A paint-probe
+ * report written before the newest of these measured a painter that no longer
+ * exists, so it is re-run rather than reused (decision 0033).
+ */
+function newestPaintChange(film: string): number | null {
+  const files: string[] = [];
+  const canvas = resolve(root, "styles", score.style ?? "", "canvas");
+  if (existsSync(canvas)) {
+    for (const entry of readdirSync(canvas)) if (entry.endsWith(".js")) files.push(resolve(canvas, entry));
+  }
+  for (const name of ["painter.js", "score-data.js", "index.html"]) {
+    files.push(resolve(root, "films", film, name));
+  }
+  let newest: number | null = null;
+  for (const file of files) {
+    const at = mtime(file);
+    if (at !== null && (newest === null || at > newest)) newest = at;
+  }
+  return newest;
+}
+
+async function runStep(step: Step): Promise<StepResult> {  const before = stamp(step.name);
   return new Promise((done) => {
     const child = spawn(process.execPath, ["--import", "tsx", step.script, scorePath], {
       cwd: root,
@@ -148,7 +205,41 @@ async function runStep(step: Step): Promise<StepResult> {
 
 async function main(): Promise<void> {
   const results: StepResult[] = [];
+
+  // What a report must be tied to for the review to print it without re-measuring.
+  const manifestFile = resolve(root, "build", id, "render-manifest.json");
+  const frozenHash: string | null = existsSync(manifestFile)
+    ? ((JSON.parse(readFileSync(manifestFile, "utf8")) as { videoHash?: string }).videoHash ?? null)
+    : null;
+  const scoreNow = `sha256:${createHash("sha256").update(readFileSync(resolve(root, scorePath))).digest("hex")}`;
+  const paintChangedAt = newestPaintChange(id);
+
   for (const step of steps) {
+    if (mayReuseReports && step.tie && step.report) {
+      const path = resolve(root, step.report);
+      const report = existsSync(path) ? (JSON.parse(readFileSync(path, "utf8")) as Record<string, unknown>) : null;
+      const verdict = mayReuse({
+        report,
+        tie: step.tie,
+        frozenHash,
+        scoreNow,
+        writtenAt: report ? mtime(path) : null,
+        paintChangedAt,
+      });
+      if (verdict.ok && report) {
+        process.stdout.write(`film:review: ${step.name}... reused\n`);
+        // A reused report is still a verdict: if it failed, the review fails.
+        const passed = report.pass === true;
+        results.push({
+          name: step.name,
+          ok: passed,
+          detail: passed ? `${describe(step.name) ?? step.detail} · ${verdict.why}` : "FAIL",
+          output: "",
+        });
+        continue;
+      }
+      if (report) console.log(`film:review: ${step.name} — re-measuring: ${verdict.why}`);
+    }
     process.stdout.write(`film:review: ${step.name}...\n`);
     results.push(await runStep(step));
   }
