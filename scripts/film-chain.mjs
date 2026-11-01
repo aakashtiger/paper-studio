@@ -59,6 +59,13 @@ const master = `${build}/mix/master.wav`;
  */
 const steps = [
   { name: "embed", tsx: "scripts/embed.ts", args: [score] },
+  // The score audit costs 0.4 s and the render costs 34 minutes, so the audit
+  // runs first. It was the other way round, and a contradiction in one event
+  // (`quiet` on an event a cue was bound to) was reported by the audit *after*
+  // the deliverable and its twin had both finished — 70 minutes to learn what
+  // four tenths of a second would have said. A check that can refuse a render
+  // must run before it.
+  { name: "audit", tsx: "scripts/audit.ts", args: [score] },
   { name: "sfx", tsx: "scripts/sfx.ts", args: [score] },
   { name: "mix", tsx: "scripts/mix.ts", args: [score] },
   {
@@ -76,7 +83,6 @@ const steps = [
       { name: "determinism", node: "scripts/compare-renders.mjs", args: [deliverable, twin, "--out", `${build}/determinism.json`] },
     ],
   },
-  { name: "audit", tsx: "scripts/audit.ts", args: [score] },
   { name: "frames", tsx: "scripts/frame-audit.ts", args: [score, "--video", deliverable] },
   { name: "paint", tsx: "scripts/paint-match.ts", args: [score, "--video", deliverable] },
   { name: "palette", tsx: "scripts/palette-audit.ts", args: [score, "--video", deliverable] },

@@ -493,7 +493,6 @@ window.SCORE = {
             "t": 6.6,
             "kind": "pose",
             "note": "and the head goes down, over the better part of a second",
-            "quiet": "a pose has no sound of its own",
             "who": "Kiran",
             "pose": "asleep"
           }
