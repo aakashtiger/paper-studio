@@ -13,7 +13,7 @@ warning.
 | G4 assets | `build/<id>/sheets/*.png` | `npm run sheet -- <score>` | seam gap 0; feet planted; contact shadow; 8 poses + 4 expressions; joint map; hand/foot/coat panels | designer, developer, QA | ready |
 | G5 shots | animated shots, `build/<id>/strips/` | `npm run render:film -- <score>` + `npm run audit:motion -- <score>` + `npm run strips -- <score>` | entry/exit match; ≥3 events; no floating part; every shot's median frame-to-frame change ≥ 0.6 and no dead stretch > 0.1 s; one strip per shot every 0.5 s on one image (from the delivered MP4) | motion, editor | **measured + strips sheet** |
 | G6 mix | master + `build/<id>/sfx/sfx.json` + `build/<id>/sfx/spectrogram-sheet.png` | `npm run sfx -- <score>` + `npm run mix -- <score>` | every cue generated in code from the kit and layered (transient, body, tail) over a material; a cue names its time once (typed `at`, or bound to its picture `event`, which derives it, snapped to the frame); **each cue passes the kit checks** - on a frame, ≥50% of its energy in its declared band, ≥60% at or above 200 Hz where a phone speaker lives, clean fade, longer than a click, band top ≤9 kHz, kind not on the banned list, and **its loudest 50 ms at the kit's level** (a cue whose gain is not its only level fails); no machine-gun repetition (any two cues of one kind may not overlap or restart within 0.3 s); **every picture event is scored or says why it is quiet** (`quiet: "<why>"` on the event — an event with neither a cue nor a reason, an event with both, an event with no cue and no reason, a cue overlapping a declared silence, a declared silence with narration over it, a hole over 2.5 s with no reason, or a cue inside the master's tail fade is an error); **each declared silence is measured on the master** (peak ≤ -50 dBFS); the mix bus is highpassed at 75 Hz and peaks at ≤ -1 dBFS; the 1-4 kHz band is ducked against the voice **and the duck the bus applied is the depth the score declared**; one shared reverb return; tail faded to silence and **measured as a monotonic slope to ≤ -60 dBFS**; **no ticks, clicks, hats, glitches or beeps (phone-speaker rule)**; a spectrogram sheet per cue on one image, each tile labelled with its measured level; master -14.0 LUFS / ≤ -1.5 dBTP from one gain and a true-peak limiter, **and the report says what the limiter took** (`limiterGainReductionDb` at the loudest sample, plus the same reduction as a distribution over 100 ms windows) | sound, editor, QA | **master ready** |
-| G7 final | MP4 + SRT + score + stills + `asr.json` + `gate-7.json` | `npm run deliver -- <score>` + `npm run asr -- <score>` + `npm run gate:7 -- <score>` | one frozen **picture** hash, and the delivered file's own audio measured inside -1.5 dBTP (not the master's); score audit, **the page's score data regenerated from the score**, frames, paint-match, motion floor, type safe area, rig seam, one-hash, hashed inputs, determinism (two renders, same bytes and same picture), mix, duck, cue levels, silence, undeclared holes, a room bed under a line, tail, palette **and clipping over every frame**, and the final 0.5 s contact sheet all pass; the frame audit must also find the picture **described by the render's own manifest** (the renderer writes it, the audit never does); ASR of the master is a hard check once its report exists, and is named as pending (with the command) until then | all seven + director | **partial** |
+| G7 final | MP4 + SRT + score + stills + `asr.json` + `gate-7.json` | `npm run deliver -- <score>` + `npm run asr -- <score>` + `npm run gate:7 -- <score>` | one frozen **picture** hash, and the delivered file's own audio measured inside -1.5 dBTP (not the master's); score audit, **the page's score data regenerated from the score**, frames, paint-match, motion floor, type safe area, rig seam, one-hash, hashed inputs, determinism (**a twin sample**: the same frames repainted serially and in parallel, byte for byte — decision 0032), mix, duck, cue levels, silence, undeclared holes, a room bed under a line, tail, palette **and clipping over every frame**, and the final 0.5 s contact sheet all pass; the frame audit must also find the picture **described by the render's own manifest** (the renderer writes it, the audit never does); ASR of the master is a hard check once its report exists, and is named as pending (with the command) until then | all seven + director | **partial** |
 
 ## Paint match
 
@@ -201,19 +201,24 @@ any report, because no report was about that file. Now one is: a score edited
 without re-embedding, or a hand-edited page, fails the gate and names the command
 that fixes it.
 
-**Render the deliverable last.** The manifest names the file the render wrote, and
-one film has one manifest, so the last render to run is the one the film ships
-with:
+**One render, one manifest.** The manifest names the file the render wrote, so
+the film is painted once and the manifest describes the picture that ships:
 
 ```bash
-npm run render:film -- films/understudy/score.json --out build/understudy/det.mp4   # the determinism copy first
-npm run render:film -- films/understudy/score.json                                   # then the deliverable
-node scripts/compare-renders.mjs films/understudy/understudy.mp4 build/understudy/det.mp4
+npm run determinism -- films/understudy/score.json   # the twin sample: same frames, serial and parallel
+npm run render:film -- films/understudy/score.json   # the film, once
 ```
 
-The other order works — the picture hash is the same either way — but then the
-manifest names `build/understudy/det.mp4` while the film ships
-`films/understudy/understudy.mp4`, which is a true statement about the wrong file.
+A full twin — two complete renders compared byte for byte — is still available
+when a release wants the heavier proof:
+
+```bash
+npm run render:film -- films/understudy/score.json --out build/understudy/det.mp4
+node scripts/compare-renders.mjs build/understudy/det.mp4 films/understudy/understudy.mp4
+```
+
+Render the deliverable **last** in that case: one film has one manifest, so the
+last render to run is the one the film ships with.
 
 ## Picture and container are two hashes
 

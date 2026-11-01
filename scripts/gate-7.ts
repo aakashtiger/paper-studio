@@ -21,6 +21,7 @@ import { scoreDataPath, scoreDataText } from "../src/engine/score-data.js";
 import { cueSetText, type SfxRecordLike } from "../src/engine/sfx.js";
 import { FilmBriefSchema, mustSayGaps } from "../src/engine/film-brief.js";
 import { inputMismatches, type RenderInputs } from "../src/engine/manifest.js";
+import { checkTwinEvidence, type TwinEvidence } from "../src/engine/determinism.js";
 /**
  * The bounds the mix contract sets on the master come from `loudness.ts`, not
  * from a copy here. The mix refuses a film past them and the gate refuses a
@@ -162,15 +163,7 @@ async function main(): Promise<void> {
     audio?: { path: string; hash: string } | null;
     inputs: RenderInputs;
   }>("render-manifest.json");
-  const determinism = read<{
-    pass: boolean;
-    mismatches: number;
-    frameSetHash: string;
-    pictureMatch?: boolean;
-    comparedAt?: string;
-    a?: { file: string; hash: string; bytes?: number; videoHash: string | null };
-    b?: { file: string; hash: string; bytes?: number; videoHash: string | null };
-  }>("determinism.json");
+  const determinism = read<TwinEvidence>("determinism.json");
   const mix = read<{
     passes: boolean;
     measured: { lufs: number; truePeak: number };
@@ -332,39 +325,13 @@ async function main(): Promise<void> {
           };
     })(),
     determinism: (() => {
-      // Two renders are the same bytes, *and* those bytes are still the bytes on
-      // disk, *and* both produced the picture this film ships. A report that
-      // names a file the gate has not opened proves nothing: the delivered path
-      // is re-cut at delivery by design, which is exactly why the comparands
-      // must be two build copies at distinct paths.
-      const a = determinism?.a;
-      const b = determinism?.b;
-      if (!determinism || !a?.file || !b?.file) {
-        return { ok: false, detail: "no determinism report, or one that names no two files" };
-      }
-      const now = [a, b].map((side) => {
-        const absolute = resolve(root, side.file);
-        return existsSync(absolute) ? `sha256:${hashFile(absolute)}` : null;
-      });
-      const samePath = resolve(root, a.file) === resolve(root, b.file);
-      const recorded = now[0] === a.hash && now[1] === b.hash;
-      const ok =
-        determinism.pass === true &&
-        determinism.mismatches === 0 &&
-        !samePath &&
-        recorded &&
-        a.hash === b.hash &&
-        a.videoHash !== null &&
-        a.videoHash === b.videoHash &&
-        a.videoHash === frozenHash;
-      const why = samePath
-        ? "both sides are the same path: a file compared with itself proves nothing"
-        : !recorded
-          ? "a file named in the report has moved since it was compared"
-          : a.videoHash !== frozenHash
-            ? "the two renders are not the delivered picture"
-            : `${determinism.mismatches} mismatched frames between two renders at different paths, re-hashed now`;
-      return { ok, detail: why };
+      // The painter is a pure function of the score and the time (decision 0032).
+      //
+      // The evidence is a sample painted twice in two independent browser
+      // processes — one serial, one parallel — and compared byte for byte. The
+      // rule lives in `checkTwinEvidence`, so every way this row can refuse is a
+      // unit test rather than something nobody can run without the whole gate.
+      return checkTwinEvidence(determinism, `sha256:${hashFile(resolve(root, scorePath))}`);
     })(),
     mix: {
       ok:

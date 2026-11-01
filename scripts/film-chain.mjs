@@ -7,16 +7,16 @@
  * which is gitignored — so the sequence that produced the accepted film was
  * not in the repository.
  *
- * The one structural rule it enforces: **the two renders compared for
- * determinism are builds, not deliveries.** The film is rendered to
- * `build/<id>/deliverable.mp4`, the twin to `build/<id>/det-e.mp4`, the two are
- * compared byte for byte, and only then does `deliver` re-cut the audio into
- * `films/<id>/<id>.mp4`. If the comparand were the delivered file, `deliver`
- * would move it after the comparison and the gate would be right to refuse:
- * a report that names a file that has since changed proves nothing.
+ * The one structural rule it enforces: **the film is painted once.** Determinism
+ * is proven before the paint by a twin *sample* — the same 30 frames painted
+ * twice, once serial and once parallel, compared byte for byte (0032) — and the
+ * single full render is then tied to that painter by the score hash, the
+ * re-hashed inputs and `paint-match`, which repaints 61 frames in fresh
+ * processes and compares them to the delivered video. Painting 1,800 frames
+ * twice to prove what 30 frames already proved was the largest cost in the loop.
  *
  *   npm run film:chain -- films/understudy/score.json
- *   npm run film:chain -- <score> --skip-render   (reuse the two renders)
+ *   npm run film:chain -- <score> --skip-render   (reuse the render on disk)
  *   npm run film:chain -- <score> --from gate     (resume at a step)
  *   npm run film:chain -- <score> --workers 1     (force a serial render)
  */
@@ -68,7 +68,6 @@ if (typeof id !== "string" || id === "") {
 }
 const build = `build/${id}`;
 const deliverable = `${build}/deliverable.mp4`;
-const twin = `${build}/det-e.mp4`;
 const delivered = `films/${id}/${id}.mp4`;
 const master = `${build}/mix/master.wav`;
 
@@ -113,6 +112,12 @@ const steps = [
   // renderer's gate reads. Before this, the chain painted those frames three
   // times — and a rig pass wrote 2 GB of PNGs that nothing opened.
   { name: "inspect", tsx: "scripts/inspect.ts", args: [score] },
+  // The painter is a pure function of the score and the time, proven by painting
+  // a sample twice — once in one browser, once across four — and comparing bytes
+  // (0032). It runs *before* the paint because that is the only place a
+  // nondeterministic painter can be refused cheaply: 30 frames, ~48 s, against
+  // painting 1,800 frames twice to learn the same thing.
+  { name: "determinism", tsx: "scripts/determinism.ts", args: [score] },
   // Stage 5: the character sheet and the collage. The sheet is the page where a
   // plank arm is obvious; the collage is one frame per shot, checked by the tool
   // (every shot present, none blank or duplicated, every staged character drawn,
@@ -126,14 +131,6 @@ const steps = [
     skip: skipRender,
     commands: [
       { name: "render (deliverable)", tsx: "scripts/render-film.ts", args: [score, "--out", deliverable, "--audio", master, "--workers", String(workers)] },
-      { name: "render (twin)", tsx: "scripts/render-film.ts", args: [score, "--out", twin, "--audio", master, "--workers", String(workers)] },
-    ],
-  },
-  {
-    name: "determinism",
-    skip: skipRender,
-    commands: [
-      { name: "determinism", node: "scripts/compare-renders.mjs", args: [deliverable, twin, "--out", `${build}/determinism.json`] },
     ],
   },
   { name: "frames", tsx: "scripts/frame-audit.ts", args: [score, "--video", deliverable] },
@@ -168,15 +165,13 @@ function run(step) {
 }
 
 mkdirSync(resolve(root, build), { recursive: true });
-console.log(`chain: ${id} · ${workers} worker(s) of ${threads} threads · render ${skipRender ? "reused" : "twice (deliverable + twin)"}`);
+console.log(`chain: ${id} · ${workers} worker(s) of ${threads} threads · render ${skipRender ? "reused" : "once"}`);
 
 // A resumed or audio-only run must not measure a picture that is not there.
 if (skipRender) {
-  for (const file of [deliverable, twin]) {
-    if (!existsSync(resolve(root, file))) {
-      console.error(`error: --skip-render needs ${file}; render it first or drop the flag`);
-      process.exit(2);
-    }
+  if (!existsSync(resolve(root, deliverable))) {
+    console.error(`error: --skip-render needs ${deliverable}; render it first or drop the flag`);
+    process.exit(2);
   }
 }
 

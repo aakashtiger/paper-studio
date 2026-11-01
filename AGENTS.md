@@ -65,6 +65,7 @@ npm run preflight -- films/understudy/score.json  # every cheap check, before fr
 npm run probe:motion -- films/understudy/score.json   # does every shot move? before the paint
 npm run inspect -- films/understudy/score.json    # one pass: movement, type and rig together
 npm run draft -- films/understudy/score.json      # watch and listen, at 10 fps, before the film
+npm run determinism -- films/understudy/score.json # twin sample: the same frames, serial and parallel (0032)
 npm run collage -- films/understudy/score.json    # one frame per shot, self-checked
 npm run audit -- films/understudy/score.json     # score-level audit
 npm run audit:motion -- films/understudy/score.json   # per-shot motion floor
@@ -117,10 +118,11 @@ beats.json   what each beat is for, the share it owns, its signature sound (0025
 score.json   the shots, each bound to a beat, with a reason to exist       (0025)
    ↓ npm run preflight     ~1 s    the writing, the cut, the voice, the sound, the cast
    ↓ npm run inspect       ~1 min  ONE pass: movement, type and rig, probe-only
+   ↓ npm run determinism   ~48 s   the same 30 frames, serial and parallel (0032)
    ↓ npm run collage       ~30 s   one frame per shot, checked by the tool, not by a person
    ↓ npm run sfx / mix             the sound, generated in code, measured
    ↓ npm run draft         ~4 min  watch and listen at 10 fps, with the master
-   ↓ npm run render:film   ~12 min the film, refused without all three checks passing
+   ↓ npm run render:film   ~12 min the film, ONCE, refused without every check passing
    ↓ npm run deliver + gate        the delivered file, measured
 ```
 
@@ -134,6 +136,7 @@ What each decision bought, measured on *Same Alarm* (60 s, 10 shots):
 | 0029 one pass | 3 passes / 871 frames / 2.4 GB of PNGs / 92.5 s | **1 pass**, 600 frames, **0 bytes**, **59.4 s** |
 | 0030 front door | `film:new` wrote only the score — a film could start at its shot list | writes **story, beats, score**, in order, and names every gap |
 | 0031 draft | the first moving look was the film itself | **3 min 52 s** for a 10 fps cut with the master |
+| 0032 determinism | the film painted twice to prove it, 2 × ~12 min | **48 s**, 30 frames, and the twin now tests worker order |
 
 `render:film` refuses a whole-film paint without a passing preflight, collage
 and movement report, each carrying the sha256 of the score it describes. Probes
@@ -141,11 +144,20 @@ and movement report, each carrying the sha256 of the score it describes. Probes
 The type and rig audits now run **before** the render, on frames identical to the
 delivered ones by purity (0023).
 
-**Still open, and named:** the chain paints the film twice to prove determinism
-(2 × ~12 min — the largest remaining cost); the collage and the storyboard each
-paint their own ten frames; narration word times still say `source: "guess"`
-until the local Whisper model is installed, so ASR is the one manual gate row.
-No new film starts until the user says so.
+Determinism is a twin **sample**, not a twin render: 30 frames painted once
+serially and once across four browsers, compared byte for byte (~48 s, against
+~24 min). It also proves what the old twin could not — that a frame is the same
+whichever browser paints it — and `test/paint-purity.test.ts` keeps the paint
+path free of `Math.random`, wall clocks, `requestAnimationFrame` and played
+timelines, so the guarantee is structural rather than observed.
+`npm run determinism:renders` still compares two complete renders when a release
+wants the full proof.
+
+**Still open, and named:** the collage and the storyboard each paint their own
+ten frames (they could read the frames `inspect` already painted); narration
+word times still say `source: "guess"` until the local Whisper model is
+installed, so ASR is the one manual gate row. No new film starts until the user
+says so.
 
 ---
 
@@ -219,7 +231,7 @@ The **contract layer and the first generators are implemented**: film brief,
 audio resolver (recorded/TTS narration, library/generated music, generated SFX),
 asset manifest, pose library, film score, derived **board**, score-level
 **audit**, the **character/pose sheet** generator and the **board animatic**
-builder. **346 tests.** The sheet has a signed **9/10 design** review. The paper
+builder. **367 tests.** The sheet has a signed **9/10 design** review. The paper
 rig has two-bone leg IK, ankle targets, foot pitch and a knee-driven bounce; the
 leg targets are now reachable, so a planted foot bends its knee and lands on its
 shadow (`test/cast-rig.test.ts`). The board animatic is **9/10 signed** (editor +

@@ -31,7 +31,7 @@
     "audit:type": "tsx scripts/type-audit.ts",
     "audit:rig": "tsx scripts/rig-audit.ts",
     "audit:rig:proof": "node scripts/rig-seam-proof.mjs",
-    "determinism": "node scripts/compare-frames.mjs",
+    "determinism": "tsx scripts/determinism.ts",
     "determinism:renders": "node scripts/compare-renders.mjs",
     "gate:7": "tsx scripts/gate-7.ts",
     "sfx": "tsx scripts/sfx.ts",
