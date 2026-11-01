@@ -385,6 +385,43 @@ ceiling: four Chrome launches and two encodes are most of the 28 s.
 missing, with a deliberately small build plan. No new architecture unless it
 removes a real blocker.
 
+**Update 2026-11-02 — the loop is fixed before the next film.** The user's
+instruction after *Same Alarm* was rejected: fix the whole system first, then make
+another film. What was wrong was the **order** and the **cost** of the work, and
+decisions 0025–0034 changed both. A film is now written `story.json` →
+`beats.json` → `score.json`, each generated from the one above, and every stage is
+checked before a frame is painted:
+
+| step | what it removed | measured |
+|---|---|---|
+| `preflight` (0026) | defects found after a render | **0.9 s**, 5 refusals before a browser opens |
+| `collage` (0027) | nine rounds of stills and a human seal | **30 s**, self-checked; the render refuses it |
+| `probe:motion` (0028) | whole renders lost to still shots | **50 s**, refuses `motion:still` |
+| `inspect` (0029) | 3 passes / 871 frames / 2.4 GB | **1 pass**, 600 frames, **0 bytes**, 59.4 s |
+| `film:new` (0030) | a film could start at its shot list | writes **story, beats, score**, names every gap |
+| `draft` (0031) | the first moving look was the film | **3 min 52 s** at 10 fps with the master |
+| `determinism` (0032) | the film painted twice, 2 × ~12 min | **48 s**, 30 frames, and it tests worker order |
+| `review --gate --reuse` (0033) | five audits re-run seconds after the chain | **363.5 s → 62.0 s**, all five reused |
+| `audit:frames` (0034) | four whole-film decodes | **134.4 s → 38.5 s**, same values |
+
+The chain tail with the render reused fell from **745 s to 297 s (5.0 min)**, so
+the whole loop is about **19–20 minutes** including a ~12-minute render — inside
+the 30–60 minute idea→video target, with no human seal anywhere in it.
+
+Two claims in the verdict below are now false and are superseded here: **ASR is
+not pending** (local Whisper `small.en` heard all 26 script words, 100.0% matched;
+`words.json` and `transcript.json` say `source: "asr"`), and **determinism is not
+two renders** (a 30-frame twin sample across one and four browsers, byte for byte,
+plus a guard test that keeps the paint path free of wall clocks and randomness).
+`gate:7` on *Same Alarm* is **PASS · 21 checks · nothing pending**, **388 tests**,
+typecheck clean.
+
+Still open and named: the collage and the storyboard each paint their own ten
+frames (they could read the frames `inspect` already painted); `paint-match`
+repaints 61 frames in fresh browsers (~73 s), which is the price of that proof;
+and assets are not yet derived from the shots. No new film starts until the user
+says so.
+
 ## Verdict in one paragraph
 
 **Verdict in one paragraph (as of 2026-11-01).** We have a strong **look** and a
