@@ -19,8 +19,11 @@
  * hangs from. The long hair was drawn at the rig root, so it kept the upright
  * head's place and read as a second, detached head the moment a character bowed;
  * every still that checked the head alone passed. Each rig now publishes the
- * chest, the head pivot and the hair, and this audit holds every one of them to
- * a fixed place in chest space across the whole film.
+ * chest, the head pivot and the hair, and this audit holds each one still **in
+ * the space of the part it hangs from** — the head pivot against the chest, the
+ * hair against the head. Measured against the chest instead, the hair moves
+ * through an arc whenever the head turns, which is a head turning rather than a
+ * rig coming apart (decision 0024).
  *
  * usage: npm run audit:rig -- films/understudy/score.json [--step 0.1]
  */
@@ -28,6 +31,7 @@ import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
+import { anchorsInSpace } from "../src/engine/rig.js";
 
 type Solve = {
   kind: "solve";
@@ -57,7 +61,6 @@ type Anchor = {
   local: [number, number];
   m: [number, number, number, number, number, number];
 };
-type Matrix = [number, number, number, number, number, number];
 type Record = Solve | Limb | Anchor;
 type ProbeFile = { frames: { time: number; rigRecords: Record[] }[] };
 type Score = {
@@ -69,20 +72,6 @@ type Score = {
     direction?: { events?: { t: number; kind: string; who?: string }[] };
   }[];
 };
-
-/** Device position of a point in the transform's own space. */
-function place(m: Matrix, x: number, y: number): [number, number] {
-  return [m[0] * x + m[2] * y + m[4], m[1] * x + m[3] * y + m[5]];
-}
-
-/** The inverse transform: device space back to the transform's own space. */
-function unplace(m: Matrix, x: number, y: number): [number, number] {
-  const det = m[0] * m[3] - m[1] * m[2];
-  if (!Number.isFinite(det) || Math.abs(det) < 1e-9) return [Number.NaN, Number.NaN];
-  const ix = (m[3] * (x - m[4]) - m[2] * (y - m[5])) / det;
-  const iy = (-m[1] * (x - m[4]) + m[0] * (y - m[5])) / det;
-  return [ix, iy];
-}
 
 function arg(name: string): string | undefined {
   const index = process.argv.indexOf(`--${name}`);
@@ -203,8 +192,8 @@ async function main(): Promise<void> {
 
     // 5 — a body part stays where it hangs from. Each rig publishes the point
     // it hangs the chest, the head and the hair from, together with the
-    // transform in force there; the same point expressed in chest space must
-    // not move, whatever the pose does. A part drawn outside its parent's
+    // transform in force there; the point must not move **in the space of the
+    // part it hangs from** (decision 0024). A part drawn outside its parent's
     // transform drifts with every lean, and this is the only check that sees it.
     const groups = new Map<string, Anchor[]>();
     for (const record of records) {
@@ -217,14 +206,11 @@ async function main(): Promise<void> {
       const chest = list.find((item) => item.part === "chest");
       if (!chest) continue;
       anchored.add(name);
-      for (const anchor of list) {
-        if (anchor.part === "chest") continue;
+      for (const { part, at } of anchorsInSpace(list)) {
         anchors++;
-        const device = place(anchor.m, anchor.local[0], anchor.local[1]);
-        const inChest = unplace(chest.m, device[0], device[1]);
-        const key = `${name}|${anchor.part}`;
+        const key = `${name}|${part}`;
         const samples = seams.get(key) ?? [];
-        samples.push({ time: frame.time, at: inChest });
+        samples.push({ time: frame.time, at: [at.x, at.y] });
         seams.set(key, samples);
       }
     }
@@ -379,7 +365,7 @@ async function main(): Promise<void> {
           side: 0,
           part,
           check: "head-seam",
-          detail: `${part} moved ${shift.toFixed(1)} units in chest space in ${step}s`,
+          detail: `${part} moved ${shift.toFixed(1)} units in its parent's space in ${step}s`,
         });
       }
     }
