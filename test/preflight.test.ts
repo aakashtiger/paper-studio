@@ -126,6 +126,50 @@ test("a film written to the declared band passes every cheap check", () => {
   assert.equal(report.narration?.wpm, 140);
 });
 
+test("a new film with a story and beats but no scenes is refused", () => {
+  const report = check({ sceneCheck: null });
+  assert.ok(codes(report).includes("scenes:missing"));
+});
+
+test("the scenes' refusals reach the preflight", () => {
+  const report = check({
+    sceneCheck: { errors: [{ code: "scene:air", message: "scene sc01 owns 4s of air" }], warnings: [] },
+    sceneSource: "authored",
+  });
+  assert.ok(codes(report).includes("scene:air"));
+});
+
+test("a cut that does not answer authored scenes is refused", () => {
+  const report = check({
+    sceneDocs: [{ id: "sc01", beat: "b01", duration: 30 }],
+    sceneSource: "authored",
+  });
+  assert.ok(codes(report).includes("cut:scene-unbound"));
+});
+
+test("a narrated short does not open on more than a second of silence", () => {
+  const plan = passingPlan();
+  if (plan.clock.mode === "narration") plan.clock.lines[0]!.start = 3;
+  const report = check({ plan });
+  assert.ok(codes(report).includes("narration:start"));
+});
+
+test("an authored film's cast must have a character asset", () => {
+  const report = check({
+    sceneSource: "authored",
+    cast: [
+      {
+        character: "Kiran",
+        rig: "worker@0.1.0",
+        poses: "films/x/cast/kiran.poses.json",
+        asset: false,
+        problems: [],
+      },
+    ],
+  });
+  assert.ok(codes(report).includes("cast:asset"));
+});
+
 /**
  * Every test below is a defect a viewer named in one sentence, turned into a
  * refusal — and the first is the delivered film itself, measured from its own
@@ -236,11 +280,12 @@ test("a single cue may not own the film", () => {
 test("a cast the film's vendor does not register is refused", () => {
   const report = check({
     cast: [
-      { character: "Kiran", rig: "worker@0.1.0", poses: "films/x/cast/kiran.poses.json", problems: [] },
+      { character: "Kiran", rig: "worker@0.1.0", poses: "films/x/cast/kiran.poses.json", asset: true, problems: [] },
       {
         character: "Vaz",
         rig: "supervisor@9",
         poses: "films/x/cast/vaz.poses.json",
+        asset: true,
         problems: [{ code: "cast:rig", message: 'films/x/vendor does not register the rig "supervisor@9" for Vaz' }],
       },
     ],

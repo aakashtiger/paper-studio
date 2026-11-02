@@ -26,6 +26,8 @@ export type CutShot = {
   duration: number;
   /** The beat this shot serves. Absent is refused once the film has beats. */
   beat?: string;
+  /** The authored scene this shot belongs to (decision 0035). */
+  scene?: string;
   /** Why the shot exists, in one line (`direction.spine`). */
   reason?: string;
 };
@@ -44,14 +46,25 @@ export type CutCue = {
   kind: string;
 };
 
+/** The authored scenes, as `scenes.json` declares them (decision 0035). */
+export type CutSceneDoc = {
+  id: string;
+  beat: string;
+  duration: number;
+};
+
 export type CutInput = {
   shots: CutShot[];
   beats: CutBeat[];
+  /** When present, the cut must answer these scenes; absent, scenes are derived. */
+  scenes?: CutSceneDoc[];
   cues: CutCue[];
   duration: number;
 };
 
 export type CutScene = {
+  /** The authored scene id, when the film has `scenes.json`. */
+  id?: string;
   beat: string;
   from: number;
   to: number;
@@ -83,6 +96,9 @@ export type CutReport = {
 /** How far a beat's share of the *shots* may drift from its share of the *writing*. */
 export const BEAT_SHARE_DRIFT = 0.1;
 
+/** How far a scene's declared seconds may drift from the shots that fill it. */
+export const SCENE_SHOT_SLACK = 0.3;
+
 /** A reason shorter than this is a label, not a reason. */
 export const REASON_MIN_WORDS = 3;
 
@@ -94,6 +110,7 @@ export function checkCut(input: CutInput): CutReport {
   const errors: Issue[] = [];
   const warnings: Issue[] = [];
   const { shots, beats, cues, duration } = input;
+  const sceneDocs = input.scenes;
   const ordered = [...shots].sort((a, b) => a.start - b.start);
   const byId = new Map(beats.map((beat) => [beat.id, beat]));
 
@@ -125,17 +142,80 @@ export function checkCut(input: CutInput): CutReport {
     }
   }
 
-  // 2 — the scenes: contiguous runs of shots on one beat.
+  // 2 — the scenes. When `scenes.json` is authored (0035), the cut must answer
+  // it: every shot names its scene, every scene has shots, the scene's beat is
+  // the shot's beat, and the scene's declared seconds are the shots' seconds.
+  // Without a scene document, scenes are the contiguous runs of shots on a beat.
   const scenes: CutScene[] = [];
-  for (const shot of ordered) {
-    if (!shot.beat) continue;
-    const last = scenes[scenes.length - 1];
-    if (last && last.beat === shot.beat) {
-      last.to = shot.start + shot.duration;
-      last.seconds += shot.duration;
-      last.shots.push(shot.id);
-    } else {
-      scenes.push({ beat: shot.beat, from: shot.start, to: shot.start + shot.duration, seconds: shot.duration, shots: [shot.id] });
+  if (sceneDocs && sceneDocs.length > 0) {
+    const sceneIds = new Map(sceneDocs.map((scene) => [scene.id, scene]));
+    const shotsByScene = new Map<string, CutShot[]>();
+    for (const shot of ordered) {
+      if (!shot.scene) {
+        errors.push({
+          code: "cut:scene-unbound",
+          message: `shot "${shot.id}" is not bound to a scene — the cut does not say where it happens`,
+        });
+        continue;
+      }
+      const scene = sceneIds.get(shot.scene);
+      if (!scene) {
+        errors.push({
+          code: "cut:scene-orphan",
+          message: `shot "${shot.id}" serves scene "${shot.scene}", which scenes.json does not have`,
+        });
+        continue;
+      }
+      if (shot.beat && shot.beat !== scene.beat) {
+        errors.push({
+          code: "cut:scene-beat",
+          message:
+            `shot "${shot.id}" is on beat "${shot.beat}" but its scene "${scene.id}" serves ` +
+            `beat "${scene.beat}" — the scene and the shot disagree`,
+        });
+      }
+      const list = shotsByScene.get(scene.id) ?? [];
+      list.push(shot);
+      shotsByScene.set(scene.id, list);
+    }
+    for (const scene of sceneDocs) {
+      const own = shotsByScene.get(scene.id) ?? [];
+      if (own.length === 0) {
+        errors.push({
+          code: "cut:scene-empty",
+          message: `scene "${scene.id}" has no shot — it is staged and never filmed`,
+        });
+        continue;
+      }
+      const seconds = own.reduce((sum, shot) => sum + shot.duration, 0);
+      if (Math.abs(seconds - scene.duration) > SCENE_SHOT_SLACK) {
+        errors.push({
+          code: "cut:scene-duration",
+          message:
+            `scene "${scene.id}" declares ${secs(scene.duration)} but its ${own.length} shot(s) run ` +
+            `${secs(seconds)} — the scene and the cut disagree`,
+        });
+      }
+      scenes.push({
+        id: scene.id,
+        beat: scene.beat,
+        from: Math.min(...own.map((shot) => shot.start)),
+        to: Math.max(...own.map((shot) => shot.start + shot.duration)),
+        seconds,
+        shots: own.map((shot) => shot.id),
+      });
+    }
+  } else {
+    for (const shot of ordered) {
+      if (!shot.beat) continue;
+      const last = scenes[scenes.length - 1];
+      if (last && last.beat === shot.beat) {
+        last.to = shot.start + shot.duration;
+        last.seconds += shot.duration;
+        last.shots.push(shot.id);
+      } else {
+        scenes.push({ beat: shot.beat, from: shot.start, to: shot.start + shot.duration, seconds: shot.duration, shots: [shot.id] });
+      }
     }
   }
 

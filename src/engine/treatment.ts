@@ -35,6 +35,14 @@ export const TreatmentShotSchema = z.object({
    * seconds of a sixty-second film without saying anything in them.
    */
   beat: z.string().min(1).optional(),
+  /**
+   * The scene of the film's `scenes.json` this shot belongs to (decision 0035).
+   *
+   * Optional for the same reason `beat` is: pre-0025 films have no scenes. Once
+   * a film has `scenes.json`, `checkCut()` refuses a shot that is not bound to a
+   * scene, and refuses a scene that no shot films.
+   */
+  scene: z.string().min(1).optional(),
   recipe: z.string().min(1),
   duration: z.number().positive(),
   slots: z.record(z.string()).default({}),
@@ -81,6 +89,8 @@ export type ResolvedShot = {
   id: string;
   /** The beat this shot serves, when the film has a beat map (decision 0025). */
   beat?: string;
+  /** The authored scene this shot belongs to, when the film has one (0035). */
+  scene?: string;
   recipe: string;
   start: number;
   duration: number;
@@ -457,6 +467,23 @@ export function resolveFilm(
   errors.push(...assetResult.errors.map((issue) => ({ code: issue.code, message: issue.message })));
   warnings.push(...assetResult.warnings.map((issue) => ({ code: issue.code, message: issue.message })));
 
+  // A character asset that names someone outside the cast is a contradiction in
+  // the manifest itself. Coverage of the cast is checked by `preflight` when the
+  // film has authored scenes: a legacy film (no `scenes.json`) is not
+  // retro-fitted, and warning there would change its generated page data.
+  for (const asset of film.assets) {
+    if (
+      asset.type === "character" &&
+      asset.character &&
+      !film.cast.some((member) => member.character.toLowerCase() === asset.character!.toLowerCase())
+    ) {
+      errors.push({
+        code: "asset_character",
+        message: `asset "${asset.id}" draws "${asset.character}", who is not in the film's cast`,
+      });
+    }
+  }
+
   let start = 0;
   const shots: ResolvedFilmShot[] = film.shots.map((shot, index) => {
     const id = `s${String(index + 1).padStart(2, "0")}`;
@@ -475,6 +502,8 @@ export function resolveFilm(
 
     const resolved: ResolvedFilmShot = {
       id,
+      beat: shot.beat,
+      scene: shot.scene,
       recipe: shot.recipe,
       start: round(start),
       duration: round(shot.duration),

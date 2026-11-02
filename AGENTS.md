@@ -52,11 +52,12 @@ npm install            # install
 npm run plan -- fixtures/wedding-min/brief.json   # print a shot plan
 npm run treatment -- proofs/s2-paper/plan.json    # validate a creative treatment
 npm run film -- films/understudy/score.json      # validate a scored film
-npm run film:new -- --brief films/understudy/brief.json   # scaffold story, beats and score; never invent
+npm run film:new -- --brief films/understudy/brief.json   # scaffold story, beats, scenes and score; never invent
 npm run film:review -- films/understudy/score.json        # chain the review, one page + one sheet
 npm run film:review -- <score> --gate --reuse             # print audits the chain just ran, when they are tied to this film (0033)
 npm run captions -- films/understudy/score.json  # generate transcript + SRT
 npm run voice -- films/understudy/score.json     # capture narration + word times, derive the clock
+npm run voice -- <score> --apply                 # accept the measured read: line starts, shot bounds, captions (0035)
 npm run asr -- films/understudy/score.json       # listen to the master; the G7 ASR gate
 npm run board -- films/understudy/score.json     # derive board cards (HTML + manifest)
 npm run storyboard -- films/understudy/score.json   # one code-drawn frame per shot, tiled into one sheet
@@ -104,20 +105,22 @@ npx hyperframes render proofs/s2-paper -o proofs/s2-paper/paper-proof.mp4 --fps 
 
 ## Current phase
 
-**The loop is fixed before the next film is made (decisions 0025–0033).**
+**The loop is fixed before the next film is made (decisions 0025–0035).**
 
 The user's instruction, after *Same Alarm* was rejected: fix the whole system
 first, then make another film. What was wrong was not the painter — it was the
 **order** and the **cost** of the work. Nine full renders produced seven cuts a
 one-second check had already rejected; the film that shipped had never been
-written; the first time anyone saw the cut move was after paying for it. Nine
+written; the first time anyone saw the cut move was after paying for it. Eleven
 decisions changed that, and the pipeline a film now takes is:
 
 ```
 story.json   the spine, the tone, the narration lines, the pace band       (0025)
 beats.json   what each beat is for, the share it owns, its signature sound (0025)
-score.json   the shots, each bound to a beat, with a reason to exist       (0025)
-   ↓ npm run preflight     ~1 s    the writing, the cut, the voice, the sound, the cast
+   ↓ npm run voice --apply  ~15 s  speak it, measure the words, cut to them  (0035)
+scenes.json  where it happens, who is in it, what happens, its lines       (0035)
+score.json   the shots, each bound to a scene and a beat, with a reason     (0025)
+   ↓ npm run preflight     ~1 s    the writing, the scenes, the read, the cut, the sound
    ↓ npm run inspect       ~1 min  ONE pass: movement, type and rig, probe-only
    ↓ npm run determinism   ~48 s   the same 30 frames, serial and parallel (0032)
    ↓ npm run collage       ~30 s   one frame per shot, checked by the tool, not by a person
@@ -136,11 +139,12 @@ What each decision bought, measured on *Same Alarm* (60 s, 10 shots):
 | 0027 collage | nine rounds of fifteen stills, ~2 h | **30 s**, one page, self-checked |
 | 0028 movement probe | two whole renders lost to still shots | **50 s**, refuses `motion:still` before the paint |
 | 0029 one pass | 3 passes / 871 frames / 2.4 GB of PNGs / 92.5 s | **1 pass**, 600 frames, **0 bytes**, **59.4 s** |
-| 0030 front door | `film:new` wrote only the score — a film could start at its shot list | writes **story, beats, score**, in order, and names every gap |
+| 0030 front door | `film:new` wrote only the score — a film could start at its shot list | writes **story, beats, scenes, score**, in order, and names every gap |
 | 0031 draft | the first moving look was the film itself | **3 min 52 s** for a 10 fps cut with the master |
 | 0032 determinism | the film painted twice to prove it, 2 × ~12 min | **48 s**, 30 frames, and the twin now tests worker order |
 | 0033 review reuse | the review re-ran five audits the chain had just run | **62 s**, all five printed from reports tied to this picture/score |
 | 0034 frame audit | 134 s, four whole-film decodes, and a blank check that could not fail | **38.5 s** per shot, same values, and the blank rule fires |
+| 0035 four documents | 0025 promised `scenes.json`; no schema read it, and `voice` only proposed | scenes authored and checked, story↔score text compared, `voice --apply` cuts to the read |
 
 `render:film` refuses a whole-film paint without a passing preflight, collage
 and movement report, each carrying the sha256 of the score it describes. Probes
@@ -181,10 +185,30 @@ never fail. It now requires a frame at either end of the video's own range **and
 uniform, and a clip with half a second of black inserted is caught (15 blank
 frames, exit 1). The chain tail fell from 6.6 to **5.0 min**.
 
-**Still open, and named:** the collage and the storyboard each paint their own ten
-frames (they could read the frames `inspect` already painted); `paint-match`
-repaints 61 frames in fresh browsers (~73 s), which is the price of that proof
-rather than waste; and assets are not yet derived from the shots. No new film
+**The four documents are four now, and the voice is the clock.** 0025 promised
+`scenes.json`; `film:new` printed it and nothing ever read it. Scenes are now
+authored — place, cast, summary, the lines they carry, their seconds — and
+checked against the beats, the measured read, and the shots that answer them.
+The story's lines and the score's lines are compared word for word, so a film
+cannot say something it was not written to say. `voice` no longer proposes:
+`--apply` moves line starts to the measured **word** times, extends a line only
+when the read runs past its window, keeps captions inside their line, and
+validates the result before writing. Proven on *Same Alarm*: the old check said
+"kept"; the measured clock is **0.27 s early** on the first line, 0.14 s late on
+the second, 0.22 s late on the sixth, and `--apply` fixed all three after the new
+score validated. **408 tests.**
+
+**Still open, and named:** the script is not generated from the idea —
+`film:new` scaffolds and a person (or an LLM they direct) writes; narration is
+still spoken from the score rather than directly from `story.json` (the text is
+proved identical, but the literal order 0025 describes is one stage away);
+scenes are checked against the read, not auto-fitted; props and sets are not
+derived from shot slots (cast coverage is); song films are a marker only; there
+is no arm/hand audit, no measured reference style bible, no
+visual-reaction-to-word check, and backgrounds are not cached within a scene.
+The collage and the storyboard each paint their own ten frames (they could read
+the frames `inspect` already painted); `paint-match` repaints 61 frames in fresh
+browsers (~73 s), which is the price of that proof rather than waste. No new film
 starts until the user says so.
 
 ---
@@ -259,7 +283,7 @@ The **contract layer and the first generators are implemented**: film brief,
 audio resolver (recorded/TTS narration, library/generated music, generated SFX),
 asset manifest, pose library, film score, derived **board**, score-level
 **audit**, the **character/pose sheet** generator and the **board animatic**
-builder. **388 tests.** The sheet has a signed **9/10 design** review. The paper
+builder. **408 tests.** The sheet has a signed **9/10 design** review. The paper
 rig has two-bone leg IK, ankle targets, foot pitch and a knee-driven bounce; the
 leg targets are now reachable, so a planted foot bends its knee and lands on its
 shadow (`test/cast-rig.test.ts`). The board animatic is **9/10 signed** (editor +

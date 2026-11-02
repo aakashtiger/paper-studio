@@ -413,13 +413,28 @@ not pending** (local Whisper `small.en` heard all 26 script words, 100.0% matche
 `words.json` and `transcript.json` say `source: "asr"`), and **determinism is not
 two renders** (a 30-frame twin sample across one and four browsers, byte for byte,
 plus a guard test that keeps the paint path free of wall clocks and randomness).
-`gate:7` on *Same Alarm* is **PASS · 21 checks · nothing pending**, **388 tests**,
+`gate:7` on *Same Alarm* is **PASS · 21 checks · nothing pending**, **408 tests**,
 typecheck clean.
+
+**Update 2026-11-02 — the four documents are four (0035).** 0025 promised
+`scenes.json`; `film:new` printed it and nothing read it. The stage now exists:
+scenes are authored (beat, place, summary, cast, lines, seconds), checked
+against the beats and the measured read, and every shot names the scene it
+answers. The story's lines and the score's lines are compared word for word.
+`voice --apply` moves line starts and shot boundaries to the measured word
+times, extends a line only when the read runs past it, keeps captions inside
+their line, and validates before writing. On *Same Alarm* the old clock check
+said "kept" while the measured read is 0.27 s early on the first line; the new
+check catches it. **The script is still not generated from the idea** —
+`film:new` scaffolds and a person writes — and narration is still spoken from
+the score, not directly from `story.json`.
 
 Still open and named: the collage and the storyboard each paint their own ten
 frames (they could read the frames `inspect` already painted); `paint-match`
 repaints 61 frames in fresh browsers (~73 s), which is the price of that proof;
-and assets are not yet derived from the shots. No new film starts until the user
+props and sets are not yet derived from shot slots (cast coverage is); song
+films are a marker only; there is no arm/hand audit, no measured reference style
+bible, and no visual-reaction-to-word check. No new film starts until the user
 says so.
 
 ## Verdict in one paragraph

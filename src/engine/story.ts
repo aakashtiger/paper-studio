@@ -44,6 +44,15 @@ export type Pace = z.infer<typeof PaceSchema>;
 
 export const NARRATION_LINE_MAX_WORDS = 22;
 
+/**
+ * How long a narrated film may go with no words in it.
+ *
+ * Shared with the scene check: a scene may not carry more air than this without
+ * saying something, and the preflight refuses a hole this long anywhere in the
+ * film. One number, so the two checks cannot drift apart.
+ */
+export const NARRATION_HOLE_MAX = 2.5;
+
 export const StorySchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
@@ -338,4 +347,56 @@ export function checkStory(story: Story, beats: Beats): StoryCheck {
   };
 
   return { errors, warnings, report };
+}
+
+/**
+ * The story and the score must say the same words (decision 0035).
+ *
+ * The narration exists twice: once as writing in `story.json`, once as a clock
+ * in the score. Nothing compared them, so a score could speak a line the story
+ * never wrote — or drop a line the story promised — and every check would pass,
+ * because each document was internally consistent.
+ */
+export function checkNarrationSync(
+  story: Story,
+  lines: Array<{ id: string; text: string }>,
+): Issue[] {
+  const errors: Issue[] = [];
+  const byId = new Map(story.narration.map((line) => [line.id, line]));
+  const seen = new Set<string>();
+  const normalize = (text: string) => text.trim().replace(/\s+/g, " ");
+
+  for (const line of lines) {
+    const scripted = byId.get(line.id);
+    if (!scripted) {
+      errors.push({
+        code: "story:score-line",
+        message: `the score speaks line "${line.id}", which story.json does not have`,
+      });
+      continue;
+    }
+    if (seen.has(line.id)) {
+      errors.push({ code: "story:score-line", message: `the score speaks line "${line.id}" twice` });
+    }
+    seen.add(line.id);
+    if (normalize(scripted.text) !== normalize(line.text)) {
+      errors.push({
+        code: "story:score-text",
+        message:
+          `line "${line.id}" is "${scripted.text}" in story.json and "${line.text}" in the score — ` +
+          "the film would say something it was not written to say",
+      });
+    }
+  }
+
+  for (const line of story.narration) {
+    if (!seen.has(line.id)) {
+      errors.push({
+        code: "story:score-missing",
+        message: `story.json's line "${line.id}" is never spoken in the score`,
+      });
+    }
+  }
+
+  return errors;
 }

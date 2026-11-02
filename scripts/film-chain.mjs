@@ -66,6 +66,18 @@ if (typeof id !== "string" || id === "") {
   console.error(`error: ${score} has no id`);
   process.exit(2);
 }
+const scoreDoc = JSON.parse(readFileSync(resolve(root, score), "utf8")) as {
+  clock?: { mode?: string };
+  audio?: { narration?: unknown };
+};
+/** A narrated film is spoken before it is cut; a foley or music film is not. */
+const hasNarration = scoreDoc.clock?.mode === "narration" && Boolean(scoreDoc.audio?.narration);
+/**
+ * Only a film written under 0035 has authored scenes. A legacy film (no
+ * `scenes.json`) is a reproduction: the chain must not rewrite its score to
+ * measured times on every run, because its picture was cut to the old clock.
+ */
+const needsVoice = hasNarration && existsSync(resolve(root, "films", id, "scenes.json"));
 const build = `build/${id}`;
 const deliverable = `${build}/deliverable.mp4`;
 const delivered = `films/${id}/${id}.mp4`;
@@ -93,6 +105,13 @@ const steps = [
   // would have failed in a fourteenth of a second… if anything had run it. A
   // check that can refuse a render has to run before the render.
   { name: "tests", argv: ["--import", "tsx", "--test", ...testFiles] },
+  // Narration is the clock, so it is spoken before the cut is judged (0035).
+  // `--apply` accepts the measured read: clock lines, shot boundaries and
+  // captions move to what was actually said, inventing nothing. A foley or
+  // music film has no narration and skips the step. Before 0035 the command was
+  // manual and only *proposed* the move, so a read that drifted was refused and
+  // a person retyped the times.
+  { name: "voice", skip: !needsVoice, tsx: "scripts/voice.ts", args: [score, "--apply"] },
   // The score audit costs 0.4 s and the render costs 34 minutes, so the audit
   // runs first. It was the other way round, and a contradiction in one event
   // (`quiet` on an event a cue was bound to) was reported by the audit *after*

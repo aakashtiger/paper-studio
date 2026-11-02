@@ -8,6 +8,7 @@
  * fill. There is no placeholder shot, no sample line and no guessed recipe.
  */
 import type { FilmBrief } from "./film-brief.js";
+import { assetNamesCharacter, type AssetRef } from "./assets.js";
 import { DEFAULT_PACE } from "./preflight.js";
 import type { Pace } from "./story.js";
 
@@ -49,6 +50,17 @@ export function storySkeleton(brief: FilmBrief, options: SkeletonOptions): Recor
  */
 export function beatsSkeleton(brief: FilmBrief): Record<string, unknown> {
   return { id: brief.id, beats: [] };
+}
+
+/**
+ * Stage 3 — the scenes, scaffolded (decision 0035).
+ *
+ * A scene is where it happens, who is in it, what happens and which lines it
+ * carries. None of that is guessed: the file exists so the stage exists, and
+ * `sceneGaps` names every sentence the director has to mean.
+ */
+export function scenesSkeleton(brief: FilmBrief): Record<string, unknown> {
+  return { id: brief.id, scenes: [] };
 }
 
 /** A legal-shaped score with nothing creative invented yet. */
@@ -139,6 +151,74 @@ export function storyGaps(story: unknown, beats: unknown): string[] {
 }
 
 /**
+ * The precise list of fields a director must fill in **scenes.json** — stage 3
+ * (decision 0035). It names a missing field, a line on the wrong beat, a line
+ * used twice or never, a beat with no scene, and a scene total that is not the
+ * film. It invents no place, no summary and no duration.
+ */
+export function sceneGaps(scenes: unknown, story: unknown, beats: unknown): string[] {
+  const gaps: string[] = [];
+  const root = record(scenes);
+  const written = list(root.scenes);
+  const storyRoot = record(story);
+  const beatIds = new Set(
+    list(record(beats).beats)
+      .map((value) => record(value).id)
+      .filter(text)
+      .map(String),
+  );
+  const lineById = new Map<string, AnyRecord>();
+  for (const value of list(storyRoot.narration)) {
+    const line = record(value);
+    if (text(line.id)) lineById.set(String(line.id), line);
+  }
+  const placed = new Set<string>();
+  let total = 0;
+
+  if (written.length === 0) {
+    gaps.push("scenes: at least one scene (id, beat, title, place, summary, duration, lines)");
+    return gaps;
+  }
+
+  written.forEach((value, index) => {
+    const scene = record(value);
+    const where = `scenes[${index}]`;
+    if (!text(scene.id) || !text(scene.title) || !text(scene.place) || !text(scene.summary)) {
+      gaps.push(`${where}: id, title, place and summary`);
+    }
+    if (!text(scene.beat) || !beatIds.has(String(scene.beat))) {
+      gaps.push(`${where}.beat: one of the beats.json ids`);
+    }
+    if (!positive(scene.duration)) gaps.push(`${where}.duration: seconds this scene owns`);
+    total += typeof scene.duration === "number" ? scene.duration : 0;
+    const lines = list(scene.lines);
+    if (lines.length === 0) gaps.push(`${where}.lines: the narration line ids this scene carries`);
+    for (const id of lines) {
+      const line = lineById.get(String(id));
+      if (!line) {
+        gaps.push(`${where}.lines: "${id}" is not a line in story.json`);
+      } else if (text(scene.beat) && line.beat !== scene.beat) {
+        gaps.push(`${where}.lines: "${id}" belongs to beat "${line.beat}", not "${scene.beat}"`);
+      }
+      if (placed.has(String(id))) gaps.push(`${where}.lines: "${id}" is already in another scene`);
+      placed.add(String(id));
+    }
+  });
+
+  for (const id of lineById.keys()) {
+    if (!placed.has(id)) gaps.push(`lines: "${id}" is in story.json and in no scene`);
+  }
+  for (const beat of beatIds) {
+    if (!written.some((value) => record(value).beat === beat)) gaps.push(`scenes: beat "${beat}" has no scene`);
+  }
+  if (typeof storyRoot.duration === "number" && Math.abs(total - storyRoot.duration) > 0.5) {
+    gaps.push(`scenes[].duration: the scenes add up to ${total}s, not the film's ${storyRoot.duration}s`);
+  }
+
+  return gaps;
+}
+
+/**
  * The precise list of fields a director must fill in the **score** — stage 4.
  * Derived from the score's own content, so it is empty for a finished score and
  * names every gap for a scaffold — the same function drives the command and its
@@ -175,6 +255,20 @@ export function filmGaps(score: unknown): string[] {
 
   if (list(root.assets).length === 0) {
     gaps.push("assets: at least one asset (id, type, source, path)");
+  } else {
+    // The manifest must cover the cast the shots stage (0035).
+    const assets = list(root.assets).map(record);
+    for (const value of list(root.cast)) {
+      const member = record(value);
+      if (!text(member.character)) continue;
+      const poses = text(member.poses) ? String(member.poses) : "";
+      const covered = assets.some((asset) =>
+        assetNamesCharacter(asset as unknown as AssetRef, String(member.character), poses),
+      );
+      if (!covered) {
+        gaps.push(`assets: a character asset for "${member.character}" (type "character")`);
+      }
+    }
   }
 
   const shots = list(root.shots);

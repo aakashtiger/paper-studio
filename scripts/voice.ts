@@ -38,6 +38,8 @@ import {
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
+/** `--apply` accepts the measured read: the score's clock and shot boundaries move to it. */
+const apply = args.includes("--apply");
 /** The three files this command writes: missing until it has run. */
 const VOICE_OUTPUTS = new Set(["audio_voice_file", "audio_transcript_file", "audio_srt_file"]);
 if (!file) {
@@ -231,15 +233,131 @@ async function main(): Promise<void> {
   // seconds; a read that keeps it lands inside a tenth.
   const onsets = wavOnsets(narrationPath, lines);
   const clockTolerance = 0.1;
-  const worstOnset = onsets.reduce(
+  /**
+   * The clock is judged on the **measured word times**, not on a rise found near
+   * the authored start. The old scan looked in a window around the score's time,
+   * so a line that actually started 0.27 s early read as "+0.04 s" — it found
+   * the second word. `words.json` is the authority the rest of the pipeline is
+   * cut to, so it is the authority here.
+   *
+   * The WAV onsets are still reported (`clock.wav`): they are a second opinion
+   * about the same audio, and a disagreement between the two is worth seeing.
+   */
+  const clockLines = lines.map((line) => {
+    const measured = derived.find((entry) => entry.id === line.id);
+    const onset = measured ? measured.start : null;
+    const authored = line.start ?? null;
+    return {
+      id: line.id,
+      authored,
+      onset,
+      delta: onset === null || authored === null ? null : Number((onset - authored).toFixed(3)),
+    };
+  });
+  const worstOnset = clockLines.reduce(
     (worst, line) => (line.delta !== null && Math.abs(line.delta) > Math.abs(worst) ? (line.delta as number) : worst),
     0,
   );
-  const lateLines = onsets.filter((line) => line.delta === null || Math.abs(line.delta) > clockTolerance);
+  const lateLines = clockLines.filter((line) => line.delta === null || Math.abs(line.delta) > clockTolerance);
   const snap = snapShots(
     plan.shots.map((shot) => ({ id: shot.id, start: shot.start, duration: shot.duration })),
     derived.map((line) => line.start),
   );
+
+  /**
+   * `--apply` — the measured read becomes the clock (decision 0035).
+   *
+   * The user's order is: write the script, speak it, then cut the scenes and
+   * shots to what was actually said. Until 0035 `voice` only *proposed* the
+   * move (`derived, not applied: edit the score to accept a moved boundary`),
+   * so a film whose read drifted was refused and a person had to retype times.
+   *
+   * Applying invents nothing: the text is unchanged and only times are measured.
+   * Captions move with their line. If no value changes, the score is not
+   * rewritten, so a re-run cannot move a hash for nothing.
+   */
+  let applied: { lines: number; shots: number; captions: number; lateLines: typeof lateLines } | null = null;
+  if (apply) {
+    const rawPath = resolve(root, scorePath);
+    const raw = JSON.parse(readFileSync(rawPath, "utf8")) as {
+      clock?: { mode?: string; lines?: Array<{ id: string; text: string; start: number; duration: number; hold?: number }> };
+      shots?: Array<{ duration: number }>;
+      captions?: { lines?: Array<{ id: string; text: string; start: number; end: number }> };
+    };
+    const before = JSON.stringify(raw);
+    const oldLines = new Map((raw.clock?.lines ?? []).map((line) => [line.id, line]));
+    const newLines = new Map(derived.map((line) => [line.id, line]));
+    let linesMoved = 0;
+    let captionsMoved = 0;
+
+    for (const line of raw.clock?.lines ?? []) {
+      const measured = newLines.get(line.id);
+      if (!measured) continue;
+      // The start is the measured word time: that is the clock the cut is
+      // trimmed to. The duration is only extended, never shortened — an
+      // authored window may hold a deliberate pause, and the read fitting
+      // inside it is not evidence that the pause should go.
+      if (line.start !== measured.start) linesMoved += 1;
+      line.start = measured.start;
+      if (measured.duration > line.duration + 0.05) {
+        line.duration = measured.duration;
+        linesMoved += 1;
+      }
+    }
+
+    for (const caption of raw.captions?.lines ?? []) {
+      const oldLine = oldLines.get(caption.id);
+      const newLine = newLines.get(caption.id);
+      if (!oldLine || !newLine) continue;
+      const beforeStart = caption.start;
+      const windowStart = newLine.start;
+      const windowEnd = Number((newLine.start + newLine.duration + (newLine.hold ?? 0)).toFixed(3));
+      const span = caption.end - caption.start;
+      // Keep the caption inside its line's own window. A read that shortened
+      // the line shortens the caption with it rather than leaving the words on
+      // screen past the line — the defect the first version of `--apply` had.
+      const latestStart = Math.max(windowStart, windowEnd - 0.1);
+      const start = Math.max(windowStart, Math.min(caption.start + (newLine.start - oldLine.start), latestStart));
+      const end = Math.min(windowEnd, Math.max(start + 0.05, start + span));
+      caption.start = Number(start.toFixed(3));
+      caption.end = Number(Math.max(caption.start + 0.05, end).toFixed(3));
+      if (caption.start !== beforeStart) captionsMoved += 1;
+    }
+
+    let shotsMoved = 0;
+    (raw.shots ?? []).forEach((shot, index) => {
+      const next = snap.shots[index];
+      if (!next) return;
+      if (shot.duration !== next.duration) shotsMoved += 1;
+      shot.duration = next.duration;
+    });
+
+    // The applied score must still be a legal film. Validate before writing, so
+    // a refused application cannot leave a half-timed score on disk.
+    const after = FilmScoreSchema.safeParse(raw);
+    if (!after.success) {
+      const first = after.error.issues[0];
+      console.error(
+        `error: --apply produced a score that does not validate — ${first?.path.join(".") || "(root)"}: ` +
+          `${first?.message ?? "invalid"}`,
+      );
+      process.exit(1);
+    }
+    const recheck = resolveFilm(after.data, resolve(root, `styles/${score.style}`), root);
+    if (recheck.errors.length > 0) {
+      for (const error of recheck.errors) console.error(`error: after --apply: ${error.message}`);
+      process.exit(1);
+    }
+
+    if (JSON.stringify(raw) !== before) {
+      writeFileSync(rawPath, `${JSON.stringify(raw, null, 2)}\n`, "utf8");
+    }
+
+    applied = { lines: linesMoved, shots: shotsMoved, captions: captionsMoved, lateLines };
+    console.log(
+      `voice: applied ${linesMoved} line timing(s), ${shotsMoved} shot boundary(ies) and ${captionsMoved} caption(s) to ${scorePath}`,
+    );
+  }
 
   const wordsPath = resolve(root, `films/${score.id}/words.json`);
   writeFileSync(
@@ -271,7 +389,9 @@ async function main(): Promise<void> {
         lines: derived,
         shots: snap.shots,
         moved: snap.moved,
-        note: "derived, not applied: edit the score to accept a moved boundary",
+        note: apply
+          ? "applied to the score: the clock and shot boundaries are the measured read"
+          : "derived, not applied: edit the score to accept a moved boundary",
         generatedAt: new Date().toISOString(),
       },
       null,
@@ -285,7 +405,9 @@ async function main(): Promise<void> {
     heardWords: heard.length > 0,
     wordsWritten: existsSync(wordsPath) && timed.length === wordsOfScript.length,
     coverage: matched / Math.max(1, wordsOfScript.length) >= 0.9,
-    clock: lateLines.length === 0,
+    // `--apply` moves the score to the measured read, so the score is exact by
+    // construction; the drift it accepted is recorded in `applied.lateLines`.
+    clock: apply || lateLines.length === 0,
   };
   const pass = Object.values(checks).every(Boolean);
   writeFileSync(
@@ -305,7 +427,8 @@ async function main(): Promise<void> {
         matched,
         coverage: Number((matched / Math.max(1, wordsOfScript.length)).toFixed(4)),
         movedBoundaries: snap.moved,
-        clock: { tolerance: clockTolerance, worst: worstOnset, lines: onsets },
+        applied,
+        clock: { tolerance: clockTolerance, worst: worstOnset, lines: clockLines, wav: onsets },
         toolVersions: status.modules,
         checks,
         generatedAt: new Date().toISOString(),
@@ -318,7 +441,7 @@ async function main(): Promise<void> {
 
   console.log(`voice: ${matched}/${wordsOfScript.length} script words timed (${((matched / Math.max(1, wordsOfScript.length)) * 100).toFixed(1)}% heard)`);
   console.log(
-    `voice: clock ${lateLines.length === 0 ? "kept" : `FAILED on ${lateLines.length} line(s)`} · worst line starts ` +
+    `voice: clock ${apply ? "applied" : lateLines.length === 0 ? "kept" : `FAILED on ${lateLines.length} line(s)`} · worst line starts ` +
       `${worstOnset >= 0 ? "+" : ""}${worstOnset.toFixed(2)}s from the score (tolerance ${clockTolerance}s)`,
   );
   for (const line of lateLines) {
@@ -327,7 +450,7 @@ async function main(): Promise<void> {
         (line.onset === null ? "and there is no sound anywhere near it" : `the voice starts at ${line.onset}s`),
     );
   }
-  console.log(`voice: ${showPath(root, wordsPath)} · clock proposal build/${score.id}/clock.json`);
+  console.log(`voice: ${showPath(root, wordsPath)} · ${apply ? "clock applied" : "clock proposal"} build/${score.id}/clock.json`);
   if (snap.moved.length > 0) {
     console.log(`voice: ${snap.moved.length} shot boundaries sit within 0.35 s of a phrase beat:`);
     for (const move of snap.moved) console.log(`  ${move.id}  ${move.from}s → ${move.to}s`);

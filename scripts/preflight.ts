@@ -18,9 +18,21 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { PoseLibrarySchema, resolvePoseLibrary } from "../src/engine/pose.js";
+import { assetNamesCharacter } from "../src/engine/assets.js";
 import type { CutBeat } from "../src/engine/cut.js";
 import { preflightFilm, DEFAULT_PACE, type CastFact } from "../src/engine/preflight.js";
-import { BeatsSchema, PaceSchema, StorySchema, checkStory, type Issue, type Pace } from "../src/engine/story.js";
+import { ScenesSchema, checkScenes } from "../src/engine/scenes.js";
+import {
+  BeatsSchema,
+  PaceSchema,
+  StorySchema,
+  checkNarrationSync,
+  checkStory,
+  type Beats,
+  type Issue,
+  type Pace,
+  type Story,
+} from "../src/engine/story.js";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
 
 const args = process.argv.slice(2);
@@ -106,7 +118,13 @@ const cast: CastFact[] = score.cast.map((member) => {
         (rigs.length > 0 ? `; it registers ${rigs.join(", ")}` : "; it registers nothing"),
     });
   }
-  return { character: member.character, rig, poses: member.poses, problems };
+  return {
+    character: member.character,
+    rig,
+    poses: member.poses,
+    asset: score.assets.some((ref) => assetNamesCharacter(ref, member.character, member.poses)),
+    problems,
+  };
 });
 
 const { pace, source } = readPace();
@@ -114,6 +132,8 @@ const { pace, source } = readPace();
 const storyPath = resolve(filmDir, "story.json");
 const beatsPath = resolve(filmDir, "beats.json");
 let story: { errors: Issue[]; warnings: Issue[] } | null = null;
+let storyDoc: Story | null = null;
+let beatDoc: Beats | null = null;
 let beatMap: CutBeat[] | null = null;
 if (existsSync(storyPath) || existsSync(beatsPath)) {
   if (!existsSync(storyPath) || !existsSync(beatsPath)) {
@@ -147,6 +167,8 @@ if (existsSync(storyPath) || existsSync(beatsPath)) {
     });
   }
   if (writtenDoc.success && beatsDoc.success) {
+    storyDoc = writtenDoc.data;
+    beatDoc = beatsDoc.data;
     const check = checkStory(writtenDoc.data, beatsDoc.data);
     story = { errors: check.errors, warnings: check.warnings };
     beatMap = beatsDoc.data.beats.map((beat) => ({
@@ -179,7 +201,75 @@ for (const warning of resolveWarnings) console.error(`warning: ${warning.message
  */
 const reproduce = existsSync(resolve(root, "films", score.id, `${score.id}.mp4`));
 
-const report = preflightFilm({ plan, pace, paceSource: source, story, beats: beatMap, cast, reproduce });
+/**
+ * Stage 3 — the scenes (decision 0035).
+ *
+ * A film with a story and beats but no scenes skipped the stage between them:
+ * the shots have no high-level screen to answer, and the order the repository
+ * promises is not the order it enforces. A delivered film is a reproduction and
+ * may predate the stage; a new film may not.
+ */
+const scenesPath = resolve(filmDir, "scenes.json");
+let sceneCheck: { errors: Issue[]; warnings: Issue[] } | undefined;
+let sceneDocs: { id: string; beat: string; duration: number }[] | null = null;
+let sceneSource: "authored" | "derived" | "missing" = "missing";
+if (storyDoc && beatDoc) {
+  if (!existsSync(scenesPath)) {
+    const issue: Issue = {
+      code: "scenes:missing",
+      message:
+        "no scenes.json — the film jumps from the beat map to the shot list, so no scene was ever " +
+        "staged: no place, no cast, no lines, no seconds",
+    };
+    sceneCheck = reproduce ? { errors: [], warnings: [issue] } : { errors: [issue], warnings: [] };
+  } else {
+    const parsed = ScenesSchema.safeParse(JSON.parse(readFileSync(scenesPath, "utf8")));
+    if (!parsed.success) {
+      const first = parsed.error.issues[0];
+      sceneCheck = {
+        errors: [
+          {
+            code: "scenes:invalid",
+            message:
+              `scenes.json is not a scene list yet — ${first?.path.join(".") || "(root)"}: ` +
+              `${first?.message ?? "invalid"} (${parsed.error.issues.length} field(s) to fill; see \`npm run film:new\`)`,
+          },
+        ],
+        warnings: [],
+      };
+    } else {
+      const check = checkScenes(
+        parsed.data,
+        storyDoc,
+        beatDoc,
+        plan.clock.mode === "narration" ? plan.clock.lines : undefined,
+        plan.cast.map((member) => member.character),
+      );
+      sceneCheck = { errors: check.errors, warnings: check.warnings };
+      sceneDocs = parsed.data.scenes.map((scene) => ({ id: scene.id, beat: scene.beat, duration: scene.duration }));
+      sceneSource = "authored";
+    }
+  }
+
+  // The score must speak the story's words (0035). Two documents that each look
+  // valid can still disagree about what the film says.
+  if (plan.clock.mode === "narration" && story) {
+    story.errors.push(...checkNarrationSync(storyDoc, plan.clock.lines));
+  }
+}
+
+const report = preflightFilm({
+  plan,
+  pace,
+  paceSource: source,
+  story,
+  beats: beatMap,
+  sceneCheck,
+  sceneDocs,
+  sceneSource,
+  cast,
+  reproduce,
+});
 const scoreHash = `sha256:${createHash("sha256").update(readFileSync(scorePath)).digest("hex")}`;
 const written = { ...report, score: scoreHash };
 const out = resolve(root, "build", score.id);
@@ -202,7 +292,7 @@ if (json) {
     const n = report.narration;
     console.log(
       `  narration ${n.lines} lines · ${n.words} words · ${n.wpm} wpm · speaks ` +
-        `${(n.coverage * 100).toFixed(0)}% · longest hole ${secs(n.hole)} at ${secs(n.holeAt)}`,
+        `${(n.coverage * 100).toFixed(0)}% · first line ${secs(n.first)} · longest hole ${secs(n.hole)} at ${secs(n.holeAt)}`,
     );
   } else {
     console.log("  narration none (the clock is not narration)");
@@ -214,11 +304,13 @@ if (json) {
     `  cast      ${report.cast.length > 0 ? report.cast.map((member) => `${member.character} ${member.rig}`).join(" · ") : "none"}`,
   );
   if (report.cut) {
-    console.log(`  scenes    ${report.cut.scenes.length} scene(s) from ${report.cut.beats.length} beats`);
+    console.log(
+      `  scenes    ${report.cut.scenes.length} scene(s) from ${report.cut.beats.length} beats (${report.sceneSource})`,
+    );
     for (const scene of report.cut.scenes) {
       const row = report.cut.beats.find((beat) => beat.beat === scene.beat);
       console.log(
-        `            ${scene.beat}  ${scene.from.toFixed(1).padStart(5)}–${scene.to.toFixed(1)}s · ` +
+        `            ${scene.id ?? scene.beat}  ${scene.from.toFixed(1).padStart(5)}–${scene.to.toFixed(1)}s · ` +
           `${scene.shots.length} shot(s) · declared ${((row?.declared ?? 0) * 100).toFixed(0)}% · ` +
           `shot ${((row?.share ?? 0) * 100).toFixed(0)}% · ${row?.cues ?? 0} cue(s)`,
       );

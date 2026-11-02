@@ -1,0 +1,55 @@
+{
+  "id": "story-min",
+  "scenes": [
+    {
+      "id": "sc01",
+      "beat": "b01",
+      "title": "the alarm",
+      "place": "a bedroom before dawn",
+      "summary": "A man silences the same alarm he has silenced for a decade.",
+      "cast": ["Kiran"],
+      "lines": ["v01"],
+      "duration": 5.55
+    },
+    {
+      "id": "sc02",
+      "beat": "b02",
+      "title": "the corridor",
+      "place": "the office corridor",
+      "summary": "He walks the same corridor into the same grey day.",
+      "cast": ["Kiran"],
+      "lines": ["v02", "v03"],
+      "duration": 6.9
+    },
+    {
+      "id": "sc03",
+      "beat": "b03",
+      "title": "the demand",
+      "place": "the open office",
+      "summary": "The supervisor asks for it sooner; he says yes.",
+      "cast": ["Kiran", "Vaz"],
+      "lines": ["v04", "v05"],
+      "duration": 5.55
+    },
+    {
+      "id": "sc04",
+      "beat": "b04",
+      "title": "the empty room",
+      "place": "the office after hours",
+      "summary": "The room empties and nothing is asked of him.",
+      "cast": ["Kiran"],
+      "lines": ["v06", "v07"],
+      "duration": 6
+    },
+    {
+      "id": "sc05",
+      "beat": "b05",
+      "title": "the alarm again",
+      "place": "the bedroom again",
+      "summary": "The alarm returns; this time he lets it ring.",
+      "cast": ["Kiran"],
+      "lines": ["v08", "v09"],
+      "duration": 6
+    }
+  ]
+}

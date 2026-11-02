@@ -21,7 +21,29 @@ export const AssetRefSchema = z.object({
   source: z.enum(["new", "reused"]),
   anchors: z.array(z.string().min(1)).default([]),
   path: z.string().min(1).optional(),
+  /**
+   * For `type: "character"`, the cast member this asset draws. Until 0035 a
+   * character asset was identified only by its path, so nothing could prove the
+   * manifest covered the cast the shots stage.
+   */
+  character: z.string().min(1).optional(),
 });
+
+/**
+ * Does this asset draw `character`?
+ *
+ * The declared `character` is authoritative. Older manifests predate it, so the
+ * pose library path and then the id are accepted as fallbacks — never the other
+ * way round: a new manifest that names the wrong character must not pass because
+ * its path looks plausible.
+ */
+export function assetNamesCharacter(asset: AssetRef, character: string, poses: string): boolean {
+  if (asset.type !== "character") return false;
+  if (asset.character) return asset.character.toLowerCase() === character.toLowerCase();
+  const clean = (value: string) => value.replace(/\\/g, "/").toLowerCase();
+  if (asset.path && clean(asset.path) === clean(poses)) return true;
+  return asset.id.toLowerCase().includes(character.toLowerCase());
+}
 
 export const AssetManifestSchema = z.array(AssetRefSchema).min(1);
 

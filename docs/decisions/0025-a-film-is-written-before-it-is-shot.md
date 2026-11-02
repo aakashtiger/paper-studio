@@ -1,6 +1,6 @@
 # 0025 — A film is written before it is shot
 
-**Status:** accepted · 2 Nov 2026
+**Status:** accepted (stages 3-5 implemented by 0035) · 2 Nov 2026
 **Owners:** shared (`src/engine/**` contract, `films/**` authored)
 **Supersedes:** the part of 0017 that treated the `score.json` shot list as the first authored artifact
 

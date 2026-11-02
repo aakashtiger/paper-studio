@@ -2,10 +2,11 @@
  * `film:new` — the front door (decision 0017, step 8; decision 0025; 0030).
  *
  * Writes the film's **documents** from a brief, in the order it has to write
- * them: `story.json`, then `beats.json`, then `score.json`. Before 0030 it wrote
- * only the score, which is how a film came to begin at its shot list — the
- * defect 0025 exists to stop — because the only document the tool offered was
- * the last one.
+ * them: `story.json`, then `beats.json`, then `scenes.json`, then `score.json`.
+ * Before 0030 it wrote only the score, which is how a film came to begin at its
+ * shot list — the defect 0025 exists to stop — because the only document the
+ * tool offered was the last one. Before 0035 it skipped `scenes.json` while
+ * printing that it was next.
  *
  * It cannot invent a shot, a beat, a recipe, a caption, a line or a note. It
  * writes the fields the brief already states, leaves every sentence a person has
@@ -17,7 +18,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { FilmBriefSchema, resolveBrief } from "../src/engine/film-brief.js";
-import { beatsSkeleton, filmGaps, filmSkeleton, storyGaps, storySkeleton } from "../src/engine/film-new.js";
+import { beatsSkeleton, filmGaps, filmSkeleton, sceneGaps, scenesSkeleton, storyGaps, storySkeleton } from "../src/engine/film-new.js";
 import { PaceSchema, type Pace } from "../src/engine/story.js";
 
 const args = process.argv.slice(2);
@@ -70,6 +71,7 @@ const outDir = resolve(root, arg("out") ?? `films/${brief.id}`);
 const documents = [
   { name: "story.json", body: storySkeleton(brief, { briefPath: relBrief, pace: stylePace() }), gap: "stage 1" },
   { name: "beats.json", body: beatsSkeleton(brief), gap: "stage 2" },
+  { name: "scenes.json", body: scenesSkeleton(brief), gap: "stage 3" },
   {
     name: "score.json",
     body: filmSkeleton(brief, { briefPath: relBrief }),
@@ -94,23 +96,29 @@ for (const doc of documents) {
 
 const story = documents[0]?.body;
 const beats = documents[1]?.body;
-const score = documents[2]?.body;
+const scenes = documents[2]?.body;
+const score = documents[3]?.body;
 
 const storyGapList = storyGaps(story, beats);
+const sceneGapList = sceneGaps(scenes, story, beats);
 const scoreGapList = filmGaps(score);
 const dir = shown(outDir);
 console.log("");
 console.log("film:new: the order is story -> beats -> scenes -> shots. Write them in that order:");
 console.log(`  1. ${dir}/story.json   the spine, the logline, the narration lines and the tone`);
 console.log(`  2. ${dir}/beats.json   what each beat is for, how much of the film it owns, its signature sound`);
-console.log(`  3. npm run preflight -- ${dir}/score.json   which lists the scenes and every gap`);
-if (storyGapList.length === 0 && scoreGapList.length === 0) {
+console.log(`  3. ${dir}/scenes.json  where each scene happens, who is in it, what happens, which lines it carries`);
+console.log(`  4. npm run preflight -- ${dir}/score.json   which checks the scenes, the narration and every gap`);
+if (storyGapList.length === 0 && sceneGapList.length === 0 && scoreGapList.length === 0) {
   console.log(`film:new: the film is written; run \`npm run preflight -- ${dir}/score.json\``);
   process.exit(0);
 }
 console.error("");
 console.error(`film:new: not a film yet — fill these in ${dir}/story.json and ${dir}/beats.json:`);
 for (const gap of storyGapList) console.error(`  - ${gap}`);
+console.error("");
+console.error(`film:new: and these in ${dir}/scenes.json:`);
+for (const gap of sceneGapList) console.error(`  - ${gap}`);
 console.error("");
 console.error(`film:new: and these in ${dir}/score.json:`);
 for (const gap of scoreGapList) console.error(`  - ${gap}`);

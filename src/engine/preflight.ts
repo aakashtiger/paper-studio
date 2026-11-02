@@ -1,6 +1,6 @@
 import { checkCut, type CutBeat, type CutReport } from "./cut.js";
 import { kindLength } from "./sfx.js";
-import { type Issue, type Pace, countWords } from "./story.js";
+import { NARRATION_HOLE_MAX, type Issue, type Pace, countWords } from "./story.js";
 import type { ResolvedFilm } from "./treatment.js";
 
 /**
@@ -46,8 +46,12 @@ export const LONGEST_SHOT_FACTOR = 2;
  * The user's rule for a narrated short is that the whole film carries narration.
  * 2.5 s is the same number the foley gap uses, for the same reason: a hole
  * longer than a breath is a hole, and *Same Alarm* left 17.0 s of one.
+ *
+ * The constant lives in `story.ts` because the scene check uses the same number.
  */
-export const NARRATION_HOLE_MAX = 2.5;
+
+/** A narrated short speaks almost immediately: no intro, no logo, no cleared throat. */
+export const NARRATION_START_MAX = 1;
 
 /** A narrated film speaks for at least this share of its own length. */
 export const NARRATION_COVERAGE_MIN = 0.5;
@@ -62,6 +66,8 @@ export type CastFact = {
   character: string;
   rig: string;
   poses: string;
+  /** True when `assets[]` has a character asset for this cast member. */
+  asset: boolean;
   /** Anything wrong with the pose file or the rig registration. */
   problems: Issue[];
 };
@@ -80,12 +86,22 @@ export type PreflightInput = {
   story: { errors: Issue[]; warnings: Issue[] } | null;
   /** The beat map, when the film has one: the cut is then checked against it. */
   beats?: CutBeat[] | null;
+  /**
+   * The authored scenes, when the film has them. `null` means the film has a
+   * story and beats but no `scenes.json` — the stage the order was missing.
+   */
+  sceneCheck?: { errors: Issue[]; warnings: Issue[] } | null;
+  /** The authored scenes as the cut check needs them: id, beat, duration. */
+  sceneDocs?: { id: string; beat: string; duration: number }[] | null;
+  sceneSource?: "authored" | "derived" | "missing";
   cast: CastFact[];
   /** True when the film already has a delivered file: this is a reproduction, not a new film. */
   reproduce: boolean;
 };
 
-export type PreflightIssue = Issue & { check: "story" | "cut" | "pacing" | "narration" | "sound" | "cast" };
+export type PreflightIssue = Issue & {
+  check: "story" | "scene" | "cut" | "pacing" | "narration" | "sound" | "cast";
+};
 
 export type PreflightReport = {
   film: string;
@@ -102,6 +118,8 @@ export type PreflightReport = {
     /** Seconds of spoken word, as measured by the clock. */
     speak: number;
     coverage: number;
+    /** Where the first line starts. */
+    first: number;
     /** The longest stretch with no line in it, and where it starts. */
     hole: number;
     holeAt: number;
@@ -111,8 +129,9 @@ export type PreflightReport = {
     longest: { id: string; seconds: number; share: number } | null;
   };
   cast: { character: string; rig: string; poses: string }[];
-  /** The film's scenes, derived from the shots — present only when the film has beats. */
+  /** The film's scenes: authored, derived from the shots, or missing. */
   cut: CutReport | null;
+  sceneSource: "authored" | "derived" | "missing";
   errors: PreflightIssue[];
   warnings: PreflightIssue[];
 };
@@ -155,6 +174,9 @@ const band = (value: [number, number]) => `${value[0]}–${value[1]}`;
 export function preflightFilm(input: PreflightInput): PreflightReport {
   const { plan, pace, paceSource, story, cast, reproduce } = input;
   const beats = input.beats ?? null;
+  const sceneCheck = input.sceneCheck;
+  const sceneDocs = input.sceneDocs ?? null;
+  const sceneSource = input.sceneSource ?? (sceneDocs ? "authored" : "derived");
   const errors: PreflightIssue[] = [];
   const warnings: PreflightIssue[] = [];
   const add = (check: PreflightIssue["check"], issue: Issue) => errors.push({ ...issue, check });
@@ -175,6 +197,23 @@ export function preflightFilm(input: PreflightInput): PreflightReport {
   } else {
     for (const issue of story.errors) add("story", issue);
     for (const issue of story.warnings) warn("story", issue);
+  }
+
+  // 1b — the scenes. A film with a story and beats but no scenes skipped stage 3:
+  // the shots have no high-level screen to answer, and the order the repository
+  // promises is not the order it enforces.
+  if (sceneCheck === null) {
+    const issue: Issue = {
+      code: "scenes:missing",
+      message:
+        "no scenes.json — the film jumps from the beat map to the shot list, so no scene was ever " +
+        "staged: no place, no cast, no lines, no seconds",
+    };
+    if (reproduce) warn("scene", issue);
+    else add("scene", issue);
+  } else if (sceneCheck) {
+    for (const issue of sceneCheck.errors) add("scene", issue);
+    for (const issue of sceneCheck.warnings) warn("scene", issue);
   }
 
   // 2 — the shape of the cut. A shot list is not a cut, and the count is where it shows.
@@ -225,9 +264,11 @@ export function preflightFilm(input: PreflightInput): PreflightReport {
         start: shot.start,
         duration: shot.duration,
         beat: shot.beat,
+        scene: shot.scene,
         reason: shot.direction.spine,
       })),
       beats,
+      scenes: sceneDocs ?? undefined,
       cues: plan.cues,
       duration,
     });
@@ -245,15 +286,30 @@ export function preflightFilm(input: PreflightInput): PreflightReport {
     const wpm = duration > 0 ? (words / duration) * 60 : 0;
     const coverage = duration > 0 ? speak / duration : 0;
     const { hole, holeAt } = longestHole(lines, duration);
+    const first = [...lines].sort((a, b) => a.start - b.start)[0];
     narration = {
       lines: lines.length,
       words,
       wpm: Number(wpm.toFixed(1)),
       speak: Number(speak.toFixed(2)),
       coverage: Number(coverage.toFixed(3)),
+      first: Number((first?.start ?? 0).toFixed(2)),
       hole: Number(hole.toFixed(2)),
       holeAt: Number(holeAt.toFixed(2)),
     };
+
+    // A narrated short does not open on silence. The reference reads start on
+    // frame 1-4; one second is the outside of a visual hook that still has the
+    // voice in it, and *Same Alarm* opened with 0.53 s — fine — then stopped for
+    // sixteen.
+    if (first && first.start > NARRATION_START_MAX) {
+      add("narration", {
+        code: "narration:start",
+        message:
+          `the first line starts at ${secs(first.start)} — a narrated short speaks within ` +
+          `${NARRATION_START_MAX}s (no intro, no logo, no cleared throat)`,
+      });
+    }
 
     if (words > 0 && (wpm < pace.wpm[0] || wpm > pace.wpm[1])) {
       add("narration", {
@@ -310,6 +366,17 @@ export function preflightFilm(input: PreflightInput): PreflightReport {
   // and a blank character is the kind of thing the collage must never discover.
   for (const member of cast) {
     for (const problem of member.problems) add("cast", problem);
+    // A film with authored scenes is a film written under 0035, so its manifest
+    // must name the characters its scenes stage. A legacy film (no scenes) is
+    // not retro-fitted — the warning `asset_cast` from the resolver names it.
+    if (sceneSource === "authored" && !member.asset) {
+      add("cast", {
+        code: "cast:asset",
+        message:
+          `${member.character} is in the cast but no asset names them — add ` +
+          `{ "type": "character", "character": "${member.character}" } to assets[]`,
+      });
+    }
   }
 
   return {
@@ -328,6 +395,7 @@ export function preflightFilm(input: PreflightInput): PreflightReport {
     sound: { cues: plan.cues.length, longest },
     cast: cast.map(({ character, rig, poses }) => ({ character, rig, poses })),
     cut,
+    sceneSource,
     errors,
     warnings,
   };
