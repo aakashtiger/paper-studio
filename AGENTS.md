@@ -94,6 +94,7 @@ npm run style:check -- <path>
 npm run style:approve -- <id> --by "<name>"
 npm run style:resolve -- --style <path> --seed <n> --brief <file> --format <file>
 npm run style:sheet -- styles/paper-kpop          # derived style sheet into build/
+npm run style:measure -- --ref <dir|video> [--specimen <dir|video>]   # measure a style, then our frames against it (0036)
 npm run style:seal
 node --import tsx --test test/watercolor-gate.test.ts   # S1b pilot gate
 node --import tsx --test test/paper-kpop-gate.test.ts   # S1c gate
@@ -199,13 +200,28 @@ the second, 0.22 s late on the sixth, and `--apply` fixed all three after the ne
 score validated. **408 tests.** The narration coverage floor is now **0.8**, not
 0.5, and a narrated short must speak within 1 s of its first frame.
 
-**Still open, and named:** the script is not generated from the idea —
+**A style can now be measured, not just described.** The pack's 27 decisions
+encode a style well; they did not come with a repeatable way to read one out of a
+reference. `style:measure` measures any video or folder of frames with ffmpeg
+alone — luma, contrast, saturation, edge density, movement, cuts, shot lengths
+and palette — and `--specimen` measures our frames against the reference in the
+same units. The first run is honest: our *Same Alarm* storyboard is **11 points
+darker, 28 points lower contrast, 24 points less saturated** than the pack's
+reference crops, with a palette distance of **64**. That is "ours looked dull" as
+numbers instead of an opinion. It does not pass or fail a style; the style
+declares its bands and the tool measures the gap.
+
+**Still open, and named:** the style measurement is global per-frame, not
+per-region (it cannot say where the ink is, which way the light falls, or whether
+a hand is a plank); it has no automatic token derivation and no pass/fail bands
+yet; reference and specimen are paired by filename, not by subject. The script
+is not generated from the idea —
 `film:new` scaffolds and a person (or an LLM they direct) writes; narration is
 still spoken from the score rather than directly from `story.json` (the text is
 proved identical, but the literal order 0025 describes is one stage away);
 scenes are checked against the read, not auto-fitted; props and sets are not
 derived from shot slots (cast coverage is); song films are a marker only; there
-is no arm/hand audit, no measured reference style bible, no
+is no arm/hand audit, no
 visual-reaction-to-word check, and backgrounds are not cached within a scene.
 The collage and the storyboard each paint their own ten frames (they could read
 the frames `inspect` already painted); `paint-match` repaints 61 frames in fresh

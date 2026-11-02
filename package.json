@@ -48,6 +48,7 @@
     "style:resolve": "tsx scripts/style.ts resolve",
     "style:seal": "tsx scripts/style.ts seal",
     "style:sheet": "tsx scripts/style-sheet.ts",
+    "style:measure": "tsx scripts/style-measure.ts",
     "story": "tsx scripts/story.ts",
     "preflight": "tsx scripts/preflight.ts",
     "collage": "tsx scripts/collage.ts",

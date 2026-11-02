@@ -521,6 +521,7 @@ Two rules keep a sheet honest:
 | board sheet | `npm run board -- <score>` | G2 |
 | storyboard | `npm run storyboard -- <score>` | G2 |
 | style sheet | `npm run style:sheet -- <pack>` | G-sheet, pack review |
+| reference vs specimen | `npm run style:measure -- --ref <dir|video> --specimen <dir|video>` | style authoring, look match (0036) |
 | per-shot strips (every 0.5 s) | `npm run strips -- <score>` | G5 |
 | spectrogram, per cue | `npm run sfx -- <score>` | G6 |
 | final 0.5 s contact sheet | `npm run gate:7 -- <score>` | G7 |
