@@ -115,11 +115,14 @@ the film has authored scenes, refuses a cast member with no character asset
 (`cast:asset`). Legacy films are not retro-fitted. `filmGaps` names the missing
 asset for a new score.
 
-### 6. A narrated short speaks immediately
+### 6. A narrated short speaks immediately, and for most of itself
 
 Preflight refuses a first line that starts more than **1 s** in
 (`narration:start`). The reference reads open on frame 1–4; one second is the
-outside of a visual hook that still has the voice in it.
+outside of a visual hook that still has the voice in it. The narration coverage
+floor is now **0.8**, not 0.5: at 140–150 wpm a normal read covers about 90% of
+the film, and half a film is not a narrated short — it is a film with a voice in
+it sometimes. The 2.5 s hole rule still refuses any single long silence.
 
 ## Measured
 

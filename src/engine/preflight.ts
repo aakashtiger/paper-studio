@@ -53,8 +53,14 @@ export const LONGEST_SHOT_FACTOR = 2;
 /** A narrated short speaks almost immediately: no intro, no logo, no cleared throat. */
 export const NARRATION_START_MAX = 1;
 
-/** A narrated film speaks for at least this share of its own length. */
-export const NARRATION_COVERAGE_MIN = 0.5;
+/**
+ * A narrated film speaks for at least this share of its own length.
+ *
+ * At 140–150 wpm a normal read covers about 90% of the film; half a film is not
+ * a narrated short, it is a film with a voice in it sometimes. The floor was
+ * 0.5, which let 30 s of silence through as long as no single hole passed 2.5 s.
+ */
+export const NARRATION_COVERAGE_MIN = 0.8;
 
 export type PaceSource = "story" | "style" | "default";
 

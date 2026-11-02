@@ -60,8 +60,9 @@ function passingPlan(): ResolvedFilm {
     transitionOut: "cut",
     direction: { entry: "", exit: "", spine: reasonOf[index], cast: [], events: [] },
   }));
-  // Seven lines, 2.6 s each, 1.5 s of air between them: 70 words over 30 s is
-  // 140 wpm, and the longest quiet is the 2.2 s the film lands on.
+  // Seven lines, 3.5 s each, 0.6 s of air between them: 70 words over 30 s is
+  // 140 wpm, speech covers 82% of the film, and the longest quiet is the 1.3 s
+  // the film lands on.
   const spoken = [
     "same alarm same six same ceiling he has stared at for a decade",
     "same corridor same grey doors all of them shut",
@@ -75,7 +76,7 @@ function passingPlan(): ResolvedFilm {
     id: `v${String(index + 1).padStart(2, "0")}`,
     text,
     start: Number((0.6 + index * 4.1).toFixed(3)),
-    duration: 2.6,
+    duration: 3.5,
   }));
   return {
     projectId: "test-pass",
@@ -245,7 +246,7 @@ test("a hole in the narration is refused, and it names where the film goes quiet
   const report = check({ plan: { ...plan, clock: { mode: "narration", lines: trimmed } } as ResolvedFilm });
   const hole = report.errors.find((error) => error.code === "narration:hole");
   assert.ok(hole, codes(report).join(", "));
-  assert.match(hole.message, /no narration from 7\.3s/);
+  assert.match(hole.message, /no narration from 8\.2s/);
 });
 
 test("narration is measured on the clock, not on what the script hoped", () => {

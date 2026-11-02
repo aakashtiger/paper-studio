@@ -196,7 +196,8 @@ when the read runs past its window, keeps captions inside their line, and
 validates the result before writing. Proven on *Same Alarm*: the old check said
 "kept"; the measured clock is **0.27 s early** on the first line, 0.14 s late on
 the second, 0.22 s late on the sixth, and `--apply` fixed all three after the new
-score validated. **408 tests.**
+score validated. **408 tests.** The narration coverage floor is now **0.8**, not
+0.5, and a narrated short must speak within 1 s of its first frame.
 
 **Still open, and named:** the script is not generated from the idea —
 `film:new` scaffolds and a person (or an LLM they direct) writes; narration is
