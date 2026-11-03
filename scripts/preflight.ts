@@ -21,6 +21,8 @@ import { PoseLibrarySchema, resolvePoseLibrary } from "../src/engine/pose.js";
 import { assetNamesCharacter } from "../src/engine/assets.js";
 import type { CutBeat } from "../src/engine/cut.js";
 import { preflightFilm, DEFAULT_PACE, measureWords, type CastFact, type MeasuredNarration } from "../src/engine/preflight.js";
+import { findFfmpeg } from "../src/engine/grid.js";
+import { measureVoiceActivity } from "../src/engine/voice-activity.js";
 import { ScenesSchema, checkScenes } from "../src/engine/scenes.js";
 import {
   BeatsSchema,
@@ -277,8 +279,25 @@ if (story && storyDoc) {
 let measured: MeasuredNarration | undefined;
 const wordsPath = resolve(filmDir, "words.json");
 if (existsSync(wordsPath)) {
-  const doc = JSON.parse(readFileSync(wordsPath, "utf8")) as { words?: { start: number; end: number }[] };
-  if (Array.isArray(doc.words)) measured = measureWords(doc.words, plan.duration);
+  const doc = JSON.parse(readFileSync(wordsPath, "utf8")) as {
+    words?: { start: number; end: number }[];
+    voiced?: number;
+    audio?: string;
+  };
+  if (Array.isArray(doc.words)) {
+    measured = measureWords(doc.words, plan.duration);
+    // The word union is not speech (voice-activity.ts): prefer the voiced
+    // seconds the read recorded, or measure the stem it names.
+    if (typeof doc.voiced === "number") {
+      measured = { ...measured, speech: Math.min(doc.voiced, plan.duration) };
+    } else if (doc.audio) {
+      const audio = resolve(root, doc.audio);
+      if (existsSync(audio)) {
+        const activity = measureVoiceActivity(findFfmpeg(), audio, plan.duration);
+        measured = { ...measured, speech: activity.voiced };
+      }
+    }
+  }
 }
 
 const report = preflightFilm({

@@ -38,7 +38,7 @@ and enough words to carry a 30 s film with pauses.
   30 s film is refused with `narration:wpm`.
 - `test/film-new.test.ts` expects the story skeleton to write
   `{ wpm: [180, 190], medianShot: [2.5, 3] }`.
-- 441 tests, typecheck clean.
+- 447 tests, typecheck clean.
 
 ## What this does not do, and is named
 

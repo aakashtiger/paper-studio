@@ -119,3 +119,18 @@ test("words are counted the way a reader counts them", () => {
   assert.equal(countWords("He doesn't reach for it — not once."), 7);
   assert.equal(countWords("  "), 0);
 });
+
+test("the 180-190 model is written to its band and clean", () => {
+  const longStory = StorySchema.parse(
+    JSON.parse(readFileSync(resolve(root, "fixtures/story-long/story.json"), "utf8")),
+  );
+  const longBeats = BeatsSchema.parse(
+    JSON.parse(readFileSync(resolve(root, "fixtures/story-long/beats.json"), "utf8")),
+  );
+  const check = checkStory(longStory, longBeats);
+  assert.deepEqual(check.errors, []);
+  assert.deepEqual(check.warnings, []);
+  assert.equal(check.report.words, 189);
+  assert.equal(check.report.wpm, 189);
+  assert.equal(check.report.beats.length, 5);
+});

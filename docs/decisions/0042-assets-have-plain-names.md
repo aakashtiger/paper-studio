@@ -65,7 +65,7 @@ from "Kiran".
 The chain runs `assets:coverage` before preflight, so a film whose manifest
 misses a recipe asset is refused before the paint.
 
-**441 tests**, typecheck clean, `films/` untouched.
+**447 tests**, typecheck clean, `films/` untouched.
 
 ## What this does not do, and is named
 

@@ -57,9 +57,10 @@ export const NARRATION_START_MAX = 1;
 /**
  * A narrated film speaks for at least this share of its own length.
  *
- * At 180–190 wpm a normal read covers about 90% of the film; half a film is not
- * a narrated short, it is a film with a voice in it sometimes. The floor was
- * 0.5, which let 30 s of silence through as long as no single hole passed 2.5 s.
+ * At 180–190 wpm a measured read is voiced for about 85% of the film; half a
+ * film is not a narrated short, it is a film with a voice in it sometimes. The
+ * floor was 0.5, which let 30 s of silence through as long as no single hole
+ * passed 2.5 s.
  */
 export const NARRATION_COVERAGE_MIN = 0.8;
 
@@ -70,7 +71,10 @@ export const NARRATION_COVERAGE_MIN = 0.8;
  * when the read runs past it but never shortens an authored hold. Summing those
  * windows therefore measures the *promise*, not the speech — a film can pass a
  * coverage floor with long holds and very few words. The measured word times
- * are the authority, exactly as they are for the cut.
+ * are the authority, exactly as they are for the cut; `speech` is voiced
+ * seconds from the audio (`voice-activity.ts`), not the union of ASR intervals,
+ * because a word's attack and decay are heard even when the recogniser omits
+ * them.
  */
 export type MeasuredNarration = {
   words: number;

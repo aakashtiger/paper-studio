@@ -44,6 +44,8 @@ import {
   type VoiceLine,
 } from "../src/engine/voice.js";
 import { attachWords, coverage, deriveClockLines, unheard, type HeardWord, type TimedWord } from "../src/engine/words.js";
+import { findFfmpeg } from "../src/engine/grid.js";
+import { measureVoiceActivity } from "../src/engine/voice-activity.js";
 
 const args = process.argv.slice(2);
 function arg(name: string): string | undefined {
@@ -199,13 +201,16 @@ async function main(): Promise<void> {
   // The check is the measured words, not the line windows: a 3 s pause inside
   // one line is a hole, and line durations count it as speech.
   const measured = measureWords(heard, story.duration);
-  const speech = measured.speech;
+  // Coverage is the audio, not the word nuclei: a listener hears the whole
+  // word, and a short articulation is not a pause (voice-activity.ts).
+  const activity = measureVoiceActivity(findFfmpeg(), audioPath, story.duration);
+  const speech = activity.voiced;
   const coverageRatio = story.duration > 0 ? speech / story.duration : 0;
   const hole = measured.hole;
   const holeAt = measured.holeAt;
   const first = measured.first;
   const lastEnd = heard.reduce((end, word) => Math.max(end, word.end), 0);
-  const spokenWpm = measured.speech > 0 ? (measured.words / measured.speech) * 60 : 0;
+  const spokenWpm = speech > 0 ? (measured.words / speech) * 60 : 0;
   const missing = unheard(wordsOfScript, heard);
 
   const checks = {
@@ -233,6 +238,9 @@ async function main(): Promise<void> {
     spokenWpm: Number(spokenWpm.toFixed(1)),
     speech: Number(speech.toFixed(2)),
     speechCoverage: Number(coverageRatio.toFixed(3)),
+    silence: activity.silence,
+    longestSilence: activity.longest,
+    longestSilenceAt: activity.longestAt,
     first: Number(first.toFixed(3)),
     lastEnd: Number(lastEnd.toFixed(3)),
     hole: Number(hole.toFixed(3)),

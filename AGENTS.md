@@ -237,15 +237,19 @@ file with **8 poses and 14 expressions**, a rig, a source, a licence and a
 `sha256`; `library:check` refuses one that is not reusable, `library:add` adds a
 pose once, and `library:use` points a film's cast and asset at it. A pose event
 can name an expression, and the painter maps it to the rig's eyes/brow/mouth.
-**441 tests.**
+**447 tests.**
 
 **The story now speaks first, the camera is a grammar, and assets have names.**
 `voice:story` reads `story.json` + `beats.json`, speaks the lines, listens with
 Whisper, and writes `narration.json` **before a score exists**; `voice --
 <score> --from-story <narration.json> --apply` then writes that measured clock,
-its captions and its shot snaps into the score. The 30 s fixture is still
-**refused** at 73.5% measured word coverage — it declares the legacy 140 band;
-the kpop default is now **180–190 wpm** (0043), which needs 90–95 words for 30 s.
+its captions and its shot snaps into the score. Coverage is measured on the
+**audio** now (0044), not on ASR word nuclei: `fixtures/story-long` (60 s,
+189 words, 189 wpm) is **82%** voiced, last word at 59.28 s, and passes every
+check. The 30 s fixture is still **refused** - its voice ends at 22.06 s and the
+film stops talking - and a 30 s film with nine spoken lines cannot carry the
+**180-190 wpm** band (0043): the line breaks alone are 4 s of 30. A 30 s short
+in this band needs five beats, not nine.
 `camera:check` refuses a still shot, a push that pulls, a move with no travel,
 and a four-shot run; `camera:plan` proposes a varied sequence from the beats
 (four moves, longest run 1, preserves authored cameras unless `--force`);

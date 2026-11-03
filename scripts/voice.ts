@@ -26,6 +26,8 @@ import { spawn } from "node:child_process";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
 import { hashFile } from "../src/core/style.js";
 import { attachWords, coverage, deriveClockLines, snapShots, type HeardWord, type TimedWord } from "../src/engine/words.js";
+import { findFfmpeg } from "../src/engine/grid.js";
+import { measureVoiceActivity } from "../src/engine/voice-activity.js";
 import {
   installSteps,
   scriptWords,
@@ -360,6 +362,7 @@ async function main(): Promise<void> {
   }
 
   const wordsPath = resolve(root, `films/${score.id}/words.json`);
+  const activity = measureVoiceActivity(findFfmpeg(), narrationPath, score.duration);
   writeFileSync(
     wordsPath,
     `${JSON.stringify(
@@ -372,6 +375,8 @@ async function main(): Promise<void> {
         scriptWords: wordsOfScript.length,
         heardWords: heard.length,
         coverage: Number((matched / Math.max(1, wordsOfScript.length)).toFixed(4)),
+        voiced: activity.voiced,
+        silence: activity.silence,
         words: timed.map((word: TimedWord) => ({ w: word.word, start: word.start, end: word.end })),
       },
       null,

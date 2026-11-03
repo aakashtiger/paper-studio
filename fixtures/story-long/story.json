@@ -1,0 +1,88 @@
+{
+  "id": "story-long",
+  "title": "Same Alarm",
+  "duration": 60,
+  "audience": "the commute, 7:40 a.m.",
+  "tone": "deadpan, then quiet, then deadpan again",
+  "logline": "A man gives a day everything it asks for and discovers it was asking for nothing.",
+  "spine": {
+    "want": "to get through the day without being noticed",
+    "obstacle": "every day is the same day, so getting through it costs him nothing and buys him nothing",
+    "turn": "the room empties and nothing is asked of him — the first thing the day has ever given him",
+    "button": "the alarm goes again, and for the first time he leaves it ringing"
+  },
+  "pace": {
+    "wpm": [
+      180,
+      190
+    ],
+    "medianShot": [
+      2.5,
+      3
+    ]
+  },
+  "narration": [
+    {
+      "id": "v01",
+      "beat": "b01",
+      "text": "Same alarm, same six, same ceiling he has stared at for a decade, and the same corridor behind a door.",
+      "tone": "flat"
+    },
+    {
+      "id": "v02",
+      "beat": "b02",
+      "text": "Nine hours under a light that never changes, someone needs it sooner than yesterday, and he says yes because he is good.",
+      "tone": "flat"
+    },
+    {
+      "id": "v03",
+      "beat": "b02",
+      "text": "He is good at yes, good at sooner, good at the voice that says it will only take a single minute.",
+      "tone": "flat"
+    },
+    {
+      "id": "v04",
+      "beat": "b03",
+      "text": "Then the room empties and nobody needs anything, he stays, the light does not, and at six the alarm goes again.",
+      "tone": "quick"
+    },
+    {
+      "id": "v05",
+      "beat": "b03",
+      "text": "This time he does not reach for it, because the hand that always rises is still, and the ceiling keeps its question.",
+      "tone": "tired"
+    },
+    {
+      "id": "v06",
+      "beat": "b04",
+      "text": "The corridor is the same corridor, the doors are the same doors, and the clock has not moved all morning.",
+      "tone": "quiet"
+    },
+    {
+      "id": "v07",
+      "beat": "b04",
+      "text": "He counts the tiles to the lift, the lift counts floors, and the numbers arrive at the same office with the window.",
+      "tone": "quiet"
+    },
+    {
+      "id": "v08",
+      "beat": "b05",
+      "text": "Somebody calls his name down the corridor, and he turns before he has decided to, because that is what the day is.",
+      "tone": "flat"
+    },
+    {
+      "id": "v09",
+      "beat": "b05",
+      "text": "At six the alarm goes again, the hand rises, and the ceiling keeps the question for tomorrow, as always.",
+      "tone": "flat"
+    }
+  ],
+  "mustSay": [
+    "same alarm"
+  ],
+  "voice": {
+    "provider": "kokoro",
+    "voiceId": "af_heart",
+    "speed": 1
+  }
+}
