@@ -58,22 +58,12 @@ function officeFigure(ctx, x, y, s, o = {}) {
   const legR = p.legR || [-0.03, -0.01];
 
   const boss = o.outfit === "supervisor";
-  // One leg, one ground line. The hip sits 258 above the feet and the leg is
-  // 156 + 117 = 273 long, so a standing figure spends 15 units of leg on a bent
-  // knee instead of standing on two locked sticks.
-  //
-  // It was -272 (worker) and -286 (supervisor): the worker's leg summed to 273
-  // against a hip 272 above the floor, i.e. exactly straight, and the
-  // supervisor's hip floated 13 units above legs that could not reach the floor
-  // at all. A walk then *raised* the hip by up to 10 (a -2 pose bounce, -2.2 of
-  // breathing and 6 from the recipe's step bob), which the leg could not follow:
-  // the solver clamped, the knee locked at 0.005 rad and the ankle stopped 4 px
-  // short. `test/cast-rig.test.ts` now holds every cast pose to a reach that
-  // leaves room for that bob, so this cannot come back quietly.
-  //
-  // The supervisor is still the taller man: he is taller in the torso
-  // (SHOULDER/HEAD), not in a hip that hangs above his own legs.
-  const HIP = -258;
+  // One leg, one ground line. The hip sits 273 above the feet and the leg is
+  // 156 + 117 = 273 long, so a standing foot is straight. The old 258 left 15
+  // units of slack, and the 2D solver spent it by swinging the knee 60 px
+  // sideways: a clean front view read as a frog. A bent knee in this flat rig
+  // is a walk pose's lifted foot, not a standing pose's default.
+  const HIP = -281;
   const SHOULDER = boss ? -466 : -452;
   const HEAD = boss ? -530 : -518;
   // One colour convention for every rig: the painter passes `colors`, an object
@@ -261,43 +251,102 @@ function officeFigure(ctx, x, y, s, o = {}) {
   ctx.beginPath(); ctx.ellipse(22, 17, 8, 3.6, 0, 0, TAU); ctx.fill();
   ctx.globalAlpha = 1;
   const ey = -4;
+  // The library's expression vocabulary is explicit where it can be: `eyes`
+  // and `mouth` name a shape, so 14 names are 14 faces. The old adapter mapped
+  // four numbers onto four shapes and half the sheet was duplicates.
+  const es = f.eyes || (f.open > 1.12 ? "wide" : f.open < 0.62 ? "closed" : "dot");
+  const lookX = f.look?.[0] ?? f.lookX ?? 0;
+  const lookY = f.look?.[1] ?? f.lookY ?? 0;
   for (const sx of [-1, 1]) {
     ctx.save();
     ctx.translate(sx * 15, ey);
-    const es = f.eyes || "dot";
     if (es === "closed") {
       ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2.2;
       ctx.beginPath(); ctx.arc(0, 0, 7, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
     } else if (es === "wide") {
       ctx.fillStyle = "#FFF"; ctx.beginPath(); ctx.arc(0, 0, 9, 0, TAU); ctx.fill();
-      ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.arc((f.look?.[0] || 0) * 3, (f.look?.[1] || 0) * 3, 4.4, 0, TAU); ctx.fill();
+      ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.arc(lookX * 3, lookY * 3, 4.4, 0, TAU); ctx.fill();
     } else if (es === "happy") {
       ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2.2;
       ctx.beginPath(); ctx.arc(0, 2, 7, 1.15 * Math.PI, 1.85 * Math.PI); ctx.stroke();
+    } else if (es === "half") {
+      // A lid across the top third, pupil below it: bored, tired, relieved.
+      ctx.fillStyle = "#FFF"; ctx.beginPath(); ctx.arc(0, 0, 8, 0, TAU); ctx.fill();
+      ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.arc(lookX * 2.4, 2 + lookY * 2.4, 3.8, 0, TAU); ctx.fill();
+      ctx.fillStyle = C.rgba(PAL.ink, 0.9);
+      ctx.beginPath(); ctx.ellipse(0, -3.4, 9, 3.2, 0, 0, TAU); ctx.fill();
+    } else if (es === "squint") {
+      // An angry eye is a wedge, not a dot: the lid cuts down from the inside.
+      ctx.fillStyle = "#FFF"; ctx.beginPath(); ctx.arc(0, 0, 8, 0, TAU); ctx.fill();
+      ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.arc(sx * -1.8, 1.4, 3.6, 0, TAU); ctx.fill();
+      ctx.fillStyle = C.rgba(PAL.ink, 0.92);
+      ctx.beginPath(); ctx.moveTo(-9, -8); ctx.lineTo(9, -8); ctx.lineTo(9, -1); ctx.lineTo(-9, 3.5); ctx.closePath(); ctx.fill();
+    } else if (es === "blank") {
+      // No catchlight and a smaller pupil: a person not home.
+      ctx.fillStyle = "#FFF"; ctx.beginPath(); ctx.arc(0, 0, 7.6, 0, TAU); ctx.fill();
+      ctx.fillStyle = C.rgba(PAL.ink, 0.55); ctx.beginPath(); ctx.arc(lookX * 2, lookY * 2, 3.4, 0, TAU); ctx.fill();
+    } else if (es === "glance") {
+      ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.arc(0, 0, 5.6, 0, TAU); ctx.fill();
+      ctx.fillStyle = "#FFF"; ctx.beginPath(); ctx.arc(1.8, -1.8, 1.4, 0, TAU); ctx.fill();
+      ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.arc(sx * 3.8, 0.6, 2.2, 0, TAU); ctx.fill();
     } else {
       ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.arc(0, 0, 5.6, 0, TAU); ctx.fill();
       ctx.fillStyle = "#FFF"; ctx.beginPath(); ctx.arc(1.8, -1.8, 1.6, 0, TAU); ctx.fill();
+      ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.arc(lookX * 2.4, lookY * 2.4, 1.9, 0, TAU); ctx.fill();
     }
     ctx.restore();
   }
-  // brows: the film's only emotional instrument, so they are separate shapes
+  // brows: the film's only emotional instrument, so they are separate shapes.
+  // `browTilt` raises the inner ends (worried) or drops them (angry).
   ctx.strokeStyle = C.rgba(PAL.ink, 0.75); ctx.lineWidth = 1.7;
-  const browLift = f.browLift || 0;
-  ctx.beginPath(); ctx.moveTo(-23, ey - 17 - browLift); ctx.quadraticCurveTo(-15, ey - 21 - browLift, -7, ey - 17 - browLift); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(7, ey - 17 - browLift); ctx.quadraticCurveTo(15, ey - 21 - browLift, 23, ey - 17 - browLift); ctx.stroke();
+  const browLift = f.browLift ?? (typeof f.brow === "number" ? f.brow * 4 : 0);
+  const browTilt = f.browTilt || 0;
+  ctx.beginPath();
+  ctx.moveTo(-23, ey - 17 - browLift);
+  ctx.quadraticCurveTo(-15, ey - 21 - browLift, -7, ey - 17 - browLift - browTilt);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(7, ey - 17 - browLift - browTilt);
+  ctx.quadraticCurveTo(15, ey - 21 - browLift, 23, ey - 17 - browLift);
+  ctx.stroke();
   ctx.strokeStyle = C.rgba(PAL.ink, 0.3); ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(0, 7); ctx.lineTo(2, 13); ctx.stroke();
-  const m = f.mouth || "flat";
+  if (f.tear) {
+    ctx.fillStyle = C.rgba("#7DB7D9", 0.9);
+    ctx.beginPath();
+    ctx.moveTo(-20, 8);
+    ctx.quadraticCurveTo(-24, 16, -20, 20);
+    ctx.quadraticCurveTo(-16, 16, -20, 8);
+    ctx.fill();
+  }
+  const m = f.mouth || (f.open > 1.3 ? "o" : typeof f.brow === "number" && f.brow > 0.25 ? "smile" : "flat");
   ctx.save();
   ctx.translate(0, 27);
   if (m === "o") {
     ctx.fillStyle = "#8E2430"; ctx.beginPath(); ctx.ellipse(0, 0, 3.8, 4.8, 0, 0, TAU); ctx.fill();
+  } else if (m === "O") {
+    ctx.fillStyle = "#6E1822"; ctx.beginPath(); ctx.ellipse(0, 1, 6.2, 8.2, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = "#C94B58"; ctx.beginPath(); ctx.ellipse(0, 4, 3.4, 3.6, 0, 0, TAU); ctx.fill();
   } else if (m === "smile") {
     ctx.fillStyle = "#A62A36";
     ctx.beginPath(); ctx.moveTo(-5.5, -1); ctx.quadraticCurveTo(0, 3, 5.5, -1); ctx.quadraticCurveTo(0, 7, -5.5, -1); ctx.fill();
+  } else if (m === "grin") {
+    ctx.fillStyle = "#6E1822";
+    ctx.beginPath(); ctx.moveTo(-9, -2); ctx.quadraticCurveTo(0, 2, 9, -2); ctx.quadraticCurveTo(0, 9, -9, -2); ctx.fill();
+    ctx.fillStyle = "#FFF7E4"; ctx.fillRect(-7, 0, 14, 2.2);
   } else if (m === "wobble") {
     ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.7;
     ctx.beginPath(); ctx.moveTo(-5.5, 0); ctx.quadraticCurveTo(0, 3.6, 5.5, 0); ctx.stroke();
+  } else if (m === "frown") {
+    ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.7;
+    ctx.beginPath(); ctx.moveTo(-5.5, 2); ctx.quadraticCurveTo(0, -3.4, 5.5, 2); ctx.stroke();
+  } else if (m === "smirk") {
+    ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.7;
+    ctx.beginPath(); ctx.moveTo(-4, 1); ctx.quadraticCurveTo(2, 1.4, 6, -2); ctx.stroke();
+  } else if (m === "grit") {
+    ctx.fillStyle = "#FFF7E4"; ctx.fillRect(-7, -2, 14, 4.6);
+    ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.2; ctx.strokeRect(-7, -2, 14, 4.6);
+    ctx.beginPath(); ctx.moveTo(-2.3, -2); ctx.lineTo(-2.3, 2.6); ctx.moveTo(2.3, -2); ctx.lineTo(2.3, 2.6); ctx.stroke();
   } else {
     ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.7;
     ctx.beginPath(); ctx.moveTo(-5, 0); ctx.lineTo(5, 0); ctx.stroke();
@@ -317,7 +366,10 @@ function officeFigure(ctx, x, y, s, o = {}) {
   drawArm(1, armR, false);
 
   function drawArm(side, ang, far) {
-    const sx = side * (boss ? 40 : 38);
+    // The far arm hangs behind the torso. At ±38 it was almost entirely hidden
+    // by the 36-wide shirt, so the figure read as one-armed from the left. Move
+    // it five units out: it is still behind, but its sleeve has a silhouette.
+    const sx = side * (boss ? 40 : 38) + (side < 0 ? -5 : 0);
     const sy = SHOULDER + 4;
     const sleeveCol = jacket ? (far ? C.shade(jacket, -14) : jacket) : (far ? C.shade(shirt, -14) : shirt);
     const armEdge = jacket ? rim : C.rgba(PAL.ink, 0.5);

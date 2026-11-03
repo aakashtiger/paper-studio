@@ -38,7 +38,7 @@ no `assets:new`: a person had to copy ids and hashes by hand.
 - `assets:check`: **40 assets, no warnings**, every asset has a file, a name, a
   licence and (for a prop) a size.
 - `test/asset-catalog.test.ts` (7) fixes the coverage, the derivation, the
-  validity of the six refs, and the new size rule. **460 tests**, typecheck
+  validity of the six refs, and the new size rule. **462 tests**, typecheck
   clean.
 
 ## What this does not do

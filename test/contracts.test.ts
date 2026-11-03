@@ -93,8 +93,29 @@ test("duplicate poses fail resolution", () => {
   assert.ok(errors.some((issue) => issue.code === "pose_duplicate"));
 });
 
-test("a plank arm and a hand smaller than its thumb are refused", () => {
-  const body = {
+test("two poses with the same body are refused even under different names", () => {
+  const copied = {
+    ...nova,
+    poses: nova.poses.map((pose, index) =>
+      index === 1 ? { ...pose, name: "idle-copy", params: nova.poses[0]!.params } : pose,
+    ),
+  };
+  const { errors } = resolvePoseLibrary(copied);
+  assert.ok(errors.some((issue) => issue.code === "pose_duplicate" && issue.message.includes("same body")));
+});
+
+test("two expressions with the same face are refused even under different names", () => {
+  const copied = {
+    ...nova,
+    expressions: nova.expressions.map((expression, index) =>
+      index === 1 ? { ...expression, name: "neutral-copy", params: nova.expressions[0]!.params } : expression,
+    ),
+  };
+  const { errors } = resolvePoseLibrary(copied);
+  assert.ok(errors.some((issue) => issue.code === "expression_duplicate" && issue.message.includes("same face")));
+});
+
+test("a plank arm and a hand smaller than its thumb are refused", () => {  const body = {
     arm: { upper: 104, fore: 88, minElbow: 0.02 },
     hand: { w: 22, h: 32, thumbW: 7.6, thumbH: 11.2 },
   };

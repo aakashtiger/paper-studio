@@ -1,6 +1,13 @@
 import { z } from "zod";
 
-const ParamSchema = z.union([z.number().finite(), z.array(z.number().finite())]);
+const ParamSchema = z.union([
+  z.number().finite(),
+  z.array(z.number().finite()),
+  // Expression vocabulary names a shape directly (`eyes: "half"`, `mouth:
+  // "grin"`, `tear: true`), not only a number. A pose still uses numbers.
+  z.string().min(1),
+  z.boolean(),
+]);
 
 export const PoseSchema = z.object({
   name: z.string().min(1),
@@ -53,27 +60,57 @@ export const PoseLibrarySchema = z.object({
 export type PoseLibrary = z.infer<typeof PoseLibrarySchema>;
 export type PoseIssue = { code: string; message: string };
 
-export function resolvePoseLibrary(library: PoseLibrary): { errors: PoseIssue[]; warnings: PoseIssue[] } {
-  const errors: PoseIssue[] = [];
+/** A stable signature for a pose or expression body, so duplicates cannot hide behind key order. */
+function paramsSignature(params: Record<string, unknown>): string {
+  return JSON.stringify(
+    Object.keys(params)
+      .sort()
+      .map((key) => [key, params[key]]),
+  );
+}
+
+export function resolvePoseLibrary(library: PoseLibrary): { errors: PoseIssue[]; warnings: PoseIssue[] } {  const errors: PoseIssue[] = [];
   const warnings: PoseIssue[] = [];
 
   const poseNames = new Set<string>();
+  const poseSignatures = new Map<string, string>();
   for (const pose of library.poses) {
     if (poseNames.has(pose.name)) {
       errors.push({ code: "pose_duplicate", message: `pose "${pose.name}" is duplicated` });
     }
     poseNames.add(pose.name);
+    const signature = paramsSignature(pose.params);
+    const same = poseSignatures.get(signature);
+    if (same) {
+      errors.push({
+        code: "pose_duplicate",
+        message: `poses "${same}" and "${pose.name}" have the same body — every pose must be a different silhouette`,
+      });
+    } else {
+      poseSignatures.set(signature, pose.name);
+    }
     if (Object.keys(pose.params).length === 0) {
       errors.push({ code: "pose_empty", message: `pose "${pose.name}" has no parameters` });
     }
   }
 
   const expressionNames = new Set<string>();
+  const expressionSignatures = new Map<string, string>();
   for (const expression of library.expressions) {
     if (expressionNames.has(expression.name)) {
       errors.push({ code: "expression_duplicate", message: `expression "${expression.name}" is duplicated` });
     }
     expressionNames.add(expression.name);
+    const signature = paramsSignature(expression.params);
+    const same = expressionSignatures.get(signature);
+    if (same) {
+      errors.push({
+        code: "expression_duplicate",
+        message: `expressions "${same}" and "${expression.name}" draw the same face — every expression must be different`,
+      });
+    } else {
+      expressionSignatures.set(signature, expression.name);
+    }
   }
 
   if (library.anchors.length === 0) {

@@ -37,7 +37,7 @@ and nothing asked what the film had been written to say.
   the row's own message is the three missing documents.
 - `test/manifest.test.ts` now requires the three paths in `renderInputs` even
   when the files are absent (recorded `null`).
-- **460 tests**, typecheck clean.
+- **462 tests**, typecheck clean.
 
 ## What this does not do
 

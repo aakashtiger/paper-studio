@@ -37,24 +37,24 @@
       "params": {
         "bounce": 0,
         "sway": 0,
-        "lean": -0.02,
-        "headTilt": 0.02,
+        "lean": 0.01,
+        "headTilt": 0,
         "headTurn": 0.02,
-        "hairSwing": 1,
+        "hairSwing": 0,
         "armL": [
-          -0.06,
-          -0.05
+          -0.08,
+          -0.06
         ],
         "armR": [
-          0.06,
-          0.05
+          0.08,
+          0.06
         ],
         "footL": [
-          -30,
+          -18,
           -8
         ],
         "footR": [
-          31,
+          18,
           -8
         ],
         "legL": [
@@ -70,62 +70,53 @@
     {
       "name": "enter",
       "params": {
-        "bounce": -2,
-        "sway": 5,
-        "lean": 0.05,
-        "headTilt": -0.02,
-        "headTurn": -0.06,
-        "hairSwing": 2,
+        "bounce": 1,
+        "sway": 0.03,
+        "lean": 0.06,
+        "headTilt": -0.04,
+        "headTurn": -0.18,
+        "hairSwing": 1,
         "armL": [
-          -0.4,
-          0.15
+          0.45,
+          0.22
         ],
         "armR": [
-          0.4,
-          -0.15
+          -0.4,
+          -0.2
         ],
-        "footL": [
-          -38,
-          -14
-        ],
-        "footR": [
-          44,
-          -30
-        ],
-        "footPitchR": -0.2,
         "legL": [
-          0.03,
-          0.01
+          -0.18,
+          0.1
         ],
         "legR": [
-          -0.03,
-          -0.01
+          0.18,
+          -0.1
         ]
       }
     },
     {
       "name": "point",
       "params": {
-        "bounce": -3,
-        "sway": 4,
-        "lean": 0.06,
-        "headTilt": 0.05,
-        "headTurn": 0.1,
-        "hairSwing": 3,
+        "bounce": 0,
+        "sway": -0.02,
+        "lean": 0.05,
+        "headTilt": 0.08,
+        "headTurn": 0.12,
+        "hairSwing": -1,
         "armL": [
-          -0.08,
-          -0.04
-        ],
-        "armR": [
-          1.45,
+          0.08,
           0.1
         ],
+        "armR": [
+          1.5,
+          0.12
+        ],
         "footL": [
-          -30,
+          -18,
           -8
         ],
         "footR": [
-          31,
+          20,
           -8
         ],
         "legL": [
@@ -141,34 +132,34 @@
     {
       "name": "turn",
       "params": {
-        "bounce": -3,
-        "sway": -7,
-        "lean": -0.06,
-        "headTilt": 0.04,
-        "headTurn": 0.3,
+        "bounce": 0,
+        "sway": 0.05,
+        "lean": 0.04,
+        "headTilt": -0.06,
+        "headTurn": -0.55,
         "hairSwing": 3,
         "armL": [
-          -0.05,
-          -0.05
+          0.3,
+          0.5
         ],
         "armR": [
-          0.05,
-          0.05
+          -0.2,
+          -0.4
         ],
         "footL": [
-          -30,
+          -20,
           -8
         ],
         "footR": [
-          36,
+          18,
           -8
         ],
         "legL": [
-          0.03,
+          0.04,
           0.01
         ],
         "legR": [
-          -0.03,
+          -0.04,
           -0.01
         ]
       }
@@ -177,25 +168,25 @@
       "name": "crossed",
       "params": {
         "bounce": 0,
-        "sway": -3,
-        "lean": 0,
-        "headTilt": -0.06,
+        "sway": 0,
+        "lean": 0.02,
+        "headTilt": 0.05,
         "headTurn": 0,
-        "hairSwing": -2,
+        "hairSwing": 0,
         "armL": [
-          0.3,
-          1.5
+          0.35,
+          1.45
         ],
         "armR": [
-          -0.42,
-          -1.35
+          -0.4,
+          -1.3
         ],
         "footL": [
-          -30,
+          -18,
           -8
         ],
         "footR": [
-          31,
+          18,
           -8
         ],
         "legL": [
@@ -211,34 +202,34 @@
     {
       "name": "nod",
       "params": {
-        "bounce": -2,
+        "bounce": 0,
         "sway": 0,
-        "lean": 0.06,
-        "headTilt": 0.24,
-        "headTurn": 0.02,
+        "lean": 0.03,
+        "headTilt": 0.32,
+        "headTurn": 0.04,
         "hairSwing": 1,
         "armL": [
-          -0.06,
-          -0.05
+          0.2,
+          0.35
         ],
         "armR": [
-          0.06,
-          0.05
+          -0.15,
+          -0.3
         ],
         "footL": [
-          -30,
+          -18,
           -8
         ],
         "footR": [
-          31,
+          18,
           -8
         ],
         "legL": [
-          0.03,
+          0.02,
           0.01
         ],
         "legR": [
-          -0.03,
+          -0.02,
           -0.01
         ]
       }
@@ -246,62 +237,53 @@
     {
       "name": "leave",
       "params": {
-        "bounce": -2,
-        "sway": -5,
-        "lean": -0.05,
+        "bounce": 1,
+        "sway": -0.03,
+        "lean": 0.07,
         "headTilt": 0.02,
-        "headTurn": -0.08,
+        "headTurn": 0.3,
         "hairSwing": -2,
         "armL": [
-          -0.36,
-          0.14
+          0.4,
+          0.2
         ],
         "armR": [
-          0.36,
-          -0.14
+          -0.45,
+          -0.22
         ],
-        "footL": [
-          -38,
-          -30
-        ],
-        "footR": [
-          40,
-          -14
-        ],
-        "footPitchL": -0.2,
         "legL": [
-          0.03,
-          0.01
+          -0.16,
+          0.08
         ],
         "legR": [
-          -0.03,
-          -0.01
+          0.16,
+          -0.08
         ]
       }
     },
     {
       "name": "listen",
       "params": {
-        "bounce": -1,
-        "sway": 4,
-        "lean": 0.04,
-        "headTilt": 0.1,
-        "headTurn": 0.26,
+        "bounce": 0,
+        "sway": 0.02,
+        "lean": 0.02,
+        "headTilt": 0.42,
+        "headTurn": -0.2,
         "hairSwing": 2,
         "armL": [
-          -0.28,
-          -0.5
+          0.1,
+          0.12
         ],
         "armR": [
-          0.28,
-          0.5
+          2.35,
+          -1.15
         ],
         "footL": [
-          -30,
+          -18,
           -8
         ],
         "footR": [
-          31,
+          18,
           -8
         ],
         "legL": [
@@ -319,38 +301,49 @@
     {
       "name": "neutral",
       "params": {
-        "open": 0.8,
+        "open": 0.85,
         "brow": 0,
         "lookX": 0,
-        "lookY": 0
-      }
-    },
-    {
-      "name": "flat",
-      "params": {
-        "open": 0.7,
-        "brow": -0.1,
-        "lookX": 0,
-        "lookY": 0.05
-      }
-    },
-    {
-      "name": "stern",
-      "params": {
-        "open": 0.85,
-        "brow": 0.3,
-        "lookX": -0.1,
-        "lookY": 0
-      }
-    },
-    {
-      "name": "smile",
-      "params": {
-        "open": 0.9,
-        "brow": 0.15,
-        "lookX": 0.1,
         "lookY": 0,
-        "smile": 0.5
+        "eyes": "dot",
+        "mouth": "flat",
+        "browLift": 0
+      }
+    },
+    {
+      "name": "tired",
+      "params": {
+        "open": 0.55,
+        "brow": 0.05,
+        "lookX": 0,
+        "lookY": 0.1,
+        "eyes": "closed",
+        "mouth": "flat",
+        "browLift": 0.2
+      }
+    },
+    {
+      "name": "alarm",
+      "params": {
+        "open": 1.3,
+        "brow": 0.9,
+        "lookX": 0,
+        "lookY": 0,
+        "eyes": "wide",
+        "mouth": "o",
+        "browLift": 3
+      }
+    },
+    {
+      "name": "blank",
+      "params": {
+        "open": 0.75,
+        "brow": -0.05,
+        "lookX": 0.2,
+        "lookY": 0.05,
+        "eyes": "blank",
+        "mouth": "flat",
+        "browLift": 0
       }
     },
     {
@@ -359,7 +352,10 @@
         "open": 0.4,
         "brow": 0.5,
         "lookX": 0,
-        "lookY": 0.1
+        "lookY": 0.1,
+        "eyes": "happy",
+        "mouth": "grin",
+        "browLift": 2
       }
     },
     {
@@ -368,7 +364,12 @@
         "open": 0.45,
         "brow": -0.4,
         "lookX": 0,
-        "lookY": -0.2
+        "lookY": -0.2,
+        "eyes": "closed",
+        "mouth": "wobble",
+        "browLift": -2,
+        "browTilt": 1.2,
+        "tear": true
       }
     },
     {
@@ -377,7 +378,11 @@
         "open": 0.9,
         "brow": -0.8,
         "lookX": 0,
-        "lookY": 0
+        "lookY": 0,
+        "eyes": "squint",
+        "mouth": "frown",
+        "browLift": -1.8,
+        "browTilt": -2.4
       }
     },
     {
@@ -386,7 +391,10 @@
         "open": 1.5,
         "brow": 1.2,
         "lookX": 0,
-        "lookY": 0
+        "lookY": 0,
+        "eyes": "wide",
+        "mouth": "O",
+        "browLift": 4.5
       }
     },
     {
@@ -395,7 +403,11 @@
         "open": 0.5,
         "brow": -0.35,
         "lookX": 0,
-        "lookY": -0.3
+        "lookY": -0.2,
+        "eyes": "half",
+        "mouth": "frown",
+        "browLift": -0.2,
+        "browTilt": 1.8
       }
     },
     {
@@ -403,8 +415,12 @@
       "params": {
         "open": 0.8,
         "brow": -0.25,
-        "lookX": 0.4,
-        "lookY": 0
+        "lookX": 0.6,
+        "lookY": 0,
+        "eyes": "glance",
+        "mouth": "smirk",
+        "browLift": -0.8,
+        "browTilt": -1.2
       }
     },
     {
@@ -413,7 +429,10 @@
         "open": 0.65,
         "brow": 0.2,
         "lookX": 0,
-        "lookY": 0.1
+        "lookY": 0.1,
+        "eyes": "happy",
+        "mouth": "smile",
+        "browLift": 1.4
       }
     },
     {
@@ -421,8 +440,12 @@
       "params": {
         "open": 1,
         "brow": 0.35,
-        "lookX": -0.3,
-        "lookY": 0
+        "lookX": -0.5,
+        "lookY": 0,
+        "eyes": "dot",
+        "mouth": "wobble",
+        "browLift": 1.2,
+        "browTilt": 0.8
       }
     },
     {
@@ -431,16 +454,23 @@
         "open": 0.75,
         "brow": -0.3,
         "lookX": 0,
-        "lookY": 0.1
+        "lookY": 0.1,
+        "eyes": "squint",
+        "mouth": "grit",
+        "browLift": -1.2,
+        "browTilt": -1.4
       }
     },
     {
       "name": "bored",
       "params": {
         "open": 0.45,
-        "brow": -0.1,
-        "lookX": 0.2,
-        "lookY": 0.15
+        "brow": 0,
+        "lookX": 0.6,
+        "lookY": 0.2,
+        "eyes": "half",
+        "mouth": "flat",
+        "browLift": 0.6
       }
     }
   ]

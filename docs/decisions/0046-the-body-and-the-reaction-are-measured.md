@@ -49,7 +49,7 @@ that line".
   **−3.0 frames**, `reaction:early`, exit 1.
 - `test/frame-audit-split.test.ts` adds three pop cases: a one-frame flash is a
   pop, a cut to a new exposure is not, a jump under 40 luma is not.
-- **460 tests**, typecheck clean.
+- **462 tests**, typecheck clean.
 
 ## What this does not do
 

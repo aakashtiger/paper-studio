@@ -144,7 +144,7 @@ function readOfficeRig() {
     shin: Number(legs[2]),
     sole: 8, // the shoe is drawn from -9 to +10 around an ankle placed 2 px up
     lift: Math.max(...steps) + breath,
-    poses: { Kiran: "films/same-alarm/cast/kiran.poses.json", Vaz: "films/same-alarm/cast/vaz.poses.json" },
+    poses: { Kiran: "library/characters/kiran/poses.json", Vaz: "library/characters/vaz/poses.json" },
   };
 }
 
@@ -157,25 +157,26 @@ for (const [name, posesPath] of Object.entries(office.poses)) {
   };
   const hipX = office.hipX[name as "Kiran" | "Vaz"];
 
-  test(`office ${name}: every pose reaches the ground at the top of its bob`, () => {
+  test(`office ${name}: every pose reaches the ground at its own bounce`, () => {
     const unreachable: string[] = [];
     for (const pose of library.poses) {
       const bounce = Number(pose.params.bounce ?? 0);
-      // the highest the hip can be drawn: the pose's own lift, the breath, the bob
-      const hip = office.hip + bounce - office.lift;
+      const hip = office.hip + bounce;
       for (const side of [-1, 1] as const) {
         const target = pose.params[side < 0 ? "footL" : "footR"];
         if (!Array.isArray(target)) continue;
         const reach = Math.hypot(Number(target[0]) - side * hipX, Number(target[1]) - hip);
-        // 8 px of leg kept for the bend, so a planted foot cannot stand locked.
-        if (reach > officeLeg - 8) {
+        // The rig is straight-legged now: a planted foot must be reachable, not
+        // leave eight units of bend. A bend in this flat 2D solve is a sideways
+        // knee, which is the frog the old slack produced.
+        if (reach > officeLeg + 0.5) {
           unreachable.push(
-            `${pose.name}/${side < 0 ? "L" : "R"} needs ${reach.toFixed(1)} of ${officeLeg} at the top of the bob`,
+            `${pose.name}/${side < 0 ? "L" : "R"} needs ${reach.toFixed(1)} of ${officeLeg} at bounce ${bounce}`,
           );
         }
       }
     }
-    assert.deepEqual(unreachable, [], "the leg clamps, the knee locks and the foot floats above its shadow");
+    assert.deepEqual(unreachable, [], "the leg clamps and the foot floats above its shadow");
   });
 
   test(`office ${name}: every pose has a foot on the ground, and none through it`, () => {

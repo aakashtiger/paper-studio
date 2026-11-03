@@ -246,7 +246,7 @@ file with **8 poses and 14 expressions**, a rig, a source, a licence and a
 `sha256`; `library:check` refuses one that is not reusable, `library:add` adds a
 pose once, and `library:use` points a film's cast and asset at it. A pose event
 can name an expression, and the painter maps it to the rig's eyes/brow/mouth.
-**460 tests.**
+**462 tests.**
 
 **The story now speaks first, the camera is a grammar, and assets have names.**
 `voice:story` reads `story.json` + `beats.json`, speaks the lines, listens with
@@ -265,20 +265,21 @@ and a four-shot run; `camera:plan` proposes a varied sequence from the beats
 `assets:list` names 40 built assets in plain English, every prop now has a
 declared size, and `assets:new` derives the **6** recipe assets Same Alarm's
 manifest misses, hashes the file that draws each, and passes `assets:coverage`
-on the copy (0045). `library:sheet` renders Kiran and Vaz with their 8 poses and
-**14 expressions** into `build/library/sheets/`. The library immutability/14-face
-proof and the 7+4 agent workflow are parked; ElevenLabs/other voice providers
-are parked too.
+on the copy (0045). `library:sheet` renders Kiran and Vaz with 8 unique poses
+and **14 unique expressions** into `build/library/sheets/`; both characters now
+stand on straight legs, their left sleeve is visible, and the 14 faces are 14
+shapes (0048). Immutable library versions and the 7+4 agent workflow are parked;
+ElevenLabs/other voice providers are parked too.
 
 **The body has a check now (P0.4).** The shared pose libraries publish their arm
 lengths and hand/thumb boxes; `resolvePoseLibrary` refuses a hand narrower or
 shorter than 1.5× its own thumb and a pose whose two elbows are both straight.
 `audit:body` reads the library character for every cast member (Same Alarm:
-Kiran hand 22×32, Vaz 18×26, pass; a 5×6 hand and a 0.000/0.000 elbow fail).
+Kiran and Vaz hand 18×26, pass; a 5×6 hand and a 0.000/0.000 elbow fail).
 `event.word` binds an event to a clock line, and `audit:reaction` requires it to
 land **0–3 frames after the measured word** (12.40 s passes at +0.0, 12.30 s
 fails at −3.0). The frame audit now refuses a one-frame luma pop at a cut. The
-first film must author `word` events; Same Alarm has none. **460 tests.**
+first film must author `word` events; Same Alarm has none. **462 tests.**
 
 **The plan is `docs/PLAN-v2.md`.** It is the end-to-end process in plain English,
 the video checklist, the P0/P1/P2 gap list and a ten-session build order. No new
@@ -293,9 +294,9 @@ per-region (it cannot say where the ink is, which way the light falls, or whethe
 a hand is a plank); its contrast is still `YMAX-YMIN`, its edge density is
 scale-dependent, and it has no pass/fail bands; reference and specimen are paired
 by filename. The camera z is a per-shot scale proxy, not a 3D solve, its grid is
-40 px on a 1920 film, and there is no roll. The library holds 14 expressions and
-a pose event can name one, but the 14 names do not yet draw 14 unique faces;
-props/sets are not in the library. The script
+40 px on a 1920 film, and there is no roll. The library holds 14 expressions,
+each a different face (0048), and 8 poses, each a different body; props and sets
+are not in the library. The script
 is not generated from the idea —
 `film:new` scaffolds and a person (or an LLM they direct) writes; narration is
 still spoken from the score rather than directly from `story.json` (the text is

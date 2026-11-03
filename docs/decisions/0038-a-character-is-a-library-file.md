@@ -58,7 +58,7 @@ rewrites the cast and the character asset, then validates the whole score.
 
 ## Measured
 
-- **460 tests** pass (from 418): the library test adds 5 cases — a legal library,
+- **462 tests** pass (from 418): the library test adds 5 cases — a legal library,
   a four-expression character refused, a duplicate id refused, a new pose
   appended and re-validated, an expression appended without touching the poses.
   The camera tests add 4 more (see 0039).

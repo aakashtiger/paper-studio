@@ -1392,6 +1392,18 @@ function faceFromExpression(name, expression) {
   const p = entry.params || {};
   const open = typeof p.open === "number" ? p.open : 0.85;
   const brow = typeof p.brow === "number" ? p.brow : 0;
+  // An explicit `eyes`/`mouth` is the library's newer vocabulary: 14 names can
+  // be 14 shapes. The fallback keeps an older three-number expression legal.
+  if (typeof p.eyes === "string" || typeof p.mouth === "string") {
+    return {
+      eyes: typeof p.eyes === "string" ? p.eyes : open > 1.12 ? "wide" : open < 0.62 ? "closed" : "dot",
+      mouth: typeof p.mouth === "string" ? p.mouth : open > 1.3 ? "o" : brow > 0.25 ? "smile" : "flat",
+      browLift: typeof p.browLift === "number" ? p.browLift : brow * 4,
+      browTilt: typeof p.browTilt === "number" ? p.browTilt : 0,
+      look: [typeof p.lookX === "number" ? p.lookX : 0, typeof p.lookY === "number" ? p.lookY : 0],
+      tear: p.tear === true,
+    };
+  }
   return {
     eyes: open > 1.12 ? "wide" : open < 0.62 ? "closed" : "dot",
     browLift: brow * 4,
