@@ -7,6 +7,7 @@ import {
   LibraryIndexSchema,
   addToLibrary,
   resolveLibrary,
+  sha256File,
   type LibraryIndex,
 } from "../src/engine/library.js";
 
@@ -112,6 +113,37 @@ test("an expression is appended without touching the poses", () => {
     const after = result.doc as { poses: unknown[]; expressions: unknown[] };
     assert.equal(after.poses.length, 8);
     assert.equal(after.expressions.length, 15);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("a pinned hash catches a changed pose file", () => {
+  const { dir, index } = tempLibrary("library/characters/kiran/poses.json");
+  try {
+    const pinned = {
+      ...index,
+      characters: [{ ...index.characters[0]!, hash: sha256File(join(dir, "poses.json")) }],
+    };
+    assert.deepEqual(resolveLibrary(pinned, { root: dir }).errors, []);
+    const doc = JSON.parse(readFileSync(join(dir, "poses.json"), "utf8")) as { poses: { params: Record<string, unknown> }[] };
+    doc.poses[0]!.params.armL = [0.11, 0.09];
+    writeFileSync(join(dir, "poses.json"), `${JSON.stringify(doc, null, 2)}\n`);
+    const changed = resolveLibrary(pinned, { root: dir });
+    assert.ok(changed.errors.some((error) => error.code === "library:hash"));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("character ids are compared case-insensitively", () => {
+  const { dir, index } = tempLibrary("library/characters/kiran/poses.json");
+  try {
+    const doubled = LibraryIndexSchema.parse({
+      ...index,
+      characters: [index.characters[0], { ...index.characters[0], id: index.characters[0]!.id.toUpperCase() }],
+    });
+    assert.ok(resolveLibrary(doubled, { root: dir }).errors.some((error) => error.code === "library:id"));
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

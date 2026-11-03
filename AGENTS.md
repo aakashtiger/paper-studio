@@ -217,14 +217,16 @@ declares its bands and the tool measures the gap.
 **The camera is x/y/z, and a character is a library file.** `style:measure
 --camera` tracks the camera on a 48-wide luma grid — `dx`, `dy` and `dz` per shot,
 plus a per-frame path and the share of shots that move or zoom. On *Same Alarm*
-it reads **|dx| 16 px/shot, |dy| 0 px/shot, dz 4.5%/shot, moving 20%**, and it
-matches the score: shot 7 `dz +20%`, shot 8 `−3%`, shot 9 `+6%`, shot 10 `+9%`.
-The shared library (`library/characters/`) makes a character a versioned pose
+it reads **|dx| 16 px/shot, |dy| 0 px/shot, dz 4.5%/shot, moving 20%**, and its
+**z** moves match the score: shot 7 `+20%`, shot 8 `−3%`, shot 9 `+6%`, shot 10
+`+9%`. Shot 2's `dx −120` is the corridor scroll, not a camera move, and it
+dominates the `|dx|` average; the report keeps the per-shot rows so that is
+visible. The shared library (`library/characters/`) makes a character a versioned pose
 file with **8 poses and 14 expressions**, a rig, a source, a licence and a
 `sha256`; `library:check` refuses one that is not reusable, `library:add` adds a
 pose once, and `library:use` points a film's cast and asset at it. A pose event
 can name an expression, and the painter maps it to the rig's eyes/brow/mouth.
-**427 tests.**
+**429 tests.**
 
 **The plan is `docs/PLAN-v2.md`.** It is the end-to-end process in plain English,
 the video checklist, the P0/P1/P2 gap list and a ten-session build order. No new

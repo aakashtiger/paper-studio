@@ -57,13 +57,16 @@ Two guards:
 camera |dx| 16 px/shot · |dy| 0 px/shot · dz 4.5 %/shot · moving 20%
 ```
 
-Per shot, the moves match the score: shot 2 `dx −120`, shot 7 `dz +20%`
-(the score asks for 1.00→1.20), shot 8 `dz −3%` (1.04→1.00), shot 9 `dz +6%`
-(1.00→1.06), shot 10 `dz +9%`. The signed mean of x is 0 because a left move and
-a right move cancel; the report therefore prints **mean absolute** translation
-for x/y and the signed mean for z.
+Per shot, the **z** moves match the score: shot 7 `dz +20%` (the score asks for
+1.00→1.20), shot 8 `dz −3%` (1.04→1.00), shot 9 `dz +6%` (1.00→1.06), shot 10
+`dz +9%` (1.00→1.10; the grid is 1%, so 9 is within one point). Shot 2's
+`dx −120` is **the corridor scroll**, and the score declares no camera move on
+that shot, so it is not evidence of a camera pan — it is the largest single
+translation in the film and it dominates the `|dx| 16 px/shot` headline. The
+signed mean of x is 0 because a left move and a right move cancel; the report
+therefore prints **mean absolute** translation for x/y and the signed mean for z.
 
-**427 tests** pass (from 418): four camera cases — a known 2 px / 1 px shift is
+**429 tests** pass (from 418): four camera cases — a known 2 px / 1 px shift is
 found in x and y and reported as content movement; identical frames are still; a
 known **10% push** is measured as a push and not absorbed by translation; a cut
 frame is not a camera move. Typecheck clean, `films/` untouched.

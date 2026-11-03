@@ -55,10 +55,37 @@ once and reused; it is not rebuilt in every film.
 - **The renderer is not a library.** A downloaded 3D model or a photo is a
   `sprite` asset with a licence and a source, not a character in this folder.
 
+## Using a character
+
+```bash
+npm run library:use -- --score films/<id>/score.json --character kiran --apply
+npm run embed -- films/<id>/score.json
+```
+
+The first command rewrites the film's `cast[].poses` and its character asset to
+the library path, with the pinned version and hash, and validates the score. The
+second regenerates the page data, which is now stale.
+
+A pose event may also name an expression:
+
+```json
+{ "t": 1.2, "kind": "pose", "who": "Kiran", "pose": "look", "expression": "tired" }
+```
+
+The painter maps the library's `open/brow/look` to the rig's
+`eyes/browLift/look/mouth`. The 14 names produce about **6–8 distinct faces**,
+not 14; a richer face (separate mouth shapes, brows, eye shapes per name) is a
+pack upgrade, not a library one. The character sheet uses the same mapping, so
+the 14 cards are not identical.
+
 ## What still has to be built
 
-The library holds the data; the film painter must **use** it. Today a shot can
-name a pose (`direction.events[].pose`), but not an expression. The next step is
-`direction.events[].expression`, passed through `drawCharacter` to the rig. Until
-then the expressions are drawn on the character sheet and the pose file, and the
-library check keeps them legal.
+- **Immutable versions.** Adding a pose edits the same file and bumps the patch;
+  a film that already points at it keeps its own copy, but a film that pins a
+  hash must be re-pointed. Per-version files (`kiran/1.0.0.json`) are next.
+- **Props and sets** in the library.
+- **14 unique faces**, not 6–8.
+- **`assets:new --score`** to derive the manifest from the shots, with prop sizes
+  and a hash for every path.
+
+The library check keeps the data legal until then.

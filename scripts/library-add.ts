@@ -24,14 +24,16 @@ const character = arg("character");
 const kind = arg("kind");
 const from = arg("from");
 const indexFile = arg("index") ?? "library/characters/index.json";
+const dry = args.includes("--dry-run");
 if (!character || (kind !== "pose" && kind !== "expression") || !from) {
-  console.error("usage: npm run library:add -- --character <id> --kind pose|expression --from <file.json> [--index <file>]");
+  console.error("usage: npm run library:add -- --character <id> --kind pose|expression --from <file.json> [--index <file>] [--dry-run]");
   process.exit(2);
 }
 
 const root = process.cwd();
-const index = LibraryIndexSchema.parse(JSON.parse(readFileSync(resolve(root, indexFile), "utf8")));
-const value = JSON.parse(readFileSync(resolve(root, from), "utf8"));
+const readJson = (path: string) => JSON.parse(readFileSync(path, "utf8").replace(/^\uFEFF/, ""));
+const index = LibraryIndexSchema.parse(readJson(resolve(root, indexFile)));
+const value = readJson(resolve(root, from));
 const result = addToLibrary({ index, root, character, kind, value });
 const entry = index.characters.find(
   (item) => item.id.toLowerCase() === character.toLowerCase() || item.name.toLowerCase() === character.toLowerCase(),
@@ -50,7 +52,9 @@ const tempRel = `${entry.poses}.tmp`;
 writeFileSync(tempPath, `${JSON.stringify(result.doc, null, 2)}\n`, "utf8");
 const tempIndex = {
   ...index,
-  characters: index.characters.map((item) => (item.id === entry.id ? { ...item, poses: tempRel } : item)),
+  characters: index.characters.map((item) =>
+    item.id === entry.id ? { ...item, poses: tempRel, hash: sha256File(tempPath) } : item,
+  ),
 };
 const report = resolveLibrary(tempIndex, { root });
 if (report.errors.length > 0) {
@@ -58,6 +62,12 @@ if (report.errors.length > 0) {
   for (const error of report.errors) console.error(`FAIL ${error.code}: ${error.message}`);
   console.error("library:add: refused; the library was not changed");
   process.exit(1);
+}
+for (const warning of report.warnings) console.warn(`warn ${warning.code}: ${warning.message}`);
+if (dry) {
+  rmSync(tempPath, { force: true });
+  console.log(`library:add: dry run — ${entry.id} would gain one ${kind}; the library was not changed`);
+  process.exit(0);
 }
 
 renameSync(tempPath, finalPath);

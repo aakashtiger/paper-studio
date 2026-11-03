@@ -316,8 +316,8 @@ export function summarizeCamera(
     source: options.source ?? "",
     resolutionPx: options.resolutionPx ?? 0,
     samples: path.length,
-    dx: summarize((useMoves ? moves.map((move) => move.dx) : path.map((sample) => sample.dx))),
-    dy: summarize((useMoves ? moves.map((move) => move.dy) : path.map((sample) => sample.dy))),
+    dx: summarize((useMoves ? moves.map((move) => Math.abs(move.dx)) : path.map((sample) => Math.abs(sample.dx)))),
+    dy: summarize((useMoves ? moves.map((move) => Math.abs(move.dy)) : path.map((sample) => Math.abs(sample.dy)))),
     dz: summarize((useMoves ? moves.map((move) => move.dz) : path.map((sample) => sample.dz))),
     speed: summarize((useMoves ? moves.map((move) => move.speed) : path.map((sample) => sample.speed))),
     movingShare: Number((moving / n).toFixed(4)),
@@ -435,6 +435,7 @@ export type CameraReport = {
   /** Full-resolution pixels per grid cell; 48-wide grid on a 1920 film = 40 px. */
   resolutionPx: number;
   samples: number;
+  /** Per-shot summaries when moves exist: x/y mean absolute, z signed. */
   dx: Summary;
   dy: Summary;
   dz: Summary;

@@ -359,7 +359,7 @@ function table(metrics: StyleMetrics): string {
           `| camera |dx| | ${row.cameraDx} px/shot | mean absolute x translation |`,
           `| camera |dy| | ${row.cameraDy} px/shot | mean absolute y translation |`,
           `| camera dz | ${row.cameraDz} %/shot | z zoom; positive = push-in |`,
-          `| camera moving | ${(Number(row.cameraMoving) * 100).toFixed(1)}% | frames with at least 1 px of translation |`,
+          `| camera moving | ${(Number(row.cameraMoving) * 100).toFixed(1)}% | share of shots with at least 1 px/s of translation |`,
         ]
       : []),
     `| shot median | ${row.shotMedian ?? "-"} s | middle shot length |`,

@@ -53,6 +53,13 @@ if (!cast) {
     `the score has no cast member "${entry.name}" — it has ${(raw.cast ?? []).map((member) => member.character).join(", ") || "none"}`,
   );
 }
+// The film's vendor draws with cast[].rig; without it preflight falls back to the
+// library rig and the painter throws at frame 1. Carry it, or refuse a mismatch.
+if (!cast.rig) cast.rig = entry.rig;
+else if (cast.rig !== entry.rig) {
+  console.error(`error: ${cast.character} is rig "${cast.rig}" but the library character is "${entry.rig}"`);
+  process.exit(1);
+}
 
 const poseLibrary = PoseLibrarySchema.parse(JSON.parse(readFileSync(resolve(root, entry.poses), "utf8")));
 const poseReport = resolvePoseLibrary(poseLibrary);
@@ -112,3 +119,4 @@ if (!apply) {
 }
 writeFileSync(scoreFile, `${JSON.stringify(raw, null, 2)}\n`, "utf8");
 console.log(`library:use: wrote ${scorePath}`);
+console.log(`library:use: run \`npm run embed -- ${scorePath}\`; the page data is now stale`);

@@ -142,12 +142,17 @@ test("a known 10% push is measured as a push, not absorbed by translation", () =
     for (let x = 0; x < width; x += 1) previous[y * width + x] = (x * 37 + y * 57) % 255;
   }
   // Sampling a narrower region makes the next frame larger: a push-in.
-  const next = scaleFrame(previous, width, height, 0.9);
+  const next = scaleFrame(previous, width, height, 1 / 1.1);
   const moves = cameraMoves([previous, next], width, height, [{ start: 0, duration: 2 }], 1, { maxShift: 4 });
   assert.equal(moves.length, 1);
-  assert.ok((moves[0]?.dz ?? 0) > 7, `expected a push, got ${moves[0]?.dz}`);
-  assert.ok((moves[0]?.dz ?? 0) < 14, `expected about 10%, got ${moves[0]?.dz}`);
+  assert.ok((moves[0]?.dz ?? 0) > 9, `expected a 10% push, got ${moves[0]?.dz}`);
+  assert.ok((moves[0]?.dz ?? 0) < 11, `expected a 10% push, got ${moves[0]?.dz}`);
   assert.ok(Math.abs(moves[0]?.dx ?? 0) < 8, `push should not become a pan: dx ${moves[0]?.dx}`);
+
+  const pull = scaleFrame(previous, width, height, 1.1);
+  const back = cameraMoves([previous, pull], width, height, [{ start: 0, duration: 2 }], 1, { maxShift: 4 });
+  assert.ok((back[0]?.dz ?? 0) < -7, `expected a pull-back, got ${back[0]?.dz}`);
+  assert.ok((back[0]?.dz ?? 0) > -12, `expected about -9%, got ${back[0]?.dz}`);
 });
 
 test("a cut frame is not a camera move", () => {

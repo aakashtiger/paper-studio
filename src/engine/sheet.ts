@@ -372,7 +372,21 @@ ${options.extra.map((name) => `<script src="${options.vendor}/${name}"></script>
   function expressionCard(x, y, labelText, expr) {
     card(x, y, POSE_W, EXPR_H);
     label(labelText, x + 24, y + 38);
-    const mapped = PACK ? (FACE[expr.name] || FACE.neutral) : (expr.params || {});
+    // A film-local rig reads eyes/browLift/look/mouth, not the library's
+    // open/brow/lookX/lookY. Map it here too, or every expression card draws the
+    // same default face and the sheet proves nothing.
+    const filmFace = (params) => {
+      const p = params || {};
+      const open = typeof p.open === "number" ? p.open : 0.85;
+      const brow = typeof p.brow === "number" ? p.brow : 0;
+      return {
+        eyes: open > 1.12 ? "wide" : open < 0.62 ? "closed" : "dot",
+        browLift: brow * 4,
+        look: [typeof p.lookX === "number" ? p.lookX : 0, typeof p.lookY === "number" ? p.lookY : 0],
+        mouth: open > 1.3 ? "o" : brow > 0.25 ? "smile" : brow < -0.35 ? "wobble" : "flat",
+      };
+    };
+    const mapped = PACK ? (FACE[expr.name] || FACE.neutral) : filmFace(expr.params);
     const headY = KIND === "mira" ? -536 : -604;
     // A film-local rig does not say where its face is, so the face crop is
     // centred on the part it publishes highest on the figure — the head anchor,
