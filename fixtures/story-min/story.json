@@ -12,20 +12,77 @@
     "button": "the alarm goes again, and for the first time he leaves it ringing"
   },
   "pace": {
-    "wpm": [140, 150],
-    "medianShot": [2.5, 3]
+    "wpm": [
+      140,
+      150
+    ],
+    "medianShot": [
+      2.5,
+      3
+    ]
   },
   "narration": [
-    { "id": "v01", "beat": "b01", "text": "Same alarm. Same six. Same ceiling he has stared at for a decade.", "tone": "flat" },
-    { "id": "v02", "beat": "b02", "text": "Same corridor. Same little grey doors, all closed.", "tone": "flat" },
-    { "id": "v03", "beat": "b02", "text": "Nine hours under a light that never changes.", "tone": "flat" },
-    { "id": "v04", "beat": "b03", "text": "Someone always needs it sooner.", "tone": "quick" },
-    { "id": "v05", "beat": "b03", "text": "He says yes. He is good at yes.", "tone": "tired" },
-    { "id": "v06", "beat": "b04", "text": "Then the room empties, and nobody needs anything.", "tone": "quiet" },
-    { "id": "v07", "beat": "b04", "text": "He stays. The light does not.", "tone": "quiet" },
-    { "id": "v08", "beat": "b05", "text": "At six the alarm goes again.", "tone": "flat" },
-    { "id": "v09", "beat": "b05", "text": "This time he does not reach for it.", "tone": "flat" }
+    {
+      "id": "v01",
+      "beat": "b01",
+      "text": "Same alarm. Same six. Same ceiling he has stared at for a decade.",
+      "tone": "flat"
+    },
+    {
+      "id": "v02",
+      "beat": "b02",
+      "text": "Same corridor. Same little grey doors, all closed.",
+      "tone": "flat"
+    },
+    {
+      "id": "v03",
+      "beat": "b02",
+      "text": "Nine hours under a light that never changes.",
+      "tone": "flat"
+    },
+    {
+      "id": "v04",
+      "beat": "b03",
+      "text": "Someone always needs it sooner.",
+      "tone": "quick"
+    },
+    {
+      "id": "v05",
+      "beat": "b03",
+      "text": "He says yes. He is good at yes.",
+      "tone": "tired"
+    },
+    {
+      "id": "v06",
+      "beat": "b04",
+      "text": "Then the room empties, and nobody needs anything.",
+      "tone": "quiet"
+    },
+    {
+      "id": "v07",
+      "beat": "b04",
+      "text": "He stays. The light does not.",
+      "tone": "quiet"
+    },
+    {
+      "id": "v08",
+      "beat": "b05",
+      "text": "At six the alarm goes again.",
+      "tone": "flat"
+    },
+    {
+      "id": "v09",
+      "beat": "b05",
+      "text": "This time he does not reach for it.",
+      "tone": "flat"
+    }
   ],
-  "mustSay": ["same alarm"],
-  "voice": { "provider": "kokoro", "voiceId": "af_heart", "speed": 1.04 }
+  "mustSay": [
+    "same alarm"
+  ],
+  "voice": {
+    "provider": "kokoro",
+    "voiceId": "af_heart",
+    "speed": 0.8
+  }
 }

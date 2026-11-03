@@ -120,6 +120,10 @@ const steps = [
   // four tenths of a second would have said. A check that can refuse a render
   // must run before it.
   { name: "audit", tsx: "scripts/audit.ts", args: [score] },
+  // The camera is part of the style, not an afterthought: every shot moves,
+  // the move has a real delta, and the film varies it (0041). A still frame is
+  // refused before the expensive type/rig/motion probe.
+  { name: "camera", tsx: "scripts/camera-check.ts", args: [score] },
   // The preflight is the same lesson one stage up: it asks the *writing* every
   // question a viewer asked about the last film — median shot length, words a
   // minute, where the voice stops, whether one cue owns the whole thing, whether

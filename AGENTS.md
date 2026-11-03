@@ -58,6 +58,7 @@ npm run film:review -- <score> --gate --reuse             # print audits the cha
 npm run captions -- films/understudy/score.json  # generate transcript + SRT
 npm run voice -- films/understudy/score.json     # capture narration + word times, derive the clock
 npm run voice -- <score> --apply                 # accept the measured read: line starts, shot bounds, captions (0035)
+npm run voice:story -- --story films/<id>/story.json --out films/<id>/narration.json   # speak the story before the score (0040)
 npm run asr -- films/understudy/score.json       # listen to the master; the G7 ASR gate
 npm run board -- films/understudy/score.json     # derive board cards (HTML + manifest)
 npm run storyboard -- films/understudy/score.json   # one code-drawn frame per shot, tiled into one sheet
@@ -98,6 +99,11 @@ npm run style:measure -- --ref <dir|video> [--specimen <dir|video>] [--camera]  
 npm run library:check -- library/characters/index.json   # reusable characters: file, rig, poses, 12+ expressions, licence (0038)
 npm run library:add -- --character <id> --kind pose|expression --from <file.json>   # add one pose/expression once, reuse it
 npm run library:use -- --score <score.json> --character <id> --apply   # point a film's cast and asset at a library character
+npm run camera:check -- <score>                  # every shot moves, varied, correct sign (0041)
+npm run camera:plan -- <score> [--apply]         # propose dynamic moves from the beats
+npm run assets:list                              # the plain-name asset catalogue
+npm run assets:check                             # every asset has a file, a name, a licence; props a size
+npm run assets:coverage -- <score>               # the assets the recipes name vs the film's manifest (0042)
 npm run style:seal
 node --import tsx --test test/watercolor-gate.test.ts   # S1b pilot gate
 node --import tsx --test test/paper-kpop-gate.test.ts   # S1c gate
@@ -121,9 +127,12 @@ decisions changed that, and the pipeline a film now takes is:
 ```
 story.json   the spine, the tone, the narration lines, the pace band       (0025)
 beats.json   what each beat is for, the share it owns, its signature sound (0025)
-   ↓ npm run voice --apply  ~15 s  speak it, measure the words, cut to them  (0035)
+   → npm run voice:story  ~20 s  speak the story, measure the words (0040)
 scenes.json  where it happens, who is in it, what happens, its lines       (0035)
 score.json   the shots, each bound to a scene and a beat, with a reason     (0025)
+   → npm run voice --apply    accept the measured read into the score (0035)
+   → npm run camera:check   ~1 s   every shot moves, and the film varies it (0041)
+   → npm run assets:coverage         every recipe asset is in the manifest (0042)
    ↓ npm run preflight     ~1 s    the writing, the scenes, the read, the cut, the sound
    ↓ npm run inspect       ~1 min  ONE pass: movement, type and rig, probe-only
    ↓ npm run determinism   ~48 s   the same 30 frames, serial and parallel (0032)
@@ -226,15 +235,27 @@ file with **8 poses and 14 expressions**, a rig, a source, a licence and a
 `sha256`; `library:check` refuses one that is not reusable, `library:add` adds a
 pose once, and `library:use` points a film's cast and asset at it. A pose event
 can name an expression, and the painter maps it to the rig's eyes/brow/mouth.
-**429 tests.**
+**440 tests.**
+
+**The story now speaks first, the camera is a grammar, and assets have names.**
+`voice:story` reads `story.json` + `beats.json`, speaks the lines, listens with
+Whisper, and writes `narration.json` **before a score exists**. On the 30 s
+fixture it reads **70 words at 140 wpm, first line 0.08 s, last ends 29.48 s,
+0.69 s longest hole, 69/70 words heard** and passes every pace gate;
+`camera:check` refuses a still shot, a push that pulls, a move with no travel,
+and a four-shot run, while `camera:plan` proposes a varied dynamic sequence from
+the beats (six moves, longest run 1, on the Same Alarm copy);
+`assets:list` names the built assets in plain English (Bedroom, Office chair,
+Phone, Anton) and `assets:coverage` reports the **6 of 11** recipe assets Same
+Alarm's manifest misses. The library immutability/14-face proof and the 7+4 agent
+workflow are parked.
 
 **The plan is `docs/PLAN-v2.md`.** It is the end-to-end process in plain English,
 the video checklist, the P0/P1/P2 gap list and a ten-session build order. No new
-film starts until P0.1–P0.5 and P0.7–P0.9 close: `voice --story` and the song
-clock, the rest of the asset manifest (expression through the painter, prop
-sizes, hashing), per-region/bands measurement, the arm/hand + word-reaction + pop
-checks, the seven-analysis/four-rebuild agent workflow, the bypasses, and the
-sound-contrast gate.
+film starts until P0.1–P0.5 and P0.7–P0.9 close: `voice:story` is built (the
+score fill is next); the rest of the asset manifest (prop sizes, hashing,
+`assets:new`); the arm/hand + word-reaction + pop checks; the seven-analysis /
+four-rebuild agent workflow; the bypasses; and the sound-contrast gate.
 
 **Still open, and named:** the style measurement is global per-frame, not
 per-region (it cannot say where the ink is, which way the light falls, or whether

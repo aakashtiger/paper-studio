@@ -1,0 +1,73 @@
+# 0040 — The voice is spoken from the story, before the score
+
+**Status:** accepted · 4 Nov 2026
+**Owners:** shared (`src/engine/**` contract, `films/**` authored)
+**Depends on:** 0025 (the film is written before it is shot), 0035 (the measured read)
+
+## Context
+
+0025 said narration is generated after the beats and before the scenes and
+shots. The code did the opposite: `voice` read `score.clock.lines`, so the score
+— and the shot list — existed before the read. `voice` could move the score's
+line starts, but it could not speak a film that had no score.
+
+The user asked for the literal order: idea → story → beats → voice → scenes →
+shots. This decision builds the first half of that order.
+
+## Decision
+
+**`npm run voice:story -- --story <story.json>` speaks the story, measures every
+word, and writes `narration.json` before any scene or shot exists.**
+
+It:
+
+1. reads `story.json` and the `beats.json` beside it;
+2. runs `checkStory` first — a story that is not filmable is not spoken;
+3. speaks the story's narration lines with Kokoro (or keeps a pinned read);
+4. listens with Whisper and attaches the heard words to the script's spelling;
+5. derives each line's start and duration from the measured words;
+6. writes `narration.json` with the lines, the word times, the coverage, the
+   wpm, the first line, the longest hole and the last end;
+7. refuses the read if any of these fails:
+   - a line was not spoken (`everyLineSpoken`);
+   - fewer than 90% of the script's words were heard (`everyWordHeard`);
+   - the script is outside the story's wpm band (`wpm`);
+   - the first line starts after 1 s (`firstLine`);
+   - a hole is longer than 2.5 s (`hole`);
+   - speech covers less than 80% of the film (`coverage`);
+   - a line ends after the film (`withinFilm`).
+
+`voice` still exists for a score that already has a clock; `voice:story` is the
+front-door command. The score can be filled from `narration.json` next; that is
+the one link still to build.
+
+## Measured
+
+`fixtures/story-min` — 30 s, 70 words, 5 beats:
+
+```
+voice:story: story-min · 70 words · 140 wpm · speaks 91%
+  first line 0.08s · last ends 29.48s · longest hole 0.69s at 13.08s · 69/70 words heard
+  ok everyLineSpoken · ok everyWordHeard · ok wpm · ok firstLine
+  ok hole · ok coverage · ok withinFilm
+```
+
+The one unheard word is **grey**, heard as **gray** — a spelling variant, not a
+swallowed word; the 0.9 coverage floor is the same one `voice` uses. The read is
+Kokoro `af_heart` at speed **0.80**. At 1.04 the same script read 178 wpm and
+left 6.4 s of silence; at 0.82 it still left 2.69 s; at 0.80 it fits. The
+fixture's `voice.speed` was corrected to 0.80 so the model and the command agree.
+
+**440 tests**, typecheck clean, `films/` untouched.
+
+## What this does not do, and is named
+
+- **It does not fill `score.clock.lines` yet.** `narration.json` is the measured
+  clock; a `voice --from-story` (or `score:clock`) that writes it into the score
+  is the next link.
+- **It speaks TTS only.** A recorded read is supported by `voice`, not yet by
+  `voice:story`.
+- **A song is not a narration.** The same order applies, but a lyric/syllable
+  clock is not built.
+- **The 0.80 speed is a fixture choice, not a style constant.** Another voice
+  will need another speed to hit 140–150 wpm.
