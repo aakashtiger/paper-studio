@@ -1,12 +1,16 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  bestShift,
+  cameraMoves,
+  cameraPath,
   compareMetrics,
   distinctPalette,
   median,
   paletteDistance,
   parseSignalStats,
   percentile,
+  scaleFrame,
   shotLengths,
   summarize,
   type StyleMetrics,
@@ -87,10 +91,70 @@ test("a comparison reports a palette distance, not a signed delta", () => {
     movement: null,
     cuts: null,
     sceneChanges: null,
+    camera: null,
     shots: null,
     palette,
   });
   const delta = compareMetrics(metrics(100, ["#000000"]), metrics(110, ["#ffffff"]));
   assert.equal(delta.luma, 10);
   assert.ok((delta.palette ?? 0) > 0, "palette distance is positive");
+});
+
+test("a known shift is found in x and y, and reported as content movement", () => {
+  const width = 16;
+  const height = 16;
+  const previous = new Uint8Array(width * height);
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) previous[y * width + x] = (x * 17 + y * 29) % 255;
+  }
+  // The next frame is the previous one moved right 2 and down 1.
+  const next = new Uint8Array(width * height);
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const sx = x - 2;
+      const sy = y - 1;
+      if (sx >= 0 && sy >= 0 && sx < width && sy < height) next[y * width + x] = previous[sy * width + sx] as number;
+    }
+  }
+  const shift = bestShift(previous, next, width, height, 4);
+  assert.equal(shift.dx, -2);
+  assert.equal(shift.dy, -1);
+  const path = cameraPath([previous, next], width, height, { maxShift: 4, fullWidth: width * 2, fullHeight: height * 2 });
+  assert.equal(path[0]?.dx, 4);
+  assert.equal(path[0]?.dy, 2);
+  assert.ok((path[0]?.sad ?? 99) < 10, "the aligned difference is small");
+});
+
+test("identical frames are still and have no zoom", () => {
+  const frame = new Uint8Array(16 * 16).fill(120);
+  const path = cameraPath([frame, frame], 16, 16, { maxShift: 2 });
+  assert.equal(path[0]?.dx, 0);
+  assert.equal(path[0]?.dy, 0);
+  assert.equal(path[0]?.dz, 0);
+  assert.equal(path[0]?.speed, 0);
+});
+
+test("a known 10% push is measured as a push, not absorbed by translation", () => {
+  const width = 32;
+  const height = 32;
+  const previous = new Uint8Array(width * height);
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) previous[y * width + x] = (x * 37 + y * 57) % 255;
+  }
+  // Sampling a narrower region makes the next frame larger: a push-in.
+  const next = scaleFrame(previous, width, height, 0.9);
+  const moves = cameraMoves([previous, next], width, height, [{ start: 0, duration: 2 }], 1, { maxShift: 4 });
+  assert.equal(moves.length, 1);
+  assert.ok((moves[0]?.dz ?? 0) > 7, `expected a push, got ${moves[0]?.dz}`);
+  assert.ok((moves[0]?.dz ?? 0) < 14, `expected about 10%, got ${moves[0]?.dz}`);
+  assert.ok(Math.abs(moves[0]?.dx ?? 0) < 8, `push should not become a pan: dx ${moves[0]?.dx}`);
+});
+
+test("a cut frame is not a camera move", () => {
+  const a = new Uint8Array(16 * 16).fill(40);
+  const b = new Uint8Array(16 * 16).fill(200);
+  const c = new Uint8Array(16 * 16).fill(210);
+  const path = cameraPath([a, b, c], 16, 16, { maxShift: 2, skipFrames: new Set([1]) });
+  // Both samples touch frame 1 (the cut), so neither is a camera move.
+  assert.equal(path.length, 0);
 });

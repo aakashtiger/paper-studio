@@ -1368,6 +1368,38 @@ function officeHourTab(text, t) {
  * once inside `drawCharacter`. `extra` is motion the recipe owns (a step bob),
  * added to the scored pose before the hold breathes over it.
  */
+/** The expression the shot is holding at local time `lt`, from the score's events. */
+function expressionNameAt(shot, lt, who) {
+  let found = null;
+  for (const event of (shot.direction && shot.direction.events) || []) {
+    if (event.kind === "pose" && event.expression && event.t <= lt && (!event.who || event.who === who)) {
+      found = event.expression;
+    }
+  }
+  return found;
+}
+
+/**
+ * The library's expression vocabulary is open/brow/lookX/lookY; the office rig
+ * draws eyes/browLift/look/mouth. This is the adapter, so the 14 named
+ * expressions actually reach the face instead of being stored data.
+ */
+function faceFromExpression(name, expression) {
+  if (!expression) return undefined;
+  const library = libFor(name);
+  const entry = library && (library.expressions || []).find((item) => item.name === expression);
+  if (!entry) return undefined;
+  const p = entry.params || {};
+  const open = typeof p.open === "number" ? p.open : 0.85;
+  const brow = typeof p.brow === "number" ? p.brow : 0;
+  return {
+    eyes: open > 1.12 ? "wide" : open < 0.62 ? "closed" : "dot",
+    browLift: brow * 4,
+    look: [typeof p.lookX === "number" ? p.lookX : 0, typeof p.lookY === "number" ? p.lookY : 0],
+    mouth: open > 1.3 ? "o" : brow > 0.25 ? "smile" : brow < -0.35 ? "wobble" : "flat",
+  };
+}
+
 function officeActor(shot, lt, t, name, x, y, scale, entry, flip, extra = {}) {
   const d = shot.duration;
   const keys = scoreKeys(shot, name, d, entry ?? null);
@@ -1376,8 +1408,13 @@ function officeActor(shot, lt, t, name, x, y, scale, entry, flip, extra = {}) {
     pose[key] = typeof value === "function" ? value(pose[key]) : (typeof pose[key] === "number" ? pose[key] + value : value);
   }
   // The pose's name as well as its numbers: the rig chooses a face from the name,
-  // because an open eye cannot be blended into a closed one.
-  drawCharacter(name, x, y, scale, "idle", flip || 1, pose, t, { poseKey: poseNameAt(name, keys, lt) });
+  // because an open eye cannot be blended into a closed one. A named expression
+  // from the score overrides it, through the library's face adapter.
+  const expression = expressionNameAt(shot, lt, name);
+  drawCharacter(name, x, y, scale, "idle", flip || 1, pose, t, {
+    poseKey: poseNameAt(name, keys, lt),
+    face: faceFromExpression(name, expression),
+  });
   return pose;
 }
 

@@ -19,7 +19,12 @@ export const PoseLibrarySchema = z.object({
   /** Palette roles or explicit values; the sheet resolves roles through PAL. */
   colors: z.record(z.string()).default({}),
   poses: z.array(PoseSchema).min(8).max(12),
-  expressions: z.array(ExpressionSchema).min(4).max(8),
+  /**
+   * 4-16 expressions. The shared library carries 14, so a character can be
+   * reused with the same face set; a film-specific library may carry the four
+   * a shot needs. The renderer only uses an expression when a shot names it.
+   */
+  expressions: z.array(ExpressionSchema).min(4).max(16),
 });
 
 export type PoseLibrary = z.infer<typeof PoseLibrarySchema>;

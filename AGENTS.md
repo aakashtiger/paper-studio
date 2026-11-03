@@ -94,7 +94,10 @@ npm run style:check -- <path>
 npm run style:approve -- <id> --by "<name>"
 npm run style:resolve -- --style <path> --seed <n> --brief <file> --format <file>
 npm run style:sheet -- styles/paper-kpop          # derived style sheet into build/
-npm run style:measure -- --ref <dir|video> [--specimen <dir|video>]   # measure a style, then our frames against it (0036)
+npm run style:measure -- --ref <dir|video> [--specimen <dir|video>] [--camera]   # measure a style, then our frames against it; x/y/z camera (0036, 0039)
+npm run library:check -- library/characters/index.json   # reusable characters: file, rig, poses, 12+ expressions, licence (0038)
+npm run library:add -- --character <id> --kind pose|expression --from <file.json>   # add one pose/expression once, reuse it
+npm run library:use -- --score <score.json> --character <id> --apply   # point a film's cast and asset at a library character
 npm run style:seal
 node --import tsx --test test/watercolor-gate.test.ts   # S1b pilot gate
 node --import tsx --test test/paper-kpop-gate.test.ts   # S1c gate
@@ -211,17 +214,34 @@ reference crops, with a palette distance of **64**. That is "ours looked dull" a
 numbers instead of an opinion. It does not pass or fail a style; the style
 declares its bands and the tool measures the gap.
 
+**The camera is x/y/z, and a character is a library file.** `style:measure
+--camera` tracks the camera on a 48-wide luma grid — `dx`, `dy` and `dz` per shot,
+plus a per-frame path and the share of shots that move or zoom. On *Same Alarm*
+it reads **|dx| 16 px/shot, |dy| 0 px/shot, dz 4.5%/shot, moving 20%**, and it
+matches the score: shot 7 `dz +20%`, shot 8 `−3%`, shot 9 `+6%`, shot 10 `+9%`.
+The shared library (`library/characters/`) makes a character a versioned pose
+file with **8 poses and 14 expressions**, a rig, a source, a licence and a
+`sha256`; `library:check` refuses one that is not reusable, `library:add` adds a
+pose once, and `library:use` points a film's cast and asset at it. A pose event
+can name an expression, and the painter maps it to the rig's eyes/brow/mouth.
+**427 tests.**
+
 **The plan is `docs/PLAN-v2.md`.** It is the end-to-end process in plain English,
 the video checklist, the P0/P1/P2 gap list and a ten-session build order. No new
-film starts until P0.1–P0.6 close: `voice --story` and the song clock, a shared
-asset library with expressions and poses, per-region/camera/bands measurement,
-the arm/hand + word-reaction + pop checks, and the seven-analysis/four-rebuild
-agent workflow.
+film starts until P0.1–P0.5 and P0.7–P0.9 close: `voice --story` and the song
+clock, the rest of the asset manifest (expression through the painter, prop
+sizes, hashing), per-region/bands measurement, the arm/hand + word-reaction + pop
+checks, the seven-analysis/four-rebuild agent workflow, the bypasses, and the
+sound-contrast gate.
 
 **Still open, and named:** the style measurement is global per-frame, not
 per-region (it cannot say where the ink is, which way the light falls, or whether
-a hand is a plank); it has no automatic token derivation and no pass/fail bands
-yet; reference and specimen are paired by filename, not by subject. The script
+a hand is a plank); its contrast is still `YMAX-YMIN`, its edge density is
+scale-dependent, and it has no pass/fail bands; reference and specimen are paired
+by filename. The camera z is a per-shot scale proxy, not a 3D solve, its grid is
+40 px on a 1920 film, and there is no roll. The library holds 14 expressions and
+a pose event can name one, but the 14 names do not yet draw 14 unique faces;
+props/sets are not in the library. The script
 is not generated from the idea —
 `film:new` scaffolds and a person (or an LLM they direct) writes; narration is
 still spoken from the score rather than directly from `story.json` (the text is

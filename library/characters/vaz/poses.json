@@ -1,0 +1,434 @@
+{
+  "character": "Vaz",
+  "rig": "supervisor@0.1.0",
+  "anchors": [
+    "face",
+    "hair",
+    "hand-left",
+    "hand-right",
+    "foot-left",
+    "foot-right",
+    "chest",
+    "waist"
+  ],
+  "colors": {
+    "shirt": "cream",
+    "trouser": "ink2",
+    "jacket": "ink",
+    "hair": "ink3",
+    "skin": "#D9A87E"
+  },
+  "poses": [
+    {
+      "name": "idle",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": -0.02,
+        "headTilt": 0.02,
+        "headTurn": 0.02,
+        "hairSwing": 1,
+        "armL": [
+          -0.06,
+          -0.05
+        ],
+        "armR": [
+          0.06,
+          0.05
+        ],
+        "footL": [
+          -30,
+          -8
+        ],
+        "footR": [
+          31,
+          -8
+        ],
+        "legL": [
+          0.03,
+          0.01
+        ],
+        "legR": [
+          -0.03,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "enter",
+      "params": {
+        "bounce": -2,
+        "sway": 5,
+        "lean": 0.05,
+        "headTilt": -0.02,
+        "headTurn": -0.06,
+        "hairSwing": 2,
+        "armL": [
+          -0.4,
+          0.15
+        ],
+        "armR": [
+          0.4,
+          -0.15
+        ],
+        "footL": [
+          -38,
+          -14
+        ],
+        "footR": [
+          44,
+          -30
+        ],
+        "footPitchR": -0.2,
+        "legL": [
+          0.03,
+          0.01
+        ],
+        "legR": [
+          -0.03,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "point",
+      "params": {
+        "bounce": -3,
+        "sway": 4,
+        "lean": 0.06,
+        "headTilt": 0.05,
+        "headTurn": 0.1,
+        "hairSwing": 3,
+        "armL": [
+          -0.08,
+          -0.04
+        ],
+        "armR": [
+          1.45,
+          0.1
+        ],
+        "footL": [
+          -30,
+          -8
+        ],
+        "footR": [
+          31,
+          -8
+        ],
+        "legL": [
+          0.03,
+          0.01
+        ],
+        "legR": [
+          -0.03,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "turn",
+      "params": {
+        "bounce": -3,
+        "sway": -7,
+        "lean": -0.06,
+        "headTilt": 0.04,
+        "headTurn": 0.3,
+        "hairSwing": 3,
+        "armL": [
+          -0.05,
+          -0.05
+        ],
+        "armR": [
+          0.05,
+          0.05
+        ],
+        "footL": [
+          -30,
+          -8
+        ],
+        "footR": [
+          36,
+          -8
+        ],
+        "legL": [
+          0.03,
+          0.01
+        ],
+        "legR": [
+          -0.03,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "crossed",
+      "params": {
+        "bounce": 0,
+        "sway": -3,
+        "lean": 0,
+        "headTilt": -0.06,
+        "headTurn": 0,
+        "hairSwing": -2,
+        "armL": [
+          0.3,
+          1.5
+        ],
+        "armR": [
+          -0.42,
+          -1.35
+        ],
+        "footL": [
+          -30,
+          -8
+        ],
+        "footR": [
+          31,
+          -8
+        ],
+        "legL": [
+          0.03,
+          0.01
+        ],
+        "legR": [
+          -0.03,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "nod",
+      "params": {
+        "bounce": -2,
+        "sway": 0,
+        "lean": 0.06,
+        "headTilt": 0.24,
+        "headTurn": 0.02,
+        "hairSwing": 1,
+        "armL": [
+          -0.06,
+          -0.05
+        ],
+        "armR": [
+          0.06,
+          0.05
+        ],
+        "footL": [
+          -30,
+          -8
+        ],
+        "footR": [
+          31,
+          -8
+        ],
+        "legL": [
+          0.03,
+          0.01
+        ],
+        "legR": [
+          -0.03,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "leave",
+      "params": {
+        "bounce": -2,
+        "sway": -5,
+        "lean": -0.05,
+        "headTilt": 0.02,
+        "headTurn": -0.08,
+        "hairSwing": -2,
+        "armL": [
+          -0.36,
+          0.14
+        ],
+        "armR": [
+          0.36,
+          -0.14
+        ],
+        "footL": [
+          -38,
+          -30
+        ],
+        "footR": [
+          40,
+          -14
+        ],
+        "footPitchL": -0.2,
+        "legL": [
+          0.03,
+          0.01
+        ],
+        "legR": [
+          -0.03,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "listen",
+      "params": {
+        "bounce": -1,
+        "sway": 4,
+        "lean": 0.04,
+        "headTilt": 0.1,
+        "headTurn": 0.26,
+        "hairSwing": 2,
+        "armL": [
+          -0.28,
+          -0.5
+        ],
+        "armR": [
+          0.28,
+          0.5
+        ],
+        "footL": [
+          -30,
+          -8
+        ],
+        "footR": [
+          31,
+          -8
+        ],
+        "legL": [
+          0.03,
+          0.01
+        ],
+        "legR": [
+          -0.03,
+          -0.01
+        ]
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "name": "neutral",
+      "params": {
+        "open": 0.8,
+        "brow": 0,
+        "lookX": 0,
+        "lookY": 0
+      }
+    },
+    {
+      "name": "flat",
+      "params": {
+        "open": 0.7,
+        "brow": -0.1,
+        "lookX": 0,
+        "lookY": 0.05
+      }
+    },
+    {
+      "name": "stern",
+      "params": {
+        "open": 0.85,
+        "brow": 0.3,
+        "lookX": -0.1,
+        "lookY": 0
+      }
+    },
+    {
+      "name": "smile",
+      "params": {
+        "open": 0.9,
+        "brow": 0.15,
+        "lookX": 0.1,
+        "lookY": 0,
+        "smile": 0.5
+      }
+    },
+    {
+      "name": "laugh",
+      "params": {
+        "open": 0.4,
+        "brow": 0.5,
+        "lookX": 0,
+        "lookY": 0.1
+      }
+    },
+    {
+      "name": "cry",
+      "params": {
+        "open": 0.45,
+        "brow": -0.4,
+        "lookX": 0,
+        "lookY": -0.2
+      }
+    },
+    {
+      "name": "angry",
+      "params": {
+        "open": 0.9,
+        "brow": -0.8,
+        "lookX": 0,
+        "lookY": 0
+      }
+    },
+    {
+      "name": "shocked",
+      "params": {
+        "open": 1.5,
+        "brow": 1.2,
+        "lookX": 0,
+        "lookY": 0
+      }
+    },
+    {
+      "name": "sad",
+      "params": {
+        "open": 0.5,
+        "brow": -0.35,
+        "lookX": 0,
+        "lookY": -0.3
+      }
+    },
+    {
+      "name": "suspicious",
+      "params": {
+        "open": 0.8,
+        "brow": -0.25,
+        "lookX": 0.4,
+        "lookY": 0
+      }
+    },
+    {
+      "name": "relieved",
+      "params": {
+        "open": 0.65,
+        "brow": 0.2,
+        "lookX": 0,
+        "lookY": 0.1
+      }
+    },
+    {
+      "name": "confused",
+      "params": {
+        "open": 1,
+        "brow": 0.35,
+        "lookX": -0.3,
+        "lookY": 0
+      }
+    },
+    {
+      "name": "determined",
+      "params": {
+        "open": 0.75,
+        "brow": -0.3,
+        "lookX": 0,
+        "lookY": 0.1
+      }
+    },
+    {
+      "name": "bored",
+      "params": {
+        "open": 0.45,
+        "brow": -0.1,
+        "lookX": 0.2,
+        "lookY": 0.15
+      }
+    }
+  ]
+}

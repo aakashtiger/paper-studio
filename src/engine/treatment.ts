@@ -189,6 +189,8 @@ export const DirectionSchema = z.object({
         /** For `kind: "pose"` — whose performance, and which pose. */
         who: z.string().min(1).optional(),
         pose: z.string().min(1).optional(),
+        /** The named expression from the cast's pose library, e.g. "tired". */
+        expression: z.string().min(1).optional(),
         /** The pose to come *from*, for anticipation into this one. */
         breakdown: z.string().min(1).optional(),
       }),
@@ -426,6 +428,7 @@ export function resolveFilm(
   }
 
   const poseNames = new Map<string, Set<string>>();
+  const expressionNames = new Map<string, Set<string>>();
   for (const entry of film.cast) {
     const posePath = resolve(root, entry.poses);
     if (!existsSync(posePath)) {
@@ -443,6 +446,10 @@ export function resolveFilm(
       poseNames.set(
         entry.character.toLowerCase(),
         new Set(library.poses.map((pose) => pose.name)),
+      );
+      expressionNames.set(
+        entry.character.toLowerCase(),
+        new Set(library.expressions.map((expression) => expression.name)),
       );
       const poseResult = resolvePoseLibrary(library);
       errors.push(...poseResult.errors.map((issue) => ({ code: issue.code, message: issue.message })));
@@ -498,7 +505,7 @@ export function resolveFilm(
       checkRecipe(id, shot, recipe, false, capabilities, errors, warnings);
     }
 
-    checkDirection(id, shot, errors, poseNames);
+    checkDirection(id, shot, errors, poseNames, expressionNames);
 
     const resolved: ResolvedFilmShot = {
       id,
@@ -581,6 +588,7 @@ function checkDirection(
   shot: FilmShot,
   errors: TreatmentIssue[],
   poseNames: Map<string, Set<string>>,
+  expressionNames: Map<string, Set<string>>,
 ) {
   let previous = -1;
   for (const event of shot.direction.events) {
@@ -631,13 +639,29 @@ function checkDirection(
           }
         }
       }
+      if (event.expression) {
+        const expressions = expressionNames.get(event.who.toLowerCase());
+        if (!expressions) {
+          errors.push({
+            code: "expression_unknown_actor",
+            message: `expression "${event.expression}" names "${event.who}", who is not in the film's cast`,
+            shot: id,
+          });
+        } else if (!expressions.has(event.expression)) {
+          errors.push({
+            code: "expression_unknown",
+            message: `"${event.who}" has no expression "${event.expression}" (has: ${[...expressions].join(", ")})`,
+            shot: id,
+          });
+        }
+      }
     }
     // A `who` on an event that does not change a pose is a note pretending to
     // be direction.
-    if (event.kind !== "pose" && (event.pose || event.breakdown)) {
+    if (event.kind !== "pose" && (event.pose || event.breakdown || event.expression)) {
       errors.push({
         code: "pose_on_wrong_event",
-        message: `a "${event.kind}" event at ${event.t}s cannot carry a pose`,
+        message: `a "${event.kind}" event at ${event.t}s cannot carry a pose or expression`,
         shot: id,
       });
     }

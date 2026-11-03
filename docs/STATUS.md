@@ -446,14 +446,16 @@ claimed); story and score lengths are compared; shots must land on the frame
 grid; the chain runs `tests → voice → embed`, so the page data cannot be one cut
 old; `render:film` refuses a stale `score-data.js` before a browser opens; and
 `style:measure --score` separates the score's 10 authored shots from the 12 raw
-scene changes it used to call 13 shots. **418 tests**, typecheck clean.
+scene changes it used to call 13 shots. **427 tests**, typecheck clean.
 
 `docs/PLAN-v2.md` is the full end-to-end plan in plain English: the video
 checklist, every process stage, the P0/P1/P2 gap list, the seven-analysis /
 four-rebuild agent workflow, and a ten-session build order. P0 is `voice
---story` + song clock, a shared asset library with 12–16 expressions and 12
-poses, per-region/camera/bands measurement, the arm/hand + word-reaction + pop
-checks, and the agent workflow.
+--story` + song clock, the asset pipeline (the shared library v1 is built:
+8 poses, 14 expressions, `library:check/add/use`), per-region/bands measurement
+(the x/y/z camera is built), the arm/hand + word-reaction + pop checks, and the
+agent workflow. Still open in the library: the 14 names do not draw 14 unique
+faces, props/sets are not in it, and versions are not immutable.
 
 ## Verdict in one paragraph
 

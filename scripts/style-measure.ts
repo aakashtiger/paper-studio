@@ -27,6 +27,10 @@ import {
   parseSignalStats,
   shotLengths,
   summarize,
+  cameraPath,
+  cameraMoves,
+  summarizeCamera,
+  type CameraReport,
   type StyleMetrics,
 } from "../src/engine/style-measure.js";
 
@@ -190,12 +194,13 @@ async function measureFrames(dir: string, out: string): Promise<StyleMetrics> {
     movement: null,
     cuts: null,
     sceneChanges: null,
+    camera: null,
     shots: null,
     palette: merged,
   };
 }
 
-async function measureVideo(file: string, out: string, sheets: boolean, scorePath?: string): Promise<StyleMetrics> {
+async function measureVideo(file: string, out: string, sheets: boolean, scorePath?: string, camera = false, role = "reference"): Promise<StyleMetrics> {
   const info = await probe(file);
   const samples = await stats(file, "scale=320:-2");
   const movement = await stats(file, "scale=320:-2,tblend=all_mode=difference");
@@ -221,11 +226,18 @@ async function measureVideo(file: string, out: string, sheets: boolean, scorePat
   let cuts = sceneCuts;
   let lengths = sceneLengths;
   if (scorePath) {
-    const score = JSON.parse(readFileSync(resolve(root, scorePath), "utf8")) as { shots?: { duration: number }[] };
+    const score = JSON.parse(readFileSync(resolve(root, scorePath), "utf8")) as { duration?: number; shots?: { duration: number }[] };
     if (!Array.isArray(score.shots) || score.shots.length === 0) {
       throw new Error(`--score has no shots: ${scorePath}`);
     }
     lengths = score.shots.map((shot) => shot.duration);
+    const total = lengths.reduce((sum, seconds) => sum + seconds, 0);
+    if (info.duration && Math.abs(total - info.duration) > 0.5) {
+      throw new Error(
+        `--score is ${total.toFixed(3)}s but the video is ${info.duration.toFixed(3)}s — ` +
+          "the cuts would describe a different film",
+      );
+    }
     cuts = [];
     let at = 0;
     for (let index = 0; index < lengths.length - 1; index += 1) {
@@ -248,6 +260,52 @@ async function measureVideo(file: string, out: string, sheets: boolean, scorePat
     }
   }
 
+  let shotAt = 0;
+  const shotWindows = lengths.map((duration) => {
+    const window = { start: shotAt, duration };
+    shotAt += duration;
+    return window;
+  });
+
+  /**
+   * x, y and z. The video tracks the camera with phase correlation; this is the
+   * same answer on a 48x27 luma grid: a brute-force translation search plus a
+   * zoom search around the best shift. It is opt-in because it is the one
+   * measurement that costs a full decode and a few hundred million comparisons.
+   */
+  let cameraReport: CameraReport | null = null;
+  if (camera) {
+    // 48 wide, aspect preserved: a 9:16 source gets 48x85, not a squeezed 48x27.
+    const gridWidth = 48;
+    const gridHeight = Math.max(1, Math.round((info.height * gridWidth) / Math.max(1, info.width)));
+    const gray = await capture(ffmpeg, [
+      "-v", "error", "-i", file,
+      "-vf", `scale=${gridWidth}:${gridHeight},format=gray`,
+      "-f", "rawvideo", "-",
+    ]);
+    const frameSize = gridWidth * gridHeight;
+    const frames: Uint8Array[] = [];
+    for (let at = 0; at + frameSize <= gray.length; at += frameSize) {
+      frames.push(gray.subarray(at, at + frameSize));
+    }
+    const fps = info.fps ?? 30;
+    const cutFrames = new Set(cuts.map((time) => Math.round(time * fps)));
+    const path = cameraPath(frames, gridWidth, gridHeight, {
+      fullWidth: info.width,
+      fullHeight: info.height,
+      skipFrames: cutFrames,
+    });
+    const moves = cameraMoves(frames, gridWidth, gridHeight, shotWindows, fps, {
+      fullWidth: info.width,
+      fullHeight: info.height,
+    });
+    cameraReport = summarizeCamera(path, moves, {
+      source: file,
+      resolutionPx: Number((info.width / gridWidth).toFixed(2)),
+    });
+    writeFileSync(join(out, `camera-${role}.json`), `${JSON.stringify(cameraReport, null, 2)}\n`, "utf8");
+  }
+
   return {
     source: file,
     kind: "video",
@@ -257,6 +315,7 @@ async function measureVideo(file: string, out: string, sheets: boolean, scorePat
     saturation: summarize(samples.map((sample) => sample.satavg).filter(Number.isFinite)),
     edges: summarize(edge),
     movement: summarize(movement.map((sample) => sample.yavg)),
+    camera: cameraReport,
     cuts: {
       count: cuts.length,
       perMinute: info.duration ? Number(((cuts.length / info.duration) * 60).toFixed(2)) : 0,
@@ -272,11 +331,14 @@ async function measureVideo(file: string, out: string, sheets: boolean, scorePat
   };
 }
 
-async function measure(path: string, out: string, sheets: boolean, scorePath?: string): Promise<StyleMetrics> {
+async function measure(path: string, out: string, sheets: boolean, scorePath?: string, camera = false, role = "reference"): Promise<StyleMetrics> {
   if (!existsSync(path)) throw new Error(`not found: ${path}`);
-  if (statSync(path).isDirectory()) return measureFrames(path, out);
+  if (statSync(path).isDirectory()) {
+    if (camera) throw new Error("--camera needs a video; a frame set has no motion to measure");
+    return measureFrames(path, out);
+  }
   if (!VIDEO.test(path) && !IMAGE.test(path)) throw new Error(`neither a folder of images nor a video: ${path}`);
-  return measureVideo(path, out, sheets, scorePath);
+  return measureVideo(path, out, sheets, scorePath, camera, role);
 }
 
 function table(metrics: StyleMetrics): string {
@@ -291,8 +353,16 @@ function table(metrics: StyleMetrics): string {
     `| contrast mean | ${row.contrast} / 255 | luma range, high = hard light |`,
     `| saturation mean | ${row.saturation} / 255 | colour strength |`,
     `| edge density | ${row.edges ?? "—"} / 255 | how much line/ink/cut edge |`,
-    `| movement mean | ${row.movement ?? "—"} / 255 | frame-to-frame change |`,
-    `| shot median | ${row.shotMedian ?? "—"} s | middle shot length |`,
+    `| movement mean | ${row.movement ?? "-"} / 255 | frame-to-frame change |`,
+    ...(metrics.camera
+      ? [
+          `| camera |dx| | ${row.cameraDx} px/shot | mean absolute x translation |`,
+          `| camera |dy| | ${row.cameraDy} px/shot | mean absolute y translation |`,
+          `| camera dz | ${row.cameraDz} %/shot | z zoom; positive = push-in |`,
+          `| camera moving | ${(Number(row.cameraMoving) * 100).toFixed(1)}% | frames with at least 1 px of translation |`,
+        ]
+      : []),
+    `| shot median | ${row.shotMedian ?? "-"} s | middle shot length |`,
     `| cuts / minute | ${row.cutsPerMinute ?? "—"} | cutting rate (authored shots with --score) |`,
     `| scene changes / minute | ${row.sceneChangesPerMinute ?? "—"} | raw detector; not the authored shot count |`,
     `| palette | ${row.palette} | the first six distinct colours |`,
@@ -320,6 +390,13 @@ function bible(metrics: StyleMetrics): string {
 
 function matchReport(ref: StyleMetrics, spec: StyleMetrics): string {
   const delta = compareMetrics(ref, spec);
+  const moveMean = (camera: CameraReport | null, key: "dx" | "dy" | "dz" | "speed", absolute = false): string => {
+    if (!camera || camera.moves.length === 0) return "-";
+    return (
+      camera.moves.reduce((sum, move) => sum + (absolute ? Math.abs(move[key]) : move[key]), 0) /
+      camera.moves.length
+    ).toFixed(2);
+  };
   return [
     `# Look match — reference vs specimen`,
     ``,
@@ -332,8 +409,16 @@ function matchReport(ref: StyleMetrics, spec: StyleMetrics): string {
     `| contrast | ${ref.contrast.mean.toFixed(2)} | ${spec.contrast.mean.toFixed(2)} | ${delta.contrast} |`,
     `| saturation | ${ref.saturation.mean.toFixed(2)} | ${spec.saturation.mean.toFixed(2)} | ${delta.saturation} |`,
     `| edges | ${ref.edges?.mean.toFixed(2) ?? "—"} | ${spec.edges?.mean.toFixed(2) ?? "—"} | ${delta.edges} |`,
-    `| movement | ${ref.movement?.mean.toFixed(2) ?? "—"} | ${spec.movement?.mean.toFixed(2) ?? "—"} | ${delta.movement} |`,
-    `| shot median | ${ref.shots?.median ?? "—"} | ${spec.shots?.median ?? "—"} | ${delta.shotMedian} |`,
+    `| movement | ${ref.movement?.mean.toFixed(2) ?? "-"} | ${spec.movement?.mean.toFixed(2) ?? "-"} | ${delta.movement} |`,
+    ...(ref.camera || spec.camera
+      ? [
+          `| camera dx (px/shot) | ${moveMean(ref.camera, "dx", true)} | ${moveMean(spec.camera, "dx", true)} | ${delta.cameraDx} |`,
+          `| camera dy (px/shot) | ${moveMean(ref.camera, "dy", true)} | ${moveMean(spec.camera, "dy", true)} | ${delta.cameraDy} |`,
+          `| camera dz (%/shot) | ${moveMean(ref.camera, "dz")} | ${moveMean(spec.camera, "dz")} | ${delta.cameraDz} |`,
+          `| camera speed (px/s) | ${moveMean(ref.camera, "speed")} | ${moveMean(spec.camera, "speed")} | ${delta.cameraSpeed} |`,
+        ]
+      : []),
+    `| shot median | ${ref.shots?.median ?? "-"} | ${spec.shots?.median ?? "-"} | ${delta.shotMedian} |`,
     `| cuts / minute | ${ref.cuts?.perMinute ?? "—"} | ${spec.cuts?.perMinute ?? "—"} | ${delta.cutsPerMinute} |`,
     `| scene changes / min | ${ref.sceneChanges?.perMinute ?? "—"} | ${spec.sceneChanges?.perMinute ?? "—"} | — |`,
     `| palette distance | — | ${delta.palette} | ${delta.palette} |`,
@@ -387,16 +472,17 @@ async function main(): Promise<void> {
   const ref = arg("ref");
   const spec = arg("specimen");
   const score = arg("score");
+  const camera = process.argv.includes("--camera");
   const json = process.argv.includes("--json");
   const sheets = process.argv.includes("--sheets");
   if (!ref) {
-    console.error("usage: npm run style:measure -- --ref <dir|video> [--specimen <dir|video>] [--score <score.json>] [--out build/style-measure] [--sheets] [--json]");
+    console.error("usage: npm run style:measure -- --ref <dir|video> [--specimen <dir|video>] [--score <score.json>] [--out build/style-measure] [--sheets] [--camera] [--json]");
     process.exit(2);
   }
   const out = resolve(root, arg("out") ?? "build/style-measure");
   mkdirSync(out, { recursive: true });
 
-  const reference = await measure(resolve(root, ref), out, sheets, score ? resolve(root, score) : undefined);
+  const reference = await measure(resolve(root, ref), out, sheets, score ? resolve(root, score) : undefined, camera, "reference");
   const bibleDoc = bible(reference);
   writeFileSync(join(out, "bible.json"), `${JSON.stringify(reference, null, 2)}\n`, "utf8");
   writeFileSync(join(out, "STYLE-BIBLE.md"), `${bibleDoc}\n`, "utf8");
@@ -412,7 +498,14 @@ async function main(): Promise<void> {
       if (reference.shots) {
         console.log(
           `  shots ${reference.shots.count} · median ${reference.shots.median}s · cuts/min ${reference.cuts?.perMinute} · ` +
-            `movement ${reference.movement?.mean.toFixed(2) ?? "—"}`,
+            `movement ${reference.movement?.mean.toFixed(2) ?? "-"}`,
+        );
+      }
+      if (reference.camera) {
+        const row = metricRow(reference);
+        console.log(
+          `  camera |dx| ${row.cameraDx} px/shot · |dy| ${row.cameraDy} px/shot · ` +
+            `dz ${row.cameraDz} %/shot · moving ${(reference.camera.movingShare * 100).toFixed(0)}%`,
         );
       }
       console.log(`  palette ${reference.palette.join(" ")}`);
@@ -421,7 +514,9 @@ async function main(): Promise<void> {
     return;
   }
 
-  const specimen = await measure(resolve(root, spec), out, false);
+  const specimenPath = resolve(root, spec);
+  const specimenIsVideo = statSync(specimenPath).isFile() && VIDEO.test(specimenPath);
+  const specimen = await measure(specimenPath, out, false, undefined, camera && specimenIsVideo, "specimen");
   const delta = compareMetrics(reference, specimen);
   const match = { reference, specimen, delta };
   writeFileSync(join(out, "match.json"), `${JSON.stringify(match, null, 2)}\n`, "utf8");
