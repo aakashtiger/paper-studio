@@ -195,7 +195,10 @@ reuse is about freshness, never leniency.
 **ASR is no longer the manual row.** Whisper `small.en` is installed locally:
 `npm run asr` heard all 26 script words (100.0% matched), and `words.json` and
 `transcript.json` carry `source: "asr"` with real word times rather than a guess.
-`gate:7` on *Same Alarm* is **PASS · 21 checks · nothing pending**.
+`gate:7` on *Same Alarm* was **PASS · 21 checks** before the writing row; under
+**0047** it now **fails `writing`** because the delivered film has no
+`story.json`, `beats.json` or `scenes.json` — it was never written, only shot.
+A new film is written first and must pass the row.
 
 **The frame audit measures per shot, and its blank check can fail.** 1,800 frames
 cost **38.5 s** instead of 134.4 s, with every brightness sample and every

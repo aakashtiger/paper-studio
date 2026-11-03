@@ -20,6 +20,8 @@ import { packFontPath } from "../src/engine/plan.js";
 import { scoreDataPath, scoreDataText } from "../src/engine/score-data.js";
 import { cueSetText, type SfxRecordLike } from "../src/engine/sfx.js";
 import { FilmBriefSchema, mustSayGaps } from "../src/engine/film-brief.js";
+import { StorySchema, BeatsSchema, checkStory, checkNarrationSync } from "../src/engine/story.js";
+import { ScenesSchema, checkScenes } from "../src/engine/scenes.js";
 import { inputMismatches, type RenderInputs } from "../src/engine/manifest.js";
 import { checkTwinEvidence, type TwinEvidence } from "../src/engine/determinism.js";
 /**
@@ -49,8 +51,9 @@ const score = JSON.parse(readFileSync(resolve(root, file), "utf8")) as {
   style: string;
   duration: number;
   aspect: string;
-  clock?: { lines?: { text: string }[] };
+  clock?: { lines?: { id: string; text: string; start: number; duration: number }[] };
   shots?: { slots?: Record<string, string> }[];
+  cast?: { character: string }[];
 };
 const dir = resolve(root, "build", score.id);
 
@@ -324,6 +327,57 @@ async function main(): Promise<void> {
             detail: `MOVED since the render: ${stale.join(", ")} — this picture no longer matches its ${count} inputs`,
           };
     })(),
+    writing: (() => {
+      // The writing is not a note beside the film; it is an input the render
+      // hashed. A delivered picture whose script was deleted or rewritten no
+      // longer proves what it was made from (0047). The row re-runs the three
+      // writing checks against the score's own clock and cast.
+      const filmDir = resolve(root, "films", score.id);
+      const docs = ["story.json", "beats.json", "scenes.json"];
+      const missing = docs.filter((name) => !existsSync(join(filmDir, name)));
+      if (missing.length > 0) {
+        return { ok: false, detail: `missing ${missing.join(", ")} — the film cannot prove what it was written from` };
+      }
+      if (!manifest?.inputs) {
+        return { ok: false, detail: "no inputs in the render manifest — the writing was not hashed by the render" };
+      }
+      const unhashed = docs.filter((name) => {
+        const path = `films/${score.id}/${name}`;
+        return !manifest.inputs.files.some(
+          (input) => input.path === path && input.hash === `sha256:${hashFile(join(filmDir, name))}`,
+        );
+      });
+      if (unhashed.length > 0) {
+        return { ok: false, detail: `${unhashed.join(", ")} not hashed into the render manifest` };
+      }
+      try {
+        const story = StorySchema.parse(JSON.parse(readFileSync(join(filmDir, "story.json"), "utf8").replace(/^\uFEFF/, "")));
+        const beats = BeatsSchema.parse(JSON.parse(readFileSync(join(filmDir, "beats.json"), "utf8").replace(/^\uFEFF/, "")));
+        const scenes = ScenesSchema.parse(JSON.parse(readFileSync(join(filmDir, "scenes.json"), "utf8").replace(/^\uFEFF/, "")));
+        const storyCheck = checkStory(story, beats);
+        const sceneCheck = checkScenes(
+          scenes,
+          story,
+          beats,
+          score.clock?.lines ?? null,
+          (score.cast ?? []).map((member) => member.character),
+        );
+        const sync = score.clock?.lines ? checkNarrationSync(story, score.clock.lines) : [];
+        const errors = [...storyCheck.errors, ...sceneCheck.errors, ...sync];
+        if (errors.length > 0) {
+          return {
+            ok: false,
+            detail: `${errors.length} writing error(s): ${errors.slice(0, 3).map((error) => error.message).join("; ")}`,
+          };
+        }
+        return {
+          ok: true,
+          detail: `story, beats and scenes re-read and hashed: ${storyCheck.report.words} words, ${storyCheck.report.beats.length} beats, ${scenes.scenes.length} scenes`,
+        };
+      } catch (error) {
+        return { ok: false, detail: error instanceof Error ? error.message : "writing check failed" };
+      }
+    })(),
     determinism: (() => {
       // The painter is a pure function of the score and the time (decision 0032).
       //
@@ -543,7 +597,10 @@ async function main(): Promise<void> {
   })();
 
   const failed = Object.entries(checks).filter(([, value]) => !value.ok).map(([name]) => name);
-  const pass = failed.length === 0;
+  // A pending row is not a pass (P0.7): a gate that says "nothing manual" while
+  // a listed check has not run is the "pass with a hole" this repository keeps
+  // finding. The command is printed, and the gate stays red until it runs.
+  const pass = failed.length === 0 && pending.length === 0;
   const report = {
     film: score.id,
     gate: "G7",

@@ -130,6 +130,12 @@ export async function renderInputs(
     ...(score.cast ?? [])
       .filter((entry): entry is { character: string; poses: string } => Boolean(entry.poses))
       .map((entry) => ({ path: entry.poses.replace(/\\/g, "/"), absolute: resolve(root, entry.poses) })),
+    // The writing is an input to the picture: a delivered film whose script was
+    // deleted or rewritten can no longer prove what it was made from (0047).
+    ...["story.json", "beats.json", "scenes.json"].map((name) => ({
+      path: rel(join(filmDir, name)),
+      absolute: join(filmDir, name),
+    })),
   ];
 
   return {

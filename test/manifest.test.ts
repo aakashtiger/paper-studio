@@ -72,6 +72,12 @@ test("renderInputs hashes every file the film is made from, with its path", asyn
   );
   // A vendor file the film does not load is recorded as absent, not "unchanged".
   assert.equal(byPath.get("films/demo/vendor/props.js"), null);
+  // The writing is an input even when it is missing: null is recorded, so a
+  // script deleted after the render is a mismatch, not an absence nobody saw.
+  for (const name of ["story.json", "beats.json", "scenes.json"]) {
+    assert.equal(byPath.has(`films/demo/${name}`), true, `${name} is named by the manifest`);
+    assert.equal(byPath.get(`films/demo/${name}`), null, `${name} is absent in this tree`);
+  }
 });
 
 test("a changed input changes its hash, and only its hash", async () => {
