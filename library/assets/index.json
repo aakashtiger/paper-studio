@@ -143,6 +143,11 @@
       "name": "Bed",
       "type": "prop",
       "where": "styles/paper-kpop/canvas/recipes.js",
+      "size": {
+        "w": 820,
+        "h": 500,
+        "unit": "px"
+      },
       "source": "paper-kpop",
       "licence": "proprietary",
       "recipes": [
@@ -159,6 +164,11 @@
       "name": "Nightstand",
       "type": "prop",
       "where": "styles/paper-kpop/canvas/recipes.js",
+      "size": {
+        "w": 1800,
+        "h": 512,
+        "unit": "px"
+      },
       "source": "paper-kpop",
       "licence": "proprietary",
       "recipes": [
@@ -175,6 +185,11 @@
       "name": "Phone",
       "type": "prop",
       "where": "styles/paper-kpop/canvas/recipes.js",
+      "size": {
+        "w": 380,
+        "h": 196,
+        "unit": "px"
+      },
       "source": "paper-kpop",
       "licence": "proprietary",
       "recipes": [
@@ -191,6 +206,11 @@
       "name": "Office desk",
       "type": "prop",
       "where": "styles/paper-kpop/canvas/recipes.js",
+      "size": {
+        "w": 2440,
+        "h": 640,
+        "unit": "px"
+      },
       "source": "paper-kpop",
       "licence": "proprietary",
       "recipes": [
@@ -228,6 +248,11 @@
       "name": "Monitor",
       "type": "prop",
       "where": "styles/paper-kpop/canvas/recipes.js",
+      "size": {
+        "w": 300,
+        "h": 220,
+        "unit": "px"
+      },
       "source": "paper-kpop",
       "licence": "proprietary",
       "recipes": [
@@ -244,6 +269,11 @@
       "name": "Work papers",
       "type": "prop",
       "where": "styles/paper-kpop/canvas/recipes.js",
+      "size": {
+        "w": 340,
+        "h": 240,
+        "unit": "px"
+      },
       "source": "paper-kpop",
       "licence": "proprietary",
       "recipes": [
@@ -260,6 +290,11 @@
       "name": "Hour tab",
       "type": "prop",
       "where": "styles/paper-kpop/canvas/recipes.js",
+      "size": {
+        "w": 653,
+        "h": 291,
+        "unit": "px"
+      },
       "source": "paper-kpop",
       "licence": "proprietary",
       "recipes": [
@@ -276,6 +311,11 @@
       "name": "Desk lamp",
       "type": "prop",
       "where": "styles/paper-kpop/canvas/recipes.js",
+      "size": {
+        "w": 192,
+        "h": 136,
+        "unit": "px"
+      },
       "source": "paper-kpop",
       "licence": "proprietary",
       "recipes": [
@@ -292,6 +332,11 @@
       "name": "Office door",
       "type": "prop",
       "where": "styles/paper-kpop/canvas/recipes.js",
+      "size": {
+        "w": 268,
+        "h": 660,
+        "unit": "px"
+      },
       "source": "paper-kpop",
       "licence": "proprietary",
       "recipes": [
@@ -308,6 +353,11 @@
       "name": "Mug",
       "type": "prop",
       "where": "styles/paper-kpop/canvas/recipes.js",
+      "size": {
+        "w": 52,
+        "h": 52,
+        "unit": "px"
+      },
       "source": "paper-kpop",
       "licence": "proprietary",
       "recipes": [
@@ -481,6 +531,11 @@
       "name": "Generic prop",
       "type": "prop",
       "where": "styles/paper-kpop/canvas/recipes.js",
+      "size": {
+        "w": 180,
+        "h": 180,
+        "unit": "px"
+      },
       "ids": [
         "prop.object"
       ],
@@ -497,6 +552,11 @@
       "name": "Paper sticker",
       "type": "prop",
       "where": "styles/paper-kpop/canvas/recipes.js",
+      "size": {
+        "w": 1240,
+        "h": 400,
+        "unit": "px"
+      },
       "ids": [
         "prop.paper-sticker"
       ],

@@ -1,6 +1,8 @@
+import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { z } from "zod";
+import type { AssetRef } from "./assets.js";
 
 /**
  * The plain-name asset catalogue (decision 0042).
@@ -136,4 +138,64 @@ export function checkCoverage(
     unused: [...present].filter((id) => !required.has(id)).sort(),
     missingRecipes: [...missingRecipes].sort(),
   };
+}
+
+export type DerivedAsset = {
+  /** The id the recipe named. */
+  required: string;
+  entry: CatalogEntry;
+  ref: AssetRef;
+};
+
+/** The kinds a film's `assets[]` can carry (see AssetRefSchema). */
+const REF_TYPES = new Set(["character", "set", "prop", "frame", "texture", "type", "hud"]);
+
+/**
+ * Derive the manifest entries a film is missing, from the catalogue.
+ *
+ * The catalogue is the map; the score is still the manifest. This makes the
+ * missing entries explicit and hashes the file that draws each one, so a film
+ * cannot claim an asset it does not carry. An id the catalogue does not know is
+ * returned in `unknown`; it is never guessed.
+ */
+export function deriveAssetRefs(
+  score: { assets: { id: string }[]; shots: { recipe: string }[] },
+  catalog: AssetCatalog,
+  options: { root: string; styleDir: string },
+): { refs: DerivedAsset[]; unknown: string[]; missingRecipes: string[] } {
+  const report = checkCoverage(score, options);
+  const refs: DerivedAsset[] = [];
+  const unknown: string[] = [];
+  for (const id of report.missing) {
+    const entry =
+      catalog.assets.find((candidate) => candidate.id === id) ??
+      catalog.assets.find((candidate) => candidate.ids.includes(id));
+    if (!entry) {
+      unknown.push(id);
+      continue;
+    }
+    const absolute = resolve(options.root, entry.where);
+    if (!existsSync(absolute)) {
+      throw new Error(`${entry.name} points at "${entry.where}", which does not exist`);
+    }
+    if (!REF_TYPES.has(entry.type)) {
+      throw new Error(`${entry.name} is a "${entry.type}"; a film manifest cannot carry that kind yet`);
+    }
+    const hash = `sha256:${createHash("sha256").update(readFileSync(absolute)).digest("hex")}`;
+    refs.push({
+      required: id,
+      entry,
+      ref: {
+        id,
+        version: "0.1.0",
+        hash,
+        source: "reused",
+        type: entry.type as AssetRef["type"],
+        anchors: [],
+        path: entry.where,
+        ...(entry.type === "character" ? { character: entry.name } : {}),
+      },
+    });
+  }
+  return { refs, unknown, missingRecipes: report.missingRecipes };
 }

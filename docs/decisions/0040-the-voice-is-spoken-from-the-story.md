@@ -73,7 +73,7 @@ the audio, and a changed script refuses the old read until `--force`. For a real
 film the default files are `films/<id>/voice.wav` and `films/<id>/narration.json`,
 not `build/`.
 
-**447 tests**, typecheck clean, `films/` untouched.
+**449 tests**, typecheck clean, `films/` untouched.
 
 ## What this does not do, and is named
 

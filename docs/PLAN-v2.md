@@ -255,24 +255,32 @@ shots are reviewed.
 8. Only then use the assets in the storyboard.
 
 **Have:** `assets[]` manifest with type, path, hash, anchors; `starterLibrary`;
-cast/poses/rigs; `sheet`; preflight cast→asset check.
+cast/poses/rigs; `sheet`; preflight cast→asset check. The shared character
+library (8 poses, 14 expressions, `library:check/add/use`, hashes); the 40-entry
+plain-name catalogue with sizes and licences; `assets:new` derives the recipe
+assets and hashes the file that draws each (0045); `library:sheet` draws every
+library character.
 
-**Missing:** a shared asset library (files, not names); 14 reusable expressions;
-pack-level poses; an `expression` field; an asset-first command and sheet; a
-sprite/model type; per-asset licences; free model library.
+**Missing:** asset-first derivation from **scenes and shots** (the command
+derives from recipe ids); a sheet for props and sets (only characters are drawn);
+a `sprite`/model type; immutable library versions and 14 unique faces are parked
+by the user.
 
 **Fix:**
-- `assets/` shared root: `id`, `type`, `version`, `path`, `hash`, `licence`,
-  `source`, `anchors`, `variants`.
-- `assets:new --score` derives the required list and writes a manifest.
-- `assets:sheet` draws the library before the storyboard.
-- A pack-level `characters/` library with 12–16 expressions and 12 poses; a shot
-  event names `expression`.
+- `assets:new --score` — **built** (0045): derives the missing ids, hashes the
+  drawing file, refuses an unknown name, validates before writing.
+- `assets:sheet` for props and sets — still open; `library:sheet` covers the
+  characters today.
+- A pack-level `characters/` library with 14 expressions and 8 poses; a shot
+  event names `expression` — **built** (0038). The 14 names do not yet draw 14
+  unique faces.
 - A `sprite` asset type for pre-rendered 3D/CC0 images; a real 3D primitive is a
   new renderer, not this plan.
 
-**Proof:** `assets:check` refuses a missing expression, a missing licence, a
-character with no asset, and a prop with no declared size.
+**Proof:** `assets:check` refuses a missing file, a duplicate, a bad licence and
+a prop with no declared size; `library:check` refuses a character outside the
+library, a missing expression or a missing pose; `assets:new` refuses an unknown
+id; `assets:coverage` refuses a recipe asset the manifest misses.
 
 **Time:** 30–60 min for a new cast; 5 min to reuse.
 
@@ -482,7 +490,7 @@ rediscover it.
 | P0.8 | The writing is not hashed or gated: `story.json`, `beats.json` and `scenes.json` are absent from `renderInputs`; `gate:7` has no writing row, so a delivered film can have its script deleted and still pass | Hash all three into the render manifest; add one `writing` gate row that re-runs `checkStory`, `checkScenes` and `checkNarrationSync` and is tied to the score hash | the delivered file's provenance includes the documents it was written from; a missing script fails the gate |
 | P0.9 | The sound and the gate are not in viewer units: the quietest 3 s is not measured against the loudest 3 s (the v2 rule is ≥15 LU of contrast), LRA is measured but never gated, and there is no hand/face close-up count | Measure 3 s short-term windows on the delivered file and fail if the quietest is <15 LU under the loudest; gate LRA; count hand/face close-ups per film and declare a band; express the motion floor in a viewer unit | a film that never goes quiet fails; a film with no close-ups fails; the gate speaks in words, seconds, LU and faces, not arbitrary units |
 
-**Progress (4 Nov):** P0.1 v1 is built — `voice:story` speaks story+beats and writes `narration.json` before a score; `voice --from-story` fills the clock, captions and shot snaps. Coverage is measured on the audio (0044): `fixtures/story-long` (60 s, 189 words, 189 wpm) is **82%** voiced, last word 59.28 s, and passes. The 30 s fixture is refused (its voice ends at 22.06 s), and a 30 s nine-line film cannot carry 180–190 wpm — the line breaks alone are 4 s — so a 30 s short needs five beats. Scenes auto-fit and the song clock are still open. P0.2 v1 is built — the character library (8 poses, 14 expressions, check/add/use) and the 40-entry plain-name asset catalogue with a join key (`assets:list/check/coverage`); Same Alarm names 11 recipe assets and misses 6. Still open: 12 prop sizes, `assets:new`, immutable library versions and 14 unique faces (parked). P0.3 is built as the style's camera grammar — `--camera` x/y/z, `camera:check` (resolved scores, no static, correct push/pull sign, no long run), `camera:plan` (preserves authored cameras unless `--force`, beat purpose via `beats.json`, varied 4-move template); per-region/bands/reference-video are dropped for this style by the user, not pending.
+**Progress (4 Nov):** P0.1 v1 is built — `voice:story` speaks story+beats and writes `narration.json` before a score; `voice --from-story` fills the clock, captions and shot snaps. Coverage is measured on the audio (0044): `fixtures/story-long` (60 s, 189 words, 189 wpm) is **82%** voiced, last word 59.28 s, and passes. The 30 s fixture is refused (its voice ends at 22.06 s), and a 30 s nine-line film cannot carry 180–190 wpm — the line breaks alone are 4 s — so a 30 s short needs five beats. Scenes auto-fit and the song clock are still open. P0.2 v1 is built — the character library (8 poses, 14 expressions, check/add/use) and the 40-entry plain-name asset catalogue with a join key (`assets:list/check/coverage`); Same Alarm names 11 recipe assets and misses 6; `assets:new` derives all 6 from the catalogue and hashes the file that draws each (0045), and every prop now declares a size (12 added). `assets:coverage` passes on the derived copy. Immutable library versions and 14 unique faces are parked. P0.3 is built as the style's camera grammar — `--camera` x/y/z, `camera:check` (resolved scores, no static, correct push/pull sign, no long run), `camera:plan` (preserves authored cameras unless `--force`, beat purpose via `beats.json`, varied 4-move template); per-region/bands/reference-video are dropped for this style by the user, not pending.
 
 ### P1 — after the first new film, or in parallel
 

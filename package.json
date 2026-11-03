@@ -45,6 +45,7 @@
     "assets:list": "tsx scripts/assets.ts list",
     "assets:check": "tsx scripts/assets.ts check",
     "assets:coverage": "tsx scripts/assets.ts coverage",
+    "assets:new": "tsx scripts/assets-new.ts",
     "asr": "tsx scripts/asr.ts",
     "test": "node --import tsx --test test/*.test.ts",
     "typecheck": "tsc --noEmit",

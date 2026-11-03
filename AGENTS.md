@@ -106,6 +106,7 @@ npm run camera:plan -- <score> [--apply]         # propose dynamic moves from th
 npm run assets:list                              # the plain-name asset catalogue
 npm run assets:check                             # every asset has a file, a name, a licence; props a size
 npm run assets:coverage -- <score>               # the assets the recipes name vs the film's manifest (0042)
+npm run assets:new -- --score <score> [--write]  # derive the missing recipe assets, hash them (0045)
 npm run style:seal
 node --import tsx --test test/watercolor-gate.test.ts   # S1b pilot gate
 node --import tsx --test test/paper-kpop-gate.test.ts   # S1c gate
@@ -134,6 +135,7 @@ scenes.json  where it happens, who is in it, what happens, its lines       (0035
 score.json   the shots, each bound to a scene and a beat, with a reason     (0025)
    → npm run voice --apply    accept the measured read into the score (0035)
    → npm run camera:check   ~1 s   every shot moves, and the film varies it (0041)
+   → npm run assets:new -- --score <score> --write   the manifest names what the recipes draw (0045)
    → npm run assets:coverage         every recipe asset is in the manifest (0042)
    ↓ npm run preflight     ~1 s    the writing, the scenes, the read, the cut, the sound
    ↓ npm run inspect       ~1 min  ONE pass: movement, type and rig, probe-only
@@ -237,7 +239,7 @@ file with **8 poses and 14 expressions**, a rig, a source, a licence and a
 `sha256`; `library:check` refuses one that is not reusable, `library:add` adds a
 pose once, and `library:use` points a film's cast and asset at it. A pose event
 can name an expression, and the painter maps it to the rig's eyes/brow/mouth.
-**447 tests.**
+**449 tests.**
 
 **The story now speaks first, the camera is a grammar, and assets have names.**
 `voice:story` reads `story.json` + `beats.json`, speaks the lines, listens with
@@ -253,17 +255,19 @@ in this band needs five beats, not nine.
 `camera:check` refuses a still shot, a push that pulls, a move with no travel,
 and a four-shot run; `camera:plan` proposes a varied sequence from the beats
 (four moves, longest run 1, preserves authored cameras unless `--force`);
-`assets:list` names 40 built assets in plain English, `assets:coverage` reports
-the **6 of 11** recipe assets Same Alarm's manifest misses, and
-`library:sheet` renders Kiran and Vaz with their 8 poses and **14 expressions**
-into `build/library/sheets/`. The library immutability/14-face proof and the 7+4
-agent workflow are parked; ElevenLabs/other voice providers are parked too.
+`assets:list` names 40 built assets in plain English, every prop now has a
+declared size, and `assets:new` derives the **6** recipe assets Same Alarm's
+manifest misses, hashes the file that draws each, and passes `assets:coverage`
+on the copy (0045). `library:sheet` renders Kiran and Vaz with their 8 poses and
+**14 expressions** into `build/library/sheets/`. The library immutability/14-face
+proof and the 7+4 agent workflow are parked; ElevenLabs/other voice providers
+are parked too.
 
 **The plan is `docs/PLAN-v2.md`.** It is the end-to-end process in plain English,
 the video checklist, the P0/P1/P2 gap list and a ten-session build order. No new
-film starts until P0.1–P0.5 and P0.7–P0.9 close: `voice:story` is built (the
-score fill is next); the rest of the asset manifest (prop sizes, hashing,
-`assets:new`); the arm/hand + word-reaction + pop checks; the seven-analysis /
+film starts until P0.1–P0.5 and P0.7–P0.9 close: `voice:story` and
+`voice --from-story` are built; the asset manifest is derived, sized and hashed
+(0045); the arm/hand + word-reaction + pop checks; the seven-analysis /
 four-rebuild agent workflow; the bypasses; and the sound-contrast gate.
 
 **Still open, and named:** the style measurement is global per-frame, not
