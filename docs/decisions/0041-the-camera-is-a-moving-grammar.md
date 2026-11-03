@@ -51,13 +51,12 @@ like one template, but do not copy the same sequence each time.
 *Same Alarm*, 10 shots, before the plan:
 
 ```
-camera: 10 shots · 3 move(s): push_in, orbit, pull_back
-  FAIL camera:missing: shot "s02" has no camera
+camera: 10 shots · 4 move(s): push_in, pan, orbit, pull_back
   FAIL camera:sign: shot "s08" is a push_in but 1.04 → 1
   FAIL camera:run: 4 consecutive shots use one move
 ```
 
-`camera:plan --apply` on a copy produced:
+`camera:plan --apply --force` on a copy produced:
 
 ```
 s01 push_in 1→1.05 · s02 pan 1→1.04 · s03 orbit 1→1.03 · s04 pull_back 1.08→1
@@ -65,7 +64,7 @@ s05 parallax 1→1.03 · s06 tilt 1→1.04 · s07 push_in 1→1.05 · s08 pan 1�
 s09 orbit 1→1.03 · s10 pull_back 1.08→1
 ```
 
-`camera:check` then passed: **6 distinct moves, longest run 1**. The plan is the
+`camera:check` then passed: **4 distinct moves, longest run 1**. The plan is the
 template; the score remains the director's, and a beat table overrides the
 fallback.
 

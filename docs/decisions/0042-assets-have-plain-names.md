@@ -55,8 +55,15 @@ MISSING frame.paper-window, prop.object, set.corridor, set.tabletop,
 unused  character.office-rig, set.scene-kit, type.paper
 ```
 
-`assets:check` passes with **7 size warnings** (desk, monitor, papers, hour tab,
-lamp, door, mug) — the real remaining work, not papered over.
+`assets:check` passes with **12 size warnings** (bed, nightstand, phone, desk,
+monitor, papers, hour tab, lamp, door, mug, generic prop, paper sticker) — the
+real remaining work, not papered over. The chair is 84×152 and the form 340×84;
+the other props need measured footprints. The catalogue has **40 entries** and
+each prints its technical ids, file and licence, so `character.lead` can be found
+from "Kiran".
+
+The chain runs `assets:coverage` before preflight, so a film whose manifest
+misses a recipe asset is refused before the paint.
 
 **440 tests**, typecheck clean, `films/` untouched.
 
@@ -67,9 +74,11 @@ lamp, door, mug) — the real remaining work, not papered over.
   claiming it).
 - **It does not derive `assets[]` from the shots.** `assets:coverage` is the
   check; `assets:new --score` would write the manifest. That is the next step.
-- **It does not declare the missing prop sizes.** Seven props have no measured
+- **It does not declare the missing prop sizes.** Twelve props have no measured
   width/height; the check warns. Inventing a size would be worse than the
   warning.
+- **The catalogue's `recipes[]` column is hand-written** and can drift; the
+  coverage check uses the recipe files, not that column.
 - **It is not a model library.** The paper assets are code paths; a future 3D
   style would add a `sprite` type with a licence and a source, not download into
   the render path.

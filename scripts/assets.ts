@@ -38,6 +38,7 @@ if (command === "list") {
       const size = entry.size ? `${entry.size.w}×${entry.size.h}${entry.size.unit}` : "—";
       const used = entry.recipes.length > 0 ? entry.recipes.join(", ") : "—";
       console.log(`${entry.name.padEnd(24)} ${entry.type.padEnd(10)} ${size.padEnd(12)} ${used}`);
+      console.log(`  ${entry.id} · ${entry.ids.join(", ")} · ${entry.where} · ${entry.licence}`);
     }
     console.log(`where: ${catalogPath}`);
   }
@@ -76,13 +77,18 @@ if (command === "coverage") {
     root,
     styleDir: resolve(root, "styles", score.style),
   });
+  const nameFor = (id: string) =>
+    catalog.assets.find((entry) => entry.id === id)?.name ??
+    catalog.assets.find((entry) => entry.ids.includes(id))?.name ??
+    id;
   if (json) console.log(JSON.stringify(report, null, 2));
   else {
     console.log(`assets:coverage: ${score.id} · ${report.required.length} named by the recipes, ${report.present.length} in the manifest`);
-    if (report.missing.length > 0) for (const id of report.missing) console.error(`  MISSING ${id}`);
-    if (report.unused.length > 0) for (const id of report.unused) console.log(`  unused  ${id}`);
+    for (const recipe of report.missingRecipes) console.error(`  MISSING RECIPE ${recipe}`);
+    if (report.missing.length > 0) for (const id of report.missing) console.error(`  MISSING ${nameFor(id)} (${id})`);
+    if (report.unused.length > 0) for (const id of report.unused) console.log(`  unused  ${nameFor(id)} (${id})`);
   }
-  if (report.missing.length > 0) {
+  if (report.missing.length > 0 || report.missingRecipes.length > 0) {
     console.error(`assets:coverage: ${report.missing.length} asset(s) the shots use are not in the film's assets[]`);
     process.exit(1);
   }

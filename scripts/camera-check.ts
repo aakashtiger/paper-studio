@@ -11,6 +11,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { checkCameraPlan, cameraOptionsFromTokens } from "../src/engine/camera.js";
+import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
 
 const args = process.argv.slice(2);
 const scorePath = args.find((arg) => !arg.startsWith("--"));
@@ -21,17 +22,21 @@ if (!scorePath) {
 }
 
 const root = process.cwd();
-const score = JSON.parse(readFileSync(resolve(root, scorePath), "utf8").replace(/^\uFEFF/, "")) as {
-  id: string;
-  style: string;
-  shots: { id?: string; beat?: string; camera?: { move: string; from: number; to: number; ease: string } }[];
-};
+// The renderer paints the **resolved** score, so the check must read that:
+// a shot with no camera block inherits the recipe's move. Reading the raw score
+// called Same Alarm's corridor pan a missing camera.
+const score = FilmScoreSchema.parse(JSON.parse(readFileSync(resolve(root, scorePath), "utf8").replace(/^\uFEFF/, "")));
+const resolved = resolveFilm(score, resolve(root, "styles", score.style), root);
+if (resolved.errors.length > 0) {
+  for (const error of resolved.errors) console.error(`error: ${error.message}`);
+  process.exit(1);
+}
 const tokensPath = resolve(root, "styles", score.style, "tokens.json");
 const tokens = existsSync(tokensPath) ? JSON.parse(readFileSync(tokensPath, "utf8")) : null;
 const options = cameraOptionsFromTokens(tokens);
 const report = checkCameraPlan(
-  score.shots.map((shot, index) => ({
-    id: shot.id ?? `s${String(index + 1).padStart(2, "0")}`,
+  resolved.plan.shots.map((shot) => ({
+    id: shot.id,
     beat: shot.beat,
     camera: shot.camera,
   })),

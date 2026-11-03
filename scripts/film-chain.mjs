@@ -124,6 +124,9 @@ const steps = [
   // the move has a real delta, and the film varies it (0041). A still frame is
   // refused before the expensive type/rig/motion probe.
   { name: "camera", tsx: "scripts/camera-check.ts", args: [score] },
+  // The film's assets[] must name every asset its recipes use (0042). Same
+  // Alarm misses 6 of 11; a new film is refused before preflight.
+  { name: "assets", tsx: "scripts/assets.ts", args: ["coverage", score] },
   // The preflight is the same lesson one stage up: it asks the *writing* every
   // question a viewer asked about the last film — median shot length, words a
   // minute, where the voice stops, whether one cue owns the whole thing, whether

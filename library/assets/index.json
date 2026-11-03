@@ -8,7 +8,19 @@
       "where": "library/characters/kiran/poses.json",
       "source": "paper-kpop / Same Alarm",
       "licence": "proprietary",
-      "recipes": ["alarm_close", "corridor_walk", "desk_wide", "desk_night", "window_dusk", "loop_close", "loop_card"]
+      "recipes": [
+        "alarm_close",
+        "corridor_walk",
+        "desk_wide",
+        "desk_night",
+        "window_dusk",
+        "loop_close",
+        "loop_card"
+      ],
+      "ids": [
+        "character.kiran",
+        "character.lead"
+      ]
     },
     {
       "id": "character.vaz",
@@ -17,7 +29,14 @@
       "where": "library/characters/vaz/poses.json",
       "source": "paper-kpop / Same Alarm",
       "licence": "proprietary",
-      "recipes": ["supervisor_point", "desk_wide"]
+      "recipes": [
+        "supervisor_point",
+        "desk_wide"
+      ],
+      "ids": [
+        "character.vaz",
+        "character.second"
+      ]
     },
     {
       "id": "set.bedroom",
@@ -26,7 +45,15 @@
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
       "licence": "proprietary",
-      "recipes": ["alarm_close", "loop_close", "loop_card"]
+      "recipes": [
+        "alarm_close",
+        "loop_close",
+        "loop_card"
+      ],
+      "ids": [
+        "set.bedroom",
+        "set.paper-card"
+      ]
     },
     {
       "id": "set.corridor",
@@ -35,7 +62,15 @@
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
       "licence": "proprietary",
-      "recipes": ["corridor_walk", "supervisor_point", "side_scroll_chase"]
+      "recipes": [
+        "corridor_walk",
+        "supervisor_point",
+        "side_scroll_chase"
+      ],
+      "ids": [
+        "set.corridor",
+        "set.corridor"
+      ]
     },
     {
       "id": "set.open-office",
@@ -44,7 +79,16 @@
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
       "licence": "proprietary",
-      "recipes": ["desk_wide", "desk_night", "window_dusk", "type_stack"]
+      "recipes": [
+        "desk_wide",
+        "desk_night",
+        "window_dusk",
+        "type_stack"
+      ],
+      "ids": [
+        "set.open-office",
+        "set.scene-kit"
+      ]
     },
     {
       "id": "set.stage",
@@ -53,7 +97,16 @@
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
       "licence": "proprietary",
-      "recipes": ["stage_wide", "portrait_iris", "sticker_slam", "paper_open"]
+      "recipes": [
+        "stage_wide",
+        "portrait_iris",
+        "sticker_slam",
+        "paper_open"
+      ],
+      "ids": [
+        "set.stage",
+        "set.stage"
+      ]
     },
     {
       "id": "set.tabletop",
@@ -62,7 +115,13 @@
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
       "licence": "proprietary",
-      "recipes": ["macro_prop_beat"]
+      "recipes": [
+        "macro_prop_beat"
+      ],
+      "ids": [
+        "set.tabletop",
+        "set.tabletop"
+      ]
     },
     {
       "id": "set.diorama",
@@ -71,7 +130,13 @@
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
       "licence": "proprietary",
-      "recipes": ["pullback_close"]
+      "recipes": [
+        "pullback_close"
+      ],
+      "ids": [
+        "set.diorama",
+        "set.diorama"
+      ]
     },
     {
       "id": "prop.bed",
@@ -80,7 +145,14 @@
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
       "licence": "proprietary",
-      "recipes": ["alarm_close", "loop_close"]
+      "recipes": [
+        "alarm_close",
+        "loop_close"
+      ],
+      "ids": [
+        "prop.bed",
+        "prop.object"
+      ]
     },
     {
       "id": "prop.nightstand",
@@ -89,7 +161,14 @@
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
       "licence": "proprietary",
-      "recipes": ["alarm_close", "loop_close"]
+      "recipes": [
+        "alarm_close",
+        "loop_close"
+      ],
+      "ids": [
+        "prop.nightstand",
+        "prop.object"
+      ]
     },
     {
       "id": "prop.phone",
@@ -98,7 +177,14 @@
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
       "licence": "proprietary",
-      "recipes": ["alarm_close", "loop_close"]
+      "recipes": [
+        "alarm_close",
+        "loop_close"
+      ],
+      "ids": [
+        "prop.phone",
+        "prop.object"
+      ]
     },
     {
       "id": "prop.desk",
@@ -107,17 +193,35 @@
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
       "licence": "proprietary",
-      "recipes": ["desk_wide", "desk_night"]
+      "recipes": [
+        "desk_wide",
+        "desk_night"
+      ],
+      "ids": [
+        "prop.desk",
+        "prop.object"
+      ]
     },
     {
       "id": "prop.chair",
       "name": "Office chair",
       "type": "prop",
       "where": "styles/paper-kpop/canvas/recipes.js",
-      "size": { "w": 84, "h": 152, "unit": "px" },
+      "size": {
+        "w": 84,
+        "h": 152,
+        "unit": "px"
+      },
       "source": "paper-kpop",
       "licence": "proprietary",
-      "recipes": ["desk_wide", "desk_night"]
+      "recipes": [
+        "desk_wide",
+        "desk_night"
+      ],
+      "ids": [
+        "prop.chair",
+        "prop.object"
+      ]
     },
     {
       "id": "prop.monitor",
@@ -126,7 +230,14 @@
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
       "licence": "proprietary",
-      "recipes": ["desk_wide", "desk_night"]
+      "recipes": [
+        "desk_wide",
+        "desk_night"
+      ],
+      "ids": [
+        "prop.monitor",
+        "prop.object"
+      ]
     },
     {
       "id": "prop.papers",
@@ -135,7 +246,14 @@
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
       "licence": "proprietary",
-      "recipes": ["desk_wide", "desk_night"]
+      "recipes": [
+        "desk_wide",
+        "desk_night"
+      ],
+      "ids": [
+        "prop.papers",
+        "prop.object"
+      ]
     },
     {
       "id": "prop.hour-tab",
@@ -144,7 +262,14 @@
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
       "licence": "proprietary",
-      "recipes": ["window_dusk", "type_stack"]
+      "recipes": [
+        "window_dusk",
+        "type_stack"
+      ],
+      "ids": [
+        "prop.hour-tab",
+        "prop.object"
+      ]
     },
     {
       "id": "prop.lamp",
@@ -153,7 +278,14 @@
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
       "licence": "proprietary",
-      "recipes": ["desk_night", "window_dusk"]
+      "recipes": [
+        "desk_night",
+        "window_dusk"
+      ],
+      "ids": [
+        "prop.lamp",
+        "prop.object"
+      ]
     },
     {
       "id": "prop.door",
@@ -162,7 +294,14 @@
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
       "licence": "proprietary",
-      "recipes": ["corridor_walk", "supervisor_point"]
+      "recipes": [
+        "corridor_walk",
+        "supervisor_point"
+      ],
+      "ids": [
+        "prop.door",
+        "prop.object"
+      ]
     },
     {
       "id": "prop.mug",
@@ -171,7 +310,14 @@
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
       "licence": "proprietary",
-      "recipes": ["desk_wide", "desk_night"]
+      "recipes": [
+        "desk_wide",
+        "desk_night"
+      ],
+      "ids": [
+        "prop.mug",
+        "prop.object"
+      ]
     },
     {
       "id": "type.anton",
@@ -179,7 +325,11 @@
       "type": "type",
       "where": "styles/paper-kpop/fonts/Anton-Regular.ttf",
       "source": "Google Fonts",
-      "licence": "OFL-1.1"
+      "licence": "OFL-1.1",
+      "ids": [
+        "type.anton",
+        "type.paper"
+      ]
     },
     {
       "id": "type.archivo",
@@ -187,7 +337,11 @@
       "type": "type",
       "where": "styles/paper-kpop/fonts/ArchivoBlack-Regular.ttf",
       "source": "Google Fonts",
-      "licence": "OFL-1.1"
+      "licence": "OFL-1.1",
+      "ids": [
+        "type.archivo",
+        "type.paper"
+      ]
     },
     {
       "id": "type.dm-mono",
@@ -195,7 +349,11 @@
       "type": "type",
       "where": "styles/paper-kpop/fonts/DMMono-Regular.ttf",
       "source": "Google Fonts",
-      "licence": "OFL-1.1"
+      "licence": "OFL-1.1",
+      "ids": [
+        "type.dm-mono",
+        "type.paper"
+      ]
     },
     {
       "id": "type.permanent-marker",
@@ -203,7 +361,11 @@
       "type": "type",
       "where": "styles/paper-kpop/fonts/PermanentMarker-Regular.ttf",
       "source": "Google Fonts",
-      "licence": "Apache-2.0"
+      "licence": "Apache-2.0",
+      "ids": [
+        "type.permanent-marker",
+        "type.paper"
+      ]
     },
     {
       "id": "effect.paper-fibre",
@@ -211,7 +373,11 @@
       "type": "effect",
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
-      "licence": "proprietary"
+      "licence": "proprietary",
+      "ids": [
+        "effect.paper-fibre",
+        "texture.paper-fibre"
+      ]
     },
     {
       "id": "effect.halftone",
@@ -219,7 +385,11 @@
       "type": "effect",
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
-      "licence": "proprietary"
+      "licence": "proprietary",
+      "ids": [
+        "effect.halftone",
+        "texture.halftone"
+      ]
     },
     {
       "id": "effect.grain",
@@ -227,7 +397,10 @@
       "type": "effect",
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
-      "licence": "proprietary"
+      "licence": "proprietary",
+      "ids": [
+        "effect.grain"
+      ]
     },
     {
       "id": "effect.vignette",
@@ -235,7 +408,10 @@
       "type": "effect",
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
-      "licence": "proprietary"
+      "licence": "proprietary",
+      "ids": [
+        "effect.vignette"
+      ]
     },
     {
       "id": "effect.contact-shadow",
@@ -243,7 +419,183 @@
       "type": "effect",
       "where": "styles/paper-kpop/canvas/recipes.js",
       "source": "paper-kpop",
+      "licence": "proprietary",
+      "ids": [
+        "effect.contact-shadow"
+      ]
+    },
+    {
+      "id": "character.office-rig",
+      "name": "Office rig (drawing code)",
+      "type": "rig",
+      "where": "films/same-alarm/vendor/office.js",
+      "ids": [
+        "character.office-rig"
+      ],
+      "source": "paper-kpop / Same Alarm",
+      "licence": "proprietary",
+      "recipes": [
+        "alarm_close",
+        "corridor_walk",
+        "desk_wide",
+        "desk_night",
+        "window_dusk",
+        "loop_close",
+        "loop_card",
+        "supervisor_point"
+      ]
+    },
+    {
+      "id": "set.paper-card",
+      "name": "Paper card",
+      "type": "set",
+      "where": "styles/paper-kpop/canvas/recipes.js",
+      "ids": [
+        "set.paper-card"
+      ],
+      "source": "paper-kpop",
+      "licence": "proprietary",
+      "recipes": [
+        "paper_open",
+        "type_stack"
+      ]
+    },
+    {
+      "id": "set.scene-kit",
+      "name": "Scene kit",
+      "type": "set",
+      "where": "films/same-alarm/vendor/scene_kit.js",
+      "ids": [
+        "set.scene-kit"
+      ],
+      "source": "paper-kpop / Same Alarm",
+      "licence": "proprietary",
+      "recipes": [
+        "desk_wide",
+        "desk_night",
+        "window_dusk"
+      ]
+    },
+    {
+      "id": "prop.object",
+      "name": "Generic prop",
+      "type": "prop",
+      "where": "styles/paper-kpop/canvas/recipes.js",
+      "ids": [
+        "prop.object"
+      ],
+      "source": "paper-kpop",
+      "licence": "proprietary",
+      "recipes": [
+        "desk_wide",
+        "desk_night",
+        "alarm_close"
+      ]
+    },
+    {
+      "id": "prop.paper-sticker",
+      "name": "Paper sticker",
+      "type": "prop",
+      "where": "styles/paper-kpop/canvas/recipes.js",
+      "ids": [
+        "prop.paper-sticker"
+      ],
+      "source": "paper-kpop",
+      "licence": "proprietary",
+      "recipes": [
+        "sticker_slam"
+      ]
+    },
+    {
+      "id": "prop.form",
+      "name": "Paper form",
+      "type": "prop",
+      "where": "styles/paper-kpop/canvas/recipes.js",
+      "size": {
+        "w": 340,
+        "h": 84,
+        "unit": "px"
+      },
+      "ids": [
+        "prop.form"
+      ],
+      "source": "paper-kpop",
+      "licence": "proprietary",
+      "recipes": [
+        "desk_wide"
+      ]
+    },
+    {
+      "id": "frame.paper-window",
+      "name": "Paper window frame",
+      "type": "frame",
+      "where": "styles/paper-kpop/canvas/recipes.js",
+      "ids": [
+        "frame.paper-window"
+      ],
+      "source": "paper-kpop",
+      "licence": "proprietary",
+      "recipes": [
+        "window_dusk"
+      ]
+    },
+    {
+      "id": "texture.halftone",
+      "name": "Halftone texture",
+      "type": "texture",
+      "where": "styles/paper-kpop/canvas/recipes.js",
+      "ids": [
+        "texture.halftone"
+      ],
+      "source": "paper-kpop",
       "licence": "proprietary"
+    },
+    {
+      "id": "texture.paper-fibre",
+      "name": "Paper fibre texture",
+      "type": "texture",
+      "where": "styles/paper-kpop/canvas/recipes.js",
+      "ids": [
+        "texture.paper-fibre"
+      ],
+      "source": "paper-kpop",
+      "licence": "proprietary"
+    },
+    {
+      "id": "hud.meter",
+      "name": "HUD meter",
+      "type": "hud",
+      "where": "styles/paper-kpop/canvas/recipes.js",
+      "ids": [
+        "hud.meter"
+      ],
+      "source": "paper-kpop",
+      "licence": "proprietary",
+      "recipes": [
+        "stage_wide"
+      ]
+    },
+    {
+      "id": "type.paper",
+      "name": "Paper type",
+      "type": "type",
+      "where": "films/same-alarm/vendor/type.js",
+      "ids": [
+        "type.paper"
+      ],
+      "source": "paper-kpop / Same Alarm",
+      "licence": "proprietary"
+    },
+    {
+      "id": "type.dm-mono-medium",
+      "name": "DM Mono Medium",
+      "type": "type",
+      "where": "styles/paper-kpop/fonts/DMMono-Medium.ttf",
+      "ids": [
+        "type.dm-mono-medium"
+      ],
+      "source": "Google Fonts",
+      "licence": "OFL-1.1"
     }
   ]
 }

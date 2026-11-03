@@ -46,17 +46,32 @@ the one link still to build.
 `fixtures/story-min` — 30 s, 70 words, 5 beats:
 
 ```
-voice:story: story-min · 70 words · 140 wpm · speaks 91%
-  first line 0.08s · last ends 29.48s · longest hole 0.69s at 13.08s · 69/70 words heard
-  ok everyLineSpoken · ok everyWordHeard · ok wpm · ok firstLine
-  ok hole · ok coverage · ok withinFilm
+voice:story: story-min · 70 words · 140 script wpm · 190 spoken wpm · speaks 73%
+  first line 0.08s · last ends 29.48s · longest hole 0.78s at 2.40s · 69/70 words heard
+  ok everyLineSpoken · ok everyWordHeard · ok firstLine · ok hole · ok withinFilm
+  FAIL coverage
 ```
 
 The one unheard word is **grey**, heard as **gray** — a spelling variant, not a
-swallowed word; the 0.9 coverage floor is the same one `voice` uses. The read is
-Kokoro `af_heart` at speed **0.80**. At 1.04 the same script read 178 wpm and
-left 6.4 s of silence; at 0.82 it still left 2.69 s; at 0.80 it fits. The
-fixture's `voice.speed` was corrected to 0.80 so the model and the command agree.
+swallowed word; the 0.9 coverage floor is the same one `voice` uses.
+
+**The first version of this report said 91%, and it was wrong.** It summed the
+line windows, so every pause inside a line counted as speech. The measured word
+times say **22.06 s of speech in 30 s (73.5%)**, and `measureWords` is now the
+same function preflight uses (0037). The command **refuses** the fixture.
+
+That refusal is honest, and it exposes a contract tension: 70 words at 140 script
+wpm fills 30 s with words. A natural read adds pauses, so it either covers less
+than 80% (this read) or runs past 30 s (slower reads). At 1.04 the read was 178
+wpm with a 6.4 s tail; at 0.82 a 2.69 s tail; at 0.80 the last word ends 29.48 s
+but speech covers 73.5%. No speed satisfies both. Either the coverage floor or
+the "140–150 wpm on a 30 s film" density has to move; the command does not hide
+it.
+
+The read is pinned: a request hash (script text, voice, speed) is stored beside
+the audio, and a changed script refuses the old read until `--force`. For a real
+film the default files are `films/<id>/voice.wav` and `films/<id>/narration.json`,
+not `build/`.
 
 **440 tests**, typecheck clean, `films/` untouched.
 
@@ -65,9 +80,11 @@ fixture's `voice.speed` was corrected to 0.80 so the model and the command agree
 - **It does not fill `score.clock.lines` yet.** `narration.json` is the measured
   clock; a `voice --from-story` (or `score:clock`) that writes it into the score
   is the next link.
+- **The fixture is a refusal example, not a passing one.** A passing read needs a
+  script whose words fit the coverage floor with its pauses, or a longer film.
 - **It speaks TTS only.** A recorded read is supported by `voice`, not yet by
   `voice:story`.
 - **A song is not a narration.** The same order applies, but a lyric/syllable
   clock is not built.
 - **The 0.80 speed is a fixture choice, not a style constant.** Another voice
-  will need another speed to hit 140–150 wpm.
+  will need another speed to hit the same script density.

@@ -23,7 +23,7 @@ import { hashFile } from "../src/core/style.js";
 import {
   NARRATION_COVERAGE_MIN,
   NARRATION_START_MAX,
-  longestHole,
+  measureWords,
 } from "../src/engine/preflight.js";
 import {
   BeatsSchema,
@@ -86,8 +86,15 @@ const lines: VoiceLine[] = story.narration.map((line) => ({ id: line.id, text: l
 const wordsOfScript = scriptWords(lines);
 const buildDir = resolve(root, "build", story.id);
 mkdirSync(buildDir, { recursive: true });
-const audioPath = resolve(root, arg("audio") ?? join("build", story.id, "voice-story.wav"));
-const outPath = resolve(root, arg("out") ?? join("build", story.id, "narration.json"));
+const hasFilmDir = existsSync(resolve(root, "films", story.id));
+const audioPath = resolve(
+  root,
+  arg("audio") ?? (hasFilmDir ? join("films", story.id, "voice.wav") : join("build", story.id, "voice-story.wav")),
+);
+const outPath = resolve(
+  root,
+  arg("out") ?? (hasFilmDir ? join("films", story.id, "narration.json") : join("build", story.id, "narration.json")),
+);
 mkdirSync(dirname(outPath), { recursive: true });
 mkdirSync(dirname(audioPath), { recursive: true });
 
@@ -104,6 +111,8 @@ const narration = {
 const request = voiceRequest(story.id, narration, lines);
 const requestPath = join(buildDir, "voice-story-request.json");
 writeFileSync(requestPath, `${JSON.stringify(request, null, 2)}\n`, "utf8");
+const requestHash = hashFile(requestPath);
+const readStampPath = join(buildDir, "voice-story.read.json");
 
 function run(command: string, argv: string[], cwd: string): Promise<number> {
   return new Promise((done, fail) => {
@@ -116,6 +125,17 @@ function run(command: string, argv: string[], cwd: string): Promise<number> {
 async function main(): Promise<void> {
   // 1. Speak the story. A pinned read is kept unless --force.
   if (existsSync(audioPath) && !force) {
+    if (!existsSync(readStampPath)) {
+      console.error(`error: the pinned read has no script stamp — pass --force to re-speak ${showPath(root, audioPath)}`);
+      process.exit(1);
+    }
+    const stamp = JSON.parse(readFileSync(readStampPath, "utf8")) as { requestHash?: string };
+    if (stamp.requestHash !== requestHash) {
+      console.error(
+        "error: the pinned read was spoken from a different script or speed — pass --force to re-speak it",
+      );
+      process.exit(1);
+    }
     console.log(`voice:story: keeping the pinned read ${showPath(root, audioPath)} (--force to re-speak)`);
   } else {
     const status = speechStatus();
@@ -141,6 +161,11 @@ async function main(): Promise<void> {
     console.error(`error: no narration to listen to: ${showPath(root, audioPath)}`);
     process.exit(1);
   }
+  writeFileSync(
+    readStampPath,
+    `${JSON.stringify({ requestHash, audioHash: hashFile(audioPath), source: "tts" }, null, 2)}\n`,
+    "utf8",
+  );
 
   // 2. Listen. The measured word times are the clock.
   const status = speechStatus();
@@ -170,19 +195,22 @@ async function main(): Promise<void> {
   const beatByLine = new Map(story.narration.map((line) => [line.id, line.beat]));
   const narrationLines = derived.map((line) => ({ ...line, beat: beatByLine.get(line.id) ?? "" }));
   const words = narrationLines.reduce((sum, line) => sum + countWords(line.text), 0);
-  const speech = narrationLines.reduce((sum, line) => sum + line.duration, 0);
-  const wpm = story.duration > 0 ? (words / story.duration) * 60 : 0;
-  const { hole, holeAt } = longestHole(narrationLines, story.duration);
-  const first = narrationLines[0]?.start ?? 0;
-  const lastLine = narrationLines[narrationLines.length - 1];
-  const lastEnd = lastLine ? lastLine.start + lastLine.duration : 0;
+  const scriptWpm = story.duration > 0 ? (words / story.duration) * 60 : 0;
+  // The check is the measured words, not the line windows: a 3 s pause inside
+  // one line is a hole, and line durations count it as speech.
+  const measured = measureWords(heard, story.duration);
+  const speech = measured.speech;
   const coverageRatio = story.duration > 0 ? speech / story.duration : 0;
+  const hole = measured.hole;
+  const holeAt = measured.holeAt;
+  const first = measured.first;
+  const lastEnd = heard.reduce((end, word) => Math.max(end, word.end), 0);
+  const spokenWpm = measured.speech > 0 ? (measured.words / measured.speech) * 60 : 0;
   const missing = unheard(wordsOfScript, heard);
 
   const checks = {
     everyLineSpoken: narrationLines.length === story.narration.length,
     everyWordHeard: matched / Math.max(1, wordsOfScript.length) >= 0.9,
-    wpm: wpm >= story.pace.wpm[0] && wpm <= story.pace.wpm[1],
     firstLine: first <= NARRATION_START_MAX,
     hole: hole <= NARRATION_HOLE_MAX,
     coverage: coverageRatio >= NARRATION_COVERAGE_MIN,
@@ -201,7 +229,8 @@ async function main(): Promise<void> {
     heardWords: heard.length,
     matched,
     coverage: Number((matched / Math.max(1, wordsOfScript.length)).toFixed(4)),
-    wpm: Number(wpm.toFixed(1)),
+    scriptWpm: Number(scriptWpm.toFixed(1)),
+    spokenWpm: Number(spokenWpm.toFixed(1)),
     speech: Number(speech.toFixed(2)),
     speechCoverage: Number(coverageRatio.toFixed(3)),
     first: Number(first.toFixed(3)),
@@ -219,7 +248,7 @@ async function main(): Promise<void> {
   if (json) {
     console.log(JSON.stringify(report, null, 2));
   } else {
-    console.log(`voice:story: ${story.id} · ${words} words · ${wpm.toFixed(0)} wpm · speaks ${(coverageRatio * 100).toFixed(0)}%`);
+    console.log(`voice:story: ${story.id} · ${words} words · ${scriptWpm.toFixed(0)} script wpm · ${spokenWpm.toFixed(0)} spoken wpm · speaks ${(coverageRatio * 100).toFixed(0)}%`);
     console.log(`  first line ${first.toFixed(2)}s · last ends ${lastEnd.toFixed(2)}s · longest hole ${hole.toFixed(2)}s at ${holeAt.toFixed(2)}s · ${matched}/${wordsOfScript.length} words heard`);
     for (const line of narrationLines) {
       console.log(`  ${line.id.padEnd(4)} ${line.start.toFixed(2).padStart(6)}s  +${line.duration.toFixed(2)}s  ${line.text}`);

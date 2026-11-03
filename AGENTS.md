@@ -239,16 +239,17 @@ can name an expression, and the painter maps it to the rig's eyes/brow/mouth.
 
 **The story now speaks first, the camera is a grammar, and assets have names.**
 `voice:story` reads `story.json` + `beats.json`, speaks the lines, listens with
-Whisper, and writes `narration.json` **before a score exists**. On the 30 s
-fixture it reads **70 words at 140 wpm, first line 0.08 s, last ends 29.48 s,
-0.69 s longest hole, 69/70 words heard** and passes every pace gate;
-`camera:check` refuses a still shot, a push that pulls, a move with no travel,
-and a four-shot run, while `camera:plan` proposes a varied dynamic sequence from
-the beats (six moves, longest run 1, on the Same Alarm copy);
-`assets:list` names the built assets in plain English (Bedroom, Office chair,
-Phone, Anton) and `assets:coverage` reports the **6 of 11** recipe assets Same
-Alarm's manifest misses. The library immutability/14-face proof and the 7+4 agent
-workflow are parked.
+Whisper, and writes `narration.json` **before a score exists**. The 30 s fixture
+reads 70 words at 140 script wpm (190 spoken) with **73.5% measured word
+coverage**, so the command **refuses** it — the earlier 91% was line windows,
+not speech. That refusal names a real contract tension: 140 wpm of script on a
+30 s film leaves no room for pauses. `camera:check` refuses a still shot, a push
+that pulls, a move with no travel, and a four-shot run, while `camera:plan`
+proposes a varied dynamic sequence from the beats (four moves, longest run 1, on
+the Same Alarm copy); `assets:list` names 40 built assets in plain English and
+`assets:coverage` reports the **6 of 11** recipe assets Same Alarm's manifest
+misses. The library immutability/14-face proof and the 7+4 agent workflow are
+parked.
 
 **The plan is `docs/PLAN-v2.md`.** It is the end-to-end process in plain English,
 the video checklist, the P0/P1/P2 gap list and a ten-session build order. No new

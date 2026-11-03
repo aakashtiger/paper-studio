@@ -12,7 +12,7 @@ import { z } from "zod";
  * map, not a second manifest: the score still owns what a film uses.
  */
 
-export const AssetKindSchema = z.enum(["character", "set", "prop", "type", "effect", "texture"]);
+export const AssetKindSchema = z.enum(["character", "rig", "set", "prop", "frame", "texture", "type", "hud", "effect"]);
 
 export const AssetSizeSchema = z.object({
   w: z.number().positive(),
@@ -22,6 +22,8 @@ export const AssetSizeSchema = z.object({
 
 export const CatalogEntrySchema = z.object({
   id: z.string().min(1),
+  /** The technical ids this plain-name entry maps to, e.g. ["character.lead"]. */
+  ids: z.array(z.string().min(1)).default([]),
   /** The name a person reads. */
   name: z.string().min(1),
   type: AssetKindSchema,
@@ -77,8 +79,15 @@ export function resolveCatalog(
         asset: entry.id,
       });
     }
+    if (/^(none|unknown|n\/a|tbd|found on the internet)$/i.test(entry.licence.trim())) {
+      errors.push({
+        code: "asset:licence",
+        message: `${entry.name}: "${entry.licence}" is not a licence`,
+        asset: entry.id,
+      });
+    }
     if (entry.type === "character" && !entry.where.replace(/\\/g, "/").startsWith("library/characters/")) {
-      warnings.push({
+      errors.push({
         code: "asset:character",
         message: `${entry.name} is not in library/characters/ — a reusable character belongs there`,
         asset: entry.id,
@@ -94,6 +103,8 @@ export type CoverageReport = {
   present: string[];
   missing: string[];
   unused: string[];
+  /** Recipes a shot names that the style pack does not have. */
+  missingRecipes: string[];
 };
 
 /**
@@ -107,9 +118,13 @@ export function checkCoverage(
   options: { root: string; styleDir: string },
 ): CoverageReport {
   const required = new Set<string>();
+  const missingRecipes = new Set<string>();
   for (const shot of score.shots) {
     const recipePath = join(options.styleDir, "recipes", `${shot.recipe}.json`);
-    if (!existsSync(recipePath)) continue;
+    if (!existsSync(recipePath)) {
+      missingRecipes.add(shot.recipe);
+      continue;
+    }
     const recipe = JSON.parse(readFileSync(recipePath, "utf8")) as { assets?: string[] };
     for (const id of recipe.assets ?? []) required.add(id);
   }
@@ -119,5 +134,6 @@ export function checkCoverage(
     present: [...present].sort(),
     missing: [...required].filter((id) => !present.has(id)).sort(),
     unused: [...present].filter((id) => !required.has(id)).sort(),
+    missingRecipes: [...missingRecipes].sort(),
   };
 }

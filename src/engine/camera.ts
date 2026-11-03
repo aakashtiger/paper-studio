@@ -54,7 +54,7 @@ export const CAMERA_BY_BEAT: Record<string, string> = {
   setup: "pan",
   escalate: "push_in",
   turn: "pull_back",
-  release: "parallax",
+  release: "orbit",
   button: "push_in",
 };
 
@@ -105,7 +105,7 @@ export function checkCameraPlan(
         shot: shot.id,
       });
     }
-    if (!(camera.to > camera.from) && !(camera.to < camera.from)) {
+    if ((camera.move === "push_in" || camera.move === "pull_back") && camera.to === camera.from) {
       errors.push({
         code: "camera:delta",
         message: `shot "${shot.id}" has from ${camera.from} and to ${camera.to} — the move has no travel`,
@@ -137,12 +137,13 @@ export function checkCameraPlan(
     longestRun = Math.max(longestRun, run);
   }
 
-  if (distinct.size < minDistinct) {
+  const need = Math.min(minDistinct, shots.length);
+  if (distinct.size < need) {
     errors.push({
       code: "camera:variety",
       message:
         `${distinct.size} camera move(s) in ${shots.length} shots (${[...distinct].join(", ") || "none"}) — ` +
-        `a film needs at least ${minDistinct}`,
+        `a film needs at least ${need}`,
     });
   }
   if (longestRun > maxRun) {
@@ -185,23 +186,27 @@ export function proposeCameraPlan(
 ): { id: string; beat?: string; camera: { move: string; from: number; to: number; ease: string } }[] {
   const maxRun = options.maxRun ?? 2;
   const byBeat = options.byBeat ?? CAMERA_BY_BEAT;
-  const cycle = ["push_in", "pan", "orbit", "pull_back", "parallax", "tilt"];
+  const cycle = ["push_in", "pan", "orbit", "pull_back"];
   const seed = (options.seed ?? "camera").split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
   let previous: string | null = null;
   let run = 0;
   return shots.map((shot, index) => {
     let move = byBeat[shot.beat ?? ""] ?? cycle[(index + seed) % cycle.length]!;
     if (move === previous && run >= maxRun) {
-      move = cycle[(cycle.indexOf(move) + 1 + (seed % cycle.length)) % cycle.length]!;
+      let next = (cycle.indexOf(move) + 1) % cycle.length;
+      for (let step = 1; step <= cycle.length && cycle[next] === previous; step += 1) {
+        next = (next + 1) % cycle.length;
+      }
+      move = cycle[next]!;
     }
     if (move === previous) run += 1;
     else {
       previous = move;
       run = 1;
     }
-    const from = move === "pull_back" ? 1.08 : 1;
-    const to = move === "pull_back" ? 1 : move === "push_in" ? 1.05 + (index % 3) * 0.01 : 1.03 + (index % 2) * 0.01;
-    const ease = move === "orbit" || move === "parallax" ? "easeInOut" : "easeOut";
+    const from = move === "pull_back" ? 1.12 : 1;
+    const to = move === "pull_back" ? 1 : move === "push_in" ? 1.08 + (index % 3) * 0.02 : 1.06 + (index % 2) * 0.02;
+    const ease = move === "orbit" ? "easeInOut" : move === "pan" ? "easeIn" : "easeOut";
     return { id: shot.id, ...(shot.beat ? { beat: shot.beat } : {}), camera: { move, from: Number(from.toFixed(2)), to: Number(to.toFixed(2)), ease } };
   });
 }

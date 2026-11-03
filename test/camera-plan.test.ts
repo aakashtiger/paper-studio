@@ -20,7 +20,7 @@ test("a varied, moving camera plan passes", () => {
     shot("s02", "pan", 1, 1.03, "setup"),
     shot("s03", "push_in", 1, 1.06, "escalate"),
     shot("s04", "pull_back", 1.08, 1, "turn"),
-    shot("s05", "parallax", 1, 1.03, "release"),
+    shot("s05", "orbit", 1, 1.04, "release"),
     shot("s06", "push_in", 1, 1.08, "button"),
   ]);
   assert.deepEqual(report.errors, []);
@@ -31,7 +31,7 @@ test("a still shot, a missing camera, and a move with no travel are refused", ()
   const report = checkCameraPlan([
     shot("s01", "static"),
     { id: "s02", beat: "setup" },
-    shot("s03", "pan", 1, 1),
+    shot("s03", "push_in", 1, 1),
   ]);
   assert.ok(report.errors.some((error) => error.code === "camera:static"));
   assert.ok(report.errors.some((error) => error.code === "camera:missing"));
