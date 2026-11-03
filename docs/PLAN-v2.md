@@ -472,12 +472,14 @@ rediscover it.
 
 | ID | Gap | Smallest fix | Proof |
 |---|---|---|---|
-| P0.1 | Narration is spoken from the score, not from `story.json`; scenes/shots still come before the voice | `voice --story` writes `narration.json`; scenes/shots consume it; song lyric lines use the same clock | a line that runs long moves one shot, not the film |
-| P0.2 | No shared asset library; characters have 4 expressions and 8 poses per film; assets are names, not files | `assets/` root with id@version, path, hash, licence, anchors; 12–16 expressions; 12 poses; `assets:new`; `assets:sheet`; `expression` on a shot | `assets:check` refuses a missing expression, licence or size |
-| P0.3 | Measurement is global only; no camera translation, lighting direction, shadow fraction or bands | `style:measure --regions` (face/sky/text/prop), `--camera` (x/y shift), `--bands` (declared targets) | a reference and a specimen produce a per-region gap, not one global number |
+| P0.1 | Narration is spoken from the score, not from `story.json`; scenes/shots still come before the voice. `voice --apply` can move a shot by 0.35 s while `cut:scene-duration` allows 0.3 s, so a green apply can make a red scene | `voice --story` writes `narration.json`; scenes/shots consume it; song lyric lines use the same clock. When `--apply` moves a boundary at a scene edge, it updates that scene's seconds or refuses by name. Align the two tolerances | a line that runs long moves one shot, not the film; a moved boundary cannot make a green scene red |
+| P0.2 | No shared asset library (names, not files); characters have 4 expressions and 8 poses per film; the render manifest does not hash assets, and Same Alarm's manifest misses **6 of 11** assets its own recipes name; props have no declared size in the manifest; the painter never receives an expression | `assets/` root with id@version, path, hash, licence, anchors, w/h; 12–16 expressions; 12 poses; `assets:new --score` derives the required list from recipes/cast/slots; `assets:check` diffs it; hash every `assets[].path` and every vendor script in the render manifest; pass `expression` through `drawCharacter` to the rig | `assets:check` refuses a missing expression, licence, size or recipe-named asset; the manifest names every drawn file |
+| P0.3 | Measurement is global only; contrast is a saturated `YMAX−YMIN` proxy; edge density is measured at a fixed 320 px and biases the higher-resolution film; movement includes cut spikes; no camera translation, lighting direction, shadow fraction or bands; the match report is not tied to a film | `style:measure --regions` (face/sky/text/prop), `--camera` (x/y shift on the existing 48×27 probe sample), `--bands` (declared targets); report `YHIGH−YLOW` contrast and `SATHIGH` (already in `signalstats`); measure edges at the reference's width, not 320; drop cut frames from movement; write film id + `videoHash` + tool version into `match.json`; add it to `film:review` | a reference and a specimen produce a per-region gap, not one global number; the gap is tied to the picture it describes |
 | P0.4 | No arm/hand audit; no word-reaction check; no pop-frame check | rig publishes arm segments/hand shapes; `event.word` + 0–3 frame check; frame audit flags a luminance jump at a cut | a plank arm and a hand smaller than a thumb fail; a reaction lands before its word |
-| P0.5 | No per-area analysis/rebuild workflow; critics are end-of-film and often absent | 7 read-only analysis agents, one `reviews/<film>/<area>.md` each; `FIXLIST.md`; up to 4 rebuild agents in git worktrees with disjoint file scopes; merge one file at a time | every finding has a file/frame, an owner and a proof command |
+| P0.5 | No per-area analysis/rebuild workflow; critics are end-of-film and often absent; and the areas **share one file** — `canvas/recipes.js` holds camera, light, sets and final look, so "split files" is not yet possible | **First split `canvas/recipes.js` by area** into `sets.js`, `characters.js`, `light.js`, `camera.js`, `look.js` with `recipes.js` as the registry. Then 7 read-only analysis agents, one `reviews/<film>/<area>.md` each; `FIXLIST.md`; up to 4 rebuild agents in git worktrees with disjoint files; merge one file at a time | every finding has a file/frame, an owner and a proof command; two agents never edit one file |
 | P0.6 | The chain and renderer measured the promise, not the film | **Done (0037):** measured words, story/score duration, frame grid, `embed` after voice, stale score-data guard, `--score` cut honesty | 418 tests; Same Alarm coverage 13%, not 23% |
+| P0.7 | The order can be bypassed: `reproduce` turns missing story/scenes into warnings for any film with an MP4; `--skip-render` adopts a picture without the render gates; `--from` skips the prefix; `--draft`/probes can paint a whole film; `render:film` requires only preflight, collage and motion; `gate:7` passes with ASR pending | Replace `reproduce` with a sealed legacy marker in the score; `--skip-render`/`--from` must prove the skipped reports exist and are tied to this score; require determinism, type, rig, sfx and mix before the paint; fail the gate on any `pending` | deleting story/scenes after a delivery fails preflight and the gate; a whole-film probe without checks is impossible |
+| P0.8 | The writing is not hashed or gated: `story.json`, `beats.json` and `scenes.json` are absent from `renderInputs`; `gate:7` has no writing row, so a delivered film can have its script deleted and still pass | Hash all three into the render manifest; add one `writing` gate row that re-runs `checkStory`, `checkScenes` and `checkNarrationSync` and is tied to the score hash | the delivered file's provenance includes the documents it was written from; a missing script fails the gate |
 
 ### P1 — after the first new film, or in parallel
 
@@ -533,11 +535,11 @@ git worktree add ../studio-look   -b fix/<film>/look
 git worktree add ../studio-camera -b fix/<film>/camera
 ```
 
-Disjoint scopes:
-- world: `styles/<pack>/recipes/*.json` + the set-drawing block
-- cast: `films/<id>/cast/*.json` + `src/engine/rig.ts` / `pose.ts`
-- look: `styles/<pack>/tokens.json` + the look block
-- camera: `reviews/<film>/camera.md` only
+Disjoint scopes (after the P0.5 split; without it these four would edit one file):
+- world: `styles/<pack>/canvas/sets.js` + the set recipes
+- cast: `films/<id>/cast/*.json` + `films/<id>/vendor/characters.js` + `styles/<pack>/canvas/characters.js`
+- look: `styles/<pack>/tokens.json` + `styles/<pack>/canvas/look.js`
+- camera: `styles/<pack>/canvas/camera.js` + `reviews/<film>/camera.md` (it proposes score values; `score.json` stays director-only)
 
 **Phase D — merge one file at a time**, world → cast → camera → look. After each
 file: `npm run preflight` (1 s). After each agent: `npm run inspect` (1 min).
@@ -568,13 +570,13 @@ existing commands. No parallel runtime, no agent server, no merge bot.
 
 | Session | What | Proof |
 |---|---|---|
-| 1 | `voice --story` + `narration.json`; song lyric lines use the same clock | a long line moves a shot, not the film |
-| 2–3 | Asset library v1: files, hashes, licences, 12–16 expressions, 12 poses, `assets:new`, `assets:sheet`, `expression` on a shot | asset sheet shows every expression and pose before the storyboard |
-| 4–5 | Measurement v2: `--regions`, `--camera`, `--bands`; reference vs specimen reports | a per-region gap and a translation trace |
+| 1 | `voice --story` + `narration.json`; song lyric lines use the same clock; align the `--apply` 0.35 s and scene 0.3 s tolerances | a long line moves a shot, not the film; a moved boundary cannot make a green scene red |
+| 2–3 | Asset library v1: files, hashes, licences, 12–16 expressions, 12 poses, `assets:new --score`, `assets:sheet`, `expression` through the painter; manifest covers and hashes every recipe/cast/slot asset; props declare w/h | asset sheet shows every expression and pose before the storyboard; the manifest names every drawn file |
+| 4–5 | Measurement v2: `--regions`, `--camera`, `--bands`; robust contrast/saturation/edges; movement without cuts; film id + `videoHash`; review reads it | a per-region gap, a translation trace, and a match tied to this picture |
 | 6 | Arm/hand audit, word-reaction check, pop-frame check | a plank arm fails; a late reaction fails |
-| 7 | Agent/critic workflow v1; run the seven analysis reports on the fixture | seven review files, one FIXLIST, no merge conflict |
-| 8 | `story:new --idea` + facts/sources; `style:new --bible` | an idea produces a draft, not an invented fact |
-| 9 | Background reuse; 2K/vertical; readability checks | measured render saving; 2K file |
+| 7 | Split `canvas/recipes.js` by area; agent/critic workflow v1; run the seven analysis reports on the fixture | seven review files, one FIXLIST, no merge conflict |
+| 8 | Close the bypasses: sealed legacy marker, `--skip-render`/`--from` tied reports, render requires all reports, gate fails on `pending`; hash story/beats/scenes and add the `writing` gate row | deleting the script fails the gate; a whole-film probe without checks is impossible |
+| 9 | `story:new --idea` + facts/sources; `style:new --bible`; background reuse; 2K/vertical; readability checks | an idea produces a draft, not an invented fact; a measured render saving; a 2K file |
 | 10 | The first new film, full chain, measured | one render, gate PASS, no human seal |
 
 **Rule:** no new film until sessions 1–6 are done. Sessions 7–9 can run in
