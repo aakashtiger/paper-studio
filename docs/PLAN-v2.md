@@ -407,9 +407,9 @@ master, put it into the picture, measure the delivered file.
 
 **Have:** `sfx`, `mix`, `deliver`, `asr`, `gate:7`.
 
-**Missing:** music generation; song path; the exact music +3/SFX −6 standard.
+**Missing:** music generation; song path; the exact music +3/SFX −6 standard; the **15 LU contrast** rule (quietest 3 s vs loudest 3 s) on the delivered file.
 
-**Fix:** music only when a film needs it; a lyric/syllable clock for a song.
+**Fix:** music only when a film needs it; a lyric/syllable clock for a song; measure 3 s short-term windows and fail below 15 LU of contrast.
 
 **Proof:** a click, a banned cue, a silence with narration, or a stale cue is
 refused.
@@ -432,10 +432,10 @@ gate row printed from evidence about this film.
 
 **Have:** `deliver`, `gate:7`, `film:review --gate --reuse`, `--reuse` rules.
 
-**Missing:** pop-frame check; hand/face close-up count; loudness range in viewer
-units; arm/hand.
+**Missing:** pop-frame check; hand/face close-up count; loudness range gated;
+sound contrast at least 15 LU; arm/hand.
 
-**Fix:** add the three checks (P0/P1).
+**Fix:** add the four checks (P0.4/P0.9).
 
 **Proof:** `gate:7` prints PASS with no pending row.
 
@@ -480,6 +480,7 @@ rediscover it.
 | P0.6 | The chain and renderer measured the promise, not the film | **Done (0037):** measured words, story/score duration, frame grid, `embed` after voice, stale score-data guard, `--score` cut honesty | 418 tests; Same Alarm coverage 13%, not 23% |
 | P0.7 | The order can be bypassed: `reproduce` turns missing story/scenes into warnings for any film with an MP4; `--skip-render` adopts a picture without the render gates; `--from` skips the prefix; `--draft`/probes can paint a whole film; `render:film` requires only preflight, collage and motion; `gate:7` passes with ASR pending | Replace `reproduce` with a sealed legacy marker in the score; `--skip-render`/`--from` must prove the skipped reports exist and are tied to this score; require determinism, type, rig, sfx and mix before the paint; fail the gate on any `pending` | deleting story/scenes after a delivery fails preflight and the gate; a whole-film probe without checks is impossible |
 | P0.8 | The writing is not hashed or gated: `story.json`, `beats.json` and `scenes.json` are absent from `renderInputs`; `gate:7` has no writing row, so a delivered film can have its script deleted and still pass | Hash all three into the render manifest; add one `writing` gate row that re-runs `checkStory`, `checkScenes` and `checkNarrationSync` and is tied to the score hash | the delivered file's provenance includes the documents it was written from; a missing script fails the gate |
+| P0.9 | The sound and the gate are not in viewer units: the quietest 3 s is not measured against the loudest 3 s (the v2 rule is ≥15 LU of contrast), LRA is measured but never gated, and there is no hand/face close-up count | Measure 3 s short-term windows on the delivered file and fail if the quietest is <15 LU under the loudest; gate LRA; count hand/face close-ups per film and declare a band; express the motion floor in a viewer unit | a film that never goes quiet fails; a film with no close-ups fails; the gate speaks in words, seconds, LU and faces, not arbitrary units |
 
 ### P1 — after the first new film, or in parallel
 
@@ -611,7 +612,7 @@ A film is ready to render only when:
 5. the median shot is 2.5–3 s, the read is 140–150 wpm, coverage is ≥80% of
    measured speech, first line ≤1 s, no hole >2.5 s;
 6. every shot moves and lands on the frame grid;
-7. no arm/hand, type, rig, pop-frame or word-reaction defect;
+7. no arm/hand, type, rig, pop-frame or word-reaction defect; the quietest 3 s is at least 15 LU under the loudest; the gate speaks in words, seconds, LU and faces;
 8. one full render, one delivered file, gate PASS, no manual row;
 9. the whole loop is under 60 minutes.
 
