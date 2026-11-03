@@ -59,7 +59,7 @@ npm run captions -- films/understudy/score.json  # generate transcript + SRT
 npm run voice -- films/understudy/score.json     # capture narration + word times, derive the clock
 npm run voice -- <score> --apply                 # accept the measured read: line starts, shot bounds, captions (0035)
 npm run voice:story -- --story films/<id>/story.json --out films/<id>/narration.json   # speak the story before the score (0040)
-npm run voice -- <score> --from-story <narration.json> --apply   # write the measured clock, captions and shot snaps into the score (0040)
+npm run voice -- <score> --from-story <narration.json> --apply [--no-snap]   # write the measured clock, captions and shot snaps into the score (0040; 0049)
 npm run asr -- films/understudy/score.json       # listen to the master; the G7 ASR gate
 npm run board -- films/understudy/score.json     # derive board cards (HTML + manifest)
 npm run storyboard -- films/understudy/score.json   # one code-drawn frame per shot, tiled into one sheet
@@ -246,7 +246,7 @@ file with **8 poses and 14 expressions**, a rig, a source, a licence and a
 `sha256`; `library:check` refuses one that is not reusable, `library:add` adds a
 pose once, and `library:use` points a film's cast and asset at it. A pose event
 can name an expression, and the painter maps it to the rig's eyes/brow/mouth.
-**462 tests.**
+**465 tests.**
 
 **The story now speaks first, the camera is a grammar, and assets have names.**
 `voice:story` reads `story.json` + `beats.json`, speaks the lines, listens with
@@ -279,15 +279,21 @@ Kiran and Vaz hand 18×26, pass; a 5×6 hand and a 0.000/0.000 elbow fail).
 `event.word` binds an event to a clock line, and `audit:reaction` requires it to
 land **0–3 frames after the measured word** (12.40 s passes at +0.0, 12.30 s
 fails at −3.0). The frame audit now refuses a one-frame luma pop at a cut. The
-first film must author `word` events; Same Alarm has none. **462 tests.**
+first film must author `word` events; Same Alarm has none. **465 tests.**
+
+**The first film under the new order is *The Uber Cut* (`films/uber-model/`).**
+30 s, 10 shots, 5 lines, 91 words at 182 wpm, **84.6% voiced**, made through
+story → beats → voice → scenes → score → cut. `gate:7` is **PASS · 22 checks ·
+nothing manual**, ASR heard **91/91** words, and the delivered file is
+`films/uber-model/uber-model.mp4`. `docs/ASSUMPTIONS.md` records every best-case
+assumption and the parked items (P0.5 workflow, P0.7 bypasses, P0.9 sound
+contrast, a literal car/map renderer, music). The film was made under the user's
+instruction to finish the plan while those are parked.
 
 **The plan is `docs/PLAN-v2.md`.** It is the end-to-end process in plain English,
-the video checklist, the P0/P1/P2 gap list and a ten-session build order. No new
-film starts until P0.1–P0.5 and P0.7–P0.9 close: `voice:story` and
-`voice --from-story` are built; the asset manifest is derived, sized and hashed
-(0045); the arm/hand, word-reaction and pop checks are built (0046); still open
-are the seven-analysis / four-rebuild agent workflow, the bypasses and the
-sound-contrast gate.
+the video checklist, the P0/P1/P2 gap list and a ten-session build order.
+P0.1–P0.4, P0.6 and P0.8 are built; P0.5, P0.7 and P0.9 are parked, not
+silently passed.
 
 **Still open, and named:** the style measurement is global per-frame, not
 per-region (it cannot say where the ink is, which way the light falls, or whether

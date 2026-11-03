@@ -59,7 +59,7 @@ The library sheet showed four defects the earlier sheet had hidden:
   own bounce; every planted sole touches the ground and none passes through it.
 - `test/contracts.test.ts`: a copied pose body and a copied expression face are
   refused.
-- **462 tests**, typecheck clean.
+- **465 tests**, typecheck clean.
 
 ## What this does not do
 

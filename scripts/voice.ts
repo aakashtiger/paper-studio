@@ -28,6 +28,7 @@ import { hashFile } from "../src/core/style.js";
 import { attachWords, coverage, deriveClockLines, snapShots, type HeardWord, type TimedWord } from "../src/engine/words.js";
 import { findFfmpeg } from "../src/engine/grid.js";
 import { measureVoiceActivity } from "../src/engine/voice-activity.js";
+import { splitCaption } from "../src/engine/captions.js";
 import {
   installSteps,
   scriptWords,
@@ -308,8 +309,11 @@ async function main(): Promise<void> {
     }
 
     for (const caption of raw.captions?.lines ?? []) {
-      const oldLine = oldLines.get(caption.id);
-      const newLine = newLines.get(caption.id);
+      const lineId = oldLines.has(caption.id)
+        ? caption.id
+        : [...oldLines.keys()].find((id) => caption.id.startsWith(`${id}.`));
+      const oldLine = lineId ? oldLines.get(lineId) : undefined;
+      const newLine = lineId ? newLines.get(lineId) : undefined;
       if (!oldLine || !newLine) continue;
       const beforeStart = caption.start;
       const windowStart = newLine.start;
@@ -466,7 +470,7 @@ async function main(): Promise<void> {
 async function fromStory(): Promise<void> {
   const root = process.cwd();
   const narrationPath = args[args.indexOf("--from-story") + 1];
-  if (!file || !narrationPath) throw new Error("usage: npm run voice -- <score.json> --from-story <narration.json> [--apply]");
+  if (!file || !narrationPath) throw new Error("usage: npm run voice -- <score.json> --from-story <narration.json> [--apply] [--no-snap]");
   const readJson = (path: string) => JSON.parse(readFileSync(resolve(root, path), "utf8").replace(/^\uFEFF/, ""));
   const narration = readJson(narrationPath) as {
     lines?: { id: string; text: string; start: number; duration: number; hold?: number }[];
@@ -476,6 +480,7 @@ async function fromStory(): Promise<void> {
   }
   const raw = readJson(file) as {
     id: string;
+    style: string;
     clock?: unknown;
     captions?: { source?: string; lines?: { id: string; text: string; start: number; end: number }[] };
     shots?: { duration: number }[];
@@ -496,25 +501,31 @@ async function fromStory(): Promise<void> {
     ...(line.hold !== undefined ? { hold: line.hold } : {}),
   }));
   raw.clock = { mode: "narration", lines };
-  const byId = new Map(lines.map((line) => [line.id, line]));
+  const caps = JSON.parse(readFileSync(resolve(root, "styles", raw.style, "capabilities.json"), "utf8")) as {
+    limits?: { maxWords?: number };
+  };
+  const maxWords = caps.limits?.maxWords ?? 8;
   raw.captions = raw.captions ?? { source: `films/${raw.id}/captions.srt`, lines: [] };
-  raw.captions.lines = raw.captions.lines ?? [];
-  const seen = new Set<string>();
-  for (const caption of raw.captions.lines) {
-    const line = byId.get(caption.id);
-    if (!line) continue;
-    caption.text = line.text;
-    caption.start = line.start;
-    caption.end = Number((line.start + line.duration).toFixed(3));
-    seen.add(caption.id);
-  }
+  raw.captions.lines = (raw.captions.lines ?? []).filter(
+    (caption) => !lines.some((line) => caption.id === line.id || caption.id.startsWith(`${line.id}.`)),
+  );
   for (const line of lines) {
-    if (seen.has(line.id)) continue;
-    raw.captions.lines.push({
-      id: line.id,
-      text: line.text,
-      start: line.start,
-      end: Number((line.start + line.duration).toFixed(3)),
+    // A line can be a sentence; a caption is a phone-sized chunk. Split the line
+    // and give each chunk a proportional slice of the measured line window.
+    const chunks = splitCaption(line.text, maxWords);
+    const total = chunks.reduce((sum, chunk) => sum + chunk.split(/\s+/).filter(Boolean).length, 0) || 1;
+    let cursor = line.start;
+    chunks.forEach((chunk, index) => {
+      const words = chunk.split(/\s+/).filter(Boolean).length;
+      const start = cursor;
+      const end = index === chunks.length - 1 ? Number((line.start + line.duration).toFixed(3)) : Number((cursor + (line.duration * words) / total).toFixed(3));
+      raw.captions!.lines!.push({
+        id: chunks.length === 1 ? line.id : `${line.id}.${index + 1}`,
+        text: chunk,
+        start: Number(start.toFixed(3)),
+        end,
+      });
+      cursor = end;
     });
   }
 
@@ -528,14 +539,21 @@ async function fromStory(): Promise<void> {
     for (const error of resolved.errors) console.error(`error: ${error.message}`);
     process.exit(1);
   }
-  const snap = snapShots(
-    resolved.plan.shots.map((shot) => ({ id: shot.id, start: shot.start, duration: shot.duration })),
-    lines.map((line) => line.start),
-  );
-  (raw.shots ?? []).forEach((shot, index) => {
-    const next = snap.shots[index];
-    if (next && Number.isFinite(next.duration)) shot.duration = next.duration;
-  });
+  const snap = args.includes("--no-snap")
+    ? {
+        shots: resolved.plan.shots.map((shot) => ({ id: shot.id, start: shot.start, duration: shot.duration })),
+        moved: [] as { id: string; from: number; to: number }[],
+      }
+    : snapShots(
+        resolved.plan.shots.map((shot) => ({ id: shot.id, start: shot.start, duration: shot.duration })),
+        lines.map((line) => line.start),
+      );
+  if (!args.includes("--no-snap")) {
+    (raw.shots ?? []).forEach((shot, index) => {
+      const next = snap.shots[index];
+      if (next && Number.isFinite(next.duration)) shot.duration = next.duration;
+    });
+  }
 
   const after = FilmScoreSchema.safeParse(raw);
   if (!after.success) {

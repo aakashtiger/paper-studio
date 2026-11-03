@@ -1,0 +1,503 @@
+{
+  "film": "uber-model",
+  "voice": "films/uber-model/voice.wav",
+  "source": "asr",
+  "duration": 30,
+  "lines": [
+    {
+      "id": "v01",
+      "text": "Uber does not own the cars, kitchens, or the freight it moves; it owns the network that connects them.",
+      "start": 0,
+      "duration": 5.72,
+      "words": [
+        {
+          "w": "Uber",
+          "start": 0,
+          "end": 0.54
+        },
+        {
+          "w": "does",
+          "start": 0.54,
+          "end": 0.76
+        },
+        {
+          "w": "not",
+          "start": 0.76,
+          "end": 1
+        },
+        {
+          "w": "own",
+          "start": 1,
+          "end": 1.2
+        },
+        {
+          "w": "the",
+          "start": 1.2,
+          "end": 1.36
+        },
+        {
+          "w": "cars,",
+          "start": 1.36,
+          "end": 1.7
+        },
+        {
+          "w": "kitchens,",
+          "start": 2.02,
+          "end": 2.26
+        },
+        {
+          "w": "or",
+          "start": 2.66,
+          "end": 2.76
+        },
+        {
+          "w": "the",
+          "start": 2.76,
+          "end": 2.88
+        },
+        {
+          "w": "freight",
+          "start": 2.88,
+          "end": 3.04
+        },
+        {
+          "w": "it",
+          "start": 3.04,
+          "end": 3.18
+        },
+        {
+          "w": "moves;",
+          "start": 3.18,
+          "end": 3.5
+        },
+        {
+          "w": "it",
+          "start": 3.96,
+          "end": 4.06
+        },
+        {
+          "w": "owns",
+          "start": 4.06,
+          "end": 4.3
+        },
+        {
+          "w": "the",
+          "start": 4.3,
+          "end": 4.5
+        },
+        {
+          "w": "network",
+          "start": 4.5,
+          "end": 4.78
+        },
+        {
+          "w": "that",
+          "start": 4.78,
+          "end": 5.04
+        },
+        {
+          "w": "connects",
+          "start": 5.04,
+          "end": 5.34
+        },
+        {
+          "w": "them.",
+          "start": 5.34,
+          "end": 5.72
+        }
+      ]
+    },
+    {
+      "id": "v02",
+      "text": "Riders open the app, drivers use their own cars, and every completed trip is matched by the platform.",
+      "start": 6.34,
+      "duration": 5.4,
+      "words": [
+        {
+          "w": "Riders",
+          "start": 6.34,
+          "end": 6.34
+        },
+        {
+          "w": "open",
+          "start": 6.34,
+          "end": 6.74
+        },
+        {
+          "w": "the",
+          "start": 6.74,
+          "end": 6.94
+        },
+        {
+          "w": "app,",
+          "start": 6.94,
+          "end": 7.16
+        },
+        {
+          "w": "drivers",
+          "start": 7.6,
+          "end": 7.76
+        },
+        {
+          "w": "use",
+          "start": 7.76,
+          "end": 8.12
+        },
+        {
+          "w": "their",
+          "start": 8.12,
+          "end": 8.32
+        },
+        {
+          "w": "own",
+          "start": 8.32,
+          "end": 8.56
+        },
+        {
+          "w": "cars,",
+          "start": 8.56,
+          "end": 8.92
+        },
+        {
+          "w": "and",
+          "start": 9.28,
+          "end": 9.42
+        },
+        {
+          "w": "every",
+          "start": 9.42,
+          "end": 9.74
+        },
+        {
+          "w": "completed",
+          "start": 9.74,
+          "end": 10.18
+        },
+        {
+          "w": "trip",
+          "start": 10.18,
+          "end": 10.46
+        },
+        {
+          "w": "is",
+          "start": 10.46,
+          "end": 10.66
+        },
+        {
+          "w": "matched",
+          "start": 10.66,
+          "end": 10.96
+        },
+        {
+          "w": "by",
+          "start": 10.96,
+          "end": 11.22
+        },
+        {
+          "w": "the",
+          "start": 11.22,
+          "end": 11.34
+        },
+        {
+          "w": "platform.",
+          "start": 11.34,
+          "end": 11.74
+        }
+      ]
+    },
+    {
+      "id": "v03",
+      "text": "Uber takes a service fee from every fare; the driver keeps the rest, and the platform keeps the match.",
+      "start": 12.34,
+      "duration": 5.14,
+      "words": [
+        {
+          "w": "Uber",
+          "start": 12.34,
+          "end": 12.54
+        },
+        {
+          "w": "takes",
+          "start": 12.54,
+          "end": 12.76
+        },
+        {
+          "w": "a",
+          "start": 12.76,
+          "end": 12.98
+        },
+        {
+          "w": "service",
+          "start": 12.98,
+          "end": 13.16
+        },
+        {
+          "w": "fee",
+          "start": 13.16,
+          "end": 13.44
+        },
+        {
+          "w": "from",
+          "start": 13.44,
+          "end": 13.64
+        },
+        {
+          "w": "every",
+          "start": 13.64,
+          "end": 14
+        },
+        {
+          "w": "fare;",
+          "start": 14,
+          "end": 14.24
+        },
+        {
+          "w": "the",
+          "start": 14.56,
+          "end": 14.76
+        },
+        {
+          "w": "driver",
+          "start": 14.76,
+          "end": 15.04
+        },
+        {
+          "w": "keeps",
+          "start": 15.04,
+          "end": 15.3
+        },
+        {
+          "w": "the",
+          "start": 15.3,
+          "end": 15.5
+        },
+        {
+          "w": "rest,",
+          "start": 15.5,
+          "end": 15.78
+        },
+        {
+          "w": "and",
+          "start": 16.02,
+          "end": 16.22
+        },
+        {
+          "w": "the",
+          "start": 16.22,
+          "end": 16.34
+        },
+        {
+          "w": "platform",
+          "start": 16.34,
+          "end": 16.7
+        },
+        {
+          "w": "keeps",
+          "start": 16.7,
+          "end": 16.98
+        },
+        {
+          "w": "the",
+          "start": 16.98,
+          "end": 17.2
+        },
+        {
+          "w": "match.",
+          "start": 17.2,
+          "end": 17.48
+        }
+      ]
+    },
+    {
+      "id": "v04",
+      "text": "The app sells delivery, freight, advertising and memberships, so one network earns in more than one way.",
+      "start": 17.96,
+      "duration": 6,
+      "words": [
+        {
+          "w": "The",
+          "start": 17.96,
+          "end": 18.06
+        },
+        {
+          "w": "app",
+          "start": 18.06,
+          "end": 18.26
+        },
+        {
+          "w": "sells",
+          "start": 18.26,
+          "end": 18.58
+        },
+        {
+          "w": "delivery,",
+          "start": 18.58,
+          "end": 19.02
+        },
+        {
+          "w": "freight,",
+          "start": 19.38,
+          "end": 19.66
+        },
+        {
+          "w": "advertising",
+          "start": 20.16,
+          "end": 20.7
+        },
+        {
+          "w": "and",
+          "start": 20.94,
+          "end": 21.02
+        },
+        {
+          "w": "memberships,",
+          "start": 21.02,
+          "end": 21.6
+        },
+        {
+          "w": "so",
+          "start": 21.84,
+          "end": 22.04
+        },
+        {
+          "w": "one",
+          "start": 22.04,
+          "end": 22.28
+        },
+        {
+          "w": "network",
+          "start": 22.28,
+          "end": 22.6
+        },
+        {
+          "w": "earns",
+          "start": 22.6,
+          "end": 22.92
+        },
+        {
+          "w": "in",
+          "start": 22.92,
+          "end": 23.18
+        },
+        {
+          "w": "more",
+          "start": 23.18,
+          "end": 23.34
+        },
+        {
+          "w": "than",
+          "start": 23.34,
+          "end": 23.52
+        },
+        {
+          "w": "one",
+          "start": 23.52,
+          "end": 23.7
+        },
+        {
+          "w": "way.",
+          "start": 23.7,
+          "end": 23.96
+        }
+      ]
+    },
+    {
+      "id": "v05",
+      "text": "More riders make each car busier, more drivers shorten the wait, and the network gets harder to leave.",
+      "start": 24.4,
+      "duration": 5.28,
+      "words": [
+        {
+          "w": "More",
+          "start": 24.4,
+          "end": 24.62
+        },
+        {
+          "w": "riders",
+          "start": 24.62,
+          "end": 24.98
+        },
+        {
+          "w": "make",
+          "start": 24.98,
+          "end": 25.26
+        },
+        {
+          "w": "each",
+          "start": 25.26,
+          "end": 25.48
+        },
+        {
+          "w": "car",
+          "start": 25.48,
+          "end": 25.76
+        },
+        {
+          "w": "busier,",
+          "start": 25.76,
+          "end": 26.14
+        },
+        {
+          "w": "more",
+          "start": 26.46,
+          "end": 26.7
+        },
+        {
+          "w": "drivers",
+          "start": 26.7,
+          "end": 27.08
+        },
+        {
+          "w": "shorten",
+          "start": 27.08,
+          "end": 27.44
+        },
+        {
+          "w": "the",
+          "start": 27.44,
+          "end": 27.62
+        },
+        {
+          "w": "wait,",
+          "start": 27.62,
+          "end": 27.82
+        },
+        {
+          "w": "and",
+          "start": 28.12,
+          "end": 28.3
+        },
+        {
+          "w": "the",
+          "start": 28.3,
+          "end": 28.4
+        },
+        {
+          "w": "network",
+          "start": 28.4,
+          "end": 28.7
+        },
+        {
+          "w": "gets",
+          "start": 28.7,
+          "end": 28.98
+        },
+        {
+          "w": "harder",
+          "start": 28.98,
+          "end": 29.24
+        },
+        {
+          "w": "to",
+          "start": 29.24,
+          "end": 29.44
+        },
+        {
+          "w": "leave.",
+          "start": 29.44,
+          "end": 29.68
+        }
+      ]
+    }
+  ]
+}

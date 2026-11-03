@@ -220,10 +220,17 @@ export function auditFilm(plan: ResolvedFilm, options: { root: string }): AuditR
       }
     }
 
-    const line = lineById.get(caption.id);
+    const baseId = lineById.has(caption.id)
+      ? caption.id
+      : [...lineById.keys()].find((id) => caption.id.startsWith(`${id}.`));
+    const line = baseId ? lineById.get(baseId) : undefined;
     if (line) {
       const hold = caption.end - caption.start;
-      const required = Math.max(1.8, line.duration + 0.6);
+      const words = caption.text.trim().split(/\s+/).filter(Boolean).length;
+      // A full-line caption gets the old 1.8 s read time. A chunk is one
+      // phone-sized piece and needs only its own words' time.
+      const required =
+        baseId === caption.id ? Math.max(1.8, line.duration + 0.6) : Math.max(0.6, words * 0.22);
       if (hold + 0.001 < required) {
         errors.push({
           code: "caption_read_time",
@@ -233,11 +240,16 @@ export function auditFilm(plan: ResolvedFilm, options: { root: string }): AuditR
     }
   }
 
-  if (lineById.size > 0 && plan.captions.lines.length !== lineById.size) {
-    errors.push({
-      code: "caption_count",
-      message: `${plan.captions.lines.length} captions for ${lineById.size} narration lines`,
-    });
+  if (lineById.size > 0) {
+    const missing = [...lineById.keys()].filter(
+      (id) => !plan.captions.lines.some((caption) => caption.id === id || caption.id.startsWith(`${id}.`)),
+    );
+    if (missing.length > 0) {
+      errors.push({
+        code: "caption_count",
+        message: `${missing.length} narration line(s) have no caption: ${missing.join(", ")}`,
+      });
+    }
   }
 
   if (!existsSync(resolve(options.root, plan.captions.source))) {

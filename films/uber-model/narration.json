@@ -1,0 +1,527 @@
+{
+  "film": "uber-model",
+  "source": "asr",
+  "audio": "build/uber-voice-114.wav",
+  "audioHash": "sha256:051cc14a9b6e324adb000f89dadd21876173230fa4fc5f7efaeda9e4a6a7ea50",
+  "model": "small.en",
+  "duration": 30,
+  "scriptWords": 91,
+  "heardWords": 91,
+  "matched": 91,
+  "coverage": 1,
+  "scriptWpm": 182,
+  "spokenWpm": 218.9,
+  "speech": 24.67,
+  "speechCoverage": 0.822,
+  "silence": 5.328,
+  "longestSilence": 0.54,
+  "longestSilenceAt": 29.46,
+  "first": 0,
+  "lastEnd": 28.94,
+  "hole": 1.06,
+  "holeAt": 28.94,
+  "unheard": [],
+  "checks": {
+    "everyLineSpoken": true,
+    "everyWordHeard": true,
+    "firstLine": true,
+    "hole": true,
+    "coverage": true,
+    "withinFilm": true
+  },
+  "pass": true,
+  "lines": [
+    {
+      "id": "v01",
+      "text": "Uber does not own the cars, kitchens, or the freight it moves; it owns the network that connects them.",
+      "start": 0,
+      "duration": 5.64,
+      "beat": "b01"
+    },
+    {
+      "id": "v02",
+      "text": "Riders open the app, drivers use their own cars, and every completed trip is matched by the platform.",
+      "start": 6.24,
+      "duration": 5.18,
+      "beat": "b02"
+    },
+    {
+      "id": "v03",
+      "text": "Uber takes a service fee from every fare; the driver keeps the rest, and the platform keeps the match.",
+      "start": 12.02,
+      "duration": 5,
+      "beat": "b03"
+    },
+    {
+      "id": "v04",
+      "text": "The app sells delivery, freight, advertising and memberships, so one network earns in more than one way.",
+      "start": 17.52,
+      "duration": 5.78,
+      "beat": "b04"
+    },
+    {
+      "id": "v05",
+      "text": "More riders make each car busier, more drivers shorten the wait, and the network gets harder to leave.",
+      "start": 23.74,
+      "duration": 5.2,
+      "beat": "b05"
+    }
+  ],
+  "words": [
+    {
+      "w": "Uber",
+      "start": 0,
+      "end": 0.52
+    },
+    {
+      "w": "does",
+      "start": 0.52,
+      "end": 0.76
+    },
+    {
+      "w": "not",
+      "start": 0.76,
+      "end": 0.98
+    },
+    {
+      "w": "own",
+      "start": 0.98,
+      "end": 1.2
+    },
+    {
+      "w": "the",
+      "start": 1.2,
+      "end": 1.34
+    },
+    {
+      "w": "cars,",
+      "start": 1.34,
+      "end": 1.68
+    },
+    {
+      "w": "kitchens,",
+      "start": 2,
+      "end": 2.24
+    },
+    {
+      "w": "or",
+      "start": 2.6,
+      "end": 2.72
+    },
+    {
+      "w": "the",
+      "start": 2.72,
+      "end": 2.86
+    },
+    {
+      "w": "freight",
+      "start": 2.86,
+      "end": 3
+    },
+    {
+      "w": "it",
+      "start": 3,
+      "end": 3.14
+    },
+    {
+      "w": "moves;",
+      "start": 3.14,
+      "end": 3.44
+    },
+    {
+      "w": "it",
+      "start": 3.9,
+      "end": 4
+    },
+    {
+      "w": "owns",
+      "start": 4,
+      "end": 4.22
+    },
+    {
+      "w": "the",
+      "start": 4.22,
+      "end": 4.42
+    },
+    {
+      "w": "network",
+      "start": 4.42,
+      "end": 4.7
+    },
+    {
+      "w": "that",
+      "start": 4.7,
+      "end": 4.96
+    },
+    {
+      "w": "connects",
+      "start": 4.96,
+      "end": 5.24
+    },
+    {
+      "w": "them.",
+      "start": 5.24,
+      "end": 5.64
+    },
+    {
+      "w": "Riders",
+      "start": 6.24,
+      "end": 6.24
+    },
+    {
+      "w": "open",
+      "start": 6.24,
+      "end": 6.64
+    },
+    {
+      "w": "the",
+      "start": 6.64,
+      "end": 6.82
+    },
+    {
+      "w": "app,",
+      "start": 6.82,
+      "end": 7.04
+    },
+    {
+      "w": "drivers",
+      "start": 7.4,
+      "end": 7.62
+    },
+    {
+      "w": "use",
+      "start": 7.62,
+      "end": 7.92
+    },
+    {
+      "w": "their",
+      "start": 7.92,
+      "end": 8.12
+    },
+    {
+      "w": "own",
+      "start": 8.12,
+      "end": 8.34
+    },
+    {
+      "w": "cars,",
+      "start": 8.34,
+      "end": 8.7
+    },
+    {
+      "w": "and",
+      "start": 9.04,
+      "end": 9.2
+    },
+    {
+      "w": "every",
+      "start": 9.2,
+      "end": 9.48
+    },
+    {
+      "w": "completed",
+      "start": 9.48,
+      "end": 9.92
+    },
+    {
+      "w": "trip",
+      "start": 9.92,
+      "end": 10.2
+    },
+    {
+      "w": "is",
+      "start": 10.2,
+      "end": 10.4
+    },
+    {
+      "w": "matched",
+      "start": 10.4,
+      "end": 10.68
+    },
+    {
+      "w": "by",
+      "start": 10.68,
+      "end": 10.92
+    },
+    {
+      "w": "the",
+      "start": 10.92,
+      "end": 11.04
+    },
+    {
+      "w": "platform.",
+      "start": 11.04,
+      "end": 11.42
+    },
+    {
+      "w": "Uber",
+      "start": 12.02,
+      "end": 12.2
+    },
+    {
+      "w": "takes",
+      "start": 12.2,
+      "end": 12.42
+    },
+    {
+      "w": "a",
+      "start": 12.42,
+      "end": 12.64
+    },
+    {
+      "w": "service",
+      "start": 12.64,
+      "end": 12.82
+    },
+    {
+      "w": "fee",
+      "start": 12.82,
+      "end": 13.1
+    },
+    {
+      "w": "from",
+      "start": 13.1,
+      "end": 13.3
+    },
+    {
+      "w": "every",
+      "start": 13.3,
+      "end": 13.64
+    },
+    {
+      "w": "fare;",
+      "start": 13.64,
+      "end": 13.88
+    },
+    {
+      "w": "the",
+      "start": 14.18,
+      "end": 14.38
+    },
+    {
+      "w": "driver",
+      "start": 14.38,
+      "end": 14.64
+    },
+    {
+      "w": "keeps",
+      "start": 14.64,
+      "end": 14.92
+    },
+    {
+      "w": "the",
+      "start": 14.92,
+      "end": 15.1
+    },
+    {
+      "w": "rest,",
+      "start": 15.1,
+      "end": 15.36
+    },
+    {
+      "w": "and",
+      "start": 15.62,
+      "end": 15.78
+    },
+    {
+      "w": "the",
+      "start": 15.78,
+      "end": 15.88
+    },
+    {
+      "w": "platform",
+      "start": 15.88,
+      "end": 16.24
+    },
+    {
+      "w": "keeps",
+      "start": 16.24,
+      "end": 16.52
+    },
+    {
+      "w": "the",
+      "start": 16.52,
+      "end": 16.74
+    },
+    {
+      "w": "match.",
+      "start": 16.74,
+      "end": 17.02
+    },
+    {
+      "w": "The",
+      "start": 17.52,
+      "end": 17.62
+    },
+    {
+      "w": "app",
+      "start": 17.62,
+      "end": 17.8
+    },
+    {
+      "w": "sells",
+      "start": 17.8,
+      "end": 18.1
+    },
+    {
+      "w": "delivery,",
+      "start": 18.1,
+      "end": 18.56
+    },
+    {
+      "w": "freight,",
+      "start": 18.9,
+      "end": 19.16
+    },
+    {
+      "w": "advertising",
+      "start": 19.6,
+      "end": 20.14
+    },
+    {
+      "w": "and",
+      "start": 20.34,
+      "end": 20.42
+    },
+    {
+      "w": "memberships,",
+      "start": 20.42,
+      "end": 20.98
+    },
+    {
+      "w": "so",
+      "start": 21.24,
+      "end": 21.44
+    },
+    {
+      "w": "one",
+      "start": 21.44,
+      "end": 21.66
+    },
+    {
+      "w": "network",
+      "start": 21.66,
+      "end": 21.96
+    },
+    {
+      "w": "earns",
+      "start": 21.96,
+      "end": 22.28
+    },
+    {
+      "w": "in",
+      "start": 22.28,
+      "end": 22.52
+    },
+    {
+      "w": "more",
+      "start": 22.52,
+      "end": 22.7
+    },
+    {
+      "w": "than",
+      "start": 22.7,
+      "end": 22.86
+    },
+    {
+      "w": "one",
+      "start": 22.86,
+      "end": 23.04
+    },
+    {
+      "w": "way.",
+      "start": 23.04,
+      "end": 23.3
+    },
+    {
+      "w": "More",
+      "start": 23.74,
+      "end": 23.92
+    },
+    {
+      "w": "riders",
+      "start": 23.92,
+      "end": 24.3
+    },
+    {
+      "w": "make",
+      "start": 24.3,
+      "end": 24.56
+    },
+    {
+      "w": "each",
+      "start": 24.56,
+      "end": 24.78
+    },
+    {
+      "w": "car",
+      "start": 24.78,
+      "end": 25.06
+    },
+    {
+      "w": "busier,",
+      "start": 25.06,
+      "end": 25.44
+    },
+    {
+      "w": "more",
+      "start": 25.72,
+      "end": 25.96
+    },
+    {
+      "w": "drivers",
+      "start": 25.96,
+      "end": 26.34
+    },
+    {
+      "w": "shorten",
+      "start": 26.34,
+      "end": 26.7
+    },
+    {
+      "w": "the",
+      "start": 26.7,
+      "end": 26.9
+    },
+    {
+      "w": "wait,",
+      "start": 26.9,
+      "end": 27.06
+    },
+    {
+      "w": "and",
+      "start": 27.36,
+      "end": 27.52
+    },
+    {
+      "w": "the",
+      "start": 27.52,
+      "end": 27.62
+    },
+    {
+      "w": "network",
+      "start": 27.62,
+      "end": 27.94
+    },
+    {
+      "w": "gets",
+      "start": 27.94,
+      "end": 28.22
+    },
+    {
+      "w": "harder",
+      "start": 28.22,
+      "end": 28.5
+    },
+    {
+      "w": "to",
+      "start": 28.5,
+      "end": 28.7
+    },
+    {
+      "w": "leave.",
+      "start": 28.7,
+      "end": 28.94
+    }
+  ]
+}

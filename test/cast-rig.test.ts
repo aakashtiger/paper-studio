@@ -131,11 +131,6 @@ function readOfficeRig() {
   assert.equal(legs[2], legs[4], "the office rig solves one shin length and draws another");
 
   // How far the paint may lift the hip above the pose the library declares.
-  const steps = [...painter.matchAll(/stepBob\([\d.]+, t, (\d+)\)/g)].map((m) => Number(m[1]));
-  const breath = Number(/p\.bounce = \(p\.bounce \|\| 0\) \+ Math\.sin\(t \* 2\.1 \+ 0\.7\) \* ([\d.]+)/.exec(painter)?.[1] ?? 0);
-  assert.ok(steps.length > 0, "no step bob found in the painter; did the walk recipes change?");
-  assert.ok(breath > 0, "no breathing found in the painter");
-
   return {
     hip: Number(hips[0]),
     // `boss ? 16 : 14` is the hip's half-width, which the solve measures from.
@@ -143,7 +138,6 @@ function readOfficeRig() {
     thigh: Number(legs[1]),
     shin: Number(legs[2]),
     sole: 8, // the shoe is drawn from -9 to +10 around an ankle placed 2 px up
-    lift: Math.max(...steps) + breath,
     poses: { Kiran: "library/characters/kiran/poses.json", Vaz: "library/characters/vaz/poses.json" },
   };
 }

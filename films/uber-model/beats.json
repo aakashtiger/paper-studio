@@ -1,0 +1,65 @@
+{
+  "id": "uber-model",
+  "beats": [
+    {
+      "id": "b01",
+      "title": "the wrong answer",
+      "purpose": "hook",
+      "share": 20,
+      "energy": 3,
+      "sound": {
+        "world": "a phone buzzes on a paper table, then the room goes still",
+        "signature": "one phone buzz, one paper slap",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b02",
+      "title": "the match",
+      "purpose": "setup",
+      "share": 20,
+      "energy": 3,
+      "sound": {
+        "world": "two taps, a door, a car pulling away",
+        "signature": "a single tap on glass",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b03",
+      "title": "the cut",
+      "purpose": "escalate",
+      "share": 20,
+      "energy": 4,
+      "sound": {
+        "world": "a paper tear down the middle of a fare",
+        "signature": "one clean tear",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b04",
+      "title": "more than a fare",
+      "purpose": "turn",
+      "share": 20,
+      "energy": 3,
+      "sound": {
+        "world": "the room opens: a delivery bag, a freight crate, a small ad, a membership card",
+        "signature": "four soft paper drops, then air",
+        "quiet": true
+      }
+    },
+    {
+      "id": "b05",
+      "title": "the loop",
+      "purpose": "button",
+      "share": 20,
+      "energy": 5,
+      "sound": {
+        "world": "a city of small doors answering one another",
+        "signature": "one door, then the same door again",
+        "quiet": false
+      }
+    }
+  ]
+}

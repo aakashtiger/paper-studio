@@ -11,6 +11,7 @@ import {
   type SfxCue,
 } from "./audio.js";
 import { AssetRefSchema, type AssetRef, resolveAssets } from "./assets.js";
+import { isCaptionChunk } from "./captions.js";
 import { FilmBriefSchema, resolveBrief } from "./film-brief.js";
 import { PoseLibrarySchema, resolvePoseLibrary } from "./pose.js";
 
@@ -827,7 +828,10 @@ function checkCaptions(
       });
     }
     if (narration) {
-      const line = byId.get(caption.id);
+      const line =
+        byId.get(caption.id) ??
+        // A caption may be one chunk of a line, named `<line>.<n>`.
+        [...byId.entries()].find(([lineId]) => caption.id.startsWith(`${lineId}.`))?.[1];
       if (!line) {
         errors.push({
           code: "caption_unknown_line",
@@ -835,7 +839,7 @@ function checkCaptions(
         });
         continue;
       }
-      if (caption.text.trim() !== line.text.trim()) {
+      if (caption.text.trim() !== line.text.trim() && !isCaptionChunk(line.text, caption.text)) {
         errors.push({
           code: "caption_text",
           message: `caption "${caption.id}" does not match its narration line`,

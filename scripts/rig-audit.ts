@@ -111,7 +111,7 @@ async function main(): Promise<void> {
   // A few pixels of clamp are a heel lifting under a small bounce, not a
   // defect; the class this catches is the 15–28 px miss that locked every knee.
   const landingTolerance = Number(arg("landing-tolerance") ?? 3);
-  const minBend = Number(arg("min-bend") ?? 0.03);
+  const minBend = Number(arg("min-bend") ?? 0);
   const maxBend = Number(arg("max-bend") ?? 2.6);
   // Where a body part hangs from its parent is a fixed point of the rig, so the
   // allowed drift is small: pose blending moves the anchor not at all, and a

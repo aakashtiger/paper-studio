@@ -422,12 +422,18 @@ function paperOpen(shot, lt, t) {
     shadow: C.rgba(PAL.ink, 0.22), sx: 7, sy: 10,
   });
 
+  paper(ctx, () => tornRectPath(ctx, 1450, 356, 320, 18, 4, 19), {
+    fill: PAL.cream, edge: C.rgba(PAL.ink, 0.4), edgeW: 2,
+    shadow: C.rgba(PAL.ink, 0.28), sx: 0, sy: 10,
+  });
+  cueLamp(W - 330, 250, 1, t);
+
   // The words are the film's, never the pack's: a missing slot prints nothing.
   const title = shot.slots["content.title"] || "";
   const titleIn = C.clamp((lt - 0.2) / 0.4);
   ctx.save();
   ctx.translate(0, (1 - C.backOut(titleIn)) * -60);
-  TY.type(ctx, title, W / 2, 300, fitSize(title, W - 380, TS(64)), {
+  TY.type(ctx, title, W / 2, 360, fitSize(title, W - 380, TS(64)), {
     copy: true,
     align: "center", color: PAL.ink, edge: PAL.cream, edgeW: 14,
     shadow: C.rgba(PAL.ink, 0.3), shadowOff: 9, time: t, seed: 7,
@@ -452,11 +458,6 @@ function paperOpen(shot, lt, t) {
     ctx.restore();
   }
 
-  paper(ctx, () => tornRectPath(ctx, 1450, 356, 320, 18, 4, 19), {
-    fill: PAL.cream, edge: C.rgba(PAL.ink, 0.4), edgeW: 2,
-    shadow: C.rgba(PAL.ink, 0.28), sx: 0, sy: 10,
-  });
-  cueLamp(W - 330, 250, 1, t);
   endCam(ctx);
   if (lt > 1.5) paperShards(ctx, W / 2, 500, lt, 24, [PAL.cream, PAL.gold, PAL.red], 520, C.clamp(1 - (lt - 1.5) / 0.7), 8);
   if (lt > 1.8) {
@@ -1741,9 +1742,9 @@ function corridorWalk(shot, lt, t) {
     // sliding along a corridor, which is what this shot used to be.
     const stride = Math.sin(t * 5.4);
     officeActor(shot, lt, t, lead, 900, 1030, 1.12, null, 1, {
-      bounce: (value) => (value || 0) - stepBob(1.9, t, 6),
-      footL: () => [-24 - 16 * stride, -6 - 14 * Math.max(0, stride)],
-      footR: () => [26 + 16 * stride, -6 - 14 * Math.max(0, -stride)],
+      bounce: (value) => value || 0,
+      footL: () => [-24 - 16 * stride, -8 - 14 * Math.max(0, stride)],
+      footR: () => [26 + 16 * stride, -8 - 14 * Math.max(0, -stride)],
     });
   }
   endCam(ctx);
@@ -1838,7 +1839,7 @@ function supervisorPoint(shot, lt, t) {
   }
   if (boss) {
     officeActor(shot, lt, t, boss, vx, OFFICE.seated, 1.5, null, -1, {
-      bounce: (value) => (value || 0) - stepBob(1.7, t, 5) * (enter < 1 || leave > 0 ? 1 : 0),
+      bounce: (value) => value || 0,
       headTurn: 0.3 * C.clamp((lt - 1.4) / 0.7),
       headTilt: -0.06 * C.clamp((lt - 1.4) / 0.7),
     });

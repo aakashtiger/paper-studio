@@ -212,6 +212,10 @@ const holes = (() => {
   const step = Math.max(1, Math.round(0.05 * sr));
   const length = masterAudio.channels[0]?.length ?? 0;
   const tailFrom = plan.duration - 0.5;
+  // A breath inside a spoken line is not a hole in the foley: the viewer still
+  // hears the line continuing. Only silence between lines (or after the last
+  // word) is a decision the film has to declare.
+  const lines = plan.clock.mode === "narration" ? plan.clock.lines : [];
   const found: { from: number; to: number; seconds: number; peakDb: number }[] = [];
   let runStart: number | null = null;
   let runPeak = 0;
@@ -224,6 +228,7 @@ const holes = (() => {
     runPeak = 0;
     if (to - from < SILENCE_MIN_HOLE - 1e-6) return;
     if (from >= tailFrom) return;
+    if (lines.some((line) => from < line.start + line.duration + (line.hold ?? 0) && to > line.start)) return;
     if (declared.some((window) => from >= window.from - 0.02 && to <= window.to + 0.02)) return;
     found.push({
       from: Number(from.toFixed(3)),

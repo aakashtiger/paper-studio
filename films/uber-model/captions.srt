@@ -1,0 +1,59 @@
+1
+00:00:00,000 --> 00:00:02,400
+Uber does not own the cars, kitchens, or
+
+2
+00:00:02,400 --> 00:00:04,800
+the freight it moves; it owns the network
+
+3
+00:00:04,800 --> 00:00:05,600
+that connects them.
+
+4
+00:00:06,200 --> 00:00:08,500
+Riders open the app, drivers use their own
+
+5
+00:00:08,500 --> 00:00:10,800
+cars, and every completed trip is matched by
+
+6
+00:00:10,800 --> 00:00:11,400
+the platform.
+
+7
+00:00:12,000 --> 00:00:14,100
+Uber takes a service fee from every fare;
+
+8
+00:00:14,100 --> 00:00:16,200
+the driver keeps the rest, and the platform
+
+9
+00:00:16,200 --> 00:00:17,000
+keeps the match.
+
+10
+00:00:17,500 --> 00:00:20,200
+The app sells delivery, freight, advertising and memberships,
+
+11
+00:00:20,200 --> 00:00:22,700
+so one network earns in more than one
+
+12
+00:00:22,700 --> 00:00:23,300
+way.
+
+13
+00:00:23,700 --> 00:00:26,000
+More riders make each car busier, more drivers
+
+14
+00:00:26,000 --> 00:00:28,300
+shorten the wait, and the network gets harder
+
+15
+00:00:28,300 --> 00:00:28,900
+to leave.
