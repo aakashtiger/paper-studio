@@ -12,10 +12,33 @@ export const ExpressionSchema = z.object({
   params: z.record(ParamSchema),
 });
 
+/**
+ * The rig's body, published so an audit can refuse a plank arm or a hand smaller
+ * than its own thumb. These are the drawn lengths in the rig, not a second pose:
+ * `arm.upper` and `arm.fore` are the two `limb` lengths, and the hand/thumb
+ * boxes are the two `blobPath` radii the rig draws at the wrist.
+ */
+export const BodySchema = z.object({
+  arm: z.object({
+    upper: z.number().positive(),
+    fore: z.number().positive(),
+    /** A pose whose both elbows are straighter than this is a plank. */
+    minElbow: z.number().nonnegative().default(0.02),
+  }),
+  hand: z.object({
+    w: z.number().positive(),
+    h: z.number().positive(),
+    thumbW: z.number().positive(),
+    thumbH: z.number().positive(),
+  }),
+});
+
 export const PoseLibrarySchema = z.object({
   character: z.string().min(1),
   rig: z.string().min(1),
   anchors: z.array(z.string().min(1)).default([]),
+  /** The rig's arm lengths and hand box; optional for older libraries. */
+  body: BodySchema.optional(),
   /** Palette roles or explicit values; the sheet resolves roles through PAL. */
   colors: z.record(z.string()).default({}),
   poses: z.array(PoseSchema).min(8).max(12),
@@ -55,6 +78,44 @@ export function resolvePoseLibrary(library: PoseLibrary): { errors: PoseIssue[];
 
   if (library.anchors.length === 0) {
     warnings.push({ code: "pose_anchors", message: `"${library.character}" has no anchors` });
+  }
+
+  if (!library.body) {
+    warnings.push({
+      code: "pose_body",
+      message: `"${library.character}" publishes no arm/hand box; audit:body cannot measure it`,
+    });
+  } else {
+    const { arm, hand } = library.body;
+    const minRatio = 1.5;
+    if (hand.w < hand.thumbW * minRatio) {
+      errors.push({
+        code: "body:hand",
+        message: `"${library.character}" hand is ${hand.w} wide and its thumb ${hand.thumbW} — a hand narrower than ${minRatio}× its thumb reads as a thumb`,
+      });
+    }
+    if (hand.h < hand.thumbH * minRatio) {
+      errors.push({
+        code: "body:hand",
+        message: `"${library.character}" hand is ${hand.h} tall and its thumb ${hand.thumbH} — a hand shorter than ${minRatio}× its thumb reads as a thumb`,
+      });
+    }
+    for (const pose of library.poses) {
+      const left = pose.params.armL;
+      const right = pose.params.armR;
+      const elbow = (value: unknown) => (Array.isArray(value) && typeof value[1] === "number" ? Math.abs(value[1]) : Number.NaN);
+      const l = elbow(left);
+      const r = elbow(right);
+      // A partial pose inherits the other arm from the rig's default; it is not
+      // a missing arm. Only a pose that declares both can be a two-arm plank.
+      if (!Number.isFinite(l) && !Number.isFinite(r)) continue;
+      if (Number.isFinite(l) && Number.isFinite(r) && l < arm.minElbow && r < arm.minElbow) {
+        errors.push({
+          code: "body:plank",
+          message: `pose "${pose.name}" has both elbows at ${l.toFixed(3)}/${r.toFixed(3)} rad — a straight arm is a plank`,
+        });
+      }
+    }
   }
 
   for (let i = 0; i < library.poses.length; i++) {

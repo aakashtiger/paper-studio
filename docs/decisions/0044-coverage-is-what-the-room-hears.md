@@ -55,7 +55,7 @@ word-union said 75.5%. The 8.5-point gap was the metric.
 `test/voice-activity.test.ts` (5) fixes the arithmetic: two silences, a silence
 that crosses the end of the film, an unclosed silence, no silence, and an audio
 file shorter than the film. `test/story.test.ts` adds the 189-word model and
-refuses a warning in it. **449 tests**, typecheck clean.
+refuses a warning in it. **460 tests**, typecheck clean.
 
 ## What this does not do
 

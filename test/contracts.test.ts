@@ -93,6 +93,28 @@ test("duplicate poses fail resolution", () => {
   assert.ok(errors.some((issue) => issue.code === "pose_duplicate"));
 });
 
+test("a plank arm and a hand smaller than its thumb are refused", () => {
+  const body = {
+    arm: { upper: 104, fore: 88, minElbow: 0.02 },
+    hand: { w: 22, h: 32, thumbW: 7.6, thumbH: 11.2 },
+  };
+  const withBody = PoseLibrarySchema.parse({
+    ...nova,
+    body,
+    poses: nova.poses.map((pose, index) =>
+      index === 0 ? { ...pose, params: { ...pose.params, armL: [0.1, 0], armR: [0.2, 0] } } : pose,
+    ),
+  });
+  const { errors } = resolvePoseLibrary(withBody);
+  assert.ok(errors.some((issue) => issue.code === "body:plank"));
+
+  const tinyHand = PoseLibrarySchema.parse({
+    ...withBody,
+    body: { ...body, hand: { w: 5, h: 6, thumbW: 7.6, thumbH: 11.2 } },
+  });
+  assert.ok(resolvePoseLibrary(tinyHand).errors.some((issue) => issue.code === "body:hand"));
+});
+
 test("duplicate assets fail resolution", () => {
   const asset = AssetRefSchema.parse({
     id: "character.lead",

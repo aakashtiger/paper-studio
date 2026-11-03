@@ -496,7 +496,9 @@ window.SCORE = {
   ],
   "warnings": [
     "film pins paper-kpop@0.1.0 but the pack is @0.2.0",
-    "brief pins paper-kpop@0.1.0 but the pack is @0.2.0"
+    "brief pins paper-kpop@0.1.0 but the pack is @0.2.0",
+    "\"Nova\" publishes no arm/hand box; audit:body cannot measure it",
+    "\"Mira\" publishes no arm/hand box; audit:body cannot measure it"
   ],
   "brief": "films/understudy/brief.json",
   "clock": {

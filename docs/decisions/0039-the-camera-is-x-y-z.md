@@ -66,7 +66,7 @@ translation in the film and it dominates the `|dx| 16 px/shot` headline. The
 signed mean of x is 0 because a left move and a right move cancel; the report
 therefore prints **mean absolute** translation for x/y and the signed mean for z.
 
-**449 tests** pass (from 418): four camera cases — a known 2 px / 1 px shift is
+**460 tests** pass (from 418): four camera cases — a known 2 px / 1 px shift is
 found in x and y and reported as content movement; identical frames are still; a
 known **10% push** is measured as a push and not absorbed by translation; a cut
 frame is not a camera move. Typecheck clean, `films/` untouched.

@@ -1,6 +1,19 @@
 {
   "character": "Vaz",
   "rig": "supervisor@0.1.0",
+  "body": {
+    "arm": {
+      "upper": 92,
+      "fore": 78,
+      "minElbow": 0.02
+    },
+    "hand": {
+      "w": 18,
+      "h": 26,
+      "thumbW": 8,
+      "thumbH": 12
+    }
+  },
   "anchors": [
     "face",
     "hair",

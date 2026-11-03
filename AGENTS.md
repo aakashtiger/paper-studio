@@ -75,6 +75,8 @@ npm run audit -- films/understudy/score.json     # score-level audit
 npm run audit:motion -- films/understudy/score.json   # per-shot motion floor
 npm run audit:type -- films/understudy/score.json      # text inside the safe area
 npm run audit:rig -- films/understudy/score.json       # leg solve + contact seam
+npm run audit:body -- films/understudy/score.json      # arms bend, hands are hands (P0.4)
+npm run audit:reaction -- films/understudy/score.json  # a reaction lands on its word, 0-3 frames (P0.4)
 npm run sheet -- films/understudy/score.json     # character/pose sheet PNG
 npm run sfx -- films/understudy/score.json       # code-generated SFX + mix
 npm run mix -- films/understudy/score.json       # score-level master, measured
@@ -137,6 +139,8 @@ score.json   the shots, each bound to a scene and a beat, with a reason     (002
    → npm run camera:check   ~1 s   every shot moves, and the film varies it (0041)
    → npm run assets:new -- --score <score> --write   the manifest names what the recipes draw (0045)
    → npm run assets:coverage         every recipe asset is in the manifest (0042)
+   → npm run audit:body              arms bend, hands are hands (P0.4)
+   → npm run audit:reaction          the picture waits for the word, 0-3 frames (P0.4)
    ↓ npm run preflight     ~1 s    the writing, the scenes, the read, the cut, the sound
    ↓ npm run inspect       ~1 min  ONE pass: movement, type and rig, probe-only
    ↓ npm run determinism   ~48 s   the same 30 frames, serial and parallel (0032)
@@ -239,7 +243,7 @@ file with **8 poses and 14 expressions**, a rig, a source, a licence and a
 `sha256`; `library:check` refuses one that is not reusable, `library:add` adds a
 pose once, and `library:use` points a film's cast and asset at it. A pose event
 can name an expression, and the painter maps it to the rig's eyes/brow/mouth.
-**449 tests.**
+**460 tests.**
 
 **The story now speaks first, the camera is a grammar, and assets have names.**
 `voice:story` reads `story.json` + `beats.json`, speaks the lines, listens with
@@ -263,12 +267,23 @@ on the copy (0045). `library:sheet` renders Kiran and Vaz with their 8 poses and
 proof and the 7+4 agent workflow are parked; ElevenLabs/other voice providers
 are parked too.
 
+**The body has a check now (P0.4).** The shared pose libraries publish their arm
+lengths and hand/thumb boxes; `resolvePoseLibrary` refuses a hand narrower or
+shorter than 1.5× its own thumb and a pose whose two elbows are both straight.
+`audit:body` reads the library character for every cast member (Same Alarm:
+Kiran hand 22×32, Vaz 18×26, pass; a 5×6 hand and a 0.000/0.000 elbow fail).
+`event.word` binds an event to a clock line, and `audit:reaction` requires it to
+land **0–3 frames after the measured word** (12.40 s passes at +0.0, 12.30 s
+fails at −3.0). The frame audit now refuses a one-frame luma pop at a cut. The
+first film must author `word` events; Same Alarm has none. **460 tests.**
+
 **The plan is `docs/PLAN-v2.md`.** It is the end-to-end process in plain English,
 the video checklist, the P0/P1/P2 gap list and a ten-session build order. No new
 film starts until P0.1–P0.5 and P0.7–P0.9 close: `voice:story` and
 `voice --from-story` are built; the asset manifest is derived, sized and hashed
-(0045); the arm/hand + word-reaction + pop checks; the seven-analysis /
-four-rebuild agent workflow; the bypasses; and the sound-contrast gate.
+(0045); the arm/hand, word-reaction and pop checks are built (0046); still open
+are the seven-analysis / four-rebuild agent workflow, the bypasses and the
+sound-contrast gate.
 
 **Still open, and named:** the style measurement is global per-frame, not
 per-region (it cannot say where the ink is, which way the light falls, or whether

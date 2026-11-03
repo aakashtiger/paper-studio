@@ -56,3 +56,61 @@ export function diffTimes(from: number, count: number, fps: number): number[] {
   // can move a millisecond at a boundary.
   return Array.from({ length: count }, (_, index) => clock(from + (index + 1) / fps));
 }
+
+export type Pop = {
+  time: number;
+  frame: number;
+  yavg: number;
+  before: number;
+  after: number;
+};
+
+const median = (values: number[]): number => {
+  if (values.length === 0) return Number.NaN;
+  const sorted = [...values].sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 1 ? (sorted[middle] ?? Number.NaN) : ((sorted[middle - 1] ?? 0) + (sorted[middle] ?? 0)) / 2;
+};
+
+/**
+ * A one-frame flash at a cut.
+ *
+ * A cut is allowed to change brightness: the new shot is a new exposure. A pop
+ * is different — the first frame after the cut is much brighter or darker than
+ * **both** the shot it left and the shot it entered, and the next frame has
+ * already settled. That is a single frame nobody authored, and a still of either
+ * shot cannot show it.
+ */
+export function findPops(
+  samples: { time: number; yavg: number }[],
+  cuts: number[],
+  options: { threshold?: number; window?: number; fps?: number } = {},
+): Pop[] {
+  const threshold = options.threshold ?? 40;
+  const window = options.window ?? 3;
+  const fps = options.fps ?? 30;
+  const pops: Pop[] = [];
+  const ordered = [...samples].sort((a, b) => a.time - b.time);
+  for (const cut of cuts) {
+    // The first frame at or after the cut is the one a pop would live on.
+    const index = ordered.findIndex((sample) => sample.time >= cut - 1e-6);
+    if (index < 0) continue;
+    const sample = ordered[index];
+    if (!sample) continue;
+    const before = median(ordered.slice(Math.max(0, index - window), index).map((item) => item.yavg));
+    const after = median(ordered.slice(index + 1, index + 1 + window).map((item) => item.yavg));
+    if (!Number.isFinite(before) || !Number.isFinite(after)) continue;
+    const fromBefore = sample.yavg - before;
+    const fromAfter = sample.yavg - after;
+    if (Math.abs(fromBefore) >= threshold && Math.abs(fromAfter) >= threshold && Math.sign(fromBefore) === Math.sign(fromAfter)) {
+      pops.push({
+        time: sample.time,
+        frame: Math.round(sample.time * fps),
+        yavg: Number(sample.yavg.toFixed(1)),
+        before: Number(before.toFixed(1)),
+        after: Number(after.toFixed(1)),
+      });
+    }
+  }
+  return pops;
+}

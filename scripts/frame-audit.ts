@@ -12,7 +12,7 @@ import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { readRenderManifest } from "../src/engine/manifest.js";
-import { diffTimes, frameTimes, isBlankFrame } from "../src/engine/frame-audit.js";
+import { diffTimes, findPops, frameTimes, isBlankFrame } from "../src/engine/frame-audit.js";
 import { findFfmpeg, videoStreamHash } from "../src/engine/video.js";
 
 type Score = {
@@ -206,6 +206,14 @@ async function main(): Promise<void> {
     (expected) => !cuts.some((actual) => Math.abs(actual - expected) <= cutTolerance),
   );
 
+  // A cut may change exposure; a single frame that differs from both sides and
+  // then settles is a pop. `--pop-luma` sets the jump in luma units.
+  const pops = findPops(
+    stats.map((entry) => ({ time: entry.time, yavg: entry.yavg })),
+    cuts,
+    { threshold: Number(arg("pop-luma") ?? 40), fps },
+  );
+
   // A diff pass that measured nothing must fail the audit, not pass it with
   // "no holds": an empty list is the one result that looks like success.
   if (diffs.length === 0) throw new Error("no frame differences measured — the audit measured nothing");
@@ -252,6 +260,7 @@ async function main(): Promise<void> {
     noBlankFrames: blank.length === 0,
     cutsOnShots: missedCuts.length === 0,
     noLongHolds: holds.length === 0,
+    noPopFrames: pops.length === 0,
     describedByRender: manifestOk,
   };
   const pass = Object.values(checks).every(Boolean);
@@ -274,6 +283,7 @@ async function main(): Promise<void> {
     expectedCuts,
     missedCuts,
     holds,
+    pops,
     diff: { median: Number(medianDiff.toFixed(3)), longestRunFrames: longestRun },
     checks,
     pass,
@@ -290,7 +300,7 @@ async function main(): Promise<void> {
   await writeFile(out, JSON.stringify(report, null, 2) + "\n", "utf8");
 
   console.log(`frames ${frameCount}/${expectedFrames} · luma ${minAvg.toFixed(1)}-${maxAvg.toFixed(1)}`);
-  console.log(`cuts ${cuts.length} · missed ${missedCuts.length} · blank ${blank.length} · longest hold ${(longestRun / fps).toFixed(2)}s`);
+  console.log(`cuts ${cuts.length} · missed ${missedCuts.length} · blank ${blank.length} · longest hold ${(longestRun / fps).toFixed(2)}s · pops ${pops.length}`);
   console.log(
     `render manifest: ${
       manifestOk

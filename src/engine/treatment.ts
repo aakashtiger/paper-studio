@@ -193,6 +193,12 @@ export const DirectionSchema = z.object({
         expression: z.string().min(1).optional(),
         /** The pose to come *from*, for anticipation into this one. */
         breakdown: z.string().min(1).optional(),
+        /**
+         * The clock line this event answers. A reaction must land on the word,
+         * or within three frames of it; `audit:reaction` measures that against
+         * the measured read, not against the authored window.
+         */
+        word: z.string().min(1).optional(),
       }),
     )
     .min(3),
@@ -537,7 +543,7 @@ export function resolveFilm(
       errors.push({
         code: "duration_outside_edit",
         message: `${shot.id} runs ${shot.duration}s, edit allows ${film.edit.minShot}–${film.edit.maxShot}s`,
-        shot: shot.id,
+        shot: shot.recipe,
       });
     }
   }
@@ -558,6 +564,7 @@ export function resolveFilm(
   errors.push(...cueResult.errors.map((issue) => ({ code: issue.code, message: issue.message })));
 
   checkClock(film, errors);
+  checkReactionWords(film, errors);
   checkCaptions(film, capabilities, errors);
 
   const plan: ResolvedFilm = {
@@ -763,6 +770,31 @@ function checkClock(film: FilmScore, errors: TreatmentIssue[]) {
       code: "clock_zero",
       message: `zero point ${film.clock.zero}s is outside the film`,
     });
+  }
+}
+
+function checkReactionWords(film: FilmScore, errors: TreatmentIssue[]) {
+  const lines = film.clock.mode === "narration" ? film.clock.lines : [];
+  const ids = new Set(lines.map((line) => line.id));
+  for (const shot of film.shots) {
+    for (const event of shot.direction.events) {
+      if (!event.word) continue;
+      if (film.clock.mode !== "narration") {
+        errors.push({
+          code: "reaction:clock",
+          message: `event "${event.kind}" at ${event.t}s answers a word, but the clock is "${film.clock.mode}" — there is no line to answer`,
+          shot: shot.recipe,
+        });
+        continue;
+      }
+      if (!ids.has(event.word)) {
+        errors.push({
+          code: "reaction:word",
+          message: `event "${event.kind}" at ${event.t}s answers line "${event.word}", which the clock does not have`,
+          shot: shot.recipe,
+        });
+      }
+    }
   }
 }
 

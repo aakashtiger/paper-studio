@@ -5,6 +5,7 @@ import {
   BLANK_SPREAD,
   BLANK_WHITE,
   diffTimes,
+  findPops,
   frameTimes,
   isBlankFrame,
 } from "../src/engine/frame-audit.js";
@@ -103,4 +104,47 @@ test("uniformity must hold at the threshold, not near it", () => {
   assert.equal(isBlankFrame({ yavg: BLANK_WHITE, ymin: 235 - BLANK_SPREAD, ymax: 235 }), true);
   // A frame that is dark but not uniform is content.
   assert.equal(isBlankFrame({ yavg: 17, ymin: 16, ymax: 40 }), false);
+});
+
+/**
+ * A pop is one frame that does not belong to either shot: the cut's first frame
+ * is much brighter or darker than both the shot it left and the shot it entered,
+ * and the next frame has settled. A cut that simply changes exposure is not a
+ * pop.
+ */
+test("a one-frame flash at a cut is a pop", () => {
+  const samples = [
+    { time: 0.933, yavg: 50 },
+    { time: 0.966, yavg: 50 },
+    { time: 1.0, yavg: 150 },
+    { time: 1.033, yavg: 50 },
+    { time: 1.066, yavg: 50 },
+  ];
+  const pops = findPops(samples, [1.0], { threshold: 40, fps: 30 });
+  assert.equal(pops.length, 1);
+  assert.equal(pops[0]?.time, 1.0);
+  assert.equal(pops[0]?.yavg, 150);
+  assert.equal(pops[0]?.before, 50);
+  assert.equal(pops[0]?.after, 50);
+});
+
+test("a cut to a new exposure is not a pop", () => {
+  const samples = [
+    { time: 0.933, yavg: 50 },
+    { time: 0.966, yavg: 50 },
+    { time: 1.0, yavg: 150 },
+    { time: 1.033, yavg: 150 },
+    { time: 1.066, yavg: 150 },
+  ];
+  assert.deepEqual(findPops(samples, [1.0], { threshold: 40, fps: 30 }), []);
+});
+
+test("a jump below the threshold is not a pop", () => {
+  const samples = [
+    { time: 0.933, yavg: 50 },
+    { time: 0.966, yavg: 50 },
+    { time: 1.0, yavg: 80 },
+    { time: 1.033, yavg: 50 },
+  ];
+  assert.deepEqual(findPops(samples, [1.0], { threshold: 40, fps: 30 }), []);
 });

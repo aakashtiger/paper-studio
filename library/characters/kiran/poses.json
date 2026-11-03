@@ -1,6 +1,19 @@
 {
   "character": "Kiran",
   "rig": "worker@0.1.0",
+  "body": {
+    "arm": {
+      "upper": 104,
+      "fore": 88,
+      "minElbow": 0.02
+    },
+    "hand": {
+      "w": 22,
+      "h": 32,
+      "thumbW": 7.6,
+      "thumbH": 11.2
+    }
+  },
   "anchors": [
     "face",
     "hair",
