@@ -98,12 +98,11 @@ const testFiles = readdirSync(resolve(root, "test"))
  * `npm.cmd` on Windows needs a shell, and Node 24 refuses that.
  */
 const steps = [
-  { name: "embed", tsx: "scripts/embed.ts", args: [score] },
-  // The unit suite is 14 s and it already knew. Chain B spent 81 minutes
-  // rendering a cut whose legs were measurably unreachable, then reported 209
-  // rig findings — while `test/cast-rig.test.ts`, which asserts exactly that,
-  // would have failed in a fourteenth of a second… if anything had run it. A
-  // check that can refuse a render has to run before the render.
+  // The unit suite runs on the checked-in score data. `embed` used to run
+  // before it, which regenerated the file the test is supposed to compare
+  // against — the staleness test could never fail. It now runs after `voice`,
+  // because `voice --apply` can move the score and the renderer paints from
+  // `score-data.js`, not from `score.json`.
   { name: "tests", argv: ["--import", "tsx", "--test", ...testFiles] },
   // Narration is the clock, so it is spoken before the cut is judged (0035).
   // `--apply` accepts the measured read: clock lines, shot boundaries and
@@ -112,6 +111,8 @@ const steps = [
   // manual and only *proposed* the move, so a read that drifted was refused and
   // a person retyped the times.
   { name: "voice", skip: !needsVoice, tsx: "scripts/voice.ts", args: [score, "--apply"] },
+  // The page's data is regenerated after the voice, never before it.
+  { name: "embed", tsx: "scripts/embed.ts", args: [score] },
   // The score audit costs 0.4 s and the render costs 34 minutes, so the audit
   // runs first. It was the other way round, and a contradiction in one event
   // (`quiet` on an event a cue was bound to) was reported by the audit *after*

@@ -62,6 +62,66 @@ export const NARRATION_START_MAX = 1;
  */
 export const NARRATION_COVERAGE_MIN = 0.8;
 
+/**
+ * What the recogniser actually heard, in seconds (decision 0037).
+ *
+ * The line windows in the score are authored: `voice --apply` extends a line
+ * when the read runs past it but never shortens an authored hold. Summing those
+ * windows therefore measures the *promise*, not the speech — a film can pass a
+ * coverage floor with long holds and very few words. The measured word times
+ * are the authority, exactly as they are for the cut.
+ */
+export type MeasuredNarration = {
+  words: number;
+  speech: number;
+  hole: number;
+  holeAt: number;
+  first: number;
+};
+
+/** Merge measured word intervals into speech seconds, the longest hole, and the first word. */
+export function measureWords(
+  words: { start: number; end: number }[],
+  duration: number,
+): MeasuredNarration {
+  const sorted = words
+    .filter((word) => Number.isFinite(word.start) && Number.isFinite(word.end) && word.end > word.start)
+    .sort((a, b) => a.start - b.start);
+  if (sorted.length === 0) return { words: 0, speech: 0, hole: duration, holeAt: 0, first: 0 };
+
+  let cursor = 0;
+  let speech = 0;
+  let hole = 0;
+  let holeAt = 0;
+  for (const word of sorted) {
+    if (word.start > cursor) {
+      const gap = word.start - cursor;
+      if (gap > hole) {
+        hole = gap;
+        holeAt = cursor;
+      }
+    }
+    const from = Math.max(word.start, cursor);
+    const to = Math.max(word.end, from);
+    speech += to - from;
+    cursor = Math.max(cursor, to);
+  }
+  if (duration > cursor) {
+    const gap = duration - cursor;
+    if (gap > hole) {
+      hole = gap;
+      holeAt = cursor;
+    }
+  }
+  return {
+    words: sorted.length,
+    speech: Number(speech.toFixed(3)),
+    hole: Number(hole.toFixed(3)),
+    holeAt: Number(holeAt.toFixed(3)),
+    first: Number((sorted[0] as { start: number }).start.toFixed(3)),
+  };
+}
+
 export type PaceSource = "story" | "style" | "default";
 
 /**
@@ -92,6 +152,8 @@ export type PreflightInput = {
   story: { errors: Issue[]; warnings: Issue[] } | null;
   /** The beat map, when the film has one: the cut is then checked against it. */
   beats?: CutBeat[] | null;
+  /** Measured word times from `words.json`; when absent, line windows are used. */
+  measured?: MeasuredNarration | null;
   /**
    * The authored scenes, when the film has them. `null` means the film has a
    * story and beats but no `scenes.json` — the stage the order was missing.
@@ -129,6 +191,8 @@ export type PreflightReport = {
     /** The longest stretch with no line in it, and where it starts. */
     hole: number;
     holeAt: number;
+    /** True when the hole and coverage come from measured word times, not authored windows. */
+    measured: boolean;
   } | null;
   sound: {
     cues: number;
@@ -257,6 +321,23 @@ export function preflightFilm(input: PreflightInput): PreflightReport {
         });
       }
     }
+    // A shot that starts or ends between frames cannot be cut exactly. The
+    // picture is quantised to the frame grid anyway; the score should say so.
+    for (const shot of plan.shots) {
+      const from = shot.start * plan.fps;
+      const to = (shot.start + shot.duration) * plan.fps;
+      if (Math.abs(from - Math.round(from)) > 1e-6 || Math.abs(to - Math.round(to)) > 1e-6) {
+        const issue = {
+          code: "pacing:grid",
+          message:
+            `shot "${shot.id}" starts at ${shot.start.toFixed(3)}s and ends at ` +
+            `${(shot.start + shot.duration).toFixed(3)}s — not on the ${plan.fps} fps grid ` +
+            `(${from.toFixed(2)}–${to.toFixed(2)} frames)`,
+        };
+        if (reproduce) warn("pacing", issue);
+        else add("pacing", issue);
+      }
+    }
   }
 
   // 3 — the cut answers the beats. With a beat map, every shot is bound to the
@@ -287,12 +368,18 @@ export function preflightFilm(input: PreflightInput): PreflightReport {
   let narration: PreflightReport["narration"] = null;
   if (plan.clock.mode === "narration") {
     const lines = plan.clock.lines;
-    const words = lines.reduce((sum, line) => sum + countWords(line.text), 0);
-    const speak = lines.reduce((sum, line) => sum + line.duration, 0);
+    const measured = input.measured ?? null;
+    const scriptWords = lines.reduce((sum, line) => sum + countWords(line.text), 0);
+    const words = measured ? measured.words : scriptWords;
+    const speak = measured ? measured.speech : lines.reduce((sum, line) => sum + line.duration, 0);
     const wpm = duration > 0 ? (words / duration) * 60 : 0;
     const coverage = duration > 0 ? speak / duration : 0;
-    const { hole, holeAt } = longestHole(lines, duration);
-    const first = [...lines].sort((a, b) => a.start - b.start)[0];
+    const fallbackHole = longestHole(lines, duration);
+    const hole = measured ? measured.hole : fallbackHole.hole;
+    const holeAt = measured ? measured.holeAt : fallbackHole.holeAt;
+    const first = measured
+      ? { start: measured.first }
+      : ([...lines].sort((a, b) => a.start - b.start)[0] ?? { start: 0 });
     narration = {
       lines: lines.length,
       words,
@@ -302,6 +389,7 @@ export function preflightFilm(input: PreflightInput): PreflightReport {
       first: Number((first?.start ?? 0).toFixed(2)),
       hole: Number(hole.toFixed(2)),
       holeAt: Number(holeAt.toFixed(2)),
+      measured: measured !== null,
     };
 
     // A narrated short does not open on silence. The reference reads start on

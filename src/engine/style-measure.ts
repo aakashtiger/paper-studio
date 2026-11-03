@@ -183,6 +183,8 @@ export type StyleMetrics = {
   /** Frame-to-frame difference, 0-255. Higher is more movement. */
   movement: Summary | null;
   cuts: { count: number; perMinute: number; times: number[] } | null;
+  /** Raw scene changes. With `--score`, `cuts` is the authored shot boundary set instead. */
+  sceneChanges: { count: number; perMinute: number; times: number[] } | null;
   shots: { count: number; median: number; min: number; max: number } | null;
   palette: string[];
 };
@@ -202,6 +204,7 @@ export function metricRow(metrics: StyleMetrics): Record<string, number | string
     movement: metrics.movement ? round(metrics.movement.mean) : null,
     shotMedian: metrics.shots ? round(metrics.shots.median) : null,
     cutsPerMinute: metrics.cuts ? round(metrics.cuts.perMinute) : null,
+    sceneChangesPerMinute: metrics.sceneChanges ? round(metrics.sceneChanges.perMinute) : null,
     palette: metrics.palette.join(" "),
   };
 }

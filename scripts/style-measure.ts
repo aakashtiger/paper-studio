@@ -15,7 +15,7 @@
  *   npm run style:measure -- --ref <dir|video> --specimen <dir|video> [--out ...]
  *   npm run style:measure -- --ref <video> --sheets
  */
-import { existsSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { extname, join, resolve } from "node:path";
 import { spawn } from "node:child_process";
 import { findFfmpeg, renderGrid, runBinary } from "../src/engine/grid.js";
@@ -189,12 +189,13 @@ async function measureFrames(dir: string, out: string): Promise<StyleMetrics> {
     edges: summarize(edge),
     movement: null,
     cuts: null,
+    sceneChanges: null,
     shots: null,
     palette: merged,
   };
 }
 
-async function measureVideo(file: string, out: string, sheets: boolean): Promise<StyleMetrics> {
+async function measureVideo(file: string, out: string, sheets: boolean, scorePath?: string): Promise<StyleMetrics> {
   const info = await probe(file);
   const samples = await stats(file, "scale=320:-2");
   const movement = await stats(file, "scale=320:-2,tblend=all_mode=difference");
@@ -208,11 +209,30 @@ async function measureVideo(file: string, out: string, sheets: boolean): Promise
     "-vf", "select='gt(scene,0.03)',showinfo",
     "-an", "-f", "null", "-",
   ], { cwd: root });
-  const cuts = [...cutOut.matchAll(/pts_time:([\d.]+)/g)]
+  const sceneCuts = [...cutOut.matchAll(/pts_time:([\d.]+)/g)]
     .map((match) => Number(match[1]))
     .filter((time, index, all) => Number.isFinite(time) && all.indexOf(time) === index)
     .sort((a, b) => a - b);
-  const lengths = shotLengths(cuts, info.duration ?? (samples.at(-1)?.time ?? 0) + 1 / (info.fps ?? 30));
+  const sceneLengths = shotLengths(sceneCuts, info.duration ?? (samples.at(-1)?.time ?? 0) + 1 / (info.fps ?? 30));
+
+  // A scene detector finds *changes*, not authored shots: on Same Alarm it
+  // finds 12 changes for a 10-shot film. With --score, the shots are the
+  // score's own boundaries; the raw changes are reported beside them.
+  let cuts = sceneCuts;
+  let lengths = sceneLengths;
+  if (scorePath) {
+    const score = JSON.parse(readFileSync(resolve(root, scorePath), "utf8")) as { shots?: { duration: number }[] };
+    if (!Array.isArray(score.shots) || score.shots.length === 0) {
+      throw new Error(`--score has no shots: ${scorePath}`);
+    }
+    lengths = score.shots.map((shot) => shot.duration);
+    cuts = [];
+    let at = 0;
+    for (let index = 0; index < lengths.length - 1; index += 1) {
+      at += lengths[index] as number;
+      cuts.push(Number(at.toFixed(3)));
+    }
+  }
 
   if (sheets && info.duration) {
     const dir = join(out, "sheets");
@@ -242,16 +262,21 @@ async function measureVideo(file: string, out: string, sheets: boolean): Promise
       perMinute: info.duration ? Number(((cuts.length / info.duration) * 60).toFixed(2)) : 0,
       times: cuts.map((time) => Number(time.toFixed(3))),
     },
+    sceneChanges: {
+      count: sceneCuts.length,
+      perMinute: info.duration ? Number(((sceneCuts.length / info.duration) * 60).toFixed(2)) : 0,
+      times: sceneCuts.map((time) => Number(time.toFixed(3))),
+    },
     shots: { ...split(lengths), count: lengths.length },
     palette: await palette(file),
   };
 }
 
-async function measure(path: string, out: string, sheets: boolean): Promise<StyleMetrics> {
+async function measure(path: string, out: string, sheets: boolean, scorePath?: string): Promise<StyleMetrics> {
   if (!existsSync(path)) throw new Error(`not found: ${path}`);
   if (statSync(path).isDirectory()) return measureFrames(path, out);
   if (!VIDEO.test(path) && !IMAGE.test(path)) throw new Error(`neither a folder of images nor a video: ${path}`);
-  return measureVideo(path, out, sheets);
+  return measureVideo(path, out, sheets, scorePath);
 }
 
 function table(metrics: StyleMetrics): string {
@@ -268,7 +293,8 @@ function table(metrics: StyleMetrics): string {
     `| edge density | ${row.edges ?? "—"} / 255 | how much line/ink/cut edge |`,
     `| movement mean | ${row.movement ?? "—"} / 255 | frame-to-frame change |`,
     `| shot median | ${row.shotMedian ?? "—"} s | middle shot length |`,
-    `| cuts / minute | ${row.cutsPerMinute ?? "—"} | cutting rate |`,
+    `| cuts / minute | ${row.cutsPerMinute ?? "—"} | cutting rate (authored shots with --score) |`,
+    `| scene changes / minute | ${row.sceneChangesPerMinute ?? "—"} | raw detector; not the authored shot count |`,
     `| palette | ${row.palette} | the first six distinct colours |`,
   ];
   return lines.join("\n");
@@ -309,6 +335,7 @@ function matchReport(ref: StyleMetrics, spec: StyleMetrics): string {
     `| movement | ${ref.movement?.mean.toFixed(2) ?? "—"} | ${spec.movement?.mean.toFixed(2) ?? "—"} | ${delta.movement} |`,
     `| shot median | ${ref.shots?.median ?? "—"} | ${spec.shots?.median ?? "—"} | ${delta.shotMedian} |`,
     `| cuts / minute | ${ref.cuts?.perMinute ?? "—"} | ${spec.cuts?.perMinute ?? "—"} | ${delta.cutsPerMinute} |`,
+    `| scene changes / min | ${ref.sceneChanges?.perMinute ?? "—"} | ${spec.sceneChanges?.perMinute ?? "—"} | — |`,
     `| palette distance | — | ${delta.palette} | ${delta.palette} |`,
     ``,
     `Delta is `+"`specimen - reference`"+`: positive means the specimen has more of it.`,
@@ -359,16 +386,17 @@ async function pairSheet(refDir: string, specDir: string, out: string): Promise<
 async function main(): Promise<void> {
   const ref = arg("ref");
   const spec = arg("specimen");
+  const score = arg("score");
   const json = process.argv.includes("--json");
   const sheets = process.argv.includes("--sheets");
   if (!ref) {
-    console.error("usage: npm run style:measure -- --ref <dir|video> [--specimen <dir|video>] [--out build/style-measure] [--sheets] [--json]");
+    console.error("usage: npm run style:measure -- --ref <dir|video> [--specimen <dir|video>] [--score <score.json>] [--out build/style-measure] [--sheets] [--json]");
     process.exit(2);
   }
   const out = resolve(root, arg("out") ?? "build/style-measure");
   mkdirSync(out, { recursive: true });
 
-  const reference = await measure(resolve(root, ref), out, sheets);
+  const reference = await measure(resolve(root, ref), out, sheets, score ? resolve(root, score) : undefined);
   const bibleDoc = bible(reference);
   writeFileSync(join(out, "bible.json"), `${JSON.stringify(reference, null, 2)}\n`, "utf8");
   writeFileSync(join(out, "STYLE-BIBLE.md"), `${bibleDoc}\n`, "utf8");

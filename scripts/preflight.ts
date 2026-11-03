@@ -20,7 +20,7 @@ import { dirname, resolve } from "node:path";
 import { PoseLibrarySchema, resolvePoseLibrary } from "../src/engine/pose.js";
 import { assetNamesCharacter } from "../src/engine/assets.js";
 import type { CutBeat } from "../src/engine/cut.js";
-import { preflightFilm, DEFAULT_PACE, type CastFact } from "../src/engine/preflight.js";
+import { preflightFilm, DEFAULT_PACE, measureWords, type CastFact, type MeasuredNarration } from "../src/engine/preflight.js";
 import { ScenesSchema, checkScenes } from "../src/engine/scenes.js";
 import {
   BeatsSchema,
@@ -28,6 +28,7 @@ import {
   StorySchema,
   checkNarrationSync,
   checkStory,
+  checkStoryDuration,
   type Beats,
   type Issue,
   type Pace,
@@ -258,6 +259,28 @@ if (storyDoc && beatDoc) {
   }
 }
 
+/**
+ * The story and the score must be the same length. The wpm check divides by the
+ * story's duration; the cut divides by the shots' duration. If those differ, one
+ * of the two numbers is measuring a different film.
+ */
+if (story && storyDoc) {
+  const issue = checkStoryDuration(storyDoc, plan.duration);
+  if (issue) story.errors.push(issue);
+}
+
+/**
+ * Coverage and holes are measured on the words Whisper heard, not on the
+ * authored line windows. A window can hold a long pause and still count as
+ * "speech"; a word cannot.
+ */
+let measured: MeasuredNarration | undefined;
+const wordsPath = resolve(filmDir, "words.json");
+if (existsSync(wordsPath)) {
+  const doc = JSON.parse(readFileSync(wordsPath, "utf8")) as { words?: { start: number; end: number }[] };
+  if (Array.isArray(doc.words)) measured = measureWords(doc.words, plan.duration);
+}
+
 const report = preflightFilm({
   plan,
   pace,
@@ -267,6 +290,7 @@ const report = preflightFilm({
   sceneCheck,
   sceneDocs,
   sceneSource,
+  measured,
   cast,
   reproduce,
 });
@@ -292,7 +316,8 @@ if (json) {
     const n = report.narration;
     console.log(
       `  narration ${n.lines} lines · ${n.words} words · ${n.wpm} wpm · speaks ` +
-        `${(n.coverage * 100).toFixed(0)}% · first line ${secs(n.first)} · longest hole ${secs(n.hole)} at ${secs(n.holeAt)}`,
+        `${(n.coverage * 100).toFixed(0)}% · first line ${secs(n.first)} · longest hole ${secs(n.hole)} at ${secs(n.holeAt)}` +
+        ` (${n.measured ? "measured words" : "line windows"})`,
     );
   } else {
     console.log("  narration none (the clock is not narration)");

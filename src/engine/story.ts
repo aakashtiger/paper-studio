@@ -400,3 +400,20 @@ export function checkNarrationSync(
 
   return errors;
 }
+
+/**
+ * The story and the score must be the same length (decision 0037).
+ *
+ * The wpm check divides by the story's duration; the cut divides by the shots'
+ * duration. If those differ, one of the two numbers is measuring a different
+ * film, and neither check can see it.
+ */
+export function checkStoryDuration(story: Story, duration: number): Issue | null {
+  if (Math.abs(story.duration - duration) <= 0.001) return null;
+  return {
+    code: "story:duration",
+    message:
+      `story.json is ${story.duration.toFixed(3)}s but the score's shots are ` +
+      `${duration.toFixed(3)}s — the two documents are not the same film`,
+  };
+}

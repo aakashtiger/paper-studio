@@ -74,16 +74,20 @@ storyboard is darker, lower contrast, and much less saturated than the reference
 crops. It is not a verdict — the reference is six crops, not a 60 s film, and the
 pairs are matched in filename order, not by shot — but it is a target to move.
 
-The video path was measured on the delivered *Same Alarm*: 1,800 frames, 13
-shots, median **5.5 s**, **12 cuts/minute**, movement **1.06 / 255**, palette
+The video path was measured on the delivered *Same Alarm*. Without `--score`
+the raw scene detector finds **12 changes** in a **10-shot** film: a change is
+not a cut. With `--score` the report uses the score's own boundaries —
+**10 shots, median 6.25 s, 9 cuts/minute** — and keeps the 12 raw scene changes
+beside them. Movement **1.06 / 255**, palette
 `#27201b #43372d #564636 #7f736b #c9b89c #e4d4b7`. A 4 s excerpt with `--sheets`
 wrote three contact sheets of 60 frames each.
 
 The first version of the cut pass captured only stdout; `showinfo` writes to
 stderr, so it found **0 cuts** and called the film one 60 s shot. `runBinary`
-returns both, and the second run found 13. That is the same class of defect the
-video found in its own camera tool, and it is why the measured numbers are
-checked against a known film before they are trusted.
+returns both, and the second run found 12 scene changes — which the first report
+then misread as 13 shots. `--score` makes the distinction explicit. That is the
+same class of defect the video found in its own camera tool, and it is why the
+measured numbers are checked against a known film before they are trusted.
 
 ## What this does not do, and is named
 

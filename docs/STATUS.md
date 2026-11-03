@@ -433,9 +433,27 @@ Still open and named: the collage and the storyboard each paint their own ten
 frames (they could read the frames `inspect` already painted); `paint-match`
 repaints 61 frames in fresh browsers (~73 s), which is the price of that proof;
 props and sets are not yet derived from shot slots (cast coverage is); song
-films are a marker only; there is no arm/hand audit, no measured reference style
-bible, and no visual-reaction-to-word check. No new film starts until the user
-says so.
+films are a marker only; there is no arm/hand audit and no
+visual-reaction-to-word check. The measured style bible exists (`style:measure`);
+per-region measurement and declared bands do not. No new film starts until the
+plan in `docs/PLAN-v2.md` P0.1–P0.6 closes.
+
+**Update 2026-11-04 — the plan, and the checks measure the film (0037).** The
+video audit found six places where a check measured the promise, not the film,
+and they are fixed: narration coverage/holes now come from the measured word
+times (Same Alarm: **13% / 7.5 s**, not the 23% / 13.6 s the authored windows
+claimed); story and score lengths are compared; shots must land on the frame
+grid; the chain runs `tests → voice → embed`, so the page data cannot be one cut
+old; `render:film` refuses a stale `score-data.js` before a browser opens; and
+`style:measure --score` separates the score's 10 authored shots from the 12 raw
+scene changes it used to call 13 shots. **418 tests**, typecheck clean.
+
+`docs/PLAN-v2.md` is the full end-to-end plan in plain English: the video
+checklist, every process stage, the P0/P1/P2 gap list, the seven-analysis /
+four-rebuild agent workflow, and a ten-session build order. P0 is `voice
+--story` + song clock, a shared asset library with 12–16 expressions and 12
+poses, per-region/camera/bands measurement, the arm/hand + word-reaction + pop
+checks, and the agent workflow.
 
 ## Verdict in one paragraph
 

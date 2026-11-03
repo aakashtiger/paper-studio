@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { BeatsSchema, StorySchema, checkStory, countWords } from "../src/engine/story.js";
+import { BeatsSchema, StorySchema, checkStory, checkStoryDuration, countWords } from "../src/engine/story.js";
 
 const root = process.cwd();
 const story = StorySchema.parse(
@@ -105,6 +105,13 @@ test("a promised phrase that is never said is refused", () => {
 
 test("the two documents have to be the same film", () => {
   assert.ok(codes(checkStory(story, { ...beats, id: "another-film" })).includes("story:id"));
+});
+
+test("the story and the score have to be the same length", () => {
+  assert.equal(checkStoryDuration(story, story.duration), null);
+  const issue = checkStoryDuration(story, story.duration + 1.5);
+  assert.equal(issue?.code, "story:duration");
+  assert.match(issue?.message ?? "", /not the same film/);
 });
 
 test("words are counted the way a reader counts them", () => {

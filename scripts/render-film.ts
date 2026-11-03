@@ -27,6 +27,7 @@ import { findChrome as findChromePath } from "../src/engine/chrome.js";
 import { hashFile, fontFaces, manifestPath, renderInputs } from "../src/engine/manifest.js";
 import type { RenderManifest } from "../src/engine/manifest.js";
 import { FilmScoreSchema } from "../src/engine/treatment.js";
+import { scoreDataText } from "../src/engine/score-data.js";
 import { fileHash, videoStreamHash } from "../src/engine/video.js";
 
 const MIME: Record<string, string> = {
@@ -658,6 +659,14 @@ async function main(): Promise<void> {
   if (!existsSync(join(filmDir, "index.html"))) throw new Error(`no composition at ${filmDir}`);
   if (!existsSync(join(filmDir, "score-data.js"))) {
     throw new Error("score-data.js missing; run `npm run embed -- " + scorePath + "`");
+  }
+  // The renderer paints from `score-data.js`, not from the score. A file left
+  // over from before `voice --apply` moved a line is a picture of a different
+  // film, and the gate only catches it after the paint. Refuse it here.
+  const expectedData = scoreDataText(cwd, scorePath);
+  const actualData = readFileSync(join(filmDir, "score-data.js"), "utf8");
+  if (actualData !== expectedData) {
+    throw new Error(`score-data.js is stale; run \`npm run embed -- ${scorePath}\``);
   }
 
   const output = resolve(cwd, arg("out") ?? join("films", score.id, `${score.id}.mp4`));

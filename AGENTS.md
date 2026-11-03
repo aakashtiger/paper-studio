@@ -211,6 +211,13 @@ reference crops, with a palette distance of **64**. That is "ours looked dull" a
 numbers instead of an opinion. It does not pass or fail a style; the style
 declares its bands and the tool measures the gap.
 
+**The plan is `docs/PLAN-v2.md`.** It is the end-to-end process in plain English,
+the video checklist, the P0/P1/P2 gap list and a ten-session build order. No new
+film starts until P0.1–P0.6 close: `voice --story` and the song clock, a shared
+asset library with expressions and poses, per-region/camera/bands measurement,
+the arm/hand + word-reaction + pop checks, and the seven-analysis/four-rebuild
+agent workflow.
+
 **Still open, and named:** the style measurement is global per-frame, not
 per-region (it cannot say where the ink is, which way the light falls, or whether
 a hand is a plank); it has no automatic token derivation and no pass/fail bands

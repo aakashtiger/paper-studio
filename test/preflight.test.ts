@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { DEFAULT_PACE, longestHole, median, preflightFilm, type PreflightInput } from "../src/engine/preflight.js";
+import { DEFAULT_PACE, longestHole, measureWords, median, preflightFilm, type PreflightInput } from "../src/engine/preflight.js";
 import { FilmScoreSchema, resolveFilm, type ResolvedFilm } from "../src/engine/treatment.js";
 
 const root = process.cwd();
@@ -80,6 +80,7 @@ function passingPlan(): ResolvedFilm {
   }));
   return {
     projectId: "test-pass",
+    fps: 30,
     shots,
     clock: { mode: "narration", lines },
     // One signature sound per scored beat, and nothing at all inside the quiet
@@ -329,4 +330,32 @@ test("the arithmetic is the arithmetic", () => {
   assert.equal(hole.hole, 14);
   assert.equal(hole.holeAt, 6);
   assert.deepEqual(longestHole([{ start: 0, duration: 30 }], 30), { hole: 0, holeAt: 0 });
+});
+
+test("coverage and holes come from measured words, not authored windows", () => {
+  const measured = measureWords(
+    [
+      { start: 0.5, end: 1.5 },
+      { start: 2, end: 3 },
+    ],
+    30,
+  );
+  assert.equal(measured.words, 2);
+  assert.equal(measured.speech, 2);
+  assert.equal(measured.first, 0.5);
+  assert.equal(measured.hole, 27);
+  assert.equal(measured.holeAt, 3);
+
+  const report = check({ measured });
+  assert.ok(codes(report).includes("narration:coverage"));
+  assert.ok(codes(report).includes("narration:hole"));
+});
+
+test("a shot that does not land on the frame grid is refused", () => {
+  const plan = passingPlan();
+  const shots = plan.shots.map((shot, index) =>
+    index === 0 ? { ...shot, duration: 2.55 } : shot,
+  );
+  const report = check({ plan: { ...plan, shots } as ResolvedFilm });
+  assert.ok(codes(report).includes("pacing:grid"));
 });

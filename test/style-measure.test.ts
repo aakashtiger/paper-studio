@@ -86,6 +86,7 @@ test("a comparison reports a palette distance, not a signed delta", () => {
     edges: null,
     movement: null,
     cuts: null,
+    sceneChanges: null,
     shots: null,
     palette,
   });
