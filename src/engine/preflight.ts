@@ -27,12 +27,13 @@ import type { ResolvedFilm } from "./treatment.js";
  * The band a film declares when it does not declare one.
  *
  * A Short or a Reel in this idiom cuts at a median of 2.5–3.0 s, and a narrated
- * one speaks 140–150 words a minute. Both are *style* numbers — a history
+ * one speaks 180–190 words a minute for the Paper K-pop style (the reference
+ * reads ~222; 140–150 left too much air). Both are *style* numbers — a history
  * channel and a K-pop edit do not cut alike — so a style pack may declare its
  * own in `tokens.json` and a film may declare its own in `story.json`. This is
  * only what happens when neither has said anything.
  */
-export const DEFAULT_PACE: Pace = { wpm: [140, 150], medianShot: [2.5, 3] };
+export const DEFAULT_PACE: Pace = { wpm: [180, 190], medianShot: [2.5, 3] };
 
 /** No single cue may own more than this share of the film. The room bed owned 98% of *Same Alarm*. */
 export const MAX_CUE_SHARE = 0.25;
@@ -56,7 +57,7 @@ export const NARRATION_START_MAX = 1;
 /**
  * A narrated film speaks for at least this share of its own length.
  *
- * At 140–150 wpm a normal read covers about 90% of the film; half a film is not
+ * At 180–190 wpm a normal read covers about 90% of the film; half a film is not
  * a narrated short, it is a film with a voice in it sometimes. The floor was
  * 0.5, which let 30 s of silence through as long as no single hole passed 2.5 s.
  */

@@ -58,6 +58,7 @@
     "library:check": "tsx scripts/library-check.ts",
     "library:add": "tsx scripts/library-add.ts",
     "library:use": "tsx scripts/library-use.ts",
+    "library:sheet": "tsx scripts/library-sheet.ts",
     "story": "tsx scripts/story.ts",
     "preflight": "tsx scripts/preflight.ts",
     "collage": "tsx scripts/collage.ts",

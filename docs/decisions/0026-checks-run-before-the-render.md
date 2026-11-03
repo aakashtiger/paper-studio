@@ -68,8 +68,8 @@ each of those defects used to cost.
 
 A style owns its tempo. The order is the film's own `story.json` `pace` block,
 then the style pack's `tokens.json` `pace` (not yet declared by any pack), then
-`DEFAULT_PACE` — 2.5–3.0 s median and 140–150 wpm, the numbers this idiom is cut
-at. The report names which of the three it used, because a number that decides a
+`DEFAULT_PACE` - 2.5-3.0 s median and 180-190 wpm (0043; 140-150 historically),
+the numbers this idiom is cut at. The report names which of the three it used, because a number that decides a
 refusal must not be anonymous.
 
 ### The legacy films are refused, on purpose

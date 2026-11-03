@@ -103,11 +103,14 @@ const TEST_BEATS = [
   { id: "b05", title: "the alarm again", share: 20, sound: { signature: "no hand arrives", quiet: false } },
 ];
 
+/** The old 140 wpm fixture is still a legal model; the style default is 180-190. */
+const TEST_PACE = { wpm: [140, 150] as [number, number], medianShot: [2.5, 3] as [number, number] };
+
 function check(overrides: Partial<PreflightInput> = {}) {
   return preflightFilm({
     plan: passingPlan(),
-    pace: DEFAULT_PACE,
-    paceSource: "default",
+    pace: TEST_PACE,
+    paceSource: "story",
     story: { errors: [], warnings: [] },
     beats: TEST_BEATS,
     cast: [],
@@ -126,6 +129,12 @@ test("a film written to the declared band passes every cheap check", () => {
   assert.equal(report.shots.median, 2.5);
   assert.equal(report.narration?.words, 70);
   assert.equal(report.narration?.wpm, 140);
+});
+
+test("the kpop default is 180-190 wpm, and the 140 fixture is refused under it", () => {
+  assert.deepEqual(DEFAULT_PACE, { wpm: [180, 190], medianShot: [2.5, 3] });
+  const report = check({ pace: DEFAULT_PACE, paceSource: "default" });
+  assert.ok(codes(report).includes("narration:wpm"));
 });
 
 test("a new film with a story and beats but no scenes is refused", () => {

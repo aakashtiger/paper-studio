@@ -30,8 +30,8 @@ import { mustSayGaps } from "./film-brief.js";
  *
  * 2.5 s is the median shot length of a Short or a Reel in this idiom; a minute
  * at six seconds a shot is a slideshow, and the film that taught us this scored
- * 6.0. 140–150 words a minute is what keeps a narrated short from having holes
- * in it — the film that taught us this had 21.
+ * 6.0. 180-190 words a minute is what keeps a narrated short from having holes
+ * in it - the film that taught us this had 21.
  */
 export const PaceSchema = z.object({
   /** Words per minute the narration is written to, as [min, max]. */

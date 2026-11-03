@@ -73,13 +73,15 @@ the audio, and a changed script refuses the old read until `--force`. For a real
 film the default files are `films/<id>/voice.wav` and `films/<id>/narration.json`,
 not `build/`.
 
-**440 tests**, typecheck clean, `films/` untouched.
+**441 tests**, typecheck clean, `films/` untouched.
 
 ## What this does not do, and is named
 
-- **It does not fill `score.clock.lines` yet.** `narration.json` is the measured
-  clock; a `voice --from-story` (or `score:clock`) that writes it into the score
-  is the next link.
+- **It does not fill `score.clock.lines` alone.** `voice --from-story
+  <narration.json> --apply` writes the measured clock, captions and shot snaps
+  into the score; a copy of *Same Alarm* took 7 lines, 7 captions and passed
+  `npm run film`. The score must already have its shots; a shotless score is
+  refused.
 - **The fixture is a refusal example, not a passing one.** A passing read needs a
   script whose words fit the coverage floor with its pauses, or a longer film.
 - **It speaks TTS only.** A recorded read is supported by `voice`, not yet by

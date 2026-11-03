@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { relative, resolve, sep } from "node:path";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
 import { PoseLibrarySchema, resolvePoseLibrary } from "../src/engine/pose.js";
 import { sheetHtml, sheetSlug, type SheetFonts } from "../src/engine/sheet.js";
@@ -8,8 +8,12 @@ import { findChrome, fileUrl, shootHtml } from "../src/engine/chrome.js";
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
 if (!file) {
-  console.error("usage: npm run sheet -- <score.json> [--no-render]");
+  console.error("usage: npm run sheet -- <score.json> [--out <dir>] [--vendor <dir>] [--no-render]");
   process.exit(2);
+}
+function arg(name: string): string | undefined {
+  const index = args.indexOf(`--${name}`);
+  return index === -1 ? undefined : args[index + 1];
 }
 
 const root = process.cwd();
@@ -21,7 +25,7 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-const outDir = resolve(root, "build", score.id, "sheets");
+const outDir = resolve(root, arg("out") ?? resolve(root, "build", score.id, "sheets"));
 mkdirSync(outDir, { recursive: true });
 const usedSlugs = new Set<string>();
 const chrome = findChrome();
@@ -36,16 +40,18 @@ const face = (role: string) => {
   if (!family?.name || !family?.file) throw new Error(`style "${score.style}" has no font for role "${role}"`);
   return { family: family.name, file: family.file };
 };
-// The sheet is written to build/<id>/sheets/, so repo-relative paths climb three.
+// Paths are relative to the sheet's output folder, so --out and --vendor can
+// move the sheet without breaking the fonts or the vendor scripts it loads.
 const fonts: SheetFonts = {
-  dir: `../../../styles/${score.style}`,
+  dir: relative(outDir, styleDir).split(sep).join("/"),
   display: face("display"),
   body: face("body"),
   mono: face("caption"),
 };
-const vendor = `../../../films/${score.id}/vendor`;
-if (!existsSync(resolve(root, "films", score.id, "vendor"))) {
-  console.error(`error: films/${score.id}/vendor is missing; the sheet draws with the film's pinned renderer`);
+const vendorDir = resolve(root, arg("vendor") ?? resolve(root, "films", score.id, "vendor"));
+const vendor = relative(outDir, vendorDir).split(sep).join("/");
+if (!existsSync(vendorDir)) {
+  console.error(`error: ${vendorDir} is missing; the sheet draws with a film's pinned renderer (pass --vendor)`);
   process.exit(1);
 }
 
@@ -66,11 +72,11 @@ function registeredRigs(dir: string): string[] {
   }
   return [...rigs].sort();
 }
-const rigs = registeredRigs(resolve(root, "films", score.id, "vendor"));
+const rigs = registeredRigs(vendorDir);
 // The five the pack always has; anything else in the vendor is the film's own
 // cast, props or scene code and has to be loaded too or its rigs do not exist.
 const PACK_SCRIPTS = ["core.js", "type.js", "characters.js", "props.js", "scene_kit.js"];
-const extra = readdirSync(resolve(root, "films", score.id, "vendor"))
+const extra = readdirSync(vendorDir)
   .filter((name) => name.endsWith(".js") && !PACK_SCRIPTS.includes(name) && name !== "gsap.min.js")
   .sort();
 
@@ -141,8 +147,8 @@ for (const entry of plan.cast) {
       console.error(`error: sheet render failed for ${library.character}`);
       process.exit(1);
     }
-    console.log(`sheet: ${library.character} → build/${score.id}/sheets/${slug}.png (${shot.width}×${shot.height})`);
+    console.log(`sheet: ${library.character} → ${relative(root, pngPath).split(sep).join("/")} (${shot.width}×${shot.height})`);
     continue;
   }
-  console.log(`sheet: ${library.character} → build/${score.id}/sheets/${slug}.html`);
+  console.log(`sheet: ${library.character} → ${relative(root, htmlPath).split(sep).join("/")}`);
 }

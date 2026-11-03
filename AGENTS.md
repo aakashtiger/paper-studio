@@ -59,6 +59,7 @@ npm run captions -- films/understudy/score.json  # generate transcript + SRT
 npm run voice -- films/understudy/score.json     # capture narration + word times, derive the clock
 npm run voice -- <score> --apply                 # accept the measured read: line starts, shot bounds, captions (0035)
 npm run voice:story -- --story films/<id>/story.json --out films/<id>/narration.json   # speak the story before the score (0040)
+npm run voice -- <score> --from-story <narration.json> --apply   # write the measured clock, captions and shot snaps into the score (0040)
 npm run asr -- films/understudy/score.json       # listen to the master; the G7 ASR gate
 npm run board -- films/understudy/score.json     # derive board cards (HTML + manifest)
 npm run storyboard -- films/understudy/score.json   # one code-drawn frame per shot, tiled into one sheet
@@ -99,6 +100,7 @@ npm run style:measure -- --ref <dir|video> [--specimen <dir|video>] [--camera]  
 npm run library:check -- library/characters/index.json   # reusable characters: file, rig, poses, 12+ expressions, licence (0038)
 npm run library:add -- --character <id> --kind pose|expression --from <file.json>   # add one pose/expression once, reuse it
 npm run library:use -- --score <score.json> --character <id> --apply   # point a film's cast and asset at a library character
+npm run library:sheet                             # one sheet per library character: poses and 14 expressions
 npm run camera:check -- <score>                  # every shot moves, varied, correct sign (0041)
 npm run camera:plan -- <score> [--apply]         # propose dynamic moves from the beats
 npm run assets:list                              # the plain-name asset catalogue
@@ -235,21 +237,23 @@ file with **8 poses and 14 expressions**, a rig, a source, a licence and a
 `sha256`; `library:check` refuses one that is not reusable, `library:add` adds a
 pose once, and `library:use` points a film's cast and asset at it. A pose event
 can name an expression, and the painter maps it to the rig's eyes/brow/mouth.
-**440 tests.**
+**441 tests.**
 
 **The story now speaks first, the camera is a grammar, and assets have names.**
 `voice:story` reads `story.json` + `beats.json`, speaks the lines, listens with
-Whisper, and writes `narration.json` **before a score exists**. The 30 s fixture
-reads 70 words at 140 script wpm (190 spoken) with **73.5% measured word
-coverage**, so the command **refuses** it — the earlier 91% was line windows,
-not speech. That refusal names a real contract tension: 140 wpm of script on a
-30 s film leaves no room for pauses. `camera:check` refuses a still shot, a push
-that pulls, a move with no travel, and a four-shot run, while `camera:plan`
-proposes a varied dynamic sequence from the beats (four moves, longest run 1, on
-the Same Alarm copy); `assets:list` names 40 built assets in plain English and
-`assets:coverage` reports the **6 of 11** recipe assets Same Alarm's manifest
-misses. The library immutability/14-face proof and the 7+4 agent workflow are
-parked.
+Whisper, and writes `narration.json` **before a score exists**; `voice --
+<score> --from-story <narration.json> --apply` then writes that measured clock,
+its captions and its shot snaps into the score. The 30 s fixture is still
+**refused** at 73.5% measured word coverage — it declares the legacy 140 band;
+the kpop default is now **180–190 wpm** (0043), which needs 90–95 words for 30 s.
+`camera:check` refuses a still shot, a push that pulls, a move with no travel,
+and a four-shot run; `camera:plan` proposes a varied sequence from the beats
+(four moves, longest run 1, preserves authored cameras unless `--force`);
+`assets:list` names 40 built assets in plain English, `assets:coverage` reports
+the **6 of 11** recipe assets Same Alarm's manifest misses, and
+`library:sheet` renders Kiran and Vaz with their 8 poses and **14 expressions**
+into `build/library/sheets/`. The library immutability/14-face proof and the 7+4
+agent workflow are parked; ElevenLabs/other voice providers are parked too.
 
 **The plan is `docs/PLAN-v2.md`.** It is the end-to-end process in plain English,
 the video checklist, the P0/P1/P2 gap list and a ten-session build order. No new

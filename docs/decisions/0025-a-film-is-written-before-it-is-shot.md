@@ -71,7 +71,11 @@ not own a tempo any more than it owns a palette.
 | rule | value | why this value |
 |---|---|---|
 | **median shot length** | **2.5 s**, band 2.5–3.0 | what a Short or a Reel in this idiom actually cuts at. A minute at six seconds a shot is a slideshow, and the film that taught us this measured exactly 6.0. |
-| **narration density** | **140–150 words per minute** | a narrated short has no holes in it. The film that taught us this had 21 words in 60 s — 21 wpm. |
+| **narration density** | **140-150 words per minute** | a narrated short has no holes in it. The film that taught us this had 21 words in 60 s - 21 wpm. |
+
+**Later (0043):** the Paper K-pop read is **180-190 wpm**. At 140-150 the
+measured word coverage was 73.5% on the fixture; the reference reads ~222 wpm.
+140-150 remains the historical fixture and other styles may declare it.
 
 Both are *bands*, not targets, and the film declares which band it is in so that
 a different style may declare a different one without touching the engine.

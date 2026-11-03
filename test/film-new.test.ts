@@ -87,7 +87,7 @@ test("the front door writes the story, the beats, the scenes and the score — i
 
 test("the story skeleton states the pace it will be judged against, and invents nothing else", () => {
   const story = storySkeleton(brief, { briefPath: "b.json" });
-  assert.deepEqual(story.pace, { wpm: [140, 150], medianShot: [2.5, 3] });
+  assert.deepEqual(story.pace, { wpm: [180, 190], medianShot: [2.5, 3] });
   assert.deepEqual(story.narration, []);
   assert.deepEqual(story.spine, { want: "", obstacle: "", turn: "", button: "" });
   // Nothing a person has to mean is written for them.

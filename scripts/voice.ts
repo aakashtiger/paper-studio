@@ -458,7 +458,109 @@ async function main(): Promise<void> {
   if (!pass) process.exit(1);
 }
 
-main().catch((error) => {
-  console.error(error instanceof Error ? error.message : String(error));
-  process.exit(1);
-});
+async function fromStory(): Promise<void> {
+  const root = process.cwd();
+  const narrationPath = args[args.indexOf("--from-story") + 1];
+  if (!file || !narrationPath) throw new Error("usage: npm run voice -- <score.json> --from-story <narration.json> [--apply]");
+  const readJson = (path: string) => JSON.parse(readFileSync(resolve(root, path), "utf8").replace(/^\uFEFF/, ""));
+  const narration = readJson(narrationPath) as {
+    lines?: { id: string; text: string; start: number; duration: number; hold?: number }[];
+  };
+  if (!Array.isArray(narration.lines) || narration.lines.length === 0) {
+    throw new Error(`${narrationPath} has no measured lines — run voice:story first`);
+  }
+  const raw = readJson(file) as {
+    id: string;
+    clock?: unknown;
+    captions?: { source?: string; lines?: { id: string; text: string; start: number; end: number }[] };
+    shots?: { duration: number }[];
+    audio?: { mode?: string };
+  };
+  if (!Array.isArray(raw.shots) || raw.shots.length === 0) {
+    throw new Error("the score has no shots — write the shot list before filling its clock from the read");
+  }
+  if (raw.audio?.mode !== "narration" && raw.audio?.mode !== "hybrid") {
+    throw new Error(`the score's audio mode is "${raw.audio?.mode ?? "(none)"}" — a narration clock needs narration`);
+  }
+
+  const lines = narration.lines.map((line) => ({
+    id: line.id,
+    text: line.text,
+    start: line.start,
+    duration: line.duration,
+    ...(line.hold !== undefined ? { hold: line.hold } : {}),
+  }));
+  raw.clock = { mode: "narration", lines };
+  const byId = new Map(lines.map((line) => [line.id, line]));
+  raw.captions = raw.captions ?? { source: `films/${raw.id}/captions.srt`, lines: [] };
+  raw.captions.lines = raw.captions.lines ?? [];
+  const seen = new Set<string>();
+  for (const caption of raw.captions.lines) {
+    const line = byId.get(caption.id);
+    if (!line) continue;
+    caption.text = line.text;
+    caption.start = line.start;
+    caption.end = Number((line.start + line.duration).toFixed(3));
+    seen.add(caption.id);
+  }
+  for (const line of lines) {
+    if (seen.has(line.id)) continue;
+    raw.captions.lines.push({
+      id: line.id,
+      text: line.text,
+      start: line.start,
+      end: Number((line.start + line.duration).toFixed(3)),
+    });
+  }
+
+  const parsed = FilmScoreSchema.safeParse(raw);
+  if (!parsed.success) {
+    const first = parsed.error.issues[0];
+    throw new Error(`${first?.path.join(".") || "(root)"}: ${first?.message ?? "invalid"}`);
+  }
+  const resolved = resolveFilm(parsed.data, resolve(root, `styles/${parsed.data.style}`), root);
+  if (resolved.errors.length > 0) {
+    for (const error of resolved.errors) console.error(`error: ${error.message}`);
+    process.exit(1);
+  }
+  const snap = snapShots(
+    resolved.plan.shots.map((shot) => ({ id: shot.id, start: shot.start, duration: shot.duration })),
+    lines.map((line) => line.start),
+  );
+  (raw.shots ?? []).forEach((shot, index) => {
+    const next = snap.shots[index];
+    if (next && Number.isFinite(next.duration)) shot.duration = next.duration;
+  });
+
+  const after = FilmScoreSchema.safeParse(raw);
+  if (!after.success) {
+    const first = after.error.issues[0];
+    throw new Error(`after the read: ${first?.path.join(".") || "(root)"}: ${first?.message ?? "invalid"}`);
+  }
+  const checked = resolveFilm(after.data, resolve(root, `styles/${after.data.style}`), root);
+  if (checked.errors.length > 0) {
+    for (const error of checked.errors) console.error(`error: after the read: ${error.message}`);
+    process.exit(1);
+  }
+
+  console.log(`voice --from-story: ${lines.length} measured lines · ${snap.moved.length} shot boundary(ies) moved`);
+  for (const line of lines) console.log(`  ${line.id.padEnd(4)} ${line.start.toFixed(2).padStart(6)}s +${line.duration.toFixed(2)}s  ${line.text}`);
+  if (!apply) {
+    console.log("voice --from-story: dry run; pass --apply to write the score clock and captions");
+    return;
+  }
+  writeFileSync(resolve(root, file), `${JSON.stringify(raw, null, 2)}\n`, "utf8");
+  console.log(`voice --from-story: wrote ${file}; run \`npm run embed -- ${file}\``);
+}
+
+if (args.includes("--from-story")) {
+  fromStory().catch((error: unknown) => {
+    console.error(`error: ${error instanceof Error ? error.message : String(error)}`);
+    process.exit(1);
+  });
+} else {
+  main().catch((error) => {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  });
+}
