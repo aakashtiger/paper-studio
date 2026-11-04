@@ -253,7 +253,7 @@ file with **8 poses and 14 expressions**, a rig, a source, a licence and a
 `sha256`; `library:check` refuses one that is not reusable, `library:add` adds a
 pose once, and `library:use` points a film's cast and asset at it. A pose event
 can name an expression, and the painter maps it to the rig's eyes/brow/mouth.
-**492 tests.**
+**493 tests.**
 
 **The story now speaks first, the camera is a grammar, and assets have names.**
 `voice:story` reads `story.json` + `beats.json`, speaks the lines, listens with
@@ -286,7 +286,7 @@ Kiran and Vaz hand 18×26, pass; a 5×6 hand and a 0.000/0.000 elbow fail).
 `event.word` binds an event to a clock line, and `audit:reaction` requires it to
 land **0–3 frames after the measured word** (12.40 s passes at +0.0, 12.30 s
 fails at −3.0). The frame audit now refuses a one-frame luma pop at a cut. The
-first film must author `word` events; Same Alarm has none. **492 tests.**
+first film must author `word` events; Same Alarm has none. **493 tests.**
 
 **The first film under the new order is *The Uber Cut* (`films/uber-model/`).**
 30 s, 10 shots, 5 lines, 91 words at 182 wpm, **84.6% voiced**, made through
