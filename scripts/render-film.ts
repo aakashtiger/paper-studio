@@ -135,6 +135,31 @@ function requireMotion(cwd: string, id: string, scoreFile: string): void {
  * a whole-film paint is, and it needs the report to describe **this** score —
  * a pass written before the cut changed proves nothing.
  */
+function requireVisuals(cwd: string, id: string, scoreFile: string): void {
+  const reportPath = join(cwd, "build", id, "visual-check.json");
+  const run = `npm run visual:check -- ${relative(cwd, scoreFile).replace(/\\/g, "/")}`;
+  if (!existsSync(reportPath)) {
+    throw new Error(`refusing to paint ${id}: no visual check. Run \`${run}\` first`);
+  }
+  const written = JSON.parse(readFileSync(reportPath, "utf8")) as {
+    pass?: boolean;
+    score?: string;
+    findings?: { code: string; message: string }[];
+  };
+  const hash = fileHash(scoreFile);
+  if (written.score !== hash) {
+    throw new Error(`refusing to paint ${id}: build/${id}/visual-check.json describes a different score. Run \`${run}\` again`);
+  }
+  if (!written.pass) {
+    const findings = written.findings ?? [];
+    throw new Error(
+      `refusing to paint ${id}: ${findings.length} visual finding(s):\n` +
+        findings.map((finding) => `  ${finding.code}  ${finding.message}`).join("\n") +
+        `\n  see build/${id}/visual-check.json`,
+    );
+  }
+}
+
 function requirePreflight(cwd: string, id: string, scoreFile: string, scorePath: string): void {
   const reportPath = join(cwd, "build", id, "preflight.json");
   const run = `npm run preflight -- ${relative(cwd, scoreFile).replace(/\\/g, "/")}`;
@@ -693,7 +718,8 @@ async function main(): Promise<void> {
   // stop a *film* being painted. It writes no manifest, so it can never be
   // mistaken for the deliverable.
   if (!stills && fullRange && !has("draft")) {
-    requirePreflight(cwd, score.id, scoreFile, scorePath);
+    requireVisuals(cwd, score.id, scoreFile);
+  requirePreflight(cwd, score.id, scoreFile, scorePath);
     requireCollage(cwd, score.id, scoreFile);
     requireMotion(cwd, score.id, scoreFile);
   }

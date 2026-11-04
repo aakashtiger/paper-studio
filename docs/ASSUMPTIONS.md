@@ -25,10 +25,12 @@ recorded, and anything not done moved to a parked list. This is that record.
 4. **Casting.** Kiran is the rider, Vaz is the driver. This is the only invented
    fact; both names live in `brief.json`. No Uber logo, brand mark, city, date,
    person, revenue number or take rate is invented.
-5. **The visuals are paper metaphors, not a car map.** The style pack has an
-   office/city paper set; the film uses its lamp, window, stage, corridor and
-   desk rather than adding a new car/map renderer. The narration carries the
-   business model; the captions name each revenue line.
+5. **The visuals are the subject, not the office set.** Six explainer recipes
+   were added to the pack: a phone map with a route and pins, a paper city with
+   a car, a fare split, an app menu with four revenue tiles, a rider/driver
+   network, and coins moving to driver and platform. The film has no lamp, no
+   banner and no sunburst title card; the first image is the network. The
+   narration carries the business model, and the frame now shows it.
 6. **Facts are public and general:** Uber is asset-light; the driver keeps the
    fare minus a service fee; the same app also sells delivery, freight,
    advertising and memberships (Uber One); more riders and drivers make the
@@ -50,7 +52,7 @@ recorded, and anything not done moved to a parked list. This is that record.
 | **P0.5 — 7 read-only analysis agents + up to 4 rebuild worktrees** | parked by the user earlier. The single agent/critic pass and the gate are what shipped. |
 | **P0.7 — `reproduce`, `--skip-render`, `--from`, whole-film probes** | `gate:7` now fails on pending; `reproduce` still turns missing story/scenes into warnings for a film with an MP4, and the chain can still reuse a picture without proving every skipped report. |
 | **P0.9 — 3 s LU contrast, LRA, hand/face close-up count** | the mix measures loudness, true peak, duck, cue levels, declared silence, undeclared holes and tail; it does not yet measure the quietest 3 s against the loudest 3 s, gate LRA, or count close-ups. |
-| **A literal Uber car/map/phone renderer** | would be a new recipe + assets in the style pack; the film uses the existing paper set. |
+| **A semantic vision check** | `visual:check` is textual: it proves the brief names the subject and the recipe declares it can draw that subject. A person still judges the frame. |
 | **Exact Uber financials / take rate** | deliberately omitted; no number was invented. |
 | **Music** | no score/music track; narration + 9 code-generated cues. |
 | **`assets:sheet` for props and sets** | `library:sheet` draws characters; props/sets have no sheet. |
@@ -63,9 +65,9 @@ recorded, and anything not done moved to a parked list. This is that record.
 ## What is proven
 
 - `npm run film:review -- films/uber-model/score.json --gate --reuse` → **PASS**.
-- `gate:7` → **PASS · 22 checks · nothing manual**; picture `sha256:570caa57db0…`.
+- `gate:7` → **PASS · 23 checks · nothing manual**; picture `sha256:2a9c9a7bff0…`.
 - ASR of the delivered file: **91/91 words, 100.0%**.
 - Delivered audio: **−14.1 LUFS / −2.3 dBTP**.
-- `npm test` → **465 tests**, typecheck clean.
+- `npm test` → **471 tests**, typecheck clean.
 - The film is `films/uber-model/uber-model.mp4`; the one-sheet is
   `build/uber-model/final-sheet.png`.

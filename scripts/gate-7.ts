@@ -230,6 +230,7 @@ async function main(): Promise<void> {
     anchorPairs?: number;
     anchoredCharacters?: string[];
     worstSeamShift?: { units: number; limit: number };
+    expectsCast?: boolean;
   }>("rig-audit.json");
   const asr = read<{
     pass: boolean;
@@ -327,8 +328,7 @@ async function main(): Promise<void> {
             detail: `MOVED since the render: ${stale.join(", ")} — this picture no longer matches its ${count} inputs`,
           };
     })(),
-    writing: (() => {
-      // The writing is not a note beside the film; it is an input the render
+    writing: (() => {      // The writing is not a note beside the film; it is an input the render
       // hashed. A delivered picture whose script was deleted or rewritten no
       // longer proves what it was made from (0047). The row re-runs the three
       // writing checks against the score's own clock and cast.
@@ -377,6 +377,25 @@ async function main(): Promise<void> {
       } catch (error) {
         return { ok: false, detail: error instanceof Error ? error.message : "writing check failed" };
       }
+    })(),
+    visual: (() => {
+      // The picture must have been asked for before it was painted. The report
+      // is tied to the score and lists the brief, the recipe match and the
+      // scene/shot link; the render refuses without it, and the gate re-reads it.
+      const report = read<{
+        pass: boolean;
+        score: string;
+        checked: number;
+        shots: number;
+        findings: { code: string; message: string }[];
+      }>("visual-check.json");
+      const current = `sha256:${hashFile(resolve(root, scorePath))}`;
+      if (!report) return { ok: false, detail: "no visual check — run `npm run visual:check -- <score>`" };
+      if (report.score !== current) return { ok: false, detail: "the visual check measured a different score" };
+      if (!report.pass) {
+        return { ok: false, detail: `${report.findings.length} visual finding(s): ${report.findings[0]?.message ?? "see visual-check.json"}` };
+      }
+      return { ok: true, detail: `${report.checked}/${report.shots} shots have a visual brief its recipe can draw` };
     })(),
     determinism: (() => {
       // The painter is a pure function of the score and the time (decision 0032).
@@ -533,14 +552,19 @@ async function main(): Promise<void> {
         : "no type-audit report",
     },
     rigSeam: {
-      // An empty anchor set is not a pass: it means no rig published where it
-      // hangs a part, or nothing was drawn twice to compare, and the row would
-      // be green while proving nothing.
-      ok: rig?.pass === true && (rig?.anchors ?? 0) > 0 && (rig?.anchorPairs ?? 0) > 0,
+      // An empty anchor set is not a pass when the film stages a character: it
+      // means no rig published where it hangs a part, or nothing was drawn twice
+      // to compare. A diagram film with no staged cast is not applicable, and
+      // says so instead of pretending it measured a rig.
+      ok:
+        rig?.pass === true &&
+        (rig?.expectsCast === false || ((rig?.anchors ?? 0) > 0 && (rig?.anchorPairs ?? 0) > 0)),
       detail: rig
-        ? `${rig.legs} legs, ${rig.unpairedSolves} unpaired, worst ankle jump ${rig.worstAnkleJump.distance}px; ` +
-          `${rig.anchors ?? 0} anchors / ${rig.anchorPairs ?? 0} pairs on ${(rig.anchoredCharacters ?? []).length} character(s), worst in-parent shift ` +
-          `${rig.worstSeamShift?.units ?? "?"} of ${rig.worstSeamShift?.limit ?? "?"} units`
+        ? rig.expectsCast === false
+          ? "no staged cast — rig seam not applicable; the visual check proves the picture's subject"
+          : `${rig.legs} legs, ${rig.unpairedSolves} unpaired, worst ankle jump ${rig.worstAnkleJump.distance}px; ` +
+            `${rig.anchors ?? 0} anchors / ${rig.anchorPairs ?? 0} pairs on ${(rig.anchoredCharacters ?? []).length} character(s), worst in-parent shift ` +
+            `${rig.worstSeamShift?.units ?? "?"} of ${rig.worstSeamShift?.limit ?? "?"} units`
         : "no rig-audit report",
     },
   };

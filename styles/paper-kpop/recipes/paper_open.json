@@ -156,5 +156,6 @@
       "anticipation": 0.1,
       "source": "tokens.motion.paper"
     }
-  }
+  },
+  "openingDefault": true
 }

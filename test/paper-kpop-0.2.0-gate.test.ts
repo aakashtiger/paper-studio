@@ -58,6 +58,14 @@ const OFFICE = [
   "loop_close",
   "loop_card",
 ];
+const EXPLAINER = [
+  "phone_route",
+  "city_route",
+  "fare_split",
+  "app_menu",
+  "network_web",
+  "money_flow",
+];
 
 // The two plans as they were sealed at 0.1.0, recipe for recipe.
 const SONG_PLAN = [
@@ -112,13 +120,13 @@ test("0.2.0 gate: the live pack is REVIEWABLE with exactly one open choice", () 
   assert.ok(card.includes(capabilities.identity.version), "the card does not show 0.2.0");
 });
 
-test("0.2.0 gate: sixteen recipes, eight shipped and eight office, each with a beat role", () => {
+test("0.2.0 gate: twenty-two recipes, eight shipped, eight office and six explainer, each with a beat role", () => {
   const recipes = readdirSync(join(PACK, "recipes"))
     .filter((file) => file.endsWith(".json"))
     .map((file) => readStyleJson(join(PACK, "recipes", file)) as { id: string; beatRoles: string[] });
   const ids = recipes.map((recipe) => recipe.id).sort();
-  assert.deepEqual(ids, [...SHIPPED, ...OFFICE].sort());
-  assert.equal(new Set(ids).size, 16, "a recipe id is listed twice");
+  assert.deepEqual(ids, [...SHIPPED, ...OFFICE, ...EXPLAINER].sort());
+  assert.equal(new Set(ids).size, 22, "a recipe id is listed twice");
   for (const recipe of recipes) {
     assert.ok(recipe.beatRoles.length > 0, `${recipe.id} has no beat role`);
   }
@@ -151,7 +159,7 @@ test("0.2.0 gate: a format names its recipes, so the office set cannot re-cut a 
   }
 });
 
-test("0.2.0 gate: all sixteen recipes fit their text in both aspects at the 14 px floor", () => {
+test("0.2.0 gate: all twenty-two recipes fit their text in both aspects at the 14 px floor", () => {
   assertPackGeometry(PACK);
 });
 

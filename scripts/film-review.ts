@@ -66,6 +66,7 @@ const mayReuseReports = args.includes("--reuse");
 
 const steps: Step[] = [
   { name: "audit", script: "scripts/audit.ts", detail: "score-level contracts" },
+  { name: "visual:check", script: "scripts/visual-check.ts", detail: "every shot has a visual brief that its recipe can draw" },
   { name: "board", script: "scripts/board.ts", detail: "cards, one image" },
   { name: "storyboard", script: "scripts/storyboard.ts", detail: "one frame per shot" },
   { name: "sheet", script: "scripts/sheet.ts", detail: "character / pose sheet" },
@@ -105,6 +106,8 @@ function artifact(name: string): string | null {
   switch (name) {
     case "audit":
       return `build/${id}/audit.json`;
+    case "visual:check":
+      return `build/${id}/visual-check.json`;
     case "board":
       return `build/${id}/board/board.json`;
     case "storyboard":
@@ -333,6 +336,17 @@ function describe(name: string): string | null {
       if (!report) return null;
       if (!report.ok) return `FAIL · ${report.errors[0]?.message ?? "the score audit failed"}`;
       return `ok · ${report.shots} shots · ${report.events} events · ${report.cues} cues · ${report.captions} captions${report.warnings.length ? ` · ${report.warnings.length} warnings` : ""}`;
+    }
+    case "visual:check": {
+      const report = readJson<{
+        pass: boolean;
+        checked: number;
+        shots: number;
+        findings: Array<{ code: string; message: string }>;
+      }>(`build/${id}/visual-check.json`);
+      if (!report) return null;
+      if (!report.pass) return `FAIL · ${report.findings[0]?.message ?? "the visual check failed"}`;
+      return `${report.checked}/${report.shots} shots with a visual brief · its recipe can draw the subject`;
     }
     case "board": {
       const report = readJson<{ entries: number; sheet: { width: number; height: number } | null }>(

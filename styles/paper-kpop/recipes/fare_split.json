@@ -1,0 +1,82 @@
+{
+  "id": "fare_split",
+  "beatRoles": [
+    "detail",
+    "quote"
+  ],
+  "duration": {
+    "min": 2.2,
+    "max": 5.5,
+    "default": 3.2
+  },
+  "transitionOut": "cut",
+  "failureModes": [
+    "a picture that does not show the subject the shot names",
+    "a generic opening card used as a scene",
+    "a label outside the safe area"
+  ],
+  "camera": {
+    "op": "camera",
+    "move": "push_in",
+    "from": 1,
+    "to": 1.05,
+    "ease": "easeOut"
+  },
+  "slots": [
+    "content.body",
+    "content.caption"
+  ],
+  "assets": [
+    "set.paper-card",
+    "prop.coin",
+    "texture.halftone"
+  ],
+  "composition": [
+    {
+      "op": "text",
+      "id": "body",
+      "slot": "content.body",
+      "typeRole": "body",
+      "x": 0.06,
+      "y": 0.07,
+      "w": 0.56,
+      "h": 0.08,
+      "align": "left",
+      "z": 6,
+      "color": "ink"
+    },
+    {
+      "op": "text",
+      "id": "caption",
+      "slot": "content.caption",
+      "typeRole": "caption",
+      "x": 0.06,
+      "y": 0.17,
+      "w": 0.56,
+      "h": 0.2,
+      "align": "left",
+      "z": 6,
+      "color": "ink"
+    },
+    {
+      "op": "camera",
+      "move": "push_in",
+      "from": 1,
+      "to": 1.05,
+      "ease": "easeOut"
+    },
+    {
+      "op": "transition",
+      "kind": "cut"
+    }
+  ],
+  "subjects": [
+    "fare",
+    "money",
+    "split",
+    "service fee",
+    "coin",
+    "driver",
+    "platform"
+  ]
+}

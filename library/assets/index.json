@@ -656,6 +656,45 @@
       ],
       "source": "Google Fonts",
       "licence": "OFL-1.1"
+    },
+    {
+      "id": "prop.car",
+      "name": "Paper car",
+      "type": "prop",
+      "where": "styles/paper-kpop/canvas/recipes.js",
+      "size": {
+        "w": 260,
+        "h": 140,
+        "unit": "px"
+      },
+      "source": "paper-kpop",
+      "licence": "proprietary",
+      "recipes": [
+        "city_route"
+      ],
+      "ids": [
+        "prop.car"
+      ]
+    },
+    {
+      "id": "prop.coin",
+      "name": "Paper coin",
+      "type": "prop",
+      "where": "styles/paper-kpop/canvas/recipes.js",
+      "size": {
+        "w": 80,
+        "h": 80,
+        "unit": "px"
+      },
+      "source": "paper-kpop",
+      "licence": "proprietary",
+      "recipes": [
+        "fare_split",
+        "money_flow"
+      ],
+      "ids": [
+        "prop.coin"
+      ]
     }
   ]
 }

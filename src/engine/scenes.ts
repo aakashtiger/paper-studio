@@ -20,6 +20,15 @@ import { NARRATION_HOLE_MAX, countWords, type Beats, type Issue, type Story } fr
  * it may not carry more than one narration hole of air beyond them.
  */
 
+export const SceneVisualSchema = z.object({
+  /** What the audience must see, in plain words — the subject of the shot. */
+  subject: z.string().min(1),
+  setting: z.string().min(1),
+  action: z.string().min(1),
+  /** The props the frame needs; the shot's recipe must be able to draw them. */
+  props: z.array(z.string().min(1)).default([]),
+});
+
 export const SceneSchema = z.object({
   id: z.string().min(1),
   /** The beat of `beats.json` this scene serves. */
@@ -29,6 +38,8 @@ export const SceneSchema = z.object({
   place: z.string().min(1),
   /** What happens, in one line. A scene with no event is a set, not a scene. */
   summary: z.string().min(1),
+  /** The visual idea this scene is built around, before any recipe is chosen. */
+  visual: SceneVisualSchema.optional(),
   /** Who is in it. Checked against the film's declared cast. */
   cast: z.array(z.string().min(1)).default([]),
   /** The narration lines it carries, by id. Every line belongs to one scene. */

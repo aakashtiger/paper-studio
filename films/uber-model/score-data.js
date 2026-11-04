@@ -13,119 +13,12 @@ window.SCORE = {
       "id": "s01",
       "beat": "b01",
       "scene": "sc01",
-      "recipe": "paper_open",
+      "recipe": "network_web",
       "start": 0,
       "duration": 2.6,
       "slots": {
-        "content.title": "THE UBER CUT",
-        "content.subtitle": "HOW THE NETWORK EARNS"
-      },
-      "camera": {
-        "move": "push_in",
-        "from": 0.99,
-        "to": 1.04,
-        "ease": "easeOut"
-      },
-      "motion": {
-        "note": "The title drops character by character onto the paper."
-      },
-      "transitionOut": "cut",
-      "direction": {
-        "entry": "a blank cream sheet",
-        "exit": "the title landed",
-        "spine": "The question is asked before the answer.",
-        "cast": [],
-        "events": [
-          {
-            "t": 0,
-            "kind": "light",
-            "note": "the title answers the first word",
-            "quiet": "the line carries this beat; no foley",
-            "word": "v01"
-          },
-          {
-            "t": 0.2,
-            "kind": "type",
-            "note": "the title drops character by character",
-            "quiet": "the line carries this beat; no foley"
-          },
-          {
-            "t": 1,
-            "kind": "light",
-            "note": "the paper warms under the lamp",
-            "quiet": "the line carries this beat; no foley"
-          },
-          {
-            "t": 2.4,
-            "kind": "transition",
-            "note": "cut on the last letter",
-            "quiet": "a cut has no sound"
-          }
-        ]
-      }
-    },
-    {
-      "id": "s02",
-      "beat": "b01",
-      "scene": "sc01",
-      "recipe": "sticker_slam",
-      "start": 2.6,
-      "duration": 3.6,
-      "slots": {
-        "content.body": "THE NETWORK"
-      },
-      "camera": {
-        "move": "push_in",
-        "from": 1,
-        "to": 1.06,
-        "ease": "easeOut"
-      },
-      "motion": {
-        "note": "The sticker slams; the word is the whole thesis."
-      },
-      "transitionOut": "cut",
-      "direction": {
-        "entry": "a red bed",
-        "exit": "the sticker settled",
-        "spine": "The network, not the car, is the asset.",
-        "cast": [],
-        "events": [
-          {
-            "t": 0.1,
-            "kind": "slam",
-            "note": "the sticker hits with squash",
-            "quiet": "the line carries this beat; no foley"
-          },
-          {
-            "t": 0.6,
-            "kind": "shards",
-            "note": "paper shards fly",
-            "quiet": "the line carries this beat; no foley"
-          },
-          {
-            "t": 1.5,
-            "kind": "settle",
-            "note": "the sticker settles",
-            "quiet": "the line carries this beat; no foley"
-          },
-          {
-            "t": 3.2,
-            "kind": "transition",
-            "note": "cut before the paper stops",
-            "quiet": "the cut is the punctuation"
-          }
-        ]
-      }
-    },
-    {
-      "id": "s03",
-      "beat": "b02",
-      "scene": "sc02",
-      "recipe": "macro_prop_beat",
-      "start": 6.2,
-      "duration": 2.8,
-      "slots": {
-        "content.caption": "A RIDER ASKS"
+        "content.body": "THE NETWORK",
+        "content.caption": "NOT THE FLEET"
       },
       "camera": {
         "move": "orbit",
@@ -134,31 +27,145 @@ window.SCORE = {
         "ease": "easeInOut"
       },
       "motion": {
+        "note": "The title drops character by character onto the paper."
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "a paper city map with rider and driver nodes joining into one network",
+        "exit": "routes draw and nodes appear",
+        "spine": "the line says Uber owns the network, not the cars",
+        "cast": [],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the map answers the first word",
+            "quiet": "the line carries this beat; no foley",
+            "word": "v01"
+          },
+          {
+            "t": 0.8,
+            "kind": "build",
+            "note": "rider nodes appear",
+            "quiet": "the line carries this beat; no foley"
+          },
+          {
+            "t": 1.6,
+            "kind": "build",
+            "note": "driver nodes join",
+            "quiet": "the line carries this beat; no foley"
+          },
+          {
+            "t": 2.4,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s02",
+      "beat": "b01",
+      "scene": "sc01",
+      "recipe": "app_menu",
+      "start": 2.6,
+      "duration": 3.6,
+      "slots": {
+        "content.body": "THE APP",
+        "content.caption": "RIDERS · DRIVERS"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.07,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "note": "The sticker slams; the word is the whole thesis."
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "a phone screen with the app's four taps: rides, delivery, freight, Uber One",
+        "exit": "the four tiles drop into the phone",
+        "spine": "the network is reached through one app; the app is the front door",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "type",
+            "note": "the app title lands",
+            "quiet": "the line carries this beat; no foley"
+          },
+          {
+            "t": 0.9,
+            "kind": "build",
+            "note": "the ride tile drops",
+            "quiet": "the line carries this beat; no foley"
+          },
+          {
+            "t": 1.7,
+            "kind": "build",
+            "note": "delivery and freight drop",
+            "quiet": "the line carries this beat; no foley"
+          },
+          {
+            "t": 2.5,
+            "kind": "build",
+            "note": "the membership tile drops",
+            "quiet": "the line carries this beat; no foley"
+          },
+          {
+            "t": 3.4,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the tiles are the sound"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s03",
+      "beat": "b02",
+      "scene": "sc02",
+      "recipe": "phone_route",
+      "start": 6.2,
+      "duration": 2.8,
+      "slots": {
+        "content.caption": "A RIDER TAPS"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.09,
+        "ease": "easeOut"
+      },
+      "motion": {
         "note": "The lamp becomes a phone light; the hand enters and misses by a hair."
       },
       "transitionOut": "cut",
       "direction": {
-        "entry": "a dark tabletop, one lamp",
-        "exit": "the hand gone",
-        "spine": "The rider asks the network for a car.",
+        "entry": "a phone map with a rider pin and a driver pin",
+        "exit": "a thumb taps the route and the line draws toward the driver",
+        "spine": "the line says riders open the app and the trip is matched",
         "cast": [],
         "events": [
           {
             "t": 0,
             "kind": "hand",
-            "note": "the rider's paper hand enters",
+            "note": "the rider's thumb taps",
             "word": "v02"
           },
           {
-            "t": 1.1,
-            "kind": "miss",
-            "note": "the hand passes the phone",
+            "t": 1,
+            "kind": "prop",
+            "note": "the route begins to draw",
             "quiet": "the line carries this beat; no foley"
           },
           {
-            "t": 2.2,
+            "t": 2,
             "kind": "settle",
-            "note": "the lamp settles",
+            "note": "the pins settle",
             "quiet": "the line carries this beat; no foley"
           },
           {
@@ -174,7 +181,7 @@ window.SCORE = {
       "id": "s04",
       "beat": "b02",
       "scene": "sc02",
-      "recipe": "corridor_walk",
+      "recipe": "city_route",
       "start": 9,
       "duration": 3,
       "slots": {
@@ -191,37 +198,33 @@ window.SCORE = {
       },
       "transitionOut": "cut",
       "direction": {
-        "entry": "the corridor, empty",
-        "exit": "the driver gone",
-        "spine": "The driver brings the car; the platform brings the fare.",
-        "cast": [
-          "Kiran"
-        ],
+        "entry": "a paper city with a car moving along a red route between pins",
+        "exit": "the car crosses the blocks toward the rider",
+        "spine": "the line says drivers use their own cars; the car is the trip",
+        "cast": [],
         "events": [
           {
             "t": 0.2,
-            "kind": "pose",
-            "note": "the driver steps into the corridor",
-            "who": "Kiran",
-            "pose": "walk"
+            "kind": "step",
+            "note": "the car leaves the kerb"
           },
           {
-            "t": 0.8,
+            "t": 1,
             "kind": "step",
-            "note": "the first step",
+            "note": "the car crosses the first block",
             "quiet": "the line carries this beat; no foley"
           },
           {
-            "t": 1.8,
+            "t": 2,
             "kind": "step",
-            "note": "the second step",
+            "note": "the car reaches the second",
             "quiet": "the line carries this beat; no foley"
           },
           {
-            "t": 2.9,
+            "t": 2.8,
             "kind": "transition",
-            "note": "cut on the stride",
-            "quiet": "the cut lands on the step"
+            "note": "cut",
+            "quiet": "the route is the sound"
           }
         ]
       }
@@ -230,31 +233,28 @@ window.SCORE = {
       "id": "s05",
       "beat": "b03",
       "scene": "sc03",
-      "recipe": "stage_wide",
+      "recipe": "fare_split",
       "start": 12,
-      "duration": 3.4,
+      "duration": 3.3,
       "slots": {
         "content.body": "THE FARE",
-        "content.caption": "THE DRIVER KEEPS THE REST"
+        "content.caption": "DRIVER KEEPS THE REST"
       },
       "camera": {
-        "move": "orbit",
+        "move": "push_in",
         "from": 1,
-        "to": 1.05,
-        "ease": "easeInOut"
+        "to": 1.06,
+        "ease": "easeOut"
       },
       "motion": {
         "note": "The stage builds the two sides of the fare."
       },
       "transitionOut": "cut",
       "direction": {
-        "entry": "two figures on a dark stage",
-        "exit": "the fare on the stage",
-        "spine": "The fare is the first thing the network divides.",
-        "cast": [
-          "Kiran",
-          "Vaz"
-        ],
+        "entry": "a fare bar split into a large driver share and a small red service fee",
+        "exit": "the split line settles and a coin is divided",
+        "spine": "the line says Uber takes a service fee and the driver keeps the rest",
+        "cast": [],
         "events": [
           {
             "t": 0,
@@ -264,30 +264,22 @@ window.SCORE = {
             "word": "v03"
           },
           {
-            "t": 0.2,
-            "kind": "pose",
-            "note": "the rider and driver face each other",
-            "quiet": "the line carries this beat; no foley",
-            "who": "Vaz",
-            "pose": "point"
-          },
-          {
-            "t": 1.2,
-            "kind": "light",
-            "note": "the stage light finds the fare",
+            "t": 0.8,
+            "kind": "tear",
+            "note": "the split line tears across",
             "quiet": "the line carries this beat; no foley"
           },
           {
-            "t": 2.4,
-            "kind": "confetti",
-            "note": "the paper fare lands",
+            "t": 1.8,
+            "kind": "prop",
+            "note": "the coin lands",
             "quiet": "the line carries this beat; no foley"
           },
           {
-            "t": 3.2,
+            "t": 3,
             "kind": "transition",
             "note": "cut",
-            "quiet": "the paper lands"
+            "quiet": "the tear is the sound"
           }
         ]
       }
@@ -296,129 +288,12 @@ window.SCORE = {
       "id": "s06",
       "beat": "b03",
       "scene": "sc03",
-      "recipe": "supervisor_point",
-      "start": 15.4,
-      "duration": 2.1,
+      "recipe": "money_flow",
+      "start": 15.3,
+      "duration": 2.2,
       "slots": {
-        "content.caption": "UBER TAKES A SERVICE FEE"
-      },
-      "camera": {
-        "move": "orbit",
-        "from": 1,
-        "to": 1.04,
-        "ease": "easeInOut"
-      },
-      "motion": {
-        "note": "The driver points at the small slice; the service fee is the cut."
-      },
-      "transitionOut": "cut",
-      "direction": {
-        "entry": "the driver alone",
-        "exit": "the small slice named",
-        "spine": "The platform's revenue is the service fee, not the whole fare.",
-        "cast": [
-          "Vaz"
-        ],
-        "events": [
-          {
-            "t": 0.2,
-            "kind": "pose",
-            "note": "the driver points at the slice",
-            "who": "Vaz",
-            "pose": "point"
-          },
-          {
-            "t": 0.9,
-            "kind": "door",
-            "note": "a door closes in the back",
-            "quiet": "the line carries this beat; no foley"
-          },
-          {
-            "t": 1.6,
-            "kind": "step",
-            "note": "one step back",
-            "quiet": "the line carries this beat; no foley"
-          },
-          {
-            "t": 2,
-            "kind": "transition",
-            "note": "cut",
-            "quiet": "the point is the sound"
-          }
-        ]
-      }
-    },
-    {
-      "id": "s07",
-      "beat": "b04",
-      "scene": "sc04",
-      "recipe": "window_dusk",
-      "start": 17.5,
-      "duration": 3,
-      "slots": {
-        "content.caption": "DELIVERY · FREIGHT · ADS · UBER ONE"
-      },
-      "camera": {
-        "move": "push_in",
-        "from": 1,
-        "to": 1.05,
-        "ease": "easeOut"
-      },
-      "motion": {
-        "note": "The window becomes a list of the other doors the network sells."
-      },
-      "transitionOut": "cut",
-      "direction": {
-        "entry": "a dark office window",
-        "exit": "the city lit",
-        "spine": "The same app sells more than a ride.",
-        "cast": [
-          "Kiran"
-        ],
-        "events": [
-          {
-            "t": 0,
-            "kind": "light",
-            "note": "the window answers the word",
-            "quiet": "the line carries this beat; no foley",
-            "word": "v04"
-          },
-          {
-            "t": 0.3,
-            "kind": "light",
-            "note": "the window warms",
-            "quiet": "the line carries this beat; no foley"
-          },
-          {
-            "t": 1.1,
-            "kind": "prop",
-            "note": "a delivery bag crosses the glass",
-            "quiet": "the line carries this beat; no foley"
-          },
-          {
-            "t": 2,
-            "kind": "light",
-            "note": "the city comes up",
-            "quiet": "the line carries this beat; no foley"
-          },
-          {
-            "t": 2.8,
-            "kind": "transition",
-            "note": "cut",
-            "quiet": "the list is the sound"
-          }
-        ]
-      }
-    },
-    {
-      "id": "s08",
-      "beat": "b04",
-      "scene": "sc04",
-      "recipe": "desk_wide",
-      "start": 20.5,
-      "duration": 3.2,
-      "slots": {
-        "content.caption": "ONE APP, MANY REVENUES"
+        "content.body": "SERVICE FEE",
+        "content.caption": "UBER TAKES A SMALL CUT"
       },
       "camera": {
         "move": "pull_back",
@@ -427,42 +302,150 @@ window.SCORE = {
         "ease": "easeInOut"
       },
       "motion": {
-        "note": "The desk pulls back to show the app is the counter, not the cargo."
+        "note": "The driver points at the small slice; the service fee is the cut."
       },
       "transitionOut": "cut",
       "direction": {
-        "entry": "a close desk",
-        "exit": "the whole office",
-        "spine": "The app is the storefront for every line.",
-        "cast": [
-          "Kiran"
-        ],
+        "entry": "paper coins leaving a rider and stopping at a driver, with one small coin reaching Uber",
+        "exit": "the coins arc from rider to driver and one to the platform",
+        "spine": "the line says the platform keeps the match, not the whole fare",
+        "cast": [],
         "events": [
           {
             "t": 0.2,
-            "kind": "pose",
-            "note": "the rider sits",
-            "quiet": "the line carries this beat; no foley",
-            "who": "Kiran",
-            "pose": "type"
+            "kind": "prop",
+            "note": "the first coin leaves the rider"
           },
           {
-            "t": 1,
-            "kind": "build",
-            "note": "the desk builds left",
+            "t": 0.9,
+            "kind": "prop",
+            "note": "the driver catches the large share",
+            "quiet": "the line carries this beat; no foley"
+          },
+          {
+            "t": 1.5,
+            "kind": "prop",
+            "note": "the small coin reaches Uber",
             "quiet": "the line carries this beat; no foley"
           },
           {
             "t": 2,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the coins are the sound"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s07",
+      "beat": "b04",
+      "scene": "sc04",
+      "recipe": "app_menu",
+      "start": 17.5,
+      "duration": 3,
+      "slots": {
+        "content.body": "ONE APP",
+        "content.caption": "DELIVERY · FREIGHT · ADS · UBER ONE"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.07,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "note": "The window becomes a list of the other doors the network sells."
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "the same phone with rides, delivery, freight and Uber One tiles",
+        "exit": "each revenue tile lands in the app",
+        "spine": "the line lists the four other things the network sells",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.2,
             "kind": "build",
-            "note": "the desk builds right",
+            "note": "the delivery tile lands",
+            "quiet": "the line carries this beat; no foley"
+          },
+          {
+            "t": 0.9,
+            "kind": "build",
+            "note": "the freight tile lands",
+            "quiet": "the line carries this beat; no foley"
+          },
+          {
+            "t": 1.6,
+            "kind": "build",
+            "note": "the advertising tile lands",
+            "quiet": "the line carries this beat; no foley"
+          },
+          {
+            "t": 2.3,
+            "kind": "build",
+            "note": "the membership tile lands",
             "quiet": "the line carries this beat; no foley"
           },
           {
             "t": 2.8,
             "kind": "transition",
             "note": "cut",
-            "quiet": "the build is the sound"
+            "quiet": "the tiles are the sound"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s08",
+      "beat": "b04",
+      "scene": "sc04",
+      "recipe": "city_route",
+      "start": 20.5,
+      "duration": 3.2,
+      "slots": {
+        "content.caption": "MORE THAN A RIDE"
+      },
+      "camera": {
+        "move": "pan",
+        "from": 1,
+        "to": 1.03,
+        "ease": "linear"
+      },
+      "motion": {
+        "note": "The desk pulls back to show the app is the counter, not the cargo."
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "paper city blocks with two routes crossing: a delivery bag and a freight crate",
+        "exit": "the two routes cross the city at once",
+        "spine": "the line says one network earns in more than one way",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "prop",
+            "note": "the delivery route lights",
+            "quiet": "the line carries this beat; no foley"
+          },
+          {
+            "t": 1,
+            "kind": "prop",
+            "note": "the freight route lights",
+            "quiet": "the line carries this beat; no foley"
+          },
+          {
+            "t": 2,
+            "kind": "step",
+            "note": "a crate crosses",
+            "quiet": "the line carries this beat; no foley"
+          },
+          {
+            "t": 3,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the routes are the sound"
           }
         ]
       }
@@ -471,69 +454,12 @@ window.SCORE = {
       "id": "s09",
       "beat": "b05",
       "scene": "sc05",
-      "recipe": "desk_night",
+      "recipe": "network_web",
       "start": 23.7,
       "duration": 3,
       "slots": {
-        "content.caption": "MORE RIDERS, SHORTER WAITS"
-      },
-      "camera": {
-        "move": "push_in",
-        "from": 1,
-        "to": 1.08,
-        "ease": "easeInOut"
-      },
-      "motion": {
-        "note": "The light narrows; the network tightens."
-      },
-      "transitionOut": "cut",
-      "direction": {
-        "entry": "the night desk",
-        "exit": "the light on one line",
-        "spine": "Each new rider makes the next wait shorter.",
-        "cast": [
-          "Kiran"
-        ],
-        "events": [
-          {
-            "t": 0,
-            "kind": "light",
-            "note": "the desk lamp finds the line",
-            "quiet": "the line carries this beat; no foley",
-            "word": "v05"
-          },
-          {
-            "t": 1,
-            "kind": "pose",
-            "note": "the driver waits",
-            "who": "Kiran",
-            "pose": "type"
-          },
-          {
-            "t": 1.8,
-            "kind": "build",
-            "note": "a second car arrives",
-            "quiet": "the line carries this beat; no foley"
-          },
-          {
-            "t": 2.8,
-            "kind": "transition",
-            "note": "cut",
-            "quiet": "the line is the sound"
-          }
-        ]
-      }
-    },
-    {
-      "id": "s10",
-      "beat": "b05",
-      "scene": "sc05",
-      "recipe": "loop_card",
-      "start": 26.7,
-      "duration": 3.3,
-      "slots": {
-        "content.title": "THE NETWORK",
-        "content.body": "HARDER TO LEAVE"
+        "content.body": "MORE NODES",
+        "content.caption": "SHORTER WAITS"
       },
       "camera": {
         "move": "orbit",
@@ -542,31 +468,90 @@ window.SCORE = {
         "ease": "easeInOut"
       },
       "motion": {
-        "note": "The card closes the loop; the words are the last frame."
+        "note": "The light narrows; the network tightens."
       },
       "transitionOut": "cut",
       "direction": {
-        "entry": "the paper card",
-        "exit": "the card holds",
-        "spine": "The network gets harder to leave as both sides grow.",
+        "entry": "more rider and driver nodes connecting while a paper wait bar shrinks",
+        "exit": "nodes multiply and the wait bar shortens",
+        "spine": "the line says more riders and drivers shorten the wait",
         "cast": [],
         "events": [
           {
-            "t": 0.3,
-            "kind": "type",
-            "note": "the title lands"
+            "t": 0,
+            "kind": "light",
+            "note": "the network answers the word",
+            "quiet": "the line carries this beat; no foley",
+            "word": "v05"
           },
           {
-            "t": 1.2,
-            "kind": "prop",
-            "note": "the card turns",
+            "t": 0.9,
+            "kind": "build",
+            "note": "rider nodes multiply"
+          },
+          {
+            "t": 1.7,
+            "kind": "build",
+            "note": "driver nodes multiply",
             "quiet": "the line carries this beat; no foley"
           },
           {
             "t": 2.8,
             "kind": "transition",
-            "note": "cut to black",
-            "quiet": "the card holds"
+            "note": "cut",
+            "quiet": "the bar is the sound"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s10",
+      "beat": "b05",
+      "scene": "sc05",
+      "recipe": "phone_route",
+      "start": 26.7,
+      "duration": 3.3,
+      "slots": {
+        "content.caption": "HARDER TO LEAVE"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.06,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "note": "The card closes the loop; the words are the last frame."
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "a phone map with a short route and a nearby car pin",
+        "exit": "the car pin arrives almost immediately",
+        "spine": "the button says the network gets harder to leave; the ride is already there",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.3,
+            "kind": "prop",
+            "note": "the car pin appears"
+          },
+          {
+            "t": 1.2,
+            "kind": "prop",
+            "note": "the route snaps short",
+            "quiet": "the line carries this beat; no foley"
+          },
+          {
+            "t": 2.2,
+            "kind": "settle",
+            "note": "the arrival pin holds",
+            "quiet": "the line carries this beat; no foley"
+          },
+          {
+            "t": 3.1,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the pin is the sound"
           }
         ]
       }
@@ -758,7 +743,7 @@ window.SCORE = {
         "index": 0,
         "t": 0,
         "kind": "hand",
-        "note": "the rider's paper hand enters"
+        "note": "the rider's thumb taps"
       },
       "kind": "glass",
       "note": "the rider taps",
@@ -773,8 +758,8 @@ window.SCORE = {
         "shot": "s04",
         "index": 0,
         "t": 0.2,
-        "kind": "pose",
-        "note": "the driver steps into the corridor"
+        "kind": "step",
+        "note": "the car leaves the kerb"
       },
       "kind": "step",
       "note": "the driver steps",
@@ -797,14 +782,14 @@ window.SCORE = {
         "shot": "s06",
         "index": 0,
         "t": 0.2,
-        "kind": "pose",
-        "note": "the driver points at the slice"
+        "kind": "prop",
+        "note": "the first coin leaves the rider"
       },
       "kind": "whoosh",
       "note": "the point",
       "gain": 0.5,
       "duckDb": 8,
-      "at": 15.6,
+      "at": 15.5,
       "from": "event"
     },
     {
@@ -812,14 +797,14 @@ window.SCORE = {
       "event": {
         "shot": "s09",
         "index": 1,
-        "t": 1,
-        "kind": "pose",
-        "note": "the driver waits"
+        "t": 0.9,
+        "kind": "build",
+        "note": "rider nodes multiply"
       },
       "kind": "door",
       "note": "a car door",
       "gain": 0.8,
-      "at": 24.7,
+      "at": 24.6,
       "from": "event"
     },
     {
@@ -828,8 +813,8 @@ window.SCORE = {
         "shot": "s10",
         "index": 0,
         "t": 0.3,
-        "kind": "type",
-        "note": "the title lands"
+        "kind": "prop",
+        "note": "the car pin appears"
       },
       "kind": "paper",
       "note": "the card",
@@ -982,7 +967,7 @@ window.SCORE = {
       "id": "frame.paper-window",
       "type": "frame",
       "version": "0.1.0",
-      "hash": "sha256:f1c39533b124047fb7115074fe672280f70af0ecb7a801a5bd540776761e11e6",
+      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -991,7 +976,7 @@ window.SCORE = {
       "id": "hud.meter",
       "type": "hud",
       "version": "0.1.0",
-      "hash": "sha256:f1c39533b124047fb7115074fe672280f70af0ecb7a801a5bd540776761e11e6",
+      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1000,7 +985,7 @@ window.SCORE = {
       "id": "prop.object",
       "type": "prop",
       "version": "0.1.0",
-      "hash": "sha256:f1c39533b124047fb7115074fe672280f70af0ecb7a801a5bd540776761e11e6",
+      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1009,7 +994,7 @@ window.SCORE = {
       "id": "prop.paper-sticker",
       "type": "prop",
       "version": "0.1.0",
-      "hash": "sha256:f1c39533b124047fb7115074fe672280f70af0ecb7a801a5bd540776761e11e6",
+      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1018,7 +1003,7 @@ window.SCORE = {
       "id": "set.corridor",
       "type": "set",
       "version": "0.1.0",
-      "hash": "sha256:f1c39533b124047fb7115074fe672280f70af0ecb7a801a5bd540776761e11e6",
+      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1027,7 +1012,7 @@ window.SCORE = {
       "id": "set.paper-card",
       "type": "set",
       "version": "0.1.0",
-      "hash": "sha256:f1c39533b124047fb7115074fe672280f70af0ecb7a801a5bd540776761e11e6",
+      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1036,7 +1021,7 @@ window.SCORE = {
       "id": "set.stage",
       "type": "set",
       "version": "0.1.0",
-      "hash": "sha256:f1c39533b124047fb7115074fe672280f70af0ecb7a801a5bd540776761e11e6",
+      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1045,7 +1030,7 @@ window.SCORE = {
       "id": "set.tabletop",
       "type": "set",
       "version": "0.1.0",
-      "hash": "sha256:f1c39533b124047fb7115074fe672280f70af0ecb7a801a5bd540776761e11e6",
+      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1054,7 +1039,7 @@ window.SCORE = {
       "id": "texture.halftone",
       "type": "texture",
       "version": "0.1.0",
-      "hash": "sha256:f1c39533b124047fb7115074fe672280f70af0ecb7a801a5bd540776761e11e6",
+      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1063,7 +1048,34 @@ window.SCORE = {
       "id": "texture.paper-fibre",
       "type": "texture",
       "version": "0.1.0",
-      "hash": "sha256:f1c39533b124047fb7115074fe672280f70af0ecb7a801a5bd540776761e11e6",
+      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
+      "source": "reused",
+      "anchors": [],
+      "path": "styles/paper-kpop/canvas/recipes.js"
+    },
+    {
+      "id": "prop.car",
+      "type": "prop",
+      "version": "0.1.0",
+      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
+      "source": "reused",
+      "anchors": [],
+      "path": "styles/paper-kpop/canvas/recipes.js"
+    },
+    {
+      "id": "prop.coin",
+      "type": "prop",
+      "version": "0.1.0",
+      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
+      "source": "reused",
+      "anchors": [],
+      "path": "styles/paper-kpop/canvas/recipes.js"
+    },
+    {
+      "id": "prop.phone",
+      "type": "prop",
+      "version": "0.1.0",
+      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"

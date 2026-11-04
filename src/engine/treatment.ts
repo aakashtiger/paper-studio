@@ -25,6 +25,19 @@ import { PoseLibrarySchema, resolvePoseLibrary } from "./pose.js";
  * recipe id: those live in `styles/`.
  */
 
+export const ShotVisualSchema = z.object({
+  /** What is in the frame, in plain words. */
+  shows: z.string().min(1),
+  /** What moves or changes in the frame. */
+  action: z.string().min(1),
+  /** The one thing the eye must land on. */
+  focus: z.string().min(1),
+  /** The narration line this image answers. */
+  link: z.string().min(1),
+  /** Why this image is the right one for that line, in the director's words. */
+  why: z.string().min(1),
+});
+
 export const TreatmentShotSchema = z.object({
   /**
    * The beat of the film's `beats.json` this shot serves.
@@ -44,6 +57,12 @@ export const TreatmentShotSchema = z.object({
    * scene, and refuses a scene that no shot films.
    */
   scene: z.string().min(1).optional(),
+  /**
+   * The visual idea, authored before the recipe is chosen: what is in frame,
+   * what moves, the focus, the line it answers and why this image serves it.
+   * `visual:check` refuses a shot whose recipe cannot draw the subject.
+   */
+  visual: ShotVisualSchema.optional(),
   recipe: z.string().min(1),
   duration: z.number().positive(),
   slots: z.record(z.string()).default({}),

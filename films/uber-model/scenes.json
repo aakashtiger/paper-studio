@@ -13,7 +13,17 @@
       "lines": [
         "v01"
       ],
-      "duration": 6.2
+      "duration": 6.2,
+      "visual": {
+        "subject": "a paper city map joining rider and driver nodes into a network",
+        "setting": "night-blue paper city",
+        "action": "routes draw and nodes appear",
+        "props": [
+          "map",
+          "nodes",
+          "route"
+        ]
+      }
     },
     {
       "id": "sc02",
@@ -27,7 +37,18 @@
       "lines": [
         "v02"
       ],
-      "duration": 5.8
+      "duration": 5.8,
+      "visual": {
+        "subject": "a phone map with a rider pin, a driver pin and a car on the route",
+        "setting": "a rider's phone and a paper city street",
+        "action": "a thumb taps, the route draws, the car moves",
+        "props": [
+          "phone",
+          "route",
+          "car",
+          "pins"
+        ]
+      }
     },
     {
       "id": "sc03",
@@ -41,7 +62,17 @@
       "lines": [
         "v03"
       ],
-      "duration": 5.5
+      "duration": 5.5,
+      "visual": {
+        "subject": "a fare bar split into a driver share and a small service fee, then coins moving",
+        "setting": "a paper ledger",
+        "action": "the fare splits and the coins divide",
+        "props": [
+          "fare",
+          "coin",
+          "bar"
+        ]
+      }
     },
     {
       "id": "sc04",
@@ -56,7 +87,18 @@
       "lines": [
         "v04"
       ],
-      "duration": 6.2
+      "duration": 6.2,
+      "visual": {
+        "subject": "one phone with four revenue tiles and two city routes crossing",
+        "setting": "the app and the city it serves",
+        "action": "tiles land, delivery and freight routes cross",
+        "props": [
+          "phone",
+          "tiles",
+          "delivery",
+          "freight"
+        ]
+      }
     },
     {
       "id": "sc05",
@@ -71,7 +113,17 @@
       "lines": [
         "v05"
       ],
-      "duration": 6.3
+      "duration": 6.3,
+      "visual": {
+        "subject": "a denser network of rider and driver nodes with a shrinking wait bar",
+        "setting": "the paper city map",
+        "action": "nodes multiply and the wait shortens",
+        "props": [
+          "network",
+          "nodes",
+          "wait bar"
+        ]
+      }
     }
   ]
 }

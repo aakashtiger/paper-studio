@@ -156,7 +156,12 @@ export function storyGaps(story: unknown, beats: unknown): string[] {
  * used twice or never, a beat with no scene, and a scene total that is not the
  * film. It invents no place, no summary and no duration.
  */
-export function sceneGaps(scenes: unknown, story: unknown, beats: unknown): string[] {
+export function sceneGaps(
+  scenes: unknown,
+  story: unknown,
+  beats: unknown,
+  options: { requireVisual?: boolean } = {},
+): string[] {
   const gaps: string[] = [];
   const root = record(scenes);
   const written = list(root.scenes);
@@ -185,6 +190,10 @@ export function sceneGaps(scenes: unknown, story: unknown, beats: unknown): stri
     const where = `scenes[${index}]`;
     if (!text(scene.id) || !text(scene.title) || !text(scene.place) || !text(scene.summary)) {
       gaps.push(`${where}: id, title, place and summary`);
+    }
+    const visual = record(scene.visual);
+    if (options.requireVisual && (!text(visual.subject) || !text(visual.setting) || !text(visual.action))) {
+      gaps.push(`${where}.visual: what the audience must see (subject, setting, action)`);
     }
     if (!text(scene.beat) || !beatIds.has(String(scene.beat))) {
       gaps.push(`${where}.beat: one of the beats.json ids`);
@@ -224,7 +233,7 @@ export function sceneGaps(scenes: unknown, story: unknown, beats: unknown): stri
  * names every gap for a scaffold — the same function drives the command and its
  * test.
  */
-export function filmGaps(score: unknown): string[] {
+export function filmGaps(score: unknown, options: { requireVisual?: boolean } = {}): string[] {
   const gaps: string[] = [];
   const root = record(score);
 
@@ -287,6 +296,13 @@ export function filmGaps(score: unknown): string[] {
       }
       if (list(direction.events).length < 3) {
         gaps.push(`${where}.direction.events: at least three events (t, kind, note)`);
+      }
+      const visual = record(shot.visual);
+      if (
+        options.requireVisual &&
+        (!text(visual.shows) || !text(visual.action) || !text(visual.focus) || !text(visual.link) || !text(visual.why))
+      ) {
+        gaps.push(`${where}.visual: shows, action, focus, the line it answers, and why`);
       }
     });
   }

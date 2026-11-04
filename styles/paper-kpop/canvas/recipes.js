@@ -1971,6 +1971,365 @@ function loopCard(shot, lt, t) {
 }
 
 /* The registry the painter reads: a recipe id, and the function that draws it. */
+/* ---- the explainer set (paper-kpop 0.2.1) --------------------------------
+ *
+ * A business explainer needs a phone, a map, a fare, an app menu, a network and
+ * money — not a bedroom lamp. These recipes draw those subjects on the same
+ * paper stage, so a shot can choose the image the line actually needs. The
+ * visual brief names the subject; `visual:check` matches it to `subjects`.
+ */
+
+function explainerCaption(shot, t) {
+  officeHourTab(shot.slots["content.caption"], t);
+}
+
+function explainerBody(shot, t, x = 120, y = 930, width = 1600) {
+  const body = shot.slots["content.body"] || "";
+  if (!body) return;
+  TY.type(ctx, body, x, y, fitSize(body, width, TS(32)), {
+    copy: true, align: "left", color: PAL.ink, edge: PAL.cream, edgeW: 10,
+    shadow: C.rgba(PAL.ink, 0.24), shadowOff: 5, time: t, seed: 11,
+  });
+}
+
+function paperPhone(x, y, w, h) {
+  paper(ctx, () => roundRectPath(ctx, x, y, w, h, 46), {
+    fill: PAL.ink, edge: C.rgba(PAL.ink, 0.8), edgeW: 4,
+    shadow: C.rgba(PAL.ink, 0.28), sx: 14, sy: 22,
+  });
+  paper(ctx, () => roundRectPath(ctx, x + 26, y + 34, w - 52, h - 68, 26), {
+    fill: PAL.paper2, edge: C.rgba(PAL.ink, 0.55), edgeW: 2,
+  });
+  ctx.save();
+  ctx.fillStyle = C.rgba(PAL.ink, 0.55);
+  ctx.beginPath(); ctx.ellipse(x + w / 2, y + 18, 34, 5, 0, 0, TAU); ctx.fill();
+  ctx.restore();
+}
+
+function routePoints(k, points) {
+  // Draw a partial polyline through the points; k in 0..1.
+  const total = points.length - 1;
+  const upto = k * total;
+  ctx.beginPath();
+  ctx.moveTo(points[0][0], points[0][1]);
+  for (let i = 1; i < points.length; i++) {
+    const t = Math.min(1, Math.max(0, upto - (i - 1)));
+    if (t <= 0) break;
+    const a = points[i - 1], b = points[i];
+    ctx.lineTo(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t);
+    if (t < 1) break;
+  }
+  ctx.stroke();
+}
+
+function routeAt(k, points) {
+  const total = points.length - 1;
+  const upto = Math.min(total, Math.max(0, k * total));
+  const i = Math.min(total - 1, Math.floor(upto));
+  const t = upto - i;
+  const a = points[i], b = points[i + 1];
+  return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+}
+
+function phoneRoute(shot, lt, t) {
+  const d = shot.duration;
+  bgPaper();
+  shotCam(shot, lt, d, W / 2, 520, 0.18, t);
+  beginCam(ctx);
+  ctx.save();
+  ctx.translate(Math.sin(t * 1.35) * 10, Math.cos(t * 1.15) * 8);
+  paper(ctx, () => tornRectPath(ctx, 430, 70, 1060, 940, 22, 19), {
+    fill: PAL.ink3, edge: C.rgba(PAL.ink, 0.4), edgeW: 3,
+    shadow: C.rgba(PAL.ink, 0.2), sx: 12, sy: 16,
+  });
+  paperPhone(610, 120, 700, 850);
+  const sx = 636, sy = 154, sw = 648, sh = 782;
+  ctx.save();
+  ctx.beginPath(); ctx.rect(sx, sy, sw, sh); ctx.clip();
+  ctx.fillStyle = PAL.cream; ctx.fillRect(sx, sy, sw, sh);
+  // paper city blocks
+  for (let row = 0; row < 5; row++) {
+    for (let col = 0; col < 4; col++) {
+      const bx = sx + 26 + col * 156 + (row % 2) * 22;
+      const by = sy + 30 + row * 146;
+      paper(ctx, () => roundRectPath(ctx, bx, by, 112, 92, 8), {
+        fill: C.rgba(PAL.blueL, 0.16 + (row + col) % 3 * 0.05), edge: C.rgba(PAL.ink, 0.14), edgeW: 1,
+      });
+    }
+  }
+  ctx.strokeStyle = C.rgba(PAL.ink, 0.12); ctx.lineWidth = 2;
+  for (let i = 0; i <= 4; i++) {
+    ctx.beginPath(); ctx.moveTo(sx + i * 156, sy); ctx.lineTo(sx + i * 156, sy + sh); ctx.stroke();
+  }
+  for (let i = 0; i <= 4; i++) {
+    ctx.beginPath(); ctx.moveTo(sx, sy + i * 146); ctx.lineTo(sx + sw, sy + i * 146); ctx.stroke();
+  }
+  const points = [[700, 780], [780, 640], [940, 610], [980, 430], [1180, 380], [1230, 250]];
+  const k = C.smooth(C.clamp((lt - 0.35) / 1.6));
+  ctx.strokeStyle = PAL.red; ctx.lineWidth = 12; ctx.lineCap = "round"; ctx.lineJoin = "round";
+  routePoints(k, points);
+  const pin = (x, y, fill, label) => {
+    paper(ctx, () => blobPath(ctx, x, y - 20, 18, 22, 6, 0.02, 4), { fill, edge: PAL.ink, edgeW: 3 });
+    ctx.fillStyle = PAL.cream; ctx.beginPath(); ctx.arc(x, y - 22, 6, 0, TAU); ctx.fill();
+    TY.text(ctx, label, x, y + 14, 18, { family: "DMMono", color: PAL.ink, align: "center" });
+  };
+  pin(700, 790, PAL.blueL, "RIDER");
+  pin(1230, 260, PAL.gold, "DRIVER");
+  const at = routeAt(k, points);
+  ctx.save();
+  ctx.translate(at[0] - 22, at[1] - 12);
+  ctx.rotate(-0.2);
+  paper(ctx, () => roundRectPath(ctx, 0, 0, 44, 22, 5), { fill: PAL.red, edge: PAL.ink, edgeW: 2 });
+  ctx.fillStyle = PAL.ink;
+  ctx.beginPath(); ctx.arc(10, 24, 5, 0, TAU); ctx.fill();
+  ctx.beginPath(); ctx.arc(34, 24, 5, 0, TAU); ctx.fill();
+  ctx.restore();
+  // the thumb taps the route
+  const tap = C.clamp((lt - 0.15) / 0.25);
+  ctx.save();
+  ctx.globalAlpha = tap;
+  paper(ctx, () => blobPath(ctx, 760, 800 - tap * 26, 26, 34, 12, 0.04, 5), { fill: PAL.cream, edge: PAL.ink, edgeW: 3 });
+  ctx.restore();
+  ctx.restore();
+  ctx.restore();
+  endCam(ctx);
+  explainerCaption(shot, t);
+}
+
+function cityRoute(shot, lt, t) {
+  const d = shot.duration;
+  bgPaper();
+  shotCam(shot, lt, d, W / 2 + 30, 520, 0.16, t);
+  beginCam(ctx);
+  // paper city: blocks and streets
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 7; col++) {
+      const bx = 60 + col * 270 + (row % 2) * 40;
+      const by = 100 + row * 220;
+      paper(ctx, () => tornRectPath(ctx, bx, by, 210, 150, 8, 13 + col), {
+        fill: C.rgba(PAL.blueL, 0.12 + (row + col) % 3 * 0.05),
+        edge: C.rgba(PAL.ink, 0.18), edgeW: 1.5,
+      });
+    }
+  }
+  const points = [[260, 820], [460, 760], [520, 560], [860, 520], [1040, 360], [1440, 300], [1760, 420]];
+  const k = C.smooth(C.clamp((lt - 0.2) / 1.8));
+  ctx.strokeStyle = PAL.red; ctx.lineWidth = 14; ctx.lineCap = "round"; ctx.lineJoin = "round";
+  routePoints(k, points);
+  const at = routeAt(k, points);
+  ctx.save();
+  ctx.translate(at[0], at[1] - 16);
+  ctx.rotate(-0.16);
+  paper(ctx, () => roundRectPath(ctx, -60, -26, 120, 52, 12), { fill: PAL.red, edge: PAL.ink, edgeW: 3, shadow: C.rgba(PAL.ink, 0.28), sx: 6, sy: 10 });
+  paper(ctx, () => roundRectPath(ctx, -38, -48, 76, 28, 8), { fill: PAL.cream, edge: PAL.ink, edgeW: 2 });
+  ctx.fillStyle = PAL.ink;
+  for (const wx of [-38, 38]) { ctx.beginPath(); ctx.arc(wx, 30, 13, 0, TAU); ctx.fill(); }
+  ctx.fillStyle = PAL.cream;
+  for (const wx of [-38, 38]) { ctx.beginPath(); ctx.arc(wx, 30, 5, 0, TAU); ctx.fill(); }
+  ctx.restore();
+  ctx.fillStyle = PAL.ink;
+  for (const [px, py, label] of [[260, 850, "RIDER"], [1760, 450, "DRIVER"]]) {
+    paper(ctx, () => blobPath(ctx, px, py - 24, 18, 22, 6, 0.02, 4), { fill: PAL.gold, edge: PAL.ink, edgeW: 3 });
+    TY.text(ctx, label, px, py + 16, 18, { family: "DMMono", color: PAL.ink, align: "center" });
+  }
+  endCam(ctx);
+  explainerCaption(shot, t);
+}
+
+function fareSplit(shot, lt, t) {
+  const d = shot.duration;
+  bgPaper();
+  shotCam(shot, lt, d, W / 2, 520, 0.12, t);
+  beginCam(ctx);
+  ctx.save();
+  ctx.translate(Math.sin(t * 1.2) * 36, Math.cos(t * 1.4) * 20);
+  const x = 220, y = 430, w = 1480, h = 210;
+  const split = 0.72 + Math.sin(lt * 2.1) * 0.006;
+  paper(ctx, () => roundRectPath(ctx, x, y, w, h, 26), {
+    fill: PAL.blueL, edge: C.rgba(PAL.ink, 0.6), edgeW: 4, shadow: C.rgba(PAL.ink, 0.24), sx: 10, sy: 14,
+  });
+  paper(ctx, () => roundRectPath(ctx, x + w * split, y, w * (1 - split), h, 26), {
+    fill: PAL.red, edge: C.rgba(PAL.ink, 0.6), edgeW: 4, shadow: C.rgba(PAL.ink, 0.24), sx: 10, sy: 14,
+  });
+  ctx.save();
+  ctx.strokeStyle = PAL.cream; ctx.lineWidth = 6;
+  ctx.beginPath(); ctx.moveTo(x + w * split, y - 18); ctx.lineTo(x + w * split, y + h + 18); ctx.stroke();
+  ctx.restore();
+  TY.text(ctx, "DRIVER", x + 80, y + 92, 52, { family: "Archivo Black", color: PAL.ink });
+  TY.text(ctx, "KEEPS THE REST", x + 80, y + 148, 26, { family: "DMMono", color: PAL.ink });
+  TY.text(ctx, "UBER", x + w * split + 34, y + 92, 46, { family: "Archivo Black", color: PAL.cream });
+  TY.text(ctx, "SERVICE FEE", x + w * split + 34, y + 148, 24, { family: "DMMono", color: PAL.cream });
+  // one coin is the thing being divided
+  const sweep = (lt * 300) % w;
+  ctx.save();
+  ctx.globalAlpha = 0.16;
+  ctx.fillStyle = PAL.cream;
+  ctx.fillRect(x + sweep, y, 54, h);
+  ctx.restore();
+  paper(ctx, () => blobPath(ctx, 960, 760, 56, 56, 28, 0.02, 7), { fill: PAL.gold, edge: PAL.ink, edgeW: 3, shadow: C.rgba(PAL.ink, 0.24), sx: 5, sy: 8 });
+  TY.text(ctx, "$", 960, 778, 40, { family: "Archivo Black", color: PAL.ink, align: "center" });
+  ctx.restore();
+  endCam(ctx);
+  explainerCaption(shot, t);
+  explainerBody(shot, t, 260, 940, 1400);
+}
+
+function appMenu(shot, lt, t) {
+  const d = shot.duration;
+  bgPaper();
+  shotCam(shot, lt, d, W / 2, 520, 0.12, t);
+  beginCam(ctx);
+  ctx.save();
+  ctx.translate(Math.sin(t * 1.45) * 30, Math.cos(t * 1.2) * 20);
+  paperPhone(760, 90, 400, 820);
+  const sx = 786, sy = 124, sw = 348, sh = 752;
+  ctx.save();
+  ctx.beginPath(); ctx.rect(sx, sy, sw, sh); ctx.clip();
+  ctx.fillStyle = PAL.cream; ctx.fillRect(sx, sy, sw, sh);
+  TY.text(ctx, "UBER", sx + 28, sy + 54, 34, { family: "Archivo Black", color: PAL.ink });
+  const tiles = [
+    ["RIDES", PAL.blueL, "car"],
+    ["DELIVERY", PAL.gold, "bag"],
+    ["FREIGHT", PAL.red, "crate"],
+    ["UBER ONE", PAL.ink, "card"],
+  ];
+  tiles.forEach(([label, fill, icon], index) => {
+    const col = index % 2, row = Math.floor(index / 2);
+    const tx = sx + 22 + col * 158, ty = sy + 90 + row * 190;
+    const appear = C.clamp((lt - 0.2 - index * 0.18) / 0.35);
+    ctx.save();
+    ctx.globalAlpha = appear;
+    ctx.translate(tx + 68, ty + 74 + Math.sin(t * 2.6 + index) * 5);
+    ctx.scale(0.8 + 0.2 * C.backOut(appear), 0.8 + 0.2 * C.backOut(appear));
+    paper(ctx, () => roundRectPath(ctx, -68, -74, 136, 148, 16), {
+      fill, edge: C.rgba(PAL.ink, 0.6), edgeW: 3, shadow: C.rgba(PAL.ink, 0.2), sx: 5, sy: 8,
+    });
+    ctx.fillStyle = fill === PAL.ink ? PAL.cream : PAL.ink;
+    if (icon === "car") {
+      ctx.fillRect(-30, -10, 60, 24);
+      ctx.beginPath(); ctx.arc(-18, 18, 8, 0, TAU); ctx.fill();
+      ctx.beginPath(); ctx.arc(18, 18, 8, 0, TAU); ctx.fill();
+    } else if (icon === "bag") {
+      ctx.fillRect(-26, -4, 52, 44);
+      ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 6;
+      ctx.beginPath(); ctx.arc(0, -4, 18, Math.PI, TAU); ctx.stroke();
+    } else if (icon === "crate") {
+      ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 6;
+      ctx.strokeRect(-28, -22, 56, 48);
+      ctx.beginPath(); ctx.moveTo(-28, -22); ctx.lineTo(28, 26); ctx.moveTo(28, -22); ctx.lineTo(-28, 26); ctx.stroke();
+    } else {
+      ctx.fillRect(-34, -18, 68, 44);
+      ctx.fillStyle = fill === PAL.ink ? PAL.gold : PAL.cream;
+      ctx.fillRect(-34, -4, 68, 8);
+    }
+    ctx.fillStyle = fill === PAL.ink ? PAL.cream : PAL.ink;
+    ctx.font = "600 26px DMMono";
+    ctx.textAlign = "center";
+    ctx.fillText(label, 0, 58);
+    ctx.textAlign = "left";
+    ctx.restore();
+    ctx.restore();
+  });
+  ctx.restore();
+  ctx.restore();
+  endCam(ctx);
+  explainerCaption(shot, t);
+  explainerBody(shot, t, 180, 940, 1560);
+}
+
+function networkWeb(shot, lt, t) {
+  const d = shot.duration;
+  bgPaper();
+  shotCam(shot, lt, d, W / 2, 520, 0.14, t);
+  beginCam(ctx);
+  ctx.save();
+  ctx.translate(Math.sin(t * 1.25) * 32, Math.cos(t * 1.1) * 22);
+  const nodes = [
+    [360, 300, 0], [600, 210, 1], [820, 330, 0], [1060, 220, 1], [1260, 360, 0],
+    [500, 520, 1], [760, 560, 0], [1020, 520, 1], [1240, 600, 0], [620, 740, 1], [960, 760, 0],
+  ];
+  const live = nodes.map(([x, y, kind], index) => [
+    x + Math.sin(t * 2.1 + index * 0.9) * 38,
+    y + Math.cos(t * 1.7 + index * 0.7) * 28,
+    kind,
+  ]);
+  const grow = C.smooth(C.clamp(lt / Math.max(1, d * 0.7)));
+  const links = [[0,1],[1,2],[2,3],[3,4],[0,5],[2,6],[5,6],[6,7],[7,8],[5,9],[7,9],[9,10],[6,10],[8,10],[1,6],[3,7]];
+  ctx.strokeStyle = C.rgba(PAL.ink, 0.28); ctx.lineWidth = 3;
+  for (const [a, b] of links) {
+    const pa = live[a], pb = live[b];
+    const k = C.clamp(grow * 1.2 - (a + b) * 0.02);
+    if (k <= 0) continue;
+    ctx.beginPath(); ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pa[0] + (pb[0] - pa[0]) * k, pa[1] + (pb[1] - pa[1]) * k); ctx.stroke();
+  }
+  live.forEach(([x, y, kind], index) => {
+    const k = C.clamp((grow - index * 0.035) / 0.2);
+    if (k <= 0) return;
+    const r = (20 + 8 * C.backOut(k)) * (1 + 0.12 * Math.sin(t * 3 + index));
+    paper(ctx, () => blobPath(ctx, x, y, r, r, 9, 0.02, 5), {
+      fill: kind === 0 ? PAL.blueL : PAL.gold, edge: C.rgba(PAL.ink, 0.55), edgeW: 2.5,
+      shadow: C.rgba(PAL.ink, 0.16), sx: 3, sy: 5,
+    });
+  });
+  // the wait meter: a paper bar that shrinks as the network fills
+  const wait = 0.82 - grow * 0.46;
+  paper(ctx, () => roundRectPath(ctx, 520, 860, 880, 46, 22), { fill: PAL.paper2, edge: C.rgba(PAL.ink, 0.45), edgeW: 2 });
+  paper(ctx, () => roundRectPath(ctx, 524, 864, 872 * wait, 38, 19), { fill: PAL.red, edge: C.rgba(PAL.ink, 0.4), edgeW: 1.5 });
+  TY.text(ctx, "WAIT", 520, 936, 20, { family: "DMMono", color: PAL.ink });
+  TY.text(ctx, "RIDERS", 360, 260, 18, { family: "DMMono", color: PAL.ink, align: "center" });
+  TY.text(ctx, "DRIVERS", 1260, 320, 18, { family: "DMMono", color: PAL.ink, align: "center" });
+  ctx.restore();
+  endCam(ctx);
+  explainerCaption(shot, t);
+  explainerBody(shot, t, 180, 980, 1560);
+}
+
+function moneyFlow(shot, lt, t) {
+  const d = shot.duration;
+  bgPaper();
+  shotCam(shot, lt, d, W / 2, 520, 0.12, t);
+  beginCam(ctx);
+  const labels = [
+    [300, "RIDER", PAL.blueL],
+    [960, "DRIVER", PAL.cream],
+    [1580, "UBER", PAL.red],
+  ];
+  for (const [x, label, fill] of labels) {
+    paper(ctx, () => tornRectPath(ctx, x - 150, 470, 300, 200, 16, 13), {
+      fill, edge: C.rgba(PAL.ink, 0.55), edgeW: 3, shadow: C.rgba(PAL.ink, 0.2), sx: 6, sy: 10,
+    });
+    TY.text(ctx, label, x, 570, 34, { family: "Archivo Black", color: fill === PAL.red ? PAL.cream : PAL.ink, align: "center" });
+  }
+  // coins leaving the rider, most stopping at the driver, a small one at Uber
+  const k = C.smooth(C.clamp((lt - 0.2) / 1.8));
+  for (let i = 0; i < 5; i++) {
+    const phase = C.clamp(k * 1.35 - i * 0.08);
+    if (phase <= 0) continue;
+    const from = 300, to = i < 4 ? 960 : 1580;
+    const x = from + (to - from) * phase;
+    const y = 360 - Math.sin(phase * Math.PI) * 120;
+    paper(ctx, () => blobPath(ctx, x, y, 34, 34, 17, 0.02, 5), {
+      fill: PAL.gold, edge: PAL.ink, edgeW: 2.5, shadow: C.rgba(PAL.ink, 0.2), sx: 3, sy: 5,
+    });
+    TY.text(ctx, "$", x, y + 12, 26, { family: "Archivo Black", color: PAL.ink, align: "center" });
+  }
+  ctx.strokeStyle = C.rgba(PAL.ink, 0.42); ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(450, 730); ctx.lineTo(810, 730); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(1110, 730); ctx.lineTo(1430, 730); ctx.stroke();
+  endCam(ctx);
+  explainerCaption(shot, t);
+  explainerBody(shot, t, 180, 980, 1560);
+}
+
+Object.assign(window.PAPER_BACKEND.shots, {
+  phone_route: phoneRoute,
+  city_route: cityRoute,
+  fare_split: fareSplit,
+  app_menu: appMenu,
+  network_web: networkWeb,
+  money_flow: moneyFlow,
+});
+
 Object.assign(window.PAPER_BACKEND.shots, {
   alarm_close: alarmClose,
   corridor_walk: corridorWalk,

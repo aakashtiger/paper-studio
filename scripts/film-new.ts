@@ -100,8 +100,8 @@ const scenes = documents[2]?.body;
 const score = documents[3]?.body;
 
 const storyGapList = storyGaps(story, beats);
-const sceneGapList = sceneGaps(scenes, story, beats);
-const scoreGapList = filmGaps(score);
+const sceneGapList = sceneGaps(scenes, story, beats, { requireVisual: true });
+const scoreGapList = filmGaps(score, { requireVisual: true });
 const dir = shown(outDir);
 console.log("");
 console.log("film:new: the order is story -> beats -> scenes -> shots. Write them in that order:");

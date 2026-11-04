@@ -67,9 +67,10 @@ type Score = {
   id: string;
   duration: number;
   fps?: number;
+  cast?: { character: string }[];
   shots?: {
     duration: number;
-    direction?: { events?: { t: number; kind: string; who?: string }[] };
+    direction?: { cast?: string[]; events?: { t: number; kind: string; who?: string }[] };
   }[];
 };
 
@@ -392,7 +393,12 @@ async function main(): Promise<void> {
   // `seamPairs` is the number of adjacent comparisons actually made: a rig that
   // published one anchor each would otherwise pass by having nothing to compare.
   const instrumented = legs > 0 && characters > 0 && anchored.size > 0 && seamPairs > 0;
-  const pass = instrumented && findings.length === 0;
+  // A diagram film has no cast to measure. That is not an empty pass: the score
+  // itself declares no staged character, so the rig row is not applicable.
+  const expectsCast =
+    (score.cast?.length ?? 0) > 0 &&
+    (score.shots ?? []).some((shot) => (shot.direction?.cast?.length ?? 0) > 0);
+  const pass = findings.length === 0 && (!expectsCast || instrumented);
 
   // The tie that lets a review reuse this report (decision 0033): the score it
   // measured. The paint code is tied by mtime, because a rig reading depends on
@@ -403,6 +409,7 @@ async function main(): Promise<void> {
     score: scoreHash,
     pass,
     instrumented,
+    expectsCast,
     sampled: data.frames.length,
     step,
     framesWithCharacters: characters,

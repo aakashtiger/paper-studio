@@ -105,6 +105,8 @@ npm run library:use -- --score <score.json> --character <id> --apply   # point a
 npm run library:sheet                             # one sheet per library character: poses and 14 expressions
 npm run camera:check -- <score>                  # every shot moves, varied, correct sign (0041)
 npm run camera:plan -- <score> [--apply]         # propose dynamic moves from the beats
+npm run recipes:list -- --subject "phone route"   # the visual menu: what each recipe can draw (0051)
+npm run visual:check -- <score>                   # every scene and shot has a visual brief its recipe can draw (0051)
 npm run assets:list                              # the plain-name asset catalogue
 npm run assets:check                             # every asset has a file, a name, a licence; props a size
 npm run assets:coverage -- <score>               # the assets the recipes name vs the film's manifest (0042)
@@ -137,6 +139,7 @@ scenes.json  where it happens, who is in it, what happens, its lines       (0035
 score.json   the shots, each bound to a scene and a beat, with a reason     (0025)
    → npm run voice --apply    accept the measured read into the score (0035)
    → npm run camera:check   ~1 s   every shot moves, and the film varies it (0041)
+   → npm run visual:check          every shot's image is asked for and its recipe can draw it (0051)
    → npm run assets:new -- --score <score> --write   the manifest names what the recipes draw (0045)
    → npm run assets:coverage         every recipe asset is in the manifest (0042)
    → npm run audit:body              arms bend, hands are hands (P0.4)
@@ -246,7 +249,7 @@ file with **8 poses and 14 expressions**, a rig, a source, a licence and a
 `sha256`; `library:check` refuses one that is not reusable, `library:add` adds a
 pose once, and `library:use` points a film's cast and asset at it. A pose event
 can name an expression, and the painter maps it to the rig's eyes/brow/mouth.
-**465 tests.**
+**471 tests.**
 
 **The story now speaks first, the camera is a grammar, and assets have names.**
 `voice:story` reads `story.json` + `beats.json`, speaks the lines, listens with
@@ -279,16 +282,26 @@ Kiran and Vaz hand 18×26, pass; a 5×6 hand and a 0.000/0.000 elbow fail).
 `event.word` binds an event to a clock line, and `audit:reaction` requires it to
 land **0–3 frames after the measured word** (12.40 s passes at +0.0, 12.30 s
 fails at −3.0). The frame audit now refuses a one-frame luma pop at a cut. The
-first film must author `word` events; Same Alarm has none. **465 tests.**
+first film must author `word` events; Same Alarm has none. **471 tests.**
 
 **The first film under the new order is *The Uber Cut* (`films/uber-model/`).**
 30 s, 10 shots, 5 lines, 91 words at 182 wpm, **84.6% voiced**, made through
-story → beats → voice → scenes → score → cut. `gate:7` is **PASS · 22 checks ·
+story → beats → voice → scenes → score → cut. `gate:7` is **PASS · 23 checks ·
 nothing manual**, ASR heard **91/91** words, and the delivered file is
 `films/uber-model/uber-model.mp4`. `docs/ASSUMPTIONS.md` records every best-case
 assumption and the parked items (P0.5 workflow, P0.7 bypasses, P0.9 sound
-contrast, a literal car/map renderer, music). The film was made under the user's
+contrast, a semantic vision check, music). The film was made under the user's
 instruction to finish the plan while those are parked.
+
+**The visual is authored before the recipe is chosen (0051).** A scene publishes
+`visual` (subject, setting, action, props); a shot publishes `visual` (shows,
+action, focus, the line it answers, why). `visual:check` refuses a missing brief,
+a line that is not in its scene, a recipe that cannot draw the subject, the
+pack's default opening, and one recipe doing more than 40% of the film.
+`recipes:list -- --subject "phone route"` is the menu. The Uber film is
+**10/10** briefed; it opens on a network map, has no lamp and no banner, and the
+pack gained six explainer recipes: phone map, city route, fare split, app menu,
+network web, money flow. Render and `gate:7` both require the visual report.
 
 **The plan is `docs/PLAN-v2.md`.** It is the end-to-end process in plain English,
 the video checklist, the P0/P1/P2 gap list and a ten-session build order.

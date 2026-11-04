@@ -176,6 +176,32 @@
           "bottom-left mark",
           "bottom-right mark"
         ]
+      },
+      {
+        "id": "prop.phone",
+        "type": "prop",
+        "anchors": [
+          "screen",
+          "home edge",
+          "camera mark"
+        ]
+      },
+      {
+        "id": "prop.car",
+        "type": "prop",
+        "anchors": [
+          "roof",
+          "wheel-left",
+          "wheel-right"
+        ]
+      },
+      {
+        "id": "prop.coin",
+        "type": "prop",
+        "anchors": [
+          "face",
+          "rim"
+        ]
       }
     ],
     "rigs": {
@@ -287,7 +313,13 @@
       "window_dusk",
       "desk_night",
       "loop_close",
-      "loop_card"
+      "loop_card",
+      "phone_route",
+      "city_route",
+      "fare_split",
+      "app_menu",
+      "network_web",
+      "money_flow"
     ],
     "aspects": [
       "16:9",
