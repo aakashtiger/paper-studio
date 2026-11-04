@@ -15,6 +15,7 @@ import {
   STYLE_CONTRACT,
   StyleLoadError,
   StyleResolveError,
+  TokensSchema,
   approveStylePack,
   checkSealedRun,
   computeBriefHash,
@@ -25,6 +26,7 @@ import {
   findStyleDirectory,
   formatStyleReport,
   hashFile,
+  identityGaps,
   loadStylePack,
   readStyleJson,
   readStyleSeal,
@@ -195,6 +197,17 @@ function commandNew(args: ParsedArgs): void {
 
   console.log(`CREATED: ${displayPath(target)}`);
   console.log(`BRIEF: ${displayPath(join(target, "BRIEF.md"))} (${briefHash})`);
+  const tokensParsed = TokensSchema.safeParse(readStyleJson(join(target, "tokens.json")));
+  const gaps = tokensParsed.success
+    ? identityGaps(tokensParsed.data.identity)
+    : ["identity"];
+  if (gaps.length > 0) {
+    console.log(
+      `IDENTITY: ${gaps.length} value${gaps.length === 1 ? "" : "s"} ${gaps.length === 1 ? "is" : "are"} yours: ${gaps.join(", ")}`,
+    );
+  } else {
+    console.log("IDENTITY: complete");
+  }
   console.log("");
   console.log(`NEXT: npm run style:check -- ${displayPath(target)}`);
 }

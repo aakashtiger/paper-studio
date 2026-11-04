@@ -173,7 +173,7 @@ export type PreflightInput = {
 };
 
 export type PreflightIssue = Issue & {
-  check: "story" | "scene" | "cut" | "pacing" | "narration" | "sound" | "cast";
+  check: "story" | "scene" | "cut" | "pacing" | "narration" | "sound" | "cast" | "identity";
 };
 
 export type PreflightReport = {
@@ -209,6 +209,11 @@ export type PreflightReport = {
   sceneSource: "authored" | "derived" | "missing";
   errors: PreflightIssue[];
   warnings: PreflightIssue[];
+  /** The score/cast half of the identity gate; the frame half is style:identity. */
+  identity?: {
+    pass: boolean;
+    findings: { code: string; message: string }[];
+  };
 };
 
 /** The middle of a set of shot lengths; for an even count, the mean of the two middle ones. */

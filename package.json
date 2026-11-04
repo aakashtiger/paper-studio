@@ -70,7 +70,8 @@
     "draft": "tsx scripts/draft.ts",
     "visual:check": "tsx scripts/visual-check.ts",
     "recipes:list": "tsx scripts/recipes.ts",
-    "style:identity": "tsx scripts/style-identity.ts"
+    "style:identity": "tsx scripts/style-identity.ts",
+    "identity:accept": "tsx scripts/identity-accept.ts"
   },
   "dependencies": {
     "zod": "^3.24.1"

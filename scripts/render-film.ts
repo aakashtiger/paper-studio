@@ -15,6 +15,7 @@
  * machine that cannot afford N browsers must still render correctly.
  */
 import { createServer } from "node:http";
+import { createHash } from "node:crypto";
 import { createServer as createNetServer } from "node:net";
 import { spawn, spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
@@ -160,7 +161,12 @@ function requireVisuals(cwd: string, id: string, scoreFile: string): void {
   }
 }
 
-function requireStyleIdentity(cwd: string, id: string, scoreFile: string): void {
+function requireStyleIdentity(
+  cwd: string,
+  id: string,
+  scoreFile: string,
+  style: string,
+): void {
   const reportPath = join(cwd, "build", id, "style-identity", "style-identity.json");
   const run = `npm run style:identity -- ${relative(cwd, scoreFile).replace(/\\/g, "/")}`;
   if (!existsSync(reportPath)) {
@@ -169,11 +175,29 @@ function requireStyleIdentity(cwd: string, id: string, scoreFile: string): void 
   const written = JSON.parse(readFileSync(reportPath, "utf8")) as {
     pass?: boolean;
     score?: string;
+    identityHash?: string;
+    frameReportHash?: string | null;
+    stage?: string;
     findings?: { code: string; message: string }[];
   };
   const hash = fileHash(scoreFile);
   if (written.score !== hash) {
     throw new Error(`refusing to paint ${id}: build/${id}/style-identity/style-identity.json describes a different score. Run \`${run}\` again`);
+  }
+  const tokensPath = join(cwd, "styles", style, "tokens.json");
+  const tokens = existsSync(tokensPath)
+    ? (JSON.parse(readFileSync(tokensPath, "utf8")) as { identity?: unknown })
+    : {};
+  const identityHash = `sha256:${createHash("sha256")
+    .update(JSON.stringify(tokens.identity ?? null))
+    .digest("hex")}`;
+  if (written.identityHash !== identityHash) {
+    throw new Error(
+      `refusing to paint ${id}: the identity report was measured against a different identity block. Run \`${run}\` again`,
+    );
+  }
+  if (!written.frameReportHash) {
+    throw new Error(`refusing to paint ${id}: the identity report has no frame-report hash. Run \`${run}\` again`);
   }
   if (!written.pass) {
     const findings = written.findings ?? [];
@@ -182,6 +206,73 @@ function requireStyleIdentity(cwd: string, id: string, scoreFile: string): void 
         findings.map((finding) => `  ${finding.code}  ${finding.message}`).join("\n") +
         `\n  see build/${id}/style-identity/style-identity.json`,
     );
+  }
+}
+
+function requireDeterminism(cwd: string, id: string, scoreFile: string): void {
+  const reportPath = join(cwd, "build", id, "determinism.json");
+  const run = `npm run determinism -- ${relative(cwd, scoreFile).replace(/\\/g, "/")}`;
+  if (!existsSync(reportPath)) {
+    throw new Error(`refusing to paint ${id}: no determinism report. Run \`${run}\` first`);
+  }
+  const written = JSON.parse(readFileSync(reportPath, "utf8")) as {
+    pass?: boolean;
+    score?: string;
+  };
+  if (written.score !== fileHash(scoreFile)) {
+    throw new Error(`refusing to paint ${id}: determinism measured a different score. Run \`${run}\` again`);
+  }
+  if (written.pass !== true) {
+    throw new Error(`refusing to paint ${id}: the determinism twin sample failed. Run \`${run}\` again`);
+  }
+}
+
+function requireTypeRig(cwd: string, id: string, scoreFile: string): void {
+  const hash = fileHash(scoreFile);
+  for (const [file, command] of [
+    ["type-audit.json", "audit:type"],
+    ["rig-audit.json", "audit:rig"],
+  ] as const) {
+    const reportPath = join(cwd, "build", id, file);
+    if (!existsSync(reportPath)) {
+      throw new Error(`refusing to paint ${id}: no ${file}. Run \`npm run ${command} -- <score>\` first`);
+    }
+    const written = JSON.parse(readFileSync(reportPath, "utf8")) as {
+      pass?: boolean;
+      score?: string;
+    };
+    if (written.score !== hash) {
+      throw new Error(`refusing to paint ${id}: ${file} describes a different score. Run \`npm run ${command} -- <score>\` again`);
+    }
+    if (written.pass !== true) {
+      throw new Error(`refusing to paint ${id}: ${command} failed. Run \`npm run ${command} -- <score>\` again`);
+    }
+  }
+}
+
+function requireSfxMix(cwd: string, id: string, scoreFile: string): void {
+  const hash = fileHash(scoreFile);
+  const sfxPath = join(cwd, "build", id, "sfx", "sfx.json");
+  const mixPath = join(cwd, "build", id, "mix", "mix-report.json");
+  if (!existsSync(sfxPath)) {
+    throw new Error(`refusing to paint ${id}: no sfx report. Run \`npm run sfx -- <score>\` first`);
+  }
+  if (!existsSync(mixPath)) {
+    throw new Error(`refusing to paint ${id}: no mix report. Run \`npm run mix -- <score>\` first`);
+  }
+  const sfx = JSON.parse(readFileSync(sfxPath, "utf8")) as {
+    pass?: boolean;
+    inputs?: { score?: string };
+  };
+  const mix = JSON.parse(readFileSync(mixPath, "utf8")) as {
+    passes?: boolean;
+    inputs?: { score?: string };
+  };
+  if (sfx.inputs?.score !== hash || sfx.pass !== true) {
+    throw new Error(`refusing to paint ${id}: the sfx report is not for this score or did not pass`);
+  }
+  if (mix.inputs?.score !== hash || mix.passes !== true) {
+    throw new Error(`refusing to paint ${id}: the mix report is not for this score or did not pass`);
   }
 }
 
@@ -194,13 +285,35 @@ function requirePreflight(cwd: string, id: string, scoreFile: string, scorePath:
   const written = JSON.parse(readFileSync(reportPath, "utf8")) as {
     ok?: boolean;
     score?: string;
+    reproduce?: boolean;
     errors?: { code: string; message: string }[];
+    identity?: { pass?: boolean; findings?: { code: string; message: string }[] };
   };
   const hash = fileHash(scoreFile);
   if (written.score !== hash) {
     throw new Error(
       `refusing to paint ${id}: build/${id}/preflight.json describes a different score ` +
         `(${written.score ?? "no hash"} ≠ ${hash}). Run \`${run}\` again`,
+    );
+  }
+  if (!written.identity) {
+    throw new Error(
+      `refusing to paint ${id}: preflight has no identity section. Run \`${run}\` again`,
+    );
+  }
+  const scoreDoc = JSON.parse(readFileSync(scoreFile, "utf8")) as { legacy?: unknown };
+  if (written.reproduce === true && scoreDoc.legacy === undefined) {
+    throw new Error(
+      `refusing to paint ${id}: this is a reproduction of a delivered film with no legacy marker; ` +
+        "a legacy film may be reproduced, never re-rendered as a new film",
+    );
+  }
+  if (written.identity.pass !== true) {
+    const findings = written.identity.findings ?? [];
+    throw new Error(
+      `refusing to paint ${id}: preflight identity has ${findings.length} finding(s):\n` +
+        findings.map((finding) => `  ${finding.code}  ${finding.message}`).join("\n") +
+        `\n  see build/${id}/preflight.json`,
     );
   }
   if (!written.ok) {
@@ -719,7 +832,26 @@ async function main(): Promise<void> {
     throw new Error(`score-data.js is stale; run \`npm run embed -- ${scorePath}\``);
   }
 
-  const output = resolve(cwd, arg("out") ?? join("films", score.id, `${score.id}.mp4`));
+  const output = (() => {
+    const deliverable = resolve(cwd, "films", score.id, `${score.id}.mp4`);
+    const fromArg = arg("from");
+    const toArg = arg("to");
+    const isProbe = fromArg !== undefined || toArg !== undefined;
+    const isDraft = has("draft");
+    if ((isProbe || isDraft) && arg("out") === undefined) {
+      const name = isProbe
+        ? `probe-${fromArg ?? 0}-${toArg ?? duration}.mp4`
+        : "draft.mp4";
+      return resolve(cwd, "build", score.id, name);
+    }
+    const requested = resolve(cwd, arg("out") ?? join("films", score.id, `${score.id}.mp4`));
+    if ((isProbe || isDraft) && requested === deliverable) {
+      throw new Error(
+        "a probe or draft may not write the deliverable; pass --out <build path> or omit it",
+      );
+    }
+    return requested;
+  })();
   const audioArg = arg("audio");
   const audio = audioArg ? resolve(cwd, audioArg) : undefined;
   if (audio && !existsSync(audio)) throw new Error(`audio not found: ${audio}`);
@@ -738,16 +870,24 @@ async function main(): Promise<void> {
 
   // The gate comes before the browser, not after the film.
   const fullRange = Number(arg("from") ?? 0) <= 0 && Number(arg("to") ?? duration) >= duration;
+  const checkOnly = has("check");
   // A draft is an instrument, like a stills pass: it exists so a person can judge
   // the film before it is painted, so it is not gated by the checks that exist to
   // stop a *film* being painted. It writes no manifest, so it can never be
   // mistaken for the deliverable.
-  if (!stills && fullRange && !has("draft")) {
+  if (!stills && (fullRange || checkOnly) && !has("draft")) {
     requireVisuals(cwd, score.id, scoreFile);
-  requireStyleIdentity(cwd, score.id, scoreFile);
-  requirePreflight(cwd, score.id, scoreFile, scorePath);
+    requireStyleIdentity(cwd, score.id, scoreFile, score.style);
+    requirePreflight(cwd, score.id, scoreFile, scorePath);
     requireCollage(cwd, score.id, scoreFile);
     requireMotion(cwd, score.id, scoreFile);
+    requireDeterminism(cwd, score.id, scoreFile);
+    requireTypeRig(cwd, score.id, scoreFile);
+    requireSfxMix(cwd, score.id, scoreFile);
+    if (checkOnly) {
+      console.log("render --check: visual, identity, preflight, collage, movement, determinism, type/rig and sfx/mix all pass; no browser opened");
+      return;
+    }
   }
 
   const server = await serve(cwd);

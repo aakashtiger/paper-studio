@@ -455,13 +455,41 @@ test("the dimension table has exactly the 27 spec rows", () => {
   );
 });
 
+test("a pack with a cast must declare identity", () => {
+  const { pack, template } = buildPack();
+  const capabilities = readJson(join(pack, "capabilities.json")) as {
+    limits: { maxCast: number };
+  };
+  capabilities.limits.maxCast = 2;
+  writeJson(join(pack, "capabilities.json"), capabilities);
+  const result = check(pack, template);
+  assertNamed(result, "identity-missing");
+});
+
+test("a cast pack with no filmBands names the one gap", () => {
+  const { pack, template } = buildPack();
+  const capabilities = readJson(join(pack, "capabilities.json")) as {
+    limits: { maxCast: number };
+  };
+  capabilities.limits.maxCast = 2;
+  writeJson(join(pack, "capabilities.json"), capabilities);
+  const tokens = readJson(join(pack, "tokens.json")) as Record<string, unknown>;
+  const templateTokens = readJson(
+    join(process.cwd(), "styles", "_template", "tokens.json"),
+  ) as Record<string, unknown>;
+  tokens.identity = templateTokens.identity;
+  writeJson(join(pack, "tokens.json"), tokens);
+  const result = check(pack, template);
+  assertNamed(result, "identity-gap");
+});
+
 test("a complete pack is REVIEWABLE with no hard failures", () => {
   const { pack, template } = buildPack();
   const result = check(pack, template);
   assert.equal(result.status, "REVIEWABLE");
   assert.equal(result.hardFailures.length, 0);
   assert.equal(result.warnings.length, 0);
-  assert.equal(result.profile.length, 10);
+  assert.equal(result.profile.length, 11);
   assert.ok(result.profile.every((layer) => layer.passed));
   assert.equal(result.chosen.length, 1);
 });

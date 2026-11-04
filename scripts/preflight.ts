@@ -37,6 +37,8 @@ import {
   type Story,
 } from "../src/engine/story.js";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
+import { StyleIdentitySchema } from "../src/core/style.js";
+import { FIELD_ROLES, checkFilmIdentity } from "../src/engine/identity.js";
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
@@ -314,7 +316,122 @@ const report = preflightFilm({
   reproduce,
 });
 const scoreHash = `sha256:${createHash("sha256").update(readFileSync(scorePath)).digest("hex")}`;
-const written = { ...report, score: scoreHash };
+
+// The score/cast half of the identity gate. The frame half runs after the
+// collage; this is what can refuse before a browser opens.
+const identityFindings: { code: string; message: string }[] = [];
+const tokensPath = resolve(root, "styles", score.style, "tokens.json");
+const tokensRaw = existsSync(tokensPath)
+  ? (JSON.parse(readFileSync(tokensPath, "utf8")) as { identity?: unknown })
+  : {};
+const parsedIdentity = StyleIdentitySchema.safeParse(tokensRaw.identity);
+if (!parsedIdentity.success) {
+  identityFindings.push({
+    code: "identity:missing",
+    message: `styles/${score.style}/tokens.json has no valid identity block: ${parsedIdentity.error.issues[0]?.message ?? "missing"}`,
+  });
+} else {
+  const identity = parsedIdentity.data;
+  if (!identity.filmBands) {
+    identityFindings.push({
+      code: "identity:band",
+      message: "identity.filmBands is missing; measure the reference film first",
+    });
+  }
+  const beatIds = new Set<string>((beatDoc?.beats ?? []).map((beat) => beat.id));
+  identityFindings.push(
+    ...checkFilmIdentity({
+      score,
+      pack: {
+        modes: identity.performance.modes,
+        defaultMode: identity.performance.defaultMode,
+        motifLibrary: identity.motifs.library,
+        perFilm: identity.motifs.perFilm,
+        uses: identity.motifs.uses,
+        maxShotShare: identity.motifs.maxShotShare,
+        semanticObjectMin: identity.motifs.semanticObjectMin,
+        fieldRoles: FIELD_ROLES,
+        forbidden: identity.forbidden,
+      },
+      beatIds,
+    }),
+  );
+  for (const member of score.cast) {
+    const memberPath = resolve(root, member.poses);
+    if (!existsSync(memberPath)) {
+      identityFindings.push({
+        code: "identity:cast",
+        message: `${member.character} has no pose file at ${member.poses}`,
+      });
+      continue;
+    }
+    const parsedPose = PoseLibrarySchema.safeParse(
+      JSON.parse(readFileSync(memberPath, "utf8")),
+    );
+    if (!parsedPose.success) {
+      identityFindings.push({
+        code: "identity:cast",
+        message: `${member.poses} is not a pose library`,
+      });
+      continue;
+    }
+    const library = parsedPose.data;
+    if (!library.archetype) {
+      identityFindings.push({
+        code: "identity:cast",
+        message: `${member.character} declares no stage archetype; the style needs "${identity.cast.archetype}"`,
+      });
+    } else if (library.archetype !== identity.cast.archetype) {
+      identityFindings.push({
+        code: "identity:cast",
+        message: `${member.character} is "${library.archetype}"; this style stages "${identity.cast.archetype}"`,
+      });
+    }
+    if (!library.stageRoles || library.stageRoles.length === 0) {
+      identityFindings.push({
+        code: "identity:cast",
+        message: `${member.character} declares no stage role (${identity.cast.stageRoles.join(", ")})`,
+      });
+    }
+    if (!library.appearance) {
+      identityFindings.push({
+        code: "identity:cast",
+        message: `${member.character} declares no appearance (face, head, hair, metal, fingers)`,
+      });
+    }
+    if (library.poses.length < identity.cast.posesMin) {
+      identityFindings.push({
+        code: "identity:cast",
+        message: `${member.character} has ${library.poses.length} poses; the style needs ${identity.cast.posesMin}`,
+      });
+    }
+    if (library.expressions.length < identity.cast.expressionsMin) {
+      identityFindings.push({
+        code: "identity:cast",
+        message: `${member.character} has ${library.expressions.length} expressions; the style needs ${identity.cast.expressionsMin}`,
+      });
+    }
+  }
+  const staged = score.shots.filter((shot) => (shot.direction.cast?.length ?? 0) > 0).length;
+  const stagedShare = score.shots.length === 0 ? 0 : staged / score.shots.length;
+  if (stagedShare + 1e-9 < identity.cast.stagedShare) {
+    identityFindings.push({
+      code: "identity:staged",
+      message: `${staged}/${score.shots.length} shots stage a character (${(stagedShare * 100).toFixed(0)}%); the style needs at least ${(identity.cast.stagedShare * 100).toFixed(0)}%`,
+    });
+  }
+}
+const identityPass = identityFindings.length === 0;
+const written = {
+  ...report,
+  ok: report.ok && identityPass,
+  score: scoreHash,
+  errors: [
+    ...report.errors,
+    ...identityFindings.map((finding) => ({ ...finding, check: "identity" as const })),
+  ],
+  identity: { pass: identityPass, findings: identityFindings },
+};
 const out = resolve(root, "build", score.id);
 mkdirSync(out, { recursive: true });
 writeFileSync(resolve(out, "preflight.json"), `${JSON.stringify(written, null, 2)}\n`, "utf8");
@@ -347,6 +464,9 @@ if (json) {
   console.log(
     `  cast      ${report.cast.length > 0 ? report.cast.map((member) => `${member.character} ${member.rig}`).join(" · ") : "none"}`,
   );
+  console.log(
+    `  identity  ${identityPass ? "pass" : `${identityFindings.length} finding(s)`}`,
+  );
   if (report.cut) {
     console.log(
       `  scenes    ${report.cut.scenes.length} scene(s) from ${report.cut.beats.length} beats (${report.sceneSource})`,
@@ -364,11 +484,11 @@ if (json) {
     console.log("");
     for (const warning of report.warnings) console.log(`  warn  ${warning.message}`);
   }
-  if (report.errors.length > 0) {
+  if (written.errors.length > 0) {
     console.log("");
-    for (const error of report.errors) console.log(`  FAIL  [${error.check}] ${error.message}`);
+    for (const error of written.errors) console.log(`  FAIL  [${error.check}] ${error.message}`);
     console.log("");
-    console.log(`preflight: ${report.errors.length} refusal(s) — the film is not ready to paint`);
+    console.log(`preflight: ${written.errors.length} refusal(s) — the film is not ready to paint`);
     console.log(`report: build/${score.id}/preflight.json (written, and it fails)`);
     process.exit(1);
   }

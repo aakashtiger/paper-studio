@@ -13,6 +13,11 @@ import {
 import { AssetRefSchema, type AssetRef, resolveAssets } from "./assets.js";
 import { isCaptionChunk } from "./captions.js";
 import { FilmBriefSchema, resolveBrief } from "./film-brief.js";
+import {
+  FilmPerformanceSchema,
+  MotifDeclarationSchema,
+  PaletteScriptEntrySchema,
+} from "./identity.js";
 import { PoseLibrarySchema, resolvePoseLibrary } from "./pose.js";
 
 /**
@@ -81,6 +86,8 @@ export const TreatmentShotSchema = z.object({
     })
     .optional(),
   transitionOut: z.string().optional(),
+  /** The one motif this shot carries; the motif declaration lives on the film. */
+  motif: z.string().min(1).optional(),
 });
 
 export const TreatmentSchema = z.object({
@@ -227,6 +234,18 @@ export const DirectionSchema = z.object({
 export const FilmScoreSchema = TreatmentSchema.omit({ proof: true })
   .extend({
     brief: z.string().min(1),
+    /**
+     * A sealed pre-identity film. It may be reproduced, never re-rendered as a
+     * new film; the marker is the difference between history and a bypass.
+     */
+    legacy: z
+      .object({
+        since: z.string().min(1),
+        reason: z.string().min(1),
+        signedBy: z.string().min(1),
+      })
+      .strict()
+      .optional(),
     edit: z.object({
       minShot: z.number().positive(),
       medianShot: z.number().positive(),
@@ -248,6 +267,9 @@ export const FilmScoreSchema = TreatmentSchema.omit({ proof: true })
         }),
       )
       .default([]),
+    performance: FilmPerformanceSchema.optional(),
+    paletteScript: z.array(PaletteScriptEntrySchema).optional(),
+    motifs: z.array(MotifDeclarationSchema).optional(),
     shots: z
       .array(TreatmentShotSchema.extend({ direction: DirectionSchema }))
       .min(1),

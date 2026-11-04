@@ -78,91 +78,27 @@ function visibleBodyCopy(card: string): number {
     .reduce((count, text) => count + text.split(/\s+/).length, 0);
 }
 
-test("paper-kpop gate: REVIEWABLE with exactly one open choice", () => {
+test("paper-kpop gate: the sealed pre-contract pack is DRAFT with identity-missing", () => {
   const result = validateStylePack(PACK);
-  assert.equal(result.status, "REVIEWABLE");
-  assert.equal(result.hardFailures.length, 0, JSON.stringify(result.hardFailures, null, 2));
+  assert.equal(result.status, "DRAFT");
+  assert.ok(result.hardFailures.some((failure) => failure.rule === "identity-missing"));
   assert.equal(result.chosen.length, 1);
-  assert.equal(result.chosen[0]?.id, "paper-shadow");
 });
 
-test("paper-kpop gate: song resolves 14 shots / 45 s / 16:9 and uses all eight recipes", () => {
+test("paper-kpop gate: resolveStyle refuses the sealed pack until it declares identity", () => {
   const pack = loadStylePack(PACK);
   const format = readFormat("formats/paper-kpop-song/format.json");
   const a = readBrief("fixtures/resolve/paper-kpop-a.json");
-  const b = readBrief("fixtures/resolve/paper-kpop-b.json");
-  const plan = resolveStyle(pack, a, format, 42, { compare: { brief: b, format } });
-  assert.equal(plan.format, "paper-kpop-song");
-  assert.equal(plan.shots.length, 14);
-  assert.equal(plan.duration, 45);
-  assert.equal(plan.aspect, "16:9");
-  assert.equal(plan.shots[0]?.slots["content.title"], "PAPER STAGE");
-  assert.equal(plan.shots[1]?.slots["content.body"], "THE FLOOR IS YOURS");
-  assert.equal(new Set(plan.shots.map((shot) => shot.recipe)).size, 8);
-});
-
-test("paper-kpop gate: shorts resolves 8 shots / 30 s / 9:16 and uses all eight recipes", () => {
-  const pack = loadStylePack(PACK);
-  const format = readFormat("formats/paper-kpop-shorts/format.json");
-  const a = readBrief("fixtures/resolve/paper-kpop-a.json");
-  const b = readBrief("fixtures/resolve/paper-kpop-b.json");
-  const plan = resolveStyle(pack, a, format, 42, { compare: { brief: b, format } });
-  assert.equal(plan.format, "paper-kpop-shorts");
-  assert.equal(plan.shots.length, 8);
-  assert.equal(plan.duration, 30);
-  assert.equal(plan.aspect, "9:16");
-  assert.equal(new Set(plan.shots.map((shot) => shot.recipe)).size, 8);
-  const vertical = plan.shots.find((shot) => shot.recipe === "stage_wide")?.composition
-    .filter((op) => op.op === "image")
-    .map((op) => op.id);
-  assert.ok(vertical?.includes("lead-figure"));
-  assert.ok(vertical?.includes("second-figure"));
-});
-
-test("paper-kpop gate: sealed blind run resolves 6 shots / 30 s / 9:16 on the shipped pack", () => {
-  const pack = loadStylePack(PACK);
-  const format = readFormat("gate/paper-kpop-blind/work/format.json");
-  const blind = readBrief("gate/paper-kpop-blind/work/brief.json");
-  const a = readBrief("fixtures/resolve/paper-kpop-a.json");
-  const plan = resolveStyle(pack, blind, format, 7, { compare: { brief: a, format } });
-  assert.equal(plan.shots.length, 6);
-  assert.equal(plan.duration, 30);
-  assert.equal(plan.aspect, "9:16");
-  assert.deepEqual(
-    plan.shots.map((shot) => shot.recipe),
-    ["paper_open", "macro_prop_beat", "portrait_iris", "stage_wide", "sticker_slam", "pullback_close"],
+  assert.throws(
+    () => resolveStyle(pack, a, format, 42),
+    /identity-missing/,
   );
-  assert.equal(plan.shots[0]?.slots["content.title"], "Last Cue");
-  const archived = readStyleJson(join(BLIND, "archive", "run-17", "work", "brief.json")) as {
-    content: { title: string };
-  };
-  assert.equal(archived.content.title, "ROOFTOP SOUNDCHECK");
-  assert.equal(
-    readFileSync(join(BLIND, "archive", "run-17", "PACK-HASH.txt"), "utf8").trim(),
-    "sha256:719e05825639e0338c31f06099be38d62caa69520752f7736375dd2a6048b2d5",
-  );
-
-  const recorded = readFileSync(join(BLIND, "PACK-HASH.txt"), "utf8").trim();
-  assert.equal(computePackHash(PACK), recorded);
-  assert.equal(computePackHash(join(BLIND, "inputs", "pack")), recorded);
-  assert.equal(computePackHash(join(BLIND, "used-inputs", "pack")), recorded);
-
-  const baseline = readFileSync(join(BLIND, "inputs", "MANIFEST.json"));
-  const used = readFileSync(join(BLIND, "used-inputs", "MANIFEST.json"));
-  assert.ok(baseline.equals(used), "baseline and used manifests differ");
-  const manifest = JSON.parse(baseline.toString("utf8")) as {
-    algorithm: string;
-    files: Record<string, string>;
-  };
-  assert.equal(manifest.algorithm, "sha256");
-  for (const [relativePath, expected] of Object.entries(manifest.files)) {
-    for (const root of ["inputs", "used-inputs"]) {
-      const file = join(BLIND, root, relativePath);
-      assert.equal(sha256(readFileSync(file)), expected, `${root}/${relativePath}`);
-    }
-  }
 });
 
+// The sealed 0.1.0 pack is historical evidence and is not edited (the
+// contract forbids touching a sealed input). It is now DRAFT because it
+// predates the identity schema; the live pack's resolve evidence is in
+// test/paper-kpop-0.2.0-gate.test.ts.
 test("paper-kpop gate: recipe camera, transition and text fill are unambiguous", () => {
   const recipes = readdirSync(join(PACK, "recipes"))
     .filter((file) => file.endsWith(".json"))

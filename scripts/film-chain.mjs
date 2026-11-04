@@ -21,6 +21,7 @@
  *   npm run film:chain -- <score> --workers 1     (force a serial render)
  */
 import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
 import { cpus } from "node:os";
 import { resolve } from "node:path";
@@ -133,6 +134,7 @@ const steps = [
   // the cast the vendor will draw even exists — and the renderer refuses to
   // paint a whole film without a fresh pass from it.
   { name: "preflight", tsx: "scripts/preflight.ts", args: [score] },
+  { name: "visual", tsx: "scripts/visual-check.ts", args: [score] },
   // One pass for every picture question a score can answer (decision 0029): the
   // frames are painted once, probe-only, and the movement, the type and the rig
   // are all read from that same probe. It also writes the movement report the
@@ -151,6 +153,7 @@ const steps = [
   // no word off the edge). `render:film` refuses a whole film without both.
   { name: "sheet", tsx: "scripts/sheet.ts", args: [score] },
   { name: "collage", tsx: "scripts/collage.ts", args: [score] },
+  { name: "identity", tsx: "scripts/style-identity.ts", args: [score] },
   { name: "sfx", tsx: "scripts/sfx.ts", args: [score] },
   { name: "mix", tsx: "scripts/mix.ts", args: [score] },
   {
@@ -165,6 +168,7 @@ const steps = [
   { name: "palette", tsx: "scripts/palette-audit.ts", args: [score, "--video", deliverable] },
   { name: "motion", tsx: "scripts/motion-audit.ts", args: [score, "--video", deliverable] },
   { name: "deliver", tsx: "scripts/deliver.ts", args: [score, "--video", deliverable, "--out", delivered] },
+  { name: "identity:video", tsx: "scripts/style-identity.ts", args: [score, "--video"] },
   { name: "asr", tsx: "scripts/asr.ts", args: [score] },
   { name: "gate", tsx: "scripts/gate-7.ts", args: [score] },
   // `--reuse`: the chain has just run every one of these audits, so the review
@@ -199,11 +203,44 @@ mkdirSync(resolve(root, build), { recursive: true });
 console.log(`chain: ${id} · ${workers} worker(s) of ${threads} threads · render ${skipRender ? "reused" : "once"}`);
 
 // A resumed or audio-only run must not measure a picture that is not there.
-if (skipRender) {
+const scoreHash = `sha256:${createHash("sha256").update(readFileSync(resolve(root, score))).digest("hex")}`;
+function readJson(path) {
+  return existsSync(resolve(root, path))
+    ? JSON.parse(readFileSync(resolve(root, path), "utf8"))
+    : null;
+}
+if (skipRender || from === "gate" || from === "review") {
   if (!existsSync(resolve(root, deliverable))) {
     console.error(`error: --skip-render needs ${deliverable}; render it first or drop the flag`);
     process.exit(2);
   }
+  const manifest = readJson(`build/${id}/render-manifest.json`);
+  if (!manifest || manifest.score !== scoreHash) {
+    console.error(
+      `error: ${deliverable} has no render manifest for this score; render it before reusing it`,
+    );
+    process.exit(2);
+  }
+  const identity = readJson(`build/${id}/style-identity/style-identity.json`);
+  if (!identity || identity.pass !== true) {
+    console.error(
+      "error: the reused picture has no passing style-identity report; run `npm run style:identity -- <score> --video`",
+    );
+    process.exit(2);
+  }
+  if (identity.videoHash !== manifest.videoHash) {
+    console.error(
+      "error: the identity report measured a different picture than the render manifest",
+    );
+    process.exit(2);
+  }
+}
+if (from !== undefined && from !== "gate" && from !== "review") {
+  console.error(
+    `error: --from is only allowed at "gate" or "review" after identity enforcement; ` +
+      "run the earlier steps, or omit --from",
+  );
+  process.exit(2);
 }
 
 let started = from === undefined;

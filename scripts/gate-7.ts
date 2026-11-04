@@ -169,7 +169,8 @@ async function main(): Promise<void> {
   const determinism = read<TwinEvidence>("determinism.json");
   const mix = read<{
     passes: boolean;
-    measured: { lufs: number; truePeak: number };
+    measured: { lufs: number; truePeak: number; lra?: number };
+    shortTerm?: { contrastLu: number; loudest: number; quietest: number; windows: number };
     master?: {
       gainDb: number;
       limiterCeiling: number;
@@ -214,6 +215,7 @@ async function main(): Promise<void> {
   const motion = read<{ pass: boolean; videoHash: string | null; weak: string[]; shots: { id: string; median: number }[] }>("motion-audit.json");
   const type = read<{
     pass: boolean;
+    score?: string;
     sampled: number;
     boxes: number;
     copyBoxes?: number;
@@ -223,6 +225,7 @@ async function main(): Promise<void> {
   }>("type-audit.json");
   const rig = read<{
     pass: boolean;
+    score?: string;
     legs: number;
     unpairedSolves: number;
     worstAnkleJump: { distance: number };
@@ -284,6 +287,25 @@ async function main(): Promise<void> {
   })();
 
   const checks: Record<string, { ok: boolean; detail: string }> = {
+    preflight: (() => {
+      const report = read<{
+        ok: boolean;
+        score: string;
+        identity?: { pass: boolean; findings: { code: string; message: string }[] };
+      }>("preflight.json");
+      const current = `sha256:${hashFile(resolve(root, scorePath))}`;
+      if (!report) return { ok: false, detail: "no preflight report" };
+      if (report.score !== current) return { ok: false, detail: "preflight describes a different score" };
+      if (!report.identity) return { ok: false, detail: "preflight has no identity section" };
+      if (!report.identity.pass) {
+        return {
+          ok: false,
+          detail: `${report.identity.findings.length} identity finding(s): ${report.identity.findings[0]?.message ?? "see preflight.json"}`,
+        };
+      }
+      if (!report.ok) return { ok: false, detail: "preflight refused the film" };
+      return { ok: true, detail: "score, cast and identity pass before the paint" };
+    })(),
     scoreAudit: {
       // The audit has to describe *this* score: an audit.json from before a
       // score edit would otherwise pass a gate about a film nobody audited.
@@ -398,10 +420,14 @@ async function main(): Promise<void> {
     })(),
     styleIdentity: (() => {
       // The film's own picture, not the score's promise: the identity report is
-      // re-run on the delivered video and carries its videoHash.
+      // re-run on the delivered video and carries its videoHash. The identity
+      // hash and frame-report hash close the two stale-report holes: a widened
+      // band and a re-painted frame report.
       const report = read<{
         pass: boolean;
         score: string;
+        identityHash?: string;
+        frameReportHash?: string | null;
         videoHash: string | null;
         stagedRatio: number;
         findings: { code: string; message: string }[];
@@ -410,13 +436,53 @@ async function main(): Promise<void> {
       if (!report) return { ok: false, detail: "no style-identity report — run `npm run style:identity -- <score> --video`" };
       if (report.score !== current) return { ok: false, detail: "the identity report measured a different score" };
       if (report.videoHash !== frozenHash) return { ok: false, detail: "the identity report measured a different picture" };
+      const tokensPath = resolve(root, "styles", score.style, "tokens.json");
+      const tokens = existsSync(tokensPath)
+        ? (JSON.parse(readFileSync(tokensPath, "utf8")) as { identity?: unknown })
+        : {};
+      const identityHash = `sha256:${createHash("sha256")
+        .update(JSON.stringify(tokens.identity ?? null))
+        .digest("hex")}`;
+      if (report.identityHash !== identityHash) return { ok: false, detail: "the identity block changed since the report" };
+      if (!report.frameReportHash) return { ok: false, detail: "the identity report has no frame-report hash" };
       if (!report.pass) {
         return { ok: false, detail: `${report.findings.length} identity finding(s): ${report.findings[0]?.message ?? "see the report"}` };
       }
       return { ok: true, detail: `staged ${(report.stagedRatio * 100).toFixed(0)}% · look inside the pack's bands` };
     })(),
-    determinism: (() => {
-      // The painter is a pure function of the score and the time (decision 0032).
+    closeUps: (() => {
+      const report = read<{
+        videoHash: string | null;
+        frame?: { closeUpShare?: number } | null;
+      }>("style-identity/style-identity.json");
+      if (!report) return { ok: false, detail: "no style-identity report" };
+      if (report.videoHash !== frozenHash) return { ok: false, detail: "the identity report measured a different picture" };
+      const share = report.frame?.closeUpShare;
+      if (typeof share !== "number" || !Number.isFinite(share)) {
+        return { ok: false, detail: "the frame report has no close-up share" };
+      }
+      if (share < 0.2 || share > 0.6) {
+        return { ok: false, detail: `close-ups (>=55% height) are ${(share * 100).toFixed(0)}% of shots; the band is 20-60%` };
+      }
+      return { ok: true, detail: `${(share * 100).toFixed(0)}% of shots are close-ups` };
+    })(),
+    lra: {
+      ok: typeof mix?.measured.lra === "number" && mix.measured.lra >= 4,
+      detail:
+        typeof mix?.measured.lra === "number"
+          ? `LRA ${mix.measured.lra.toFixed(1)} LU (floor 4)`
+          : "no LRA in the mix report",
+    },
+    soundContrast: {
+      ok:
+        typeof mix?.shortTerm?.contrastLu === "number" &&
+        mix.shortTerm.contrastLu >= 15,
+      detail:
+        typeof mix?.shortTerm?.contrastLu === "number"
+          ? `${mix.shortTerm.contrastLu.toFixed(1)} LU between the quietest and loudest 3 s window (floor 15)`
+          : "no 3 s short-term contrast in the mix report",
+    },
+    determinism: (() => {      // The painter is a pure function of the score and the time (decision 0032).
       //
       // The evidence is a sample painted twice in two independent browser
       // processes — one serial, one parallel — and compared byte for byte. The
@@ -564,9 +630,13 @@ async function main(): Promise<void> {
         : "no motion-audit report",
     },
     typeSafeArea: {
-      ok: type?.pass === true,
+      ok:
+        type?.pass === true &&
+        type.score === `sha256:${hashFile(resolve(root, scorePath))}`,
       detail: type
-        ? `${type.boxes} boxes in ${type.sampled} frames (${type.copyBoxes ?? 0} copy), ${type.outside.length} outside, ${type.belowFloor?.length ?? 0} under the ${type.floor?.px ?? "?"}px copy floor`
+        ? type.score !== `sha256:${hashFile(resolve(root, scorePath))}`
+          ? "type audit measured a different score"
+          : `${type.boxes} boxes in ${type.sampled} frames (${type.copyBoxes ?? 0} copy), ${type.outside.length} outside, ${type.belowFloor?.length ?? 0} under the ${type.floor?.px ?? "?"}px copy floor`
         : "no type-audit report",
     },
     rigSeam: {
@@ -576,9 +646,12 @@ async function main(): Promise<void> {
       // says so instead of pretending it measured a rig.
       ok:
         rig?.pass === true &&
+        rig.score === `sha256:${hashFile(resolve(root, scorePath))}` &&
         (rig?.expectsCast === false || ((rig?.anchors ?? 0) > 0 && (rig?.anchorPairs ?? 0) > 0)),
       detail: rig
-        ? rig.expectsCast === false
+        ? rig.score !== `sha256:${hashFile(resolve(root, scorePath))}`
+          ? "rig audit measured a different score"
+          : rig.expectsCast === false
           ? "no staged cast — rig seam not applicable; the visual check proves the picture's subject"
           : `${rig.legs} legs, ${rig.unpairedSolves} unpaired, worst ankle jump ${rig.worstAnkleJump.distance}px; ` +
             `${rig.anchors ?? 0} anchors / ${rig.anchorPairs ?? 0} pairs on ${(rig.anchoredCharacters ?? []).length} character(s), worst in-parent shift ` +

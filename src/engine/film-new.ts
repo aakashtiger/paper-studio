@@ -262,6 +262,34 @@ export function filmGaps(score: unknown, options: { requireVisual?: boolean } = 
     gaps.push("captions.lines: at least one caption line (id, text, start, end)");
   }
 
+  const performance = record(root.performance);
+  const entrance = record(performance.entrance);
+  const exit = record(performance.exit);
+  const signature = record(performance.signature);
+  if (
+    !text(performance.mode) ||
+    !text(performance.star) ||
+    !text(entrance.beat) ||
+    !text(entrance.via) ||
+    !text(exit.beat) ||
+    !text(exit.via) ||
+    !text(signature.name)
+  ) {
+    gaps.push(
+      "performance: mode, star, entrance (beat, via), exit (beat, via), signature.name",
+    );
+  }
+
+  const paletteScript = list(root.paletteScript);
+  if (paletteScript.length < 3 || paletteScript.length > 5) {
+    gaps.push("paletteScript: 3-5 field choices, one per beat");
+  }
+
+  const motifs = list(root.motifs);
+  if (motifs.length < 3 || motifs.length > 5) {
+    gaps.push("motifs: 3-5 motif declarations (motif, kind, meaning)");
+  }
+
   if (list(root.assets).length === 0) {
     gaps.push("assets: at least one asset (id, type, source, path)");
   } else {

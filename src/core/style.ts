@@ -749,6 +749,152 @@ const SeedSchema = z
   })
   .passthrough();
 
+/**
+ * The identity block is the style's grammar, not a second style document.
+ *
+ * Nine groups, no defaults, strict keys. `filmBands` is optional in the
+ * template so a new pack can be scaffolded before its reference is measured;
+ * `identityGaps` is what turns that omission into a named failure. A pack with
+ * a cast must declare the block; a pack with no cast is reported N/A.
+ */
+const IdentityBandSchema = z
+  .tuple([z.number(), z.number()])
+  .refine(([min, max]) => min < max, "band min must be less than max");
+
+const IdentityRatioBandSchema = z
+  .tuple([z.number().min(0).max(1), z.number().min(0).max(1)])
+  .refine(([min, max]) => min < max, "band min must be less than max");
+
+const IdentityCountBandSchema = z
+  .object({
+    min: z.number().int().min(0),
+    max: z.number().int().min(0),
+  })
+  .strict()
+  .refine(({ min, max }) => min <= max, "count band min must be <= max");
+
+const IdentityAppearanceSchema = z
+  .object({
+    faceStyle: z.string().min(1),
+    headLayers: z.number().int().min(1),
+    hairLayers: z.number().int().min(1),
+    bradMetal: z.string().min(1),
+    fingers: z.boolean(),
+  })
+  .strict();
+
+export const StyleIdentitySchema = z
+  .object({
+    envelope: z
+      .object({
+        canvas: z.tuple([z.number().int().positive(), z.number().int().positive()]),
+        fps: z.number().positive(),
+        dimension: z.enum(["2d-flat", "2.5d-layered", "3d"]),
+        cameraAxes: z
+          .array(z.enum(["x", "y", "z", "roll", "shake"]))
+          .min(1),
+      })
+      .strict(),
+    reference: z.string().min(1),
+    filmBands: z
+      .object({
+        lumaMean: IdentityBandSchema,
+        saturationMean: IdentityBandSchema,
+        edgesMean: IdentityBandSchema,
+      })
+      .strict()
+      .optional(),
+    field: z
+      .object({
+        edgeBarMax: z.number().min(0).max(1),
+        largestFlat: IdentityRatioBandSchema,
+        warmShare: IdentityRatioBandSchema,
+        blueShareMax: z.number().min(0).max(1),
+        saturatedShare: IdentityRatioBandSchema,
+      })
+      .strict(),
+    composition: z
+      .object({
+        subjectHeight: IdentityRatioBandSchema,
+        centroidX: IdentityRatioBandSchema,
+        centroidShare: z.number().min(0).max(1),
+        heightSdMin: z.number().positive(),
+        heightTiersMin: z.number().int().min(1),
+        localContrastMin: z.number().positive(),
+        localContrastMedian: z.number().positive(),
+        localContrastShare: z.number().min(0).max(1),
+      })
+      .strict(),
+    cast: z
+      .object({
+        archetype: z.string().min(1),
+        stageRoles: z.array(z.string().min(1)).min(1),
+        principals: IdentityCountBandSchema,
+        stagedShare: z.number().min(0).max(1),
+        posesMin: z.number().int().min(1),
+        expressionsMin: z.number().int().min(1),
+        anchors: z.array(z.string().min(1)).min(1),
+        appearance: IdentityAppearanceSchema,
+      })
+      .strict(),
+    performance: z
+      .object({
+        modes: z
+          .array(z.enum(["stage-show", "presenter-show", "creature-show"]))
+          .min(1),
+        defaultMode: z.enum(["stage-show", "presenter-show", "creature-show"]),
+      })
+      .strict(),
+    motifs: z
+      .object({
+        library: z.array(z.string().min(1)).min(1),
+        perFilm: IdentityCountBandSchema,
+        uses: IdentityCountBandSchema,
+        maxShotShare: z.number().min(0).max(1),
+        semanticObjectMin: z.number().int().min(0),
+      })
+      .strict(),
+    forbidden: z.array(z.string().min(1)).min(1),
+  })
+  .strict();
+
+export type StyleIdentity = z.infer<typeof StyleIdentitySchema>;
+
+/**
+ * The one gap a new pack is allowed to start with. Everything else is a
+ * template value the author must replace; `filmBands` cannot be invented
+ * because it is the measurement of this style's own reference film.
+ */
+export function identityGaps(identity: StyleIdentity | undefined): string[] {
+  if (!identity) return ["identity"];
+  const gaps: string[] = [];
+  if (!identity.filmBands) gaps.push("identity.filmBands");
+  return gaps;
+}
+
+/** The pack rule, mapped for the film-level identity check. */
+export function identityCastRule(identity: StyleIdentity): {
+  archetype: string;
+  stageRoles: string[];
+  principals: { min: number; max: number };
+  stagedShare: number;
+  posesMin: number;
+  expressionsMin: number;
+  anchors: string[];
+  appearance: StyleIdentity["cast"]["appearance"];
+} {
+  return {
+    archetype: identity.cast.archetype,
+    stageRoles: identity.cast.stageRoles,
+    principals: identity.cast.principals,
+    stagedShare: identity.cast.stagedShare,
+    posesMin: identity.cast.posesMin,
+    expressionsMin: identity.cast.expressionsMin,
+    anchors: identity.cast.anchors,
+    appearance: identity.cast.appearance,
+  };
+}
+
 export const TokensSchema = z
   .object({
     medium: MediumSchema,
@@ -758,6 +904,7 @@ export const TokensSchema = z
     motion: MotionSchema,
     sound: SoundSchema,
     seed: SeedSchema,
+    identity: StyleIdentitySchema.optional(),
   })
   .passthrough();
 
@@ -1524,6 +1671,7 @@ export type ValidateStylePackOptions = {
 const LAYERS = [
   "files",
   "schema",
+  "identity",
   "dimensions",
   "story",
   "content",
@@ -2154,6 +2302,48 @@ export function validateStylePack(
           ? `capabilities.json:${issue.path.join(".")}`
           : "capabilities.json";
       addFailure("schema", "schema", `capabilities.json ${where}: ${issue.message}`, where);
+    }
+  }
+
+  // -- identity -------------------------------------------------------------
+  // A pack with a cast must declare the identity grammar. A pack with no cast
+  // has no film identity to declare; it is reported N/A rather than forced to
+  // invent one. The template is allowed to omit filmBands, and that omission is
+  // the one named gap a new style starts with.
+  const maxCast =
+    capabilitiesParsed.success && typeof capabilitiesParsed.data.limits.maxCast === "number"
+      ? capabilitiesParsed.data.limits.maxCast
+      : 0;
+  const identity =
+    tokensParsed.success ? tokensParsed.data.identity : undefined;
+  if (maxCast > 0 || identity !== undefined) {
+    if (!identity) {
+      addFailure(
+        "identity",
+        "identity-missing",
+        "tokens.json has no identity block, but this pack stages a cast",
+        "tokens.json:identity",
+        "add the nine identity groups; start from styles/_template/tokens.json",
+      );
+    } else {
+      for (const gap of identityGaps(identity)) {
+        addFailure(
+          "identity",
+          "identity-gap",
+          `${gap} is missing; a film cannot be measured against this pack`,
+          `tokens.json:${gap.replace("identity.", "identity.")}`,
+          "measure this style's reference film and fill the band",
+        );
+      }
+      if (identity.cast.principals.max > maxCast) {
+        addFailure(
+          "identity",
+          "identity-cast",
+          `identity.cast.principals.max is ${identity.cast.principals.max}, but capabilities.limits.maxCast is ${maxCast}`,
+          "tokens.json:identity.cast.principals",
+          "make the cast limit one number and use it in both places",
+        );
+      }
     }
   }
 

@@ -31,6 +31,8 @@ type StepResult = { name: string; ok: boolean; detail: string; output: string };
 
 /** A gate step whose report can be tie-verified rather than re-measured. */
 const GATE_TIES: Record<string, { tie: ReportTie; report: (id: string) => string }> = {
+  // This reads the score and the cast, not the picture.
+  preflight: { tie: "score", report: (id) => `build/${id}/preflight.json` },
   // These read the delivered picture, so the picture hash is the tie.
   "frame-audit": { tie: "picture", report: (id) => `build/${id}/frame-audit.json` },
   "paint-match": { tie: "picture", report: (id) => `build/${id}/paint-match.json` },
@@ -65,6 +67,7 @@ const wantGate = args.includes("--gate");
 const mayReuseReports = args.includes("--reuse");
 
 const steps: Step[] = [
+  { name: "preflight", script: "scripts/preflight.ts", detail: "score, cast and identity before the paint", tie: "score", report: `build/${id}/preflight.json` },
   { name: "audit", script: "scripts/audit.ts", detail: "score-level contracts" },
   { name: "visual:check", script: "scripts/visual-check.ts", detail: "every shot has a visual brief that its recipe can draw" },
   { name: "board", script: "scripts/board.ts", detail: "cards, one image" },
@@ -94,7 +97,7 @@ if (wantGate) {
   // Nothing in this chain rewrites `render-manifest.json`: the renderer is its
   // only writer (see `src/engine/manifest.ts`).
   steps.push({ name: "deliver", script: "scripts/deliver.ts", detail: "master into the picture, measured" });
-  steps.push({ name: "style:identity", script: "scripts/style-identity.ts", detail: "the picture is still this channel", args: ["--video"] });
+  steps.push({ name: "style:identity", script: "scripts/style-identity.ts", detail: "the picture is still this channel", args: ["--video"], tie: "picture", report: `build/${id}/style-identity/style-identity.json` });
   steps.push({ name: "gate:7", script: "scripts/gate-7.ts", detail: "the final gate" });
 }
 
@@ -107,6 +110,8 @@ function artifact(name: string): string | null {
   switch (name) {
     case "audit":
       return `build/${id}/audit.json`;
+    case "preflight":
+      return `build/${id}/preflight.json`;
     case "visual:check":
       return `build/${id}/visual-check.json`;
     case "board":
@@ -326,6 +331,20 @@ function readJson<T>(rel: string): T | null {
 function describe(name: string): string | null {
   const id = score.id;
   switch (name) {
+    case "preflight": {
+      const report = readJson<{
+        ok: boolean;
+        identity?: { pass: boolean; findings: Array<{ code: string; message: string }> };
+        errors: Array<{ code: string; message: string }>;
+      }>(`build/${id}/preflight.json`);
+      if (!report) return null;
+      if (!report.identity) return "FAIL · no identity section — re-run preflight";
+      if (!report.identity.pass) {
+        return `FAIL · ${report.identity.findings.length} identity finding(s): ${report.identity.findings[0]?.message ?? "see preflight.json"}`;
+      }
+      if (!report.ok) return `FAIL · ${report.errors.length} refusal(s) — see preflight.json`;
+      return "score, cast and identity pass before the paint";
+    }
     case "audit": {
       const report = readJson<{
         ok: boolean;
@@ -355,12 +374,13 @@ function describe(name: string): string | null {
       const report = readJson<{
         pass: boolean;
         stagedRatio: number;
-        delta: { luma: number | null; saturation: number | null; palette: number | null };
-        findings: Array<{ message: string }>;
+        metrics: { lumaMean: number | null; saturationMean: number | null; edgesMean: number | null };
+        frame: { centroidShare?: number; localContrastMedian?: number; heightTiers?: number } | null;
+        findings: Array<{ code: string; message: string }>;
       }>(`build/${id}/style-identity/style-identity.json`);
       if (!report) return null;
-      if (!report.pass) return `FAIL · ${report.findings[0]?.message ?? "the identity check failed"}`;
-      return `staged ${(report.stagedRatio * 100).toFixed(0)}% · Δ luma ${report.delta.luma?.toFixed(1) ?? "?"} · Δ sat ${report.delta.saturation?.toFixed(1) ?? "?"} · palette ${report.delta.palette?.toFixed(1) ?? "?"}`;
+      if (!report.pass) return `FAIL · ${report.findings.length} identity finding(s): ${report.findings[0]?.message ?? "the identity check failed"}`;
+      return `staged ${(report.stagedRatio * 100).toFixed(0)}% · luma ${report.metrics.lumaMean?.toFixed(1) ?? "?"} · sat ${report.metrics.saturationMean?.toFixed(1) ?? "?"} · centroid ${report.frame?.centroidShare !== undefined ? `${(report.frame.centroidShare * 100).toFixed(0)}%` : "?"}`;
     }
     case "board": {
       const report = readJson<{ entries: number; sheet: { width: number; height: number } | null }>(

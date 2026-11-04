@@ -46,6 +46,36 @@ export const PoseLibrarySchema = z.object({
   anchors: z.array(z.string().min(1)).default([]),
   /** The rig's arm lengths and hand box; optional for older libraries. */
   body: BodySchema.optional(),
+  /**
+   * The performance class. Optional so a legacy character still loads; the
+   * film identity check refuses a lead that has not declared one.
+   */
+  archetype: z.string().min(1).optional(),
+  stageRoles: z.array(z.string().min(1)).optional(),
+  appearance: z
+    .object({
+      faceStyle: z.string().min(1),
+      headLayers: z.number().int().min(1),
+      hairLayers: z.number().int().min(1),
+      bradMetal: z.string().min(1),
+      fingers: z.boolean(),
+    })
+    .strict()
+    .optional(),
+  /** Mira-type humans and creatures may omit the thumb. */
+  thumbOptional: z.boolean().optional(),
+  /** The drawn doll ratio, when the character has measured one. */
+  visualHeadToBody: z
+    .tuple([z.number().positive(), z.number().positive()])
+    .refine(([min, max]) => min < max, "visualHeadToBody min must be less than max")
+    .optional(),
+  headOrnamentDiameterPct: z
+    .tuple([z.number().min(0).max(1), z.number().min(0).max(1)])
+    .refine(
+      ([min, max]) => min < max,
+      "headOrnamentDiameterPct min must be less than max",
+    )
+    .optional(),
   /** Palette roles or explicit values; the sheet resolves roles through PAL. */
   colors: z.record(z.string()).default({}),
   poses: z.array(PoseSchema).min(8).max(12),

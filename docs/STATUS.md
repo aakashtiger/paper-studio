@@ -1,5 +1,18 @@
 # Paper Studio — status audit
 
+**Update 2026-11-04 (identity, current):** decision **0053** replaces the
+five-crop-mean identity gate with one strict nine-group `tokens.identity`, a
+painted **frame report** (`collage` writes `build/<id>/frame-report.json`), one
+`style:identity` verdict tied to score + identity + frame + video hashes, a
+preflight score/cast section, `render:film --check`, and **28 gate checks**
+(`preflight`, `closeUps`, `lra`, `soundContrast` added). The reference film is
+inside the film bands (100.9 / 21.8 / 12.6); the Uber film fails 17 findings and
+5 gate rows **by design** - its delivered MP4 and score are unchanged.
+`identity:accept` proves both. **492 tests**, typecheck clean. P0.9 is built;
+P0.7 is partial (probe output, resume/reuse guards, report requirements; the
+`reproduce` legacy marker remains); P0.5 remains parked. The 2026-10-29 / 10-31
+blocks below are historical.
+
 **Date:** 2026-10-29
 **Update 2026-10-31 (historical — the counts and the audio cut here are
 superseded by the 2026-11-01 blocks below):** The core system is now real. The

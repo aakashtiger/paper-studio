@@ -21,6 +21,13 @@ import { join, resolve } from "node:path";
 import { spawn } from "node:child_process";
 import { checkCollage, flatness, type CollageFrame } from "../src/engine/collage.js";
 import { pngSize } from "../src/engine/chrome.js";
+import {
+  analyzeRgb,
+  readRgb,
+  summarize,
+  type FrameReport,
+  type ProbeFrame,
+} from "../src/engine/frame-report.js";
 import { findFfmpeg, renderGrid } from "../src/engine/grid.js";
 import { packFontPath } from "../src/engine/plan.js";
 import { shotTimes } from "../src/engine/sampling.js";
@@ -42,7 +49,7 @@ type Probe = {
   frames: {
     time: number;
     textBoxes?: { text: string; x: number; y: number; w: number; h: number }[];
-    rigRecords?: { kind?: string; character?: string }[];
+    rigRecords?: ProbeFrame["rigRecords"];
   }[];
 };
 
@@ -141,6 +148,38 @@ async function main(): Promise<void> {
     width: size.width,
     height: size.height,
   });
+
+  // The frame report is the identity evidence. It uses the frames the collage
+  // already painted - no second paint pass - and the probe's own anchors.
+  const frameShots = frames.map((frame) => {
+    const png = join(framesDir, `t-${frame.time.toFixed(2).padStart(5, "0")}.png`);
+    const seen = probe.frames.find((entry) => Math.abs(entry.time - frame.time) < 1e-6);
+    return analyzeRgb({
+      rgb: readRgb(ffmpeg, png),
+      shot: frame.shot.id,
+      time: frame.time,
+      cast: frame.shot.direction.cast ?? [],
+      probe: seen as ProbeFrame | undefined,
+    });
+  });
+  const frameReport: FrameReport = {
+    $schema: "paper-studio/frame-report@1",
+    film: score.id,
+    score: `sha256:${createHash("sha256").update(readFileSync(scoreFile)).digest("hex")}`,
+    videoHash: null,
+    stage: "collage",
+    grid: { width: 480, height: 270 },
+    shots: frameShots,
+    summary: summarize(frameShots),
+  };
+  writeFileSync(
+    resolve(root, "build", score.id, "frame-report.json"),
+    `${JSON.stringify(frameReport, null, 2)}\n`,
+    "utf8",
+  );
+  console.log(
+    `frame-report: ${frameReport.summary.shots} shots · bars ${(frameReport.summary.barsLeftMax * 100).toFixed(1)}/${(frameReport.summary.barsRightMax * 100).toFixed(1)}% · centroid band ${(frameReport.summary.centroidShare * 100).toFixed(0)}% · local ${frameReport.summary.localContrastMedian.toFixed(1)}`,
+  );
 
   // 2. One page, in shot order, each tile carrying the shot it is.
   const missing = painted.filter((frame) => frame.sample.length === 0).map((frame) => frame.shot);

@@ -51,9 +51,9 @@ recorded, and anything not done moved to a parked list. This is that record.
 
 | Item | Why / what remains |
 |---|---|
-| **P0.5 — 7 read-only analysis agents + up to 4 rebuild worktrees** | parked by the user earlier. The single agent/critic pass and the gate are what shipped. |
-| **P0.7 — `reproduce`, `--skip-render`, `--from`, whole-film probes** | `gate:7` now fails on pending; `reproduce` still turns missing story/scenes into warnings for a film with an MP4, and the chain can still reuse a picture without proving every skipped report. |
-| **P0.9 — 3 s LU contrast, LRA, hand/face close-up count** | the mix measures loudness, true peak, duck, cue levels, declared silence, undeclared holes and tail; it does not yet measure the quietest 3 s against the loudest 3 s, gate LRA, or count close-ups. |
+| **P0.5 - 7 read-only analysis agents + up to 4 rebuild worktrees** | parked by the user earlier. The single agent/critic pass and the gate are what shipped. The analysis half still applies; the rebuild half is blocked until `canvas/recipes.js` is split and `manifest.ts` hashes more than that one file. |
+| **P0.7 - the `reproduce` legacy marker** | probe/draft output, `--skip-render`, `--from gate|review`, whole-film render requirements, gate type/rig score ties and `--allow-none` are now guarded. `reproduce` is still inferred from an existing MP4; the render refuses a whole-film paint without a `legacy` marker, but old scores are not edited. |
+| **P0.9 - 3 s LU contrast, LRA, hand/face close-up count** | built in 0053: LRA floor 4 LU, 3 s short-term contrast floor 15 LU, close-ups (>=55% height) 20-60% of shots. The Uber film is red on all three by design. |
 | **A semantic vision check** | `visual:check` is textual: it proves the brief names the subject and the recipe declares it can draw that subject. A person still judges the frame. |
 | **Exact Uber financials / take rate** | deliberately omitted; no number was invented. |
 | **Music** | no score/music track; narration + 9 code-generated cues. |
@@ -67,11 +67,8 @@ recorded, and anything not done moved to a parked list. This is that record.
 
 ## What is proven
 
-- `npm run film:review -- films/uber-model/score.json --gate --reuse` → **PASS**.
-- `gate:7` → **PASS · 24 checks · nothing manual**; picture `sha256:d00badf1fab…`.
-- `style:identity`: **9/10** shots staged; Δ luma −1.0, Δ saturation −4.1, palette 43.0, inside the pack bands.
+- `npm run identity:accept -- --ref ... --film films/uber-model/score.json` -> **PASS**: reference 100.9 / 21.8 / 12.6 inside the film bands; Uber fails 17 findings.
+- `style:identity -- films/uber-model/score.json --video` -> **FAIL**, 17 findings; the report is tied to score, identity, frame and video hashes.
+- `gate:7` -> **28 checks**, **FAIL** on `preflight`, `styleIdentity`, `closeUps`, `lra`, `soundContrast`. The Uber film is red by design; its MP4 and score are unchanged.
+- The reference film's surface remains the six crops; the film bands are the film's own.
 - ASR of the delivered file: **91/91 words, 100.0%**.
-- Delivered audio: **−14.1 LUFS / −2.3 dBTP**.
-- `npm test` → **476 tests**, typecheck clean.
-- The film is `films/uber-model/uber-model.mp4`; the one-sheet is
-  `build/uber-model/final-sheet.png`.

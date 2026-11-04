@@ -10,8 +10,9 @@
  */
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
 import { LIMITER_MAX_REDUCTION, MASTER_MAX_GAIN, measureLoudness, measureWithFilters, runFfmpeg } from "../src/engine/loudness.js";
 import { cueBand, cueDuckDb, cueSend, mixFilm } from "../src/engine/mix.js";
@@ -318,10 +319,60 @@ const pass =
   holesOk &&
   roomOk &&
   tailOk;
+/**
+ * 3 s short-term contrast on the master, in LU.
+ *
+ * Each window is a real `ebur128` integrated loudness of a 3 s PCM slice, not
+ * an RMS proxy. The last window is dropped so the tail fade cannot make the
+ * loudest/quietest gap look wide by measuring silence.
+ */
+function shortTermContrast(
+  ffmpeg: string,
+  master: string,
+  duration: number,
+): { contrastLu: number; loudest: number; quietest: number; windows: number } {
+  const dir = mkdtempSync(join(tmpdir(), "paper-st-"));
+  const values: number[] = [];
+  try {
+    for (let start = 0; start + 3 <= duration; start += 3) {
+      const segment = join(dir, `w-${start}.wav`);
+      runFfmpeg(ffmpeg, [
+        "-hide_banner",
+        "-y",
+        "-ss",
+        String(start),
+        "-t",
+        "3",
+        "-i",
+        master,
+        segment,
+      ]);
+      const measured = measureLoudness(ffmpeg, segment);
+      if (Number.isFinite(measured.lufs)) values.push(measured.lufs);
+    }
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+  const usable = values.length > 1 ? values.slice(0, -1) : values;
+  if (usable.length === 0) {
+    return { contrastLu: Number.NaN, loudest: Number.NaN, quietest: Number.NaN, windows: 0 };
+  }
+  const loudest = Math.max(...usable);
+  const quietest = Math.min(...usable);
+  return {
+    contrastLu: Number((loudest - quietest).toFixed(2)),
+    loudest: Number(loudest.toFixed(2)),
+    quietest: Number(quietest.toFixed(2)),
+    windows: usable.length,
+  };
+}
+
 const report = {
   film: score.id,
   target: { lufs: TARGET_LUFS, truePeak: TARGET_TP },
   measured: { lufs: measured.lufs, truePeak: measured.truePeak, lra: measured.lra },
+  /** The quietest and loudest 3 s window, measured on the master. */
+  shortTerm: shortTermContrast(ffmpeg, master, plan.duration),
   master: {
     gainDb: mastered.gainDb,
     limiterCeiling: Number((20 * Math.log10(mastered.ceiling)).toFixed(2)),

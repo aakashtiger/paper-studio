@@ -27,6 +27,10 @@ const allowNone = args.includes("--allow-none");
 
 const root = process.cwd();
 const score = FilmScoreSchema.parse(JSON.parse(readFileSync(resolve(root, file), "utf8").replace(/^\uFEFF/, "")));
+if (allowNone && score.legacy === undefined) {
+  console.error("audit:reaction: --allow-none is only for a legacy film; a new film must author word events");
+  process.exit(1);
+}
 const resolved = resolveFilm(score, resolve(root, "styles", score.style), root);
 if (resolved.errors.length > 0) {
   for (const error of resolved.errors) console.error(`error: ${error.message}`);
@@ -47,7 +51,7 @@ const result = checkReactions(
   lines.map((line) => ({ id: line.id, start: line.start })),
   score.fps,
 );
-const instrumented = result.reactions.length > 0 || allowNone;
+const instrumented = result.reactions.length > 0 || (allowNone && score.legacy !== undefined);
 const pass = instrumented && result.findings.length === 0;
 const report = {
   film: score.id,

@@ -1,52 +1,195 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { checkStyleIdentity, type CastLibraryFact } from "../src/engine/style-identity.js";
+import {
+  checkStyleIdentity,
+  type CastIdentity,
+  type CastLibraryFact,
+  type FrameSummary,
+} from "../src/engine/style-identity.js";
 
-const bands = { luma: 20, contrast: 25, saturation: 10, edges: 5, palette: 45 };
-const castRule = { max: 2, stagedRatio: 0.5, posesMin: 8, expressionsMin: 14, anchors: ["face", "hair", "hand-left", "hand-right", "foot-left", "foot-right"] };
-const delta = { luma: 1, contrast: -2, saturation: -3, edges: 0, palette: 30 };
-const cast: CastLibraryFact[] = [{
-  character: "Kiran",
-  rig: "worker@0.1.0",
-  poses: 8,
-  expressions: 14,
-  anchors: castRule.anchors,
-  body: true,
-  errors: [],
-}];
+const filmBands = {
+  lumaMean: [75, 130] as const,
+  saturationMean: [12, 35] as const,
+  edgesMean: [7.5, 17.5] as const,
+};
+const field = {
+  edgeBarMax: 0.08,
+  largestFlat: [0.04, 0.46] as const,
+  warmShare: [0.4, 0.9] as const,
+  blueShareMax: 0.2,
+  saturatedShare: [0.35, 0.7] as const,
+};
+const composition = {
+  subjectHeight: [0.129, 0.92] as const,
+  centroidX: [0.3, 0.75] as const,
+  centroidShare: 0.8,
+  heightSdMin: 15,
+  heightTiersMin: 3,
+  localContrastMin: 20,
+  localContrastMedian: 35,
+  localContrastShare: 0.75,
+};
+const castRule: CastIdentity = {
+  archetype: "paper-pop-performer",
+  stageRoles: ["star", "backing", "foil", "creature", "host"],
+  principals: { min: 1, max: 2 },
+  stagedShare: 0.85,
+  posesMin: 8,
+  expressionsMin: 14,
+  anchors: ["face", "hair", "hand-left", "hand-right", "foot-left", "foot-right"],
+  appearance: {
+    faceStyle: "drawn-cartoon",
+    headLayers: 3,
+    hairLayers: 3,
+    bradMetal: "#C68E2E",
+    fingers: false,
+  },
+};
+const metrics = { lumaMean: 100, saturationMean: 22, edgesMean: 12 };
+const frame: FrameSummary = {
+  shots: 10,
+  barsLeftMax: 0,
+  barsRightMax: 0,
+  barShotShare: 0,
+  plateShare: 0,
+  centroidShare: 0.9,
+  heightSd: 20,
+  heightTiers: 3,
+  closeUpShare: 0.5,
+  localContrastShare: 0.9,
+  localContrastMedian: 50,
+  blueOnBlueShare: 0,
+  warmShare: 0.7,
+  blueShare: 0.05,
+  saturatedShare: 0.5,
+  largestFlat: 0.2,
+  meanLuma: 100,
+};
+const cast: CastLibraryFact[] = [
+  {
+    character: "Kiran",
+    rig: "worker@0.1.0",
+    poses: 8,
+    expressions: 14,
+    anchors: castRule.anchors,
+    body: true,
+    archetype: castRule.archetype,
+    stageRoles: ["star"],
+    appearance: castRule.appearance,
+    errors: [],
+  },
+];
 
-test("a conforming cast and measured look pass", () => {
-  const result = checkStyleIdentity({ shots: 10, stagedShots: 6, cast, delta, bands, castRule });
+const input = {
+  shots: 10,
+  stagedShots: 9,
+  cast,
+  metrics,
+  filmBands,
+  field,
+  composition,
+  castRule,
+  frame,
+};
+
+test("a conforming cast, look and frame pass", () => {
+  const result = checkStyleIdentity(input);
   assert.deepEqual(result.findings, []);
+  assert.equal(result.stagedRatio, 0.9);
 });
 
-test("a new character with the same construction is allowed", () => {
-  const newCast: CastLibraryFact[] = [{ ...cast[0]!, character: "New Person", rig: "new-rig@0.1.0" }];
-  const result = checkStyleIdentity({ shots: 10, stagedShots: 6, cast: newCast, delta, bands, castRule });
+test("a new character with the same construction and archetype is allowed", () => {
+  const newCast: CastLibraryFact[] = [
+    { ...cast[0]!, character: "New Person", rig: "new-rig@0.1.0" },
+  ];
+  const result = checkStyleIdentity({ ...input, cast: newCast });
   assert.deepEqual(result.findings, []);
 });
 
 test("a film that stages no character is not the channel", () => {
-  const result = checkStyleIdentity({ shots: 10, stagedShots: 0, cast, delta, bands, castRule });
+  const result = checkStyleIdentity({ ...input, stagedShots: 0 });
   assert.ok(result.findings.some((finding) => finding.code === "identity:staged"));
 });
 
-test("a character without the pack's anchors or body is refused", () => {
-  const broken: CastLibraryFact[] = [{ ...cast[0]!, anchors: ["face"], body: false }];
-  const result = checkStyleIdentity({ shots: 10, stagedShots: 6, cast: broken, delta, bands, castRule });
-  assert.ok(result.findings.some((finding) => finding.code === "identity:cast"));
+test("a character without anchors, body, archetype or stage role is refused", () => {
+  const broken: CastLibraryFact[] = [
+    {
+      ...cast[0]!,
+      anchors: ["face"],
+      body: false,
+      archetype: undefined,
+      stageRoles: undefined,
+      appearance: undefined,
+    },
+  ];
+  const result = checkStyleIdentity({ ...input, cast: broken });
+  assert.ok(result.findings.filter((finding) => finding.code === "identity:cast").length >= 4);
 });
 
-test("a look outside the luma, saturation or palette band is refused", () => {
+test("a character with a different archetype is refused", () => {
+  const broken: CastLibraryFact[] = [{ ...cast[0]!, archetype: "office-worker" }];
+  const result = checkStyleIdentity({ ...input, cast: broken });
+  assert.ok(
+    result.findings.some(
+      (finding) =>
+        finding.code === "identity:cast" && finding.message.includes("office-worker"),
+    ),
+  );
+});
+
+test("a look outside the film bands is refused", () => {
   const result = checkStyleIdentity({
-    shots: 10,
-    stagedShots: 6,
-    cast,
-    delta: { ...delta, luma: 38, saturation: -25, palette: 83 },
-    bands,
-    castRule,
+    ...input,
+    metrics: { lumaMean: 145, saturationMean: 36, edgesMean: 10 },
   });
   assert.ok(result.findings.some((finding) => finding.code === "identity:luma"));
   assert.ok(result.findings.some((finding) => finding.code === "identity:saturation"));
-  assert.ok(result.findings.some((finding) => finding.code === "identity:palette"));
+  assert.ok(!result.findings.some((finding) => finding.code === "identity:edges"));
+});
+
+test("a null measurement is a failure, never a pass", () => {
+  const result = checkStyleIdentity({
+    ...input,
+    metrics: { lumaMean: null, saturationMean: 22, edgesMean: 12 },
+  });
+  assert.ok(result.findings.some((finding) => finding.code === "identity:unmeasured"));
+});
+
+test("no frame report is a failure", () => {
+  const result = checkStyleIdentity({ ...input, frame: null });
+  assert.ok(result.findings.some((finding) => finding.code === "identity:frames"));
+});
+
+test("the Uber-shaped frame fails every named axis", () => {
+  const uber: FrameSummary = {
+    shots: 10,
+    barsLeftMax: 0.217,
+    barsRightMax: 0.242,
+    barShotShare: 1,
+    plateShare: 1,
+    centroidShare: 0,
+    heightSd: 6.3,
+    heightTiers: 1,
+    closeUpShare: 1,
+    localContrastShare: 0.67,
+    localContrastMedian: 27.5,
+    blueOnBlueShare: 0.3,
+    warmShare: 0.77,
+    blueShare: 0.17,
+    saturatedShare: 0.45,
+    largestFlat: 0.25,
+    meanLuma: 152,
+  };
+  const result = checkStyleIdentity({ ...input, frame: uber });
+  const codes = new Set(result.findings.map((finding) => finding.code));
+  for (const code of [
+    "identity:bars",
+    "identity:fieldPlate",
+    "identity:centroidX",
+    "identity:heightRhythm",
+    "identity:localContrast",
+    "identity:blueOnBlue",
+  ] as const) {
+    assert.ok(codes.has(code), `expected ${code}`);
+  }
 });

@@ -1,0 +1,2344 @@
+{
+  "$schema": "paper-studio/style-identity@1",
+  "id": "paper-kpop",
+  "version": "1.3.0",
+  "status": "research-proposal",
+  "date": "2026-11-04",
+  "note": "Compact extension proposal for styles/paper-kpop/tokens.json, not a replacement identity file. The full evidence and prose are in KPOP-IDENTITY.md. Reference values (R) are evidence, not pass/fail bands.",
+  "reference": {
+    "film": "Y:\\NewVideoTest\\out\\claude-pop.mp4",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "frames": 4699,
+    "duration": 156.63,
+    "surfaceReference": "styles/paper-kpop/references/frames",
+    "evidence": "docs/research/identity",
+    "framesNote": "4698-4699 (rounding)"
+  },
+  "scopes": {
+    "I": "invariant for every film in this style",
+    "F": "the film chooses inside the declared range",
+    "T": "owned by the format (duration, aspect)",
+    "R": "observed in the reference film; evidence, not a rule",
+    "V": "variant allowed only when declared and signed",
+    "X": "forbidden"
+  },
+  "required": [
+    "identity.filmBands",
+    "identity.field",
+    "identity.composition",
+    "identity.cast.archetype",
+    "identity.cast.silhouette",
+    "identity.performance",
+    "identity.edit",
+    "identity.motifs",
+    "identity.forbidden",
+    "identity.tone"
+  ],
+  "identity": {
+    "envelope": {
+      "scope": "I",
+      "basis": "code",
+      "measure": "schema/score",
+      "source": "A 1",
+      "canvas": {
+        "value": [
+          1920,
+          1080
+        ],
+        "unit": "px"
+      },
+      "fps": {
+        "value": 30,
+        "unit": "fps"
+      },
+      "dimension": {
+        "value": "2.5d-layered",
+        "unit": "enum"
+      },
+      "projection": {
+        "value": "orthographic",
+        "unit": "enum"
+      },
+      "planes": {
+        "value": [
+          "background",
+          "midground",
+          "character",
+          "foreground",
+          "type"
+        ],
+        "unit": "list"
+      },
+      "cameraAxes": {
+        "value": [
+          "x",
+          "y",
+          "z",
+          "roll",
+          "shake"
+        ],
+        "unit": "list"
+      },
+      "perspective": {
+        "value": false,
+        "scope": "X"
+      },
+      "fov": {
+        "value": false,
+        "scope": "X"
+      },
+      "dof": {
+        "value": false,
+        "scope": "X"
+      },
+      "parallax": {
+        "value": false,
+        "scope": "V"
+      },
+      "durationFormats": {
+        "value": [
+          30,
+          45,
+          60,
+          156.6
+        ],
+        "unit": "s",
+        "scope": "T"
+      }
+    },
+    "medium": {
+      "scope": "I",
+      "basis": "code",
+      "measure": "render/frame probe",
+      "source": "A 3; section 3.2",
+      "paper": "#F2E8D5",
+      "paper2": "#E8DAC0",
+      "paper3": "#DCCBAF",
+      "ink": "#171310",
+      "fibre": {
+        "sheetPx": 1024,
+        "mottles": 90,
+        "mottleRadiusPx": [
+          40,
+          230
+        ],
+        "mottleAlpha": 0.035,
+        "fibres": 4200,
+        "fibreLengthPx": [
+          2,
+          24
+        ],
+        "fibreWidthPx": [
+          0.4,
+          1.3
+        ],
+        "fibreAlpha": [
+          0.05,
+          0.14
+        ],
+        "specks": 1500,
+        "speckPx": [
+          0.7,
+          2.5
+        ],
+        "speckAlpha": [
+          0.06,
+          0.14
+        ]
+      },
+      "grain": {
+        "sizePx": 512,
+        "alphaMax": 34,
+        "blend": "soft-light",
+        "hz": 24,
+        "seeded": true
+      },
+      "paperOverlay": {
+        "blend": "multiply",
+        "alpha": 0.5,
+        "offsetPx": [
+          0,
+          159
+        ],
+        "hz": 2
+      },
+      "grainOverlay": {
+        "blend": "soft-light",
+        "alpha": 0.45,
+        "offsetPx": [
+          0,
+          511
+        ],
+        "hz": 24
+      },
+      "halftone": {
+        "tilePx": 64,
+        "cellPx": [
+          14,
+          24
+        ],
+        "dot": [
+          0.4,
+          0.55
+        ],
+        "alpha": [
+          0.11,
+          0.18
+        ],
+        "angleRad": [
+          0.2,
+          0.7
+        ]
+      },
+      "vignette": {
+        "strength": 0.34,
+        "innerR": 194.4,
+        "outerR": 885.6
+      },
+      "tornEdge": {
+        "amplitudePx": [
+          3,
+          10
+        ],
+        "pointsLong": 14,
+        "pointsShort": 10,
+        "shareMax": 0.1,
+        "role": "accent"
+      },
+      "edgeMode": "cut default; torn accent",
+      "layerOrder": [
+        "paper",
+        "background",
+        "midground",
+        "character",
+        "foreground",
+        "halftone",
+        "hud",
+        "type",
+        "fibre",
+        "grain",
+        "vignette"
+      ],
+      "gloss": {
+        "value": false,
+        "scope": "X"
+      },
+      "print": {
+        "marginPx": 26,
+        "markPx": 16,
+        "markAlpha": 0.22,
+        "colourBars": 4,
+        "timecodeFps": 30
+      }
+    },
+    "palette": {
+      "scope": "I",
+      "basis": "film",
+      "measure": "palette/frame probe",
+      "source": "A 2; I 5",
+      "roles": [
+        "paper",
+        "ink",
+        "red",
+        "blue",
+        "acid",
+        "accent"
+      ],
+      "dayStage": {
+        "paper": "#F2E8D5",
+        "ink": "#171310",
+        "red": "#E8452A",
+        "blue": "#203FD8",
+        "acid": "#D9F24B",
+        "accent": "#F5B93F"
+      },
+      "nightStage": {
+        "paper": "#E8DAC0",
+        "ink": "#0C0A09",
+        "red": "#B92A16",
+        "blue": "#122A9B",
+        "acid": "#D9F24B",
+        "accent": "#FF5E9C"
+      },
+      "referenceDominant": [
+        "#EDAE3A",
+        "#CF4224",
+        "#5B0D09",
+        "#F3E7D1",
+        "#1F3CC4",
+        "#1C5648",
+        "#CCB490",
+        "#0C0805"
+      ],
+      "maxRolesLong": {
+        "value": 7,
+        "unit": "roles"
+      },
+      "maxRolesShort": {
+        "value": 5,
+        "unit": "roles",
+        "scope": "T",
+        "note": "supersedes pack maxColours 4 for a short"
+      },
+      "warmShare": {
+        "range": [
+          0.4,
+          0.9
+        ],
+        "unit": "ratio"
+      },
+      "blueShare": {
+        "range": [
+          0,
+          0.2
+        ],
+        "unit": "ratio",
+        "note": "film-wide band; one blue act is allowed up to 0.60 if the figure is warm and local contrast >= 20"
+      },
+      "blueFrameMax": {
+        "value": 0.6,
+        "unit": "ratio",
+        "scope": "V"
+      },
+      "blueMedianMax": {
+        "value": 0.05,
+        "unit": "ratio"
+      },
+      "saturatedShare": {
+        "range": [
+          0.35,
+          0.7
+        ],
+        "unit": "ratio"
+      },
+      "largestFlat": {
+        "range": [
+          0.04,
+          0.46
+        ],
+        "unit": "ratio"
+      },
+      "fieldShare": {
+        "range": [
+          0.18,
+          0.6
+        ],
+        "unit": "ratio"
+      },
+      "fieldRoles": {
+        "value": [
+          "paper",
+          "ink",
+          "red",
+          "blue",
+          "acid",
+          "accent",
+          "kraft",
+          "teal",
+          "oxblood",
+          "orange",
+          "green",
+          "pink",
+          "cream"
+        ],
+        "scope": "F"
+      },
+      "accentPerFrame": {
+        "value": 1,
+        "unit": "count"
+      },
+      "accentPerFilmMin": {
+        "value": 2,
+        "unit": "count"
+      },
+      "blueOnBlue": {
+        "value": false,
+        "scope": "X"
+      },
+      "figureBlueMax": {
+        "value": 0.3,
+        "unit": "ratio"
+      },
+      "localContrastMin": {
+        "value": 20,
+        "unit": "luma"
+      },
+      "localContrastMedian": {
+        "value": 35,
+        "unit": "luma"
+      },
+      "script": {
+        "value": "3-5 field roles, one per act; no repeat in the same position; at most one blue act",
+        "scope": "F"
+      }
+    },
+    "light": {
+      "scope": "I",
+      "basis": "code",
+      "measure": "schema/human",
+      "source": "A 4; section 3.4",
+      "model": "flat-print",
+      "key": "none; shadow direction down-right",
+      "paperShadow": {
+        "offsetPx": [
+          6,
+          10
+        ],
+        "alpha": 0.22,
+        "blurPx": 0,
+        "ratio": [
+          1.6,
+          1.8
+        ]
+      },
+      "objectEdgePx": [
+        1.5,
+        4
+      ],
+      "typeEdge": {
+        "ratio": 0.055,
+        "minPx": 2
+      },
+      "typeShadow": {
+        "x": 0.035,
+        "y": 0.0385,
+        "alpha": 0.26
+      },
+      "contactShadow": {
+        "radius": 0.065,
+        "height": 0.014,
+        "alpha": 0.22
+      },
+      "spotlight": {
+        "alpha": [
+          0.1,
+          0.18
+        ],
+        "lengthPx": [
+          820,
+          1150
+        ],
+        "w0Px": [
+          30,
+          40
+        ],
+        "w1Px": [
+          280,
+          520
+        ],
+        "scope": "F"
+      },
+      "glow": {
+        "blurPx": [
+          12,
+          34
+        ],
+        "scope": "F"
+      },
+      "ambientOcclusion": {
+        "value": false,
+        "scope": "X"
+      },
+      "halation": {
+        "value": false,
+        "scope": "X"
+      },
+      "softCastShadow": {
+        "value": false,
+        "scope": "X"
+      }
+    },
+    "edge": {
+      "scope": "I",
+      "basis": "code/film",
+      "measure": "frame probe",
+      "source": "A 4; I 7",
+      "limbPx": 2.1,
+      "objectPx": [
+        1.5,
+        4
+      ],
+      "silhouetteP10Px": {
+        "value": 5.6,
+        "basis": "film"
+      },
+      "typeEdgeRatio": 0.055,
+      "typeEdgeMinPx": 2,
+      "stickerPx": 2.2,
+      "bradRadiusPx": [
+        3,
+        4.6
+      ],
+      "risoOffsetPx": {
+        "range": [
+          1,
+          3
+        ],
+        "scope": "V"
+      },
+      "bevel": {
+        "value": false,
+        "scope": "X"
+      }
+    },
+    "composition": {
+      "scope": "I",
+      "basis": "film",
+      "measure": "frame probe bbox",
+      "source": "I 3-4; section 3.6",
+      "subjectHeight": {
+        "range": [
+          0.13,
+          0.92
+        ],
+        "unit": "ratio",
+        "p50": 0.552
+      },
+      "subjectWidth": {
+        "range": [
+          0.04,
+          0.142
+        ],
+        "unit": "ratio",
+        "p50": 0.071
+      },
+      "centroidX": {
+        "range": [
+          0.3,
+          0.75
+        ],
+        "unit": "ratio",
+        "p50": 0.55,
+        "centreThirdShare": 0.78
+      },
+      "centroidY": {
+        "range": [
+          0.38,
+          0.66
+        ],
+        "unit": "ratio",
+        "p50": 0.52
+      },
+      "floorLine": {
+        "range": [
+          0.65,
+          0.88
+        ],
+        "unit": "ratio",
+        "p50": 0.778
+      },
+      "castFeetY": {
+        "range": [
+          1000,
+          1012
+        ],
+        "unit": "px",
+        "basis": "code"
+      },
+      "edgeBarMax": {
+        "value": 0.08,
+        "unit": "ratio"
+      },
+      "negativeSpace": {
+        "value": 0.97,
+        "unit": "ratio",
+        "note": "not-subject area, not empty space"
+      },
+      "textArea": {
+        "range": [
+          0.02,
+          0.06
+        ],
+        "unit": "ratio"
+      },
+      "relationship": {
+        "value": [
+          "solo",
+          "duet",
+          "lead+chorus",
+          "crowd"
+        ],
+        "scope": "F"
+      },
+      "duetChorusMin": {
+        "value": 1,
+        "unit": "shot",
+        "basis": "song film"
+      },
+      "framingMix": {
+        "value": {
+          "wide": [
+            0.25,
+            0.4
+          ],
+          "medium": [
+            0.1,
+            0.25
+          ],
+          "close": [
+            0.4,
+            0.55
+          ],
+          "extreme": [
+            0,
+            0.1
+          ]
+        },
+        "unit": "ratio",
+        "scope": "F"
+      },
+      "heightTiers": {
+        "value": 3,
+        "unit": "count"
+      },
+      "heightSdMin": {
+        "value": 15,
+        "unit": "percentage points"
+      }
+    },
+    "field": {
+      "scope": "I",
+      "basis": "film",
+      "measure": "frame probe",
+      "source": "I 5; section 3.8",
+      "share": {
+        "range": [
+          0.18,
+          0.6
+        ],
+        "unit": "ratio"
+      },
+      "largestFlat": {
+        "range": [
+          0.04,
+          0.46
+        ],
+        "unit": "ratio"
+      },
+      "edgeBarMax": {
+        "value": 0.08,
+        "unit": "ratio"
+      },
+      "noCreamPlateWithWings": {
+        "value": true,
+        "scope": "X"
+      },
+      "fullBleed": {
+        "value": true
+      },
+      "horizonPx": {
+        "range": [
+          780,
+          900
+        ],
+        "unit": "px"
+      },
+      "fieldColoursPerFilm": {
+        "value": [
+          3,
+          5
+        ],
+        "unit": "count",
+        "scope": "F"
+      },
+      "sameFieldConsecutiveActs": {
+        "value": false,
+        "scope": "X"
+      }
+    },
+    "cast": {
+      "scope": "I",
+      "basis": "code/film",
+      "measure": "library/frame probe",
+      "source": "B 2, B 9; section 3.9",
+      "archetype": "paper-pop-performer",
+      "characterSpecificityMin": 3,
+      "stageRoles": [
+        "star",
+        "backing",
+        "foil",
+        "creature",
+        "host"
+      ],
+      "performerTest": [
+        "bradded two-bone paper construction, 580-760 units, 7-7.5 construction heads",
+        "3+ distinguishing features and a declared stage role (star/backing/foil/creature/host)",
+        "drawn cartoon face with 10 eyes x 7 mouths, or an equivalent readable mask/creature face",
+        "three-layer head stack and a head styling (ornament, hair silhouette, glasses, hat, mask, ears)",
+        "8+ poses and 14+ expressions, including bounce, lean, head tilt, arm L/R, leg L/R",
+        "can hold the hero, lead, support and inset tiers",
+        "stage role: star, backing, foil, creature or host (an MC, not a narrator)"
+      ],
+      "silhouette": {
+        "headOrnamentPct": [
+          0.22,
+          0.28
+        ],
+        "torsoPct": [
+          0.3,
+          0.35
+        ],
+        "legsPct": [
+          0.35,
+          0.4
+        ],
+        "shoulderPct": [
+          0.18,
+          0.22
+        ],
+        "handPct": [
+          0.013,
+          0.037
+        ],
+        "bootPct": [
+          0.08,
+          0.12
+        ],
+        "note": "doll proportions, not a realistic 7.5-head human"
+      },
+      "faceStyle": "drawn cartoon: lashes, irises, lips, blush; not geometric dots or photo",
+      "principals": {
+        "range": [
+          1,
+          2
+        ],
+        "unit": "count"
+      },
+      "chorus": {
+        "range": [
+          0,
+          5
+        ],
+        "unit": "count",
+        "scope": "F"
+      },
+      "totalMax": {
+        "value": 7,
+        "unit": "count"
+      },
+      "heightUnits": {
+        "range": [
+          580,
+          760
+        ],
+        "unit": "world px at s=1"
+      },
+      "headToBody": {
+        "range": [
+          7,
+          7.5
+        ],
+        "unit": "construction heads"
+      },
+      "joints": [
+        "hip",
+        "waist",
+        "shoulderL",
+        "shoulderR",
+        "elbowL",
+        "elbowR",
+        "wristL",
+        "neck",
+        "headPivot",
+        "headCentre",
+        "ankleL",
+        "ankleR",
+        "wristR",
+        "kneeL",
+        "kneeR"
+      ],
+      "brads": {
+        "value": true
+      },
+      "limbTaper": {
+        "range": [
+          0.78,
+          0.82
+        ],
+        "unit": "ratio"
+      },
+      "hand": {
+        "widthRatio": [
+          0.013,
+          0.037
+        ],
+        "thumbRatio": [
+          0.4,
+          0.5
+        ],
+        "fingers": false
+      },
+      "posesMin": {
+        "value": 8,
+        "unit": "count"
+      },
+      "expressionsMin": {
+        "value": 14,
+        "unit": "count"
+      },
+      "hairLayers": {
+        "value": 3,
+        "unit": "layers"
+      },
+      "petals": {
+        "range": [
+          10,
+          24
+        ],
+        "unit": "count",
+        "scope": "F"
+      },
+      "petalsDefault": {
+        "value": 22,
+        "unit": "count",
+        "scope": "F"
+      },
+      "skin": {
+        "values": [
+          "#F0C9A4",
+          "#D9A06B",
+          "#8C5A3C"
+        ],
+        "scope": "F"
+      },
+      "hair": {
+        "values": [
+          "#171319",
+          "#3B2416",
+          "#C9B896"
+        ],
+        "scope": "F"
+      },
+      "bradMetal": {
+        "value": "#C68E2E"
+      },
+      "blink": {
+        "frames": 4,
+        "minS": 0.5,
+        "maxS": 2.3,
+        "hidesSwap": true
+      },
+      "idle": {
+        "bobPct": 0.006,
+        "tiltDeg": 1.2,
+        "headTiltDeg": 1.5
+      },
+      "scaleLadder": {
+        "value": {
+          "hero": [
+            1.1,
+            1.25
+          ],
+          "lead": [
+            0.86,
+            1.02
+          ],
+          "coLead": [
+            0.62,
+            0.95
+          ],
+          "support": [
+            0.46,
+            0.64
+          ],
+          "chorus": [
+            0.5,
+            0.68
+          ],
+          "inset": [
+            0.25,
+            0.48
+          ]
+        },
+        "scope": "F"
+      },
+      "photoFace": {
+        "value": false,
+        "scope": "X"
+      },
+      "visualHeadToBody": {
+        "range": [
+          3.4,
+          4.5
+        ],
+        "unit": "visual heads",
+        "note": "head + ornament; construction ratio is 7-7.5; reference desk figure 4.3, chorus 3.4"
+      },
+      "headPct": {
+        "range": [
+          0.22,
+          0.28
+        ],
+        "unit": "ratio of height"
+      },
+      "headOrnamentDiameterPct": {
+        "range": [
+          0.45,
+          0.65
+        ],
+        "unit": "ratio of height"
+      },
+      "thumbOptional": true,
+      "creatureBranch": "mask/creature face allowed; body may be non-human; thumb optional; still needs stage role, 8 poses, 14 expressions, signature move",
+      "note": "pack maxCast 2 applies to principals; chorus is separate; total 7"
+    },
+    "movement": {
+      "scope": "I",
+      "basis": "code",
+      "measure": "frame probe/rig audit",
+      "source": "B 3; section 3.11",
+      "poseKeys": [
+        "bounce",
+        "sway",
+        "lean",
+        "headTilt",
+        "headTurn",
+        "hairSwing",
+        "petalDrift",
+        "armL",
+        "armR",
+        "legL",
+        "legR",
+        "flip"
+      ],
+      "bouncePx": {
+        "range": [
+          -24,
+          -3
+        ],
+        "scope": "F"
+      },
+      "leanRad": {
+        "range": [
+          0.02,
+          0.3
+        ],
+        "scope": "F"
+      },
+      "headTiltRad": {
+        "range": [
+          0.02,
+          0.12
+        ],
+        "scope": "F"
+      },
+      "hairSwingPx": {
+        "range": [
+          5,
+          26
+        ],
+        "scope": "F"
+      },
+      "armsRad": {
+        "range": [
+          -2.95,
+          2.9
+        ],
+        "scope": "F"
+      },
+      "boilHz": 12,
+      "overshoot": [
+        1.03,
+        1.06
+      ],
+      "anticipationFrames": {
+        "range": [
+          2,
+          4
+        ],
+        "scope": "V"
+      },
+      "squash": {
+        "range": [
+          0.96,
+          1.04
+        ],
+        "scope": "V"
+      },
+      "easings": [
+        "easeOut",
+        "easeInOut",
+        "backOut",
+        "easeIn"
+      ],
+      "gestureCount": {
+        "range": [
+          1,
+          3
+        ],
+        "unit": "per shot"
+      },
+      "breakdowns": {
+        "range": [
+          1,
+          2
+        ],
+        "unit": "per transition"
+      },
+      "freezeBudgetS": 0.4,
+      "hairLagFrames": [
+        2,
+        4
+      ],
+      "reactionFrames": [
+        0,
+        3
+      ],
+      "exitRatio": [
+        0.4,
+        0.5
+      ],
+      "overlap": [
+        0.3,
+        0.5
+      ],
+      "stagger": {
+        "letterFrames": 1,
+        "wordMs": [
+          60,
+          120
+        ],
+        "itemMs": [
+          40,
+          80
+        ]
+      }
+    },
+    "performance": {
+      "scope": "I",
+      "basis": "code/film",
+      "measure": "score/frame probe/human",
+      "source": "section 3.30; PRODUCTION.md; blind-test.md",
+      "modes": [
+        "stage-show",
+        "presenter-show",
+        "creature-show"
+      ],
+      "defaultMode": "stage-show",
+      "stageShareMin": {
+        "value": 0.6,
+        "unit": "ratio",
+        "note": "song film; >=1 stage shot and >=1 per act for a 30 s presenter show"
+      },
+      "star": {
+        "value": 1,
+        "unit": "count"
+      },
+      "chorus": {
+        "range": [
+          0,
+          5
+        ],
+        "unit": "count"
+      },
+      "audience": {
+        "range": [
+          0,
+          160
+        ],
+        "unit": "count"
+      },
+      "spotlights": {
+        "range": [
+          1,
+          2
+        ],
+        "unit": "count"
+      },
+      "entrance": {
+        "value": 1,
+        "unit": "count"
+      },
+      "exit": {
+        "value": 1,
+        "unit": "count"
+      },
+      "signatureMove": {
+        "value": 1,
+        "unit": "count"
+      },
+      "formationChangeBeats": {
+        "range": [
+          2,
+          4
+        ],
+        "unit": "beats"
+      },
+      "showTest": "remove the story: is there still a performance?",
+      "pureFable": {
+        "value": false,
+        "scope": "X"
+      },
+      "modeScopes": {
+        "stage-show": "I for a song film",
+        "presenter-show": "V, signed",
+        "creature-show": "V, signed"
+      },
+      "performerPresenceMin": {
+        "value": 0.85,
+        "unit": "ratio"
+      },
+      "detailShareMax": {
+        "value": 0.4,
+        "unit": "ratio"
+      },
+      "giantObject": {
+        "value": 1,
+        "unit": "count"
+      },
+      "stageShotPerAct": {
+        "value": 1,
+        "unit": "count"
+      },
+      "referenceMode": {
+        "value": "presenter-show with a stage finale",
+        "scope": "R"
+      },
+      "bpm": {
+        "value": 88,
+        "offsetS": 0.21,
+        "bar": 4,
+        "unit": "BPM"
+      }
+    },
+    "sets": {
+      "scope": "I",
+      "basis": "code",
+      "measure": "render/frame probe",
+      "source": "B 5, B 10; section 3.8",
+      "layers": 5,
+      "horizonPx": [
+        780,
+        900
+      ],
+      "feetPx": [
+        1000,
+        1012
+      ],
+      "floor": {
+        "radialLines": 17,
+        "horizontals": 5,
+        "tornLipPx": 22
+      },
+      "sunburst": {
+        "range": [
+          22,
+          40
+        ],
+        "unit": "rays",
+        "scope": "F"
+      },
+      "halftoneCellPx": [
+        14,
+        24
+      ],
+      "families": {
+        "value": [
+          "stage",
+          "arena",
+          "theatre",
+          "lab",
+          "gym",
+          "data-centre",
+          "desert",
+          "cliff",
+          "room",
+          "desk",
+          "void"
+        ],
+        "scope": "F"
+      }
+    },
+    "props": {
+      "scope": "I",
+      "basis": "code",
+      "measure": "frame probe/score",
+      "source": "B 6, B 10; section 3.12",
+      "sizeClass": {
+        "handheld": [
+          0.08,
+          0.3
+        ],
+        "body": [
+          0.3,
+          0.5
+        ],
+        "hero": [
+          0.4,
+          0.9
+        ],
+        "unit": "ratio of frame height",
+        "scope": "F"
+      },
+      "gripPx": 11,
+      "motifRecurrence": 3,
+      "floating": {
+        "value": false,
+        "scope": "X"
+      },
+      "textPx": [
+        9,
+        24
+      ]
+    },
+    "motifs": {
+      "scope": "F",
+      "basis": "film",
+      "measure": "score/frame probe",
+      "source": "B 8; section 3.13",
+      "library": [
+        "sunburst",
+        "paper-sun",
+        "petal",
+        "halo",
+        "torn-strip",
+        "tape",
+        "stamp",
+        "print-marks",
+        "iris",
+        "confetti",
+        "speed-lines",
+        "paperclip",
+        "meter"
+      ],
+      "perFilm": [
+        3,
+        5
+      ],
+      "uses": [
+        2,
+        5
+      ],
+      "maxShotShare": 0.4,
+      "castOrnamentExempt": true,
+      "semanticObjectMin": 1,
+      "defaultOpener": {
+        "value": false,
+        "scope": "X"
+      },
+      "sameSetAsLastFilm": {
+        "value": false,
+        "scope": "X"
+      }
+    },
+    "camera": {
+      "scope": "I",
+      "basis": "code/target",
+      "measure": "score/probe",
+      "source": "A 5; B 7; section 3.14",
+      "model": "2d-similarity",
+      "moves": [
+        "static",
+        "push_in",
+        "pull_back",
+        "crash_zoom",
+        "pan",
+        "tilt",
+        "track",
+        "orbit",
+        "whip",
+        "handheld",
+        "world"
+      ],
+      "anchor": {
+        "value": [
+          960,
+          540
+        ],
+        "unit": "px"
+      },
+      "movingShare": {
+        "range": [
+          0.9,
+          1
+        ],
+        "unit": "ratio",
+        "basis": "target"
+      },
+      "pushPullShare": {
+        "range": [
+          0.3,
+          0.45
+        ],
+        "unit": "ratio"
+      },
+      "lateralShare": {
+        "range": [
+          0.15,
+          0.25
+        ],
+        "unit": "ratio"
+      },
+      "orbitShare": {
+        "range": [
+          0.1,
+          0.2
+        ],
+        "unit": "ratio"
+      },
+      "tiltShare": {
+        "range": [
+          0.05,
+          0.15
+        ],
+        "unit": "ratio"
+      },
+      "crashShare": {
+        "range": [
+          0.05,
+          0.15
+        ],
+        "unit": "ratio"
+      },
+      "staticMax": {
+        "value": 0.1,
+        "unit": "ratio"
+      },
+      "handheldMax": {
+        "value": 0.05,
+        "unit": "ratio"
+      },
+      "worldMax": {
+        "value": 0.15,
+        "unit": "ratio"
+      },
+      "distinctMovesShort": {
+        "range": [
+          4,
+          6
+        ],
+        "unit": "count",
+        "scope": "T"
+      },
+      "distinctMovesLong": {
+        "range": [
+          6,
+          10
+        ],
+        "unit": "count",
+        "scope": "T"
+      },
+      "maxRun": {
+        "value": 2,
+        "unit": "shots"
+      },
+      "zRange": {
+        "range": [
+          0.84,
+          3.55
+        ],
+        "unit": "scale"
+      },
+      "crashMax": {
+        "value": 8,
+        "unit": "scale",
+        "scope": "V",
+        "basis": "reference-comparison"
+      },
+      "rollDeg": {
+        "range": [
+          -4,
+          7.5
+        ],
+        "unit": "deg"
+      },
+      "shakePx": {
+        "range": [
+          0,
+          12
+        ],
+        "unit": "px",
+        "scope": "F"
+      },
+      "shakeRadPerSec": {
+        "value": [
+          71,
+          63
+        ],
+        "unit": "rad/s"
+      },
+      "holdCreep": {
+        "value": 0.0002,
+        "unit": "ratio/frame"
+      },
+      "pushCreep": {
+        "value": 0.0006,
+        "unit": "ratio/frame"
+      },
+      "kick": {
+        "px": [
+          6,
+          10
+        ],
+        "frames": 7,
+        "scope": "F"
+      },
+      "travel": {
+        "pushDz": [
+          0.03,
+          0.25
+        ],
+        "crashDz": [
+          0.5,
+          3
+        ],
+        "panPx": [
+          24,
+          600
+        ],
+        "tiltPx": [
+          18,
+          400
+        ],
+        "trackPx": [
+          100,
+          800
+        ],
+        "orbitDz": [
+          0.05,
+          0.12
+        ]
+      },
+      "seam": {
+        "speedJump": 0.35,
+        "accelJump": 0.5,
+        "directionTurnDeg": 90,
+        "cutAtRestMax": 0.5,
+        "cutOnMotionMin": 0.4
+      },
+      "motionBlur": {
+        "value": 0,
+        "scope": "X"
+      },
+      "byBeat": {
+        "hook": "orbit",
+        "setup": "pan",
+        "escalate": "push_in",
+        "turn": "pull_back",
+        "release": "pull_back",
+        "button": "push_in",
+        "scope": "F"
+      },
+      "keys": {
+        "value": [
+          "t",
+          "x",
+          "y",
+          "z",
+          "roll"
+        ],
+        "scope": "F",
+        "note": "proposed score extension for pan/tilt/roll; from/to remains the z shorthand"
+      },
+      "note": "11 moves are the allowed vocabulary; a film uses 4-6 short / 6-10 long"
+    },
+    "edit": {
+      "scope": "I",
+      "basis": "film",
+      "measure": "preflight/frame audit",
+      "source": "B 7; C 1; I 2; section 3.15",
+      "medianS": {
+        "range": [
+          2.4,
+          3.2
+        ],
+        "unit": "s"
+      },
+      "p10S": {
+        "range": [
+          1.2,
+          1.8
+        ],
+        "unit": "s"
+      },
+      "p90S": {
+        "range": [
+          4.4,
+          5
+        ],
+        "unit": "s"
+      },
+      "minS": {
+        "value": 0.6,
+        "unit": "s"
+      },
+      "maxS": {
+        "value": 6.2,
+        "unit": "s"
+      },
+      "cutsPerMinute": {
+        "range": [
+          18,
+          24
+        ],
+        "unit": "cuts/min"
+      },
+      "distribution": {
+        "target": {
+          "under1": 0.04,
+          "oneToTwo": 0.33,
+          "twoToThree": 0.15,
+          "threeToFive": 0.41,
+          "overFive": 0.07
+        },
+        "tolerance": 0.03,
+        "note": "targets, not a strict partition; a 10-13 shot short cannot have 4% under 1 s; use 0-8% for short formats"
+      },
+      "chorusS": {
+        "range": [
+          1.58,
+          2.2
+        ],
+        "unit": "s"
+      },
+      "verseS": {
+        "range": [
+          3,
+          5
+        ],
+        "unit": "s"
+      },
+      "microShotS": {
+        "range": [
+          0.22,
+          0.66
+        ],
+        "unit": "s",
+        "scope": "F",
+        "note": "graphic device, not a scene"
+      },
+      "cutOnWord": {
+        "range": [
+          0.8,
+          0.95
+        ],
+        "unit": "ratio"
+      },
+      "holdMaxS": {
+        "value": 0.4,
+        "unit": "s"
+      },
+      "lastHoldMaxS": {
+        "value": 2,
+        "unit": "s"
+      },
+      "hardCutShare": {
+        "range": [
+          0.8,
+          0.9
+        ],
+        "unit": "ratio"
+      },
+      "designedTransitionShare": {
+        "range": [
+          0.1,
+          0.2
+        ],
+        "unit": "ratio"
+      },
+      "transitions": {
+        "iris": {
+          "share": [
+            0.08,
+            0.15
+          ],
+          "durationS": [
+            0.17,
+            0.44
+          ],
+          "radiusPx": [
+            8,
+            1500
+          ],
+          "featherPx": [
+            26,
+            120
+          ]
+        },
+        "flash": {
+          "share": [
+            0,
+            0.08
+          ],
+          "durationS": [
+            0.14,
+            0.44
+          ],
+          "alpha": [
+            0.22,
+            1
+          ]
+        },
+        "wipe": {
+          "share": [
+            0,
+            0.04
+          ],
+          "durationS": [
+            0.13,
+            0.3
+          ]
+        },
+        "match_cut": {
+          "share": [
+            0.02,
+            0.06
+          ],
+          "durationS": [
+            0,
+            0
+          ],
+          "silhouetteIou": 0.8,
+          "scaleRatio": [
+            0.9,
+            1.11
+          ],
+          "angleDeltaDeg": 5,
+          "directionDot": 0.9,
+          "carrier": "a named paper edge or object"
+        },
+        "hold": {
+          "share": [
+            0,
+            0.04
+          ],
+          "durationS": [
+            0,
+            2
+          ]
+        },
+        "note": "iris/flash/wipe/match/hold are alternatives on a cut; designedTransitionShare is the sum of the chosen kinds, not the sum of all rows"
+      },
+      "dissolve": {
+        "value": false,
+        "scope": "X"
+      },
+      "formats": {
+        "30s": {
+          "shots": [
+            10,
+            13
+          ],
+          "medianS": [
+            2.4,
+            3.2
+          ],
+          "minS": 1.2,
+          "maxS": 5,
+          "cutsPerMin": [
+            18,
+            24
+          ],
+          "scope": "T",
+          "distribution": {
+            "under1": [
+              0,
+              0
+            ],
+            "oneToTwo": [
+              0.25,
+              0.35
+            ],
+            "twoToThree": [
+              0.15,
+              0.25
+            ],
+            "threeToFive": [
+              0.35,
+              0.45
+            ],
+            "overFive": [
+              0.05,
+              0.15
+            ]
+          }
+        },
+        "45s": {
+          "shots": [
+            14,
+            18
+          ],
+          "medianS": [
+            2.5,
+            3.2
+          ],
+          "minS": 1.2,
+          "maxS": 5.2,
+          "cutsPerMin": [
+            17,
+            23
+          ],
+          "scope": "T"
+        },
+        "60s": {
+          "shots": [
+            18,
+            23
+          ],
+          "medianS": [
+            2.6,
+            3.2
+          ],
+          "minS": 1.2,
+          "maxS": 5.5,
+          "cutsPerMin": [
+            17,
+            22
+          ],
+          "scope": "T"
+        },
+        "156s": {
+          "shots": [
+            48,
+            57
+          ],
+          "medianS": [
+            2.8,
+            3.1
+          ],
+          "minS": 0.6,
+          "maxS": 6.2,
+          "cutsPerMin": [
+            18,
+            22
+          ],
+          "scope": "T"
+        }
+      }
+    },
+    "motion": {
+      "scope": "I",
+      "basis": "target",
+      "measure": "motion probe",
+      "source": "J 9/10; section 3.16",
+      "actionsPerShot": [
+        1,
+        3
+      ],
+      "nonCameraAction": 1,
+      "paperEventPerAct": {
+        "value": 1,
+        "scope": "F"
+      },
+      "motionFloor": 0.6,
+      "freezeBudgetS": 0.4,
+      "holdCreep": 0.0002,
+      "overshoot": [
+        1.03,
+        1.06
+      ],
+      "anticipationFrames": {
+        "range": [
+          2,
+          4
+        ],
+        "scope": "V"
+      },
+      "squash": {
+        "range": [
+          0.96,
+          1.04
+        ],
+        "scope": "V"
+      }
+    },
+    "type": {
+      "scope": "I",
+      "basis": "code/film",
+      "measure": "type audit",
+      "source": "A 8; section 3.19",
+      "families": {
+        "display": "Anton",
+        "body": "Archivo Black",
+        "serif": "Instrument Serif Italic",
+        "caption": "DM Mono",
+        "annotation": "Permanent Marker",
+        "korean": "Black Han Sans"
+      },
+      "size16x9": {
+        "display": [
+          92,
+          376
+        ],
+        "body": [
+          44,
+          84
+        ],
+        "subtitle": 31,
+        "label": [
+          7,
+          18
+        ],
+        "sticker": [
+          12,
+          62
+        ],
+        "monogram": [
+          72,
+          160
+        ],
+        "circular": [
+          24,
+          26
+        ],
+        "vertical": 72
+      },
+      "size9x16": {
+        "display": 56,
+        "body": 24,
+        "caption": 16,
+        "label": 14,
+        "monogram": 32,
+        "floorPx": 14,
+        "platformBands": {
+          "topEmptyPx": 168,
+          "copyTopPx": 168,
+          "copyBottomPx": 1330,
+          "decorationBelowPx": 1330
+        },
+        "scope": "T"
+      },
+      "treatment": {
+        "tracking": 0.01,
+        "charRot": 0.035,
+        "charY": 0.012,
+        "edge": 0.055,
+        "edgeMinPx": 2,
+        "shadowX": 0.035,
+        "shadowY": 0.0385,
+        "shadowAlpha": 0.26,
+        "boilHz": 12,
+        "appear": [
+          0.55,
+          1
+        ]
+      },
+      "subtitleBox": {
+        "x": 84,
+        "y": 992,
+        "widthMax": 1300,
+        "height": 62,
+        "wordsStart": 64,
+        "wordGap": 9,
+        "activeLift": 5,
+        "progressWidth": 40,
+        "progressHeight": 2,
+        "maxWords": 9,
+        "maxChars": 54
+      },
+      "displayArea": {
+        "range": [
+          0.08,
+          0.25
+        ],
+        "unit": "ratio"
+      },
+      "hooksPerFilm": {
+        "range": [
+          2,
+          5
+        ],
+        "unit": "count",
+        "scope": "F"
+      },
+      "maxWords": 8,
+      "maxLinesDisplay": 3,
+      "maxLinesSubtitle": 1,
+      "maxSystems": 2,
+      "maxBoxes": 2,
+      "reading": "max(1.8, speech + 0.6)",
+      "underline": {
+        "enabled": true,
+        "kind": "hand-drawn-red-squiggle-or-3px-active-rule",
+        "offsetPx": [
+          6,
+          10
+        ],
+        "animate": "progress-or-none"
+      },
+      "behaviours": {
+        "value": [
+          "stack",
+          "stamp",
+          "slide",
+          "fold",
+          "eaten",
+          "scatter",
+          "drop"
+        ],
+        "scope": "F"
+      },
+      "lyricWall": {
+        "value": ">8 words of narrative copy, or >3 display lines of different words; a repeated single word as texture is allowed",
+        "scope": "X"
+      },
+      "textOverFace": {
+        "value": false,
+        "scope": "X"
+      },
+      "uiCard": {
+        "value": false,
+        "scope": "X"
+      },
+      "subtitleBand9x16": {
+        "x": 0.12,
+        "y": 0.34,
+        "unit": "ratio",
+        "scope": "T"
+      },
+      "subjectPriority": "performer > type; if they compete, move the type",
+      "maxWordsDisplay": 8,
+      "maxWordsSubtitle": 9,
+      "note": "31 px is 16:9; 16 px at 9:16; the 69 px audit floor is 14 px at 390 on a 1920-wide frame; on a 1080-wide 9:16 frame the equivalent is 38.8 px"
+    },
+    "interaction": {
+      "scope": "I",
+      "basis": "code",
+      "measure": "score/probe",
+      "source": "B 3.4, B 10.3; section 3.20",
+      "gripPx": 11,
+      "feet": "grounded, one shadow, support ankle locked",
+      "eyeline": "shared, looks at target",
+      "contactRequired": true,
+      "crowd": "frozen except on cue",
+      "floatingProp": {
+        "value": false,
+        "scope": "X"
+      },
+      "clippedHand": {
+        "value": false,
+        "scope": "X"
+      },
+      "mirroredBadge": {
+        "value": false,
+        "scope": "X"
+      }
+    },
+    "sound": {
+      "scope": "I",
+      "basis": "code/film",
+      "measure": "mix/gate",
+      "source": "C 8; docs/GATES.md; section 3.21",
+      "modes": [
+        "song-led",
+        "voice-led"
+      ],
+      "songFilmDefault": "song-led",
+      "voiceLedRequires": "presenter-show",
+      "song": {
+        "lufs": -15.6,
+        "lra": 6,
+        "truePeak": -3.7,
+        "addedSfx": false,
+        "lines": 46,
+        "words": 227,
+        "wpm": 97.8,
+        "scope": "R",
+        "note": "transcript values; authored lyrics 45 lines / 213 words; loudness measured on the 720p comparison, verify on canonical"
+      },
+      "voice": {
+        "lufs": -14,
+        "truePeak": -1.5,
+        "duckDb": [
+          4,
+          8
+        ],
+        "eventUnderVoiceDb": -6,
+        "silenceDbfs": -50,
+        "tailDbfs": -60,
+        "roomToneDbfsMax": -38
+      },
+      "cueKinds": [
+        "paper",
+        "wood",
+        "metal",
+        "glass",
+        "cloth",
+        "crowd"
+      ],
+      "cueDensityS": 1.5,
+      "memeSounds": {
+        "value": false,
+        "scope": "X"
+      }
+    },
+    "voice": {
+      "scope": "I",
+      "basis": "code/film",
+      "measure": "preflight",
+      "source": "0043/0044; section 3.22",
+      "narratedWpm": [
+        180,
+        190
+      ],
+      "linesPer30s": 5,
+      "wordsPer30s": [
+        84,
+        87
+      ],
+      "coverage": 0.8,
+      "firstWordS": 1,
+      "lastWordS": 1.5,
+      "songWpm": {
+        "range": [
+          90,
+          100
+        ],
+        "scope": "R"
+      },
+      "songWordsPerLine": [
+        5,
+        9
+      ]
+    },
+    "tone": {
+      "scope": "I",
+      "basis": "film",
+      "measure": "human/review",
+      "source": "section 3.26; critique-creative",
+      "mode": "sweet-sinister-pop",
+      "surface": "bright, warm, handmade, cute",
+      "subject": "a real threat, a bad idea, a doom, a joke about power",
+      "character": "sincere, deadpan, never mugging",
+      "violence": "paper slapstick; no gore; no real harm",
+      "cynicism": "none; the joke is on the situation, not the audience",
+      "tenderBeat": 1,
+      "poisonAccent": [
+        "acid",
+        "pink"
+      ],
+      "ending": "resolve, loop or hold; no cruel punchline",
+      "beats": [
+        "bright surface",
+        "first threat",
+        "cute-in-danger",
+        "comic escalation",
+        "dark act",
+        "tender beat",
+        "resolve or loop",
+        "button"
+      ],
+      "darkActMin": 1
+    },
+    "opening": {
+      "scope": "I",
+      "basis": "target",
+      "measure": "frame probe/score",
+      "source": "0051; section 3.23",
+      "firstFrame": "subject-specific thumbnail; a lit paper event; a performer or performance object",
+      "performanceOpener": {
+        "value": true
+      },
+      "titleObject": {
+        "value": 1,
+        "unit": "count"
+      },
+      "credits": {
+        "value": 1,
+        "unit": "count"
+      },
+      "types": {
+        "value": [
+          "performance-object",
+          "mid-action",
+          "question",
+          "title-object"
+        ],
+        "scope": "F"
+      },
+      "defaultCard": {
+        "value": false,
+        "scope": "X"
+      },
+      "diagramOpener": {
+        "value": false,
+        "scope": "X"
+      },
+      "closingTypes": {
+        "value": [
+          "pullback-reveal",
+          "loop",
+          "hold",
+          "curtain"
+        ],
+        "scope": "F"
+      },
+      "lastHoldS": 2,
+      "repeatConsecutive": {
+        "value": false,
+        "scope": "X"
+      }
+    },
+    "hud": {
+      "scope": "F",
+      "basis": "reference",
+      "measure": "frame probe",
+      "source": "A 10; section 3.27",
+      "mode": "diegetic readout, max 1 box",
+      "songFilm": "recommended, not mandatory",
+      "box": {
+        "x": 1634,
+        "y": 40,
+        "w": 246,
+        "h": 96
+      },
+      "titlePx": 15,
+      "valuePx": 34,
+      "unitPx": 10,
+      "bar": {
+        "w": 70,
+        "h": 6
+      },
+      "ticks": 6,
+      "recurrence": 3,
+      "copyTheLabel": false
+    },
+    "determinism": {
+      "scope": "I",
+      "basis": "code",
+      "measure": "determinism",
+      "source": "A 11; section 3.28",
+      "clock": "t = frame / 30",
+      "rng": "seeded hash",
+      "seeded": [
+        "fibre",
+        "tear",
+        "halftone",
+        "stickerRotation",
+        "grain",
+        "typeJitter",
+        "cameraPhase"
+      ],
+      "fixed": [
+        "palette",
+        "type",
+        "recipeOrder",
+        "cameraDirection"
+      ],
+      "cameraResetPerShot": true,
+      "workerSafe": true,
+      "textureHz": {
+        "paper": 2,
+        "grain": 24,
+        "type": 12
+      },
+      "freezeBudgetS": 0.4
+    },
+    "variation": {
+      "scope": "I",
+      "basis": "product",
+      "measure": "variation:check/review",
+      "source": "section 3.24",
+      "requiredDifferences": [
+        "story",
+        "set-family",
+        "field-script",
+        "cast-instance",
+        "motif-set",
+        "camera-sequence",
+        "text-behaviour",
+        "transitions",
+        "opening",
+        "closing",
+        "sound-mode",
+        "signature-shot"
+      ],
+      "historyFilms": 3,
+      "motifDiff": 2,
+      "fieldNoRepeat": true,
+      "openingDiff": true,
+      "signatureShot": 1,
+      "check": "variation:check (proposed)"
+    },
+    "forbidden": [
+      "glossy-3d",
+      "bevel",
+      "photo-face",
+      "fingers",
+      "soft-cast-shadow",
+      "dof",
+      "bokeh",
+      "motion-blur",
+      "tilt-shift",
+      "dissolve",
+      "page-turn",
+      "star-wipe",
+      "side-bars",
+      "cream-plate-with-wings",
+      "blue-on-blue",
+      "office-worker-lead",
+      "static-with-no-creep-or-action",
+      "camera-only-motion",
+      "text-over-face",
+      "lyric-wall",
+      "more-than-7-roles",
+      "more-than-5-roles-in-a-short",
+      "default-sunflower-opener",
+      "default-banner",
+      "default-lamp",
+      "diagram-opener",
+      "paper-fable-with-no-performance",
+      "same-opener-twice",
+      "same-closer-twice",
+      "same-motif-set-twice",
+      "three-same-camera-moves",
+      "floating-prop",
+      "floating-foot",
+      "clipped-hand",
+      "mirrored-badge",
+      "pose-swap-as-animation",
+      "dead-hold-over-0.4s",
+      "generic-underline",
+      "rounded-ui-card",
+      "glass-panel",
+      "soft-drop-shadow",
+      "unlicensed-font",
+      "unlicensed-track",
+      "meme-sound",
+      "unverified-claim"
+    ],
+    "filmBands": {
+      "scope": "I",
+      "basis": "film",
+      "measure": "frame probe",
+      "source": "I 3, I 11; section 5.3",
+      "lumaMean": [
+        75,
+        130
+      ],
+      "lumaP5": [
+        20,
+        60
+      ],
+      "lumaP50": [
+        80,
+        140
+      ],
+      "lumaP95": [
+        160,
+        200
+      ],
+      "contrastP5": [
+        175,
+        210
+      ],
+      "saturation": [
+        12,
+        35
+      ],
+      "saturationP95": [
+        30,
+        60
+      ],
+      "edges": [
+        7.5,
+        17.5
+      ],
+      "paletteDistanceMax": {
+        "value": 55,
+        "basis": "crops",
+        "note": "reference film 48.3 against the six crops"
+      },
+      "warmShare": [
+        0.4,
+        0.9
+      ],
+      "blueShare": [
+        0,
+        0.2
+      ],
+      "subjectHeight": [
+        0.13,
+        0.92
+      ],
+      "centroidX": [
+        0.3,
+        0.75
+      ],
+      "localContrastMin": 20,
+      "localContrastMedian": 35,
+      "cutsPerMinute": [
+        18,
+        24
+      ],
+      "medianShotS": [
+        2.4,
+        3.2
+      ],
+      "statistic": "per-film mean / percentile",
+      "share": "film"
+    }
+  },
+  "referenceValues": {
+    "note": "R values observed in the reference film; evidence, not rules.",
+    "scenes": 51,
+    "visibleCards": 54,
+    "durationS": 156.63,
+    "frames": 4699,
+    "shotMedianS": {
+      "scenes": 3.06,
+      "cards": 2.86
+    },
+    "shotMinS": {
+      "scene": 0.66,
+      "micro": 0.22
+    },
+    "shotMaxS": 6.14,
+    "cutPerMin": {
+      "scenes": 19.2,
+      "cards": 20.3
+    },
+    "cameraSetCam": 27,
+    "cameraInherited": 24,
+    "worldMoves": 8,
+    "irisCloses": 10,
+    "flashes": 38,
+    "subtitlePx16x9": 31,
+    "lufsSong": -15.6,
+    "truePeakSong": -3.7,
+    "lyricLines": 46,
+    "lyricWords": 227,
+    "authoredLyricLines": 45,
+    "authoredLyricWords": 213,
+    "sungWpm": 97.8,
+    "referenceMeanLuma": 100.9,
+    "referenceMeanContrast": 215.4,
+    "referenceMeanSaturation": 21.8,
+    "referenceEdges": 12.6,
+    "referencePaletteDistance": 48.3,
+    "subjectHeightP50": 0.552,
+    "subjectCentroidXP50": 0.55,
+    "localContrastMedian": 46.6,
+    "blueShareMedian": 0.01,
+    "warmShareMedian": 0.7,
+    "sideBars": 0
+  },
+  "checks": {
+    "note": "Proposed readers for the extension; no new framework.",
+    "schema": "style:check validates tokens.identity (missing band = error, not a pass)",
+    "frames": "style:measure adds p5/p50/p95 + 3x3 region grid; style:identity reads it",
+    "probe": "paint probe records a character bbox (min/max of rig anchors) and a field/ring sample",
+    "camera": "camera:check reads tokens.motion.camera and checks pan/orbit travel",
+    "type": "type:audit reads bottom band, role map, reading time, display area",
+    "palette": "palette:audit reads tokens.color roles/shares",
+    "variation": "variation:check reads build/variation.json (last 3 films)",
+    "acceptance": {
+      "reference": "style:measure --ref out/claude-pop.mp4; must reproduce luma ~100.9, saturation ~21.8, edges ~12.6, palette ~48.3; record sha256",
+      "uber": "style:identity -- films/uber-model/score.json --video; must fail field, centroid x, height sd, local contrast, motifs, blue-on-blue, side bars; pass surface; record sha256",
+      "rule": "missing band, null measurement or score claim is a failure; if the reference fails a film band, the band is wrong; if Uber passes a field/placement/motif band, it is not a gap check",
+      "implemented": false
+    }
+  },
+  "supersedes": {
+    "tokens.color.maxColours": "4 -> 5 short / 7 long",
+    "capabilities.limits.maxCast": "2 -> 2 principals + 0-5 chorus (total 7)",
+    "tokens.motion.camera.moves": "5 -> 11 allowed (4-6 short / 6-10 long)",
+    "tokens.motion.transitions": "5 -> 6, adding flash",
+    "tokens.type.scale": "18 caption -> 31 px 16:9 / 16 px 9:16 / 14 px floor at 390",
+    "tokens.motion.minShot": "1.2 -> 0.6 scene / 0.22 micro",
+    "tokens.identity.bands": "keep as surface delta bands; add filmBands for the film",
+    "tokens.identity.dimension": "2d -> 2.5d-layered"
+  }
+}

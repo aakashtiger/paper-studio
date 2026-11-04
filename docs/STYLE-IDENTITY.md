@@ -1,6 +1,6 @@
 # Style identity — the Paper K-pop contract
 
-**Status:** accepted and enforced (0052)
+**Status:** accepted and enforced (0053)
 **Date:** 4 Nov 2026
 **Why:** the Uber film was script-relevant but not channel-relevant. A style is a
 set of invariants plus controlled variation, not a repeated opener.
@@ -40,17 +40,31 @@ rhythm**. The story, place, props, layout, opener and which motifs appear change
 
 ## Enforcement
 
-`style:identity -- <score>` checks the axes the score and frames can prove:
-cast construction (not library membership), at least half the shots staged, and
-the global luma / contrast / saturation / edge / palette bands against the
-pack's reference frames via the existing `style:measure`. `render:film` refuses
-without a passing report tied to the score; `film:review` re-runs it on the
-delivered video (`--video`), and `gate:7` has a `styleIdentity` row tied to the
-frozen picture. The final sheet remains the human review of whether it *looks*
-like the channel.
+`style:identity -- <score> [--video]` is one verdict from three sources: the
+pack's nine-group `tokens.identity`, the score's `performance` / `paletteScript`
+/ `motifs`, and the painted frame report. The report is tied to the score hash,
+the identity hash, the frame-report hash and - on delivery - the video hash.
+Missing or null is a finding.
 
-Measured on *The Uber Cut*: 9/10 shots staged, Δ luma −1.0, Δ saturation −4.1,
-palette 43.0, all inside the bands; `gate:7` PASS 24 checks.
+- `collage` writes `build/<id>/frame-report.json`: one sample per shot, a
+  chest/head/leg aperture box, side bars, the largest flat field, a 30%-padded
+  local-contrast ring, blue-on-blue and palette families.
+- `preflight` reads the score/cast half before a browser opens.
+- `render:film` requires the report chain; `render:film --check` proves it
+  without painting.
+- `film:review` re-runs the identity check on the delivered video; `gate:7` has
+  the `styleIdentity` row plus `preflight`, `closeUps`, `lra` and
+  `soundContrast` - **28 checks**.
+
+Measured on the reference film: luma **100.9**, saturation **21.8**, edges
+**12.6**, all inside the film bands. Measured on *The Uber Cut*: luma **144.8**,
+saturation **35.7**, bars **21.7% / 24.2%**, centroid band **0%**, height sd
+**6.3** / one tier, local contrast median **27.4**, blue-on-blue **30%**,
+close-ups **100%**, LRA **1.9**, 3 s contrast **2.1 LU**. The film fails 17
+identity findings and 5 gate rows **by design**; its delivered MP4 is unchanged.
+This is the calibration, not a regression.
+
+The final sheet remains the human review of whether it *looks* like the channel.
 
 ## Non-goals
 

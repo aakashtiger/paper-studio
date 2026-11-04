@@ -46,17 +46,23 @@ test("the skeleton invents no shot, recipe or copy", () => {
 
 test("filmGaps names every creative field the director must fill", () => {
   const gaps = filmGaps(filmSkeleton(brief, { briefPath: "b.json" }));
-  assert.equal(gaps.length, 5);
+  assert.equal(gaps.length, 8);
   assert.ok(gaps.some((gap) => gap.startsWith("edit.")));
   assert.ok(gaps.some((gap) => gap.startsWith("audio.narration")));
   assert.ok(gaps.some((gap) => gap.startsWith("captions.lines")));
   assert.ok(gaps.some((gap) => gap.startsWith("assets")));
   assert.ok(gaps.some((gap) => gap.startsWith("shots")));
+  assert.ok(gaps.some((gap) => gap.startsWith("performance:")));
+  assert.ok(gaps.some((gap) => gap.startsWith("paletteScript:")));
+  assert.ok(gaps.some((gap) => gap.startsWith("motifs:")));
 });
 
-test("filmGaps is silent for a finished score", () => {
+test("filmGaps names the identity fields a pre-contract film has not chosen", () => {
   const score = JSON.parse(readFileSync(resolve(root, "films/same-alarm/score.json"), "utf8"));
-  assert.deepEqual(filmGaps(score), []);
+  const gaps = filmGaps(score);
+  assert.ok(gaps.some((gap) => gap.startsWith("performance:")));
+  assert.ok(gaps.some((gap) => gap.startsWith("paletteScript:")));
+  assert.ok(gaps.some((gap) => gap.startsWith("motifs:")));
 });
 
 test("filmGaps names a shot that is missing its direction", () => {
