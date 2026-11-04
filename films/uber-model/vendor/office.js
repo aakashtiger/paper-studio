@@ -58,23 +58,27 @@ function officeFigure(ctx, x, y, s, o = {}) {
   const legR = p.legR || [-0.03, -0.01];
 
   const boss = o.outfit === "supervisor";
+  const performer = o.outfit === "performer";
   // One leg, one ground line. The hip sits 273 above the feet and the leg is
   // 156 + 117 = 273 long, so a standing foot is straight. The old 258 left 15
   // units of slack, and the 2D solver spent it by swinging the knee 60 px
   // sideways: a clean front view read as a frog. A bent knee in this flat rig
   // is a walk pose's lifted foot, not a standing pose's default.
   const HIP = -281;
-  const SHOULDER = boss ? -466 : -452;
-  const HEAD = boss ? -530 : -518;
+  const SHOULDER = boss || performer ? -466 : -452;
+  const HEAD = boss || performer ? -530 : -518;
   // One colour convention for every rig: the painter passes `colors`, an object
   // already mapped through the pack palette, and each rig reads its own roles.
   const col = o.colors || {};
   const skin = col.skin || SKIN;
-  const shirt = col.shirt || (boss ? PAL.cream : PAL.blueL);
-  const trouser = col.trouser || (boss ? PAL.ink2 : PAL.blueD);
-  const jacket = boss ? (col.jacket || PAL.ink) : null;
+  const shirt = col.shirt || (performer ? PAL.red : boss ? PAL.cream : PAL.blueL);
+  const trouser = col.trouser || (performer ? PAL.blueD : boss ? PAL.ink2 : PAL.blueD);
+  const jacket = performer ? (col.jacket || PAL.gold) : boss ? (col.jacket || PAL.ink) : null;
   const hairCol = col.hair || PAL.ink;
-  const tie = boss ? null : (col.tie === undefined ? PAL.red : col.tie);
+  const skirt = performer ? (col.skirt || PAL.red) : null;
+  const petal = performer ? (col.petal || PAL.gold) : null;
+  const boot = performer ? (col.boot || PAL.ink) : null;
+  const tie = boss || performer ? null : (col.tie === undefined ? PAL.red : col.tie);
 
   // A dark garment on a lit wall needs a *light* rim to have a contour at all:
   // an edge in the garment's own colour is not an edge. The blazer and the
@@ -116,18 +120,31 @@ function officeFigure(ctx, x, y, s, o = {}) {
     const ankle = limb(ctx, knee[0], knee[1], 117, 20, 16, a1 + a2, far ? C.shade(trouser, -12) : trouser, C.rgba(PAL.ink, 0.5), true);
     brad(ctx, hx, hy, 3.4);
     brad(ctx, knee[0], knee[1], 2.8);
-    // A plain lace-up, cut from paper: one shape, one edge, one sole line.
+    // A plain lace-up for the office; a platform boot for the stage.
     ctx.save();
     ctx.translate(ankle[0] + 4, ankle[1] - 2);
     ctx.rotate(foot * 0.5);
-    paper(ctx, () => {
-      ctx.beginPath();
-      ctx.moveTo(-15, -9); ctx.lineTo(11, -9);
-      ctx.quadraticCurveTo(25, -3, 25, 10);
-      ctx.lineTo(-15, 10); ctx.closePath();
-    }, { fill: far ? C.shade(PAL.ink, 6) : PAL.ink, edge: PAL.ink, edgeW: 1.6, shadow: C.rgba(PAL.ink, 0.16), sx: 2, sy: 3 });
-    ctx.fillStyle = C.rgba(PAL.cream, 0.85);
-    ctx.fillRect(-13, 3, 26, 2.4);
+    if (performer) {
+      paper(ctx, () => {
+        ctx.beginPath();
+        ctx.moveTo(-17, -12); ctx.lineTo(13, -12);
+        ctx.quadraticCurveTo(26, -6, 24, 10);
+        ctx.lineTo(-18, 10); ctx.closePath();
+      }, { fill: far ? C.shade(boot, -10) : boot, edge: PAL.ink, edgeW: 2, shadow: C.rgba(PAL.ink, 0.2), sx: 3, sy: 5 });
+      ctx.fillStyle = PAL.gold;
+      ctx.fillRect(-18, 8, 42, 5);
+      ctx.strokeStyle = C.rgba(PAL.ink, 0.55); ctx.lineWidth = 1;
+      ctx.strokeRect(-18, 8, 42, 5);
+    } else {
+      paper(ctx, () => {
+        ctx.beginPath();
+        ctx.moveTo(-15, -9); ctx.lineTo(11, -9);
+        ctx.quadraticCurveTo(25, -3, 25, 10);
+        ctx.lineTo(-15, 10); ctx.closePath();
+      }, { fill: far ? C.shade(PAL.ink, 6) : PAL.ink, edge: PAL.ink, edgeW: 1.6, shadow: C.rgba(PAL.ink, 0.16), sx: 2, sy: 3 });
+      ctx.fillStyle = C.rgba(PAL.cream, 0.85);
+      ctx.fillRect(-13, 3, 26, 2.4);
+    }
     ctx.restore();
   }
 
@@ -159,7 +176,7 @@ function officeFigure(ctx, x, y, s, o = {}) {
   }
 
   // A blazer for the supervisor: open, two panels, lapels and a pocket.
-  if (jacket) {
+  if (jacket && !performer) {
     for (const side of [-1, 1]) {
       ctx.save();
       ctx.scale(side, 1);
@@ -196,6 +213,42 @@ function officeFigure(ctx, x, y, s, o = {}) {
   ctx.strokeStyle = C.rgba(PAL.ink, 0.45); ctx.lineWidth = 1;
   ctx.strokeRect(-33, HIP - 16, 66, 10);
 
+  if (performer) {
+    // A cropped stage jacket, open at the front, with one gold button.
+    for (const side of [-1, 1]) {
+      ctx.save();
+      ctx.scale(side, 1);
+      paper(ctx, () => {
+        ctx.beginPath();
+        ctx.moveTo(10, SHOULDER - 2);
+        ctx.quadraticCurveTo(42, SHOULDER + 2, 45, SHOULDER + 20);
+        ctx.quadraticCurveTo(48, SHOULDER + 80, 38, HIP + 2);
+        ctx.lineTo(22, HIP + 6);
+        ctx.lineTo(18, SHOULDER + 50);
+        ctx.closePath();
+      }, { fill: jacket, edge: C.rgba(PAL.cream, 0.55), edgeW: 2, shadow: C.rgba(PAL.ink, 0.2), sx: 4, sy: 7 });
+      ctx.restore();
+    }
+    ctx.fillStyle = PAL.ink;
+    ctx.beginPath(); ctx.arc(0, SHOULDER + 108, 5, 0, TAU); ctx.fill();
+    // Pleated skirt: one trapezoid, twelve ribs, a cream hem.
+    paper(ctx, () => {
+      ctx.beginPath();
+      ctx.moveTo(-36, HIP - 6); ctx.lineTo(36, HIP - 6);
+      ctx.lineTo(58, HIP + 104); ctx.lineTo(-58, HIP + 104);
+      ctx.closePath();
+    }, { fill: skirt, edge: C.rgba(PAL.ink, 0.55), edgeW: 2.4, shadow: C.rgba(PAL.ink, 0.2), sx: 5, sy: 8 });
+    ctx.strokeStyle = C.rgba(PAL.cream, 0.5); ctx.lineWidth = 1.4;
+    for (let i = -5; i <= 5; i++) {
+      ctx.beginPath();
+      ctx.moveTo(i * 6.4, HIP - 2);
+      ctx.lineTo(i * 10.2, HIP + 100);
+      ctx.stroke();
+    }
+    ctx.fillStyle = PAL.cream;
+    ctx.fillRect(-58, HIP + 98, 116, 6);
+  }
+
   // Name badge: the film's cast entry decides the text, or there is none.
   if (o.badge) {
     ctx.save();
@@ -223,6 +276,26 @@ function officeFigure(ctx, x, y, s, o = {}) {
   ctx.save();
   ctx.translate(0, HEAD);
   rigAnchor(ctx, "hair", 0, 0);
+  if (performer) {
+    // The petal halo is the character's silhouette: it must read from 390 px.
+    ctx.strokeStyle = C.rgba(PAL.gold, 0.9);
+    ctx.lineWidth = 7;
+    ctx.beginPath(); ctx.arc(0, 0, 103, 0, TAU); ctx.stroke();
+    for (let i = 0; i < 14; i++) {
+      const a = (i / 14) * TAU + 0.08;
+      const px = Math.cos(a) * 84;
+      const py = Math.sin(a) * 84;
+      paper(ctx, () => {
+        ctx.beginPath();
+        ctx.ellipse(px, py, 18, 32, a + Math.PI / 2, 0, TAU);
+        ctx.closePath();
+      }, {
+        fill: i % 3 === 0 ? C.shade(petal, -14) : petal,
+        edge: C.rgba(PAL.ink, 0.55), edgeW: 2,
+        shadow: C.rgba(PAL.ink, 0.18), sx: 3, sy: 5,
+      });
+    }
+  }
   // hair, back layer
   //
   // Kiran's hair falls to the jaw; the supervisor's is cut above the ear. They
@@ -379,7 +452,7 @@ function officeFigure(ctx, x, y, s, o = {}) {
     const wrist = limb(ctx, elbow[0], elbow[1], 78, 16, 13, ang[0] + ang[1], sleeveCol, armEdge, true);
     // A cuff, so the sleeve has an end and the hand has a wrist to hang from.
     // Without it a pointing arm is one tapering bar with a square tip.
-    if (jacket) {
+    if (jacket && !performer) {
       ctx.save();
       ctx.translate(wrist[0], wrist[1]);
       ctx.rotate(ang[0] + ang[1]);
@@ -416,3 +489,6 @@ function officeSupervisor(ctx, x, y, s, o = {}) {
 window.CHARACTERS = window.CHARACTERS || {};
 window.CHARACTERS["worker@0.1.0"] = officeWorker;
 window.CHARACTERS["supervisor@0.1.0"] = officeSupervisor;
+window.CHARACTERS["performer@0.1.0"] = function performer(ctx, x, y, s, o = {}) {
+  return officeFigure(ctx, x, y, s, { ...o, outfit: "performer" });
+};

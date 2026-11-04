@@ -8,7 +8,7 @@
       "place": "a paper table with a phone on it",
       "summary": "The film opens on the question: if Uber does not own the cars, what does it own?",
       "cast": [
-        "Kiran"
+        "Rider"
       ],
       "lines": [
         "v01"
@@ -32,7 +32,7 @@
       "place": "a rider's phone, a driver's car, a city corridor",
       "summary": "A rider taps, a driver moves, and the platform puts the two together.",
       "cast": [
-        "Kiran"
+        "Rider"
       ],
       "lines": [
         "v02"
@@ -57,7 +57,8 @@
       "place": "the fare, split on paper",
       "summary": "The fare is divided: the driver keeps the rest, Uber keeps the service fee.",
       "cast": [
-        "Vaz"
+        "Rider",
+        "Driver"
       ],
       "lines": [
         "v03"
@@ -81,8 +82,8 @@
       "place": "the same app, four other doors",
       "summary": "Delivery, freight, advertising and memberships turn one network into several revenues.",
       "cast": [
-        "Kiran",
-        "Vaz"
+        "Rider",
+        "Driver"
       ],
       "lines": [
         "v04"
@@ -107,8 +108,8 @@
       "place": "a city of small paper doors",
       "summary": "More riders make each car busier; more drivers shorten the wait; the network gets harder to leave.",
       "cast": [
-        "Kiran",
-        "Vaz"
+        "Rider",
+        "Driver"
       ],
       "lines": [
         "v05"

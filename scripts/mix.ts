@@ -125,7 +125,14 @@ if (!voice && cues.length === 0) {
   process.exit(1);
 }
 
-const mixed = mixFilm({ sampleRate: sr, duration: plan.duration, voice, cues });
+const voiceGains =
+  score.clock.mode === "narration"
+    ? score.clock.lines
+        .filter((line) => typeof line.gainDb === "number" && line.gainDb !== 0)
+        .map((line) => ({ start: line.start, duration: line.duration, gainDb: line.gainDb as number }))
+    : [];
+
+const mixed = mixFilm({ sampleRate: sr, duration: plan.duration, voice, voiceGains, cues });
 const premaster = resolve(outDir, "premaster48.wav");
 writeWavFloat32(premaster, mixed.left, mixed.right, sr);
 
@@ -393,6 +400,8 @@ const report = {
   bus: { headroomDb: mixed.busGainDb },
   cues: cues.length,
   voice: voicePath ? relative(voicePath) : null,
+  /** The score's deliberate quiet, in dB, applied to the voice before the bus. */
+  lineGains: voiceGains,
   duckDb: average(cues.map((cue) => cue.duckDb)),
   /**
    * What the duck actually did, per cue: a score that declares 8 dB and a mix

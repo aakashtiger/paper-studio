@@ -230,7 +230,7 @@ function largestComponent(
   return { share: best / (width * height), key: bestKey };
 }
 
-type BarRun = { width: number; key: number } | null;
+type BarRun = { width: number; rgb: [number, number, number] } | null;
 
 function barRunFrom(
   rgb: Uint8Array,
@@ -276,7 +276,23 @@ function barRunFrom(
     if (run / width > 0.45) return null;
   }
   if (run / width < 0.03) return null;
-  return { width: run / width, key: 0 };
+  // A field is not a bar. A bar has a hard inner edge: the strip's colour and
+  // the colour just inside it must be different. This is what separates the
+  // Uber film's cobalt/tomato layout bars from a full-bleed field with a prop
+  // in the middle (the rebuild's red/blue/marigold stages).
+  const edge = meanColumn(side === "left" ? 0 : width - 1);
+  const outsideX =
+    side === "left"
+      ? Math.min(width - 1, run + 4)
+      : Math.max(0, width - 1 - run - 4);
+  const outside = meanColumn(outsideX);
+  const distance = Math.hypot(
+    edge[0] - outside[0],
+    edge[1] - outside[1],
+    edge[2] - outside[2],
+  );
+  if (distance < 45) return null;
+  return { width: run / width, rgb: edge };
 }
 
 function creamShare(
@@ -324,9 +340,29 @@ export function analyzeRgb(input: {
   const right = barRunFrom(rgb, width, height, "right");
   const barLeft = left?.width ?? 0;
   const barRight = right?.width ?? 0;
+  const centralCream = creamShare(
+    rgb,
+    width,
+    height,
+    Math.floor(barLeft * width),
+    Math.ceil((1 - barRight) * width),
+  );
+  const barsDiffer =
+    left !== null &&
+    right !== null &&
+    Math.hypot(
+      left.rgb[0] - right.rgb[0],
+      left.rgb[1] - right.rgb[1],
+      left.rgb[2] - right.rgb[2],
+    ) > 45;
+  // A "plate" is the layout failure: two different colour strips at the edges
+  // with a cream field between them. A full-bleed stage with a prop in the
+  // middle has the same field colour on both sides, so it is not a plate.
   const plate =
-    barLeft + barRight >= 0.08 &&
-    creamShare(rgb, width, height, Math.floor(barLeft * width), Math.ceil((1 - barRight) * width)) > 0.5;
+    barLeft >= 0.08 &&
+    barRight >= 0.08 &&
+    barsDiffer &&
+    centralCream > 0.4;
 
   let warm = 0;
   let blue = 0;
@@ -467,9 +503,7 @@ export function summarize(shots: ShotFrameReport[]): FrameSummary {
     boxes.length === 0
       ? 0
       : boxes.filter((box) => box.h / GRID_HEIGHT >= 0.55).length / boxes.length;
-  const barShots = shots.filter(
-    (shot) => shot.bars.left > 0.08 || shot.bars.right > 0.08,
-  ).length;
+  const barShots = shots.filter((shot) => shot.bars.plate).length;
   const plateShots = shots.filter((shot) => shot.bars.plate).length;
   const blueShots = shots.filter((shot) => shot.contrast?.blueOnBlue === true).length;
   return {

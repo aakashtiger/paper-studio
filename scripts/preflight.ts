@@ -37,6 +37,7 @@ import {
   type Story,
 } from "../src/engine/story.js";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
+import { pictureMatches } from "../src/engine/video.js";
 import { StyleIdentitySchema } from "../src/core/style.js";
 import { FIELD_ROLES, checkFilmIdentity } from "../src/engine/identity.js";
 
@@ -204,7 +205,24 @@ for (const warning of resolveWarnings) console.error(`warning: ${warning.message
  * script for it would only teach everyone to bypass the check. A film with no
  * delivered file has no such excuse.
  */
-const reproduce = existsSync(resolve(root, "films", score.id, `${score.id}.mp4`));
+// A delivered file is a reproduction only when it is **not** the picture this
+// score's last render wrote. The old test was existence, so re-running preflight
+// on the film you just rendered marked it a reproduction and refused the next
+// paint. The manifest is the renderer's own claim; compare the stream, not the
+// file, so re-muxing the audio does not change the answer.
+const reproduce = (() => {
+  const filmPath = resolve(root, "films", score.id, `${score.id}.mp4`);
+  if (!existsSync(filmPath)) return false;
+  const manifestPath = resolve(root, "build", score.id, "render-manifest.json");
+  if (!existsSync(manifestPath)) return true;
+  try {
+    const manifest = JSON.parse(readFileSync(manifestPath, "utf8")) as { videoHash?: string };
+    if (typeof manifest.videoHash !== "string") return true;
+    return !pictureMatches(findFfmpeg(), filmPath, manifest.videoHash);
+  } catch {
+    return true;
+  }
+})();
 
 /**
  * Stage 3 — the scenes (decision 0035).

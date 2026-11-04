@@ -147,6 +147,12 @@ export const NarrationLineSchema = z.object({
   text: z.string().min(1),
   start: z.number().nonnegative(),
   duration: z.number().positive(),
+  /**
+   * A line may be deliberately quieter than the film around it. This is how a
+   * narrated short earns its 3 s contrast without inventing a hole: the words
+   * are still there, the room leans in. Bounded so it cannot be a mute.
+   */
+  gainDb: z.number().min(-24).max(0).optional(),
   /** Extra caption hold after the spoken line; not extra audio. */
   hold: z.number().nonnegative().optional(),
 });

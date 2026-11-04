@@ -240,7 +240,14 @@ async function main(): Promise<void> {
       if (verdict.ok && report) {
         process.stdout.write(`film:review: ${step.name}... reused\n`);
         // A reused report is still a verdict: if it failed, the review fails.
-        const passed = report.pass === true;
+        // `preflight` predates the `pass` field and publishes `ok` with the
+        // identity section; reading only `pass` made every reused preflight a
+        // false FAIL.
+        const passed =
+          step.name === "preflight"
+            ? report.ok === true &&
+              (report.identity as { pass?: boolean } | undefined)?.pass === true
+            : report.pass === true;
         results.push({
           name: step.name,
           ok: passed,

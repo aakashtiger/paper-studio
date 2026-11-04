@@ -20,6 +20,26 @@
       "source": "paper-kpop / Same Alarm (8 poses, 4 expressions); 10 expressions new",
       "licence": "proprietary",
       "hash": "sha256:31affba2abed7dccc21e69aedee9c34be9a1453aa35cb8f06bb56a605d0baacf"
+    },
+    {
+      "id": "rider",
+      "name": "Rider",
+      "rig": "performer@0.1.0",
+      "poses": "library/characters/rider/poses.json",
+      "version": "1.0.0",
+      "source": "paper-kpop / Uber Cut rebuild (8 poses, 14 expressions)",
+      "licence": "proprietary",
+      "hash": "sha256:fc1fa91ba0116e04816d76ba7f47c1cb199eb899053b0f24c193d59a1fa3f5cb"
+    },
+    {
+      "id": "driver",
+      "name": "Driver",
+      "rig": "performer@0.1.0",
+      "poses": "library/characters/driver/poses.json",
+      "version": "1.0.0",
+      "source": "paper-kpop / Uber Cut rebuild (8 poses, 14 expressions)",
+      "licence": "proprietary",
+      "hash": "sha256:57b09006575b46b7eb00979e1311e396514a9e338aba4fc698e281bdc0403abc"
     }
   ]
 }

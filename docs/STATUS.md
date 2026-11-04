@@ -1,6 +1,23 @@
 # Paper Studio — status audit
 
-**Update 2026-11-04 (identity, current):** decision **0053** replaces the
+**Update 2026-11-05 (current):** decision **0055** rebuilds *The Uber Cut* as
+the first passing example of the identity gate. The film is a presenter-show:
+Rider (star) and Driver (foil) on the `performer@0.1.0` rig, full-bleed stage
+fields, phone/city/fare props beside the performer, short captions, no bars and
+no office-worker leads. `style:identity --video` is **PASS, 0 findings**
+(luma 112.2, saturation 29.0, edges 8.6; close-ups 30%; local contrast 35.1
+median in 100%; centroid 100%; bars 0%; blue-on-blue 0%). `gate:7` is **PASS,
+28 checks, nothing manual**; `film:review --gate --reuse` is **PASS**; ASR hears
+**91/91** words on the delivered file. P0.9 is closed: v04 is a deliberate
+`gainDb: -16` line (0054), so the 3 s contrast is **17.8 LU** and LRA is
+**16.5 LU** without a narration hole. The `reproduce` inference now compares the
+existing picture to the render manifest, and a reused review reads preflight's
+`ok` + identity section, so a re-render of the current film is no longer a false
+reproduction or a false FAIL. **493 tests**, typecheck clean. P0.5 remains
+parked; exact Uber financials, music and semantic vision remain parked. The
+2026-11-04 / 10-29 / 10-31 blocks below are historical.
+
+**Update 2026-11-04 (historical, superseded by the 2026-11-05 block above):** decision **0053** replaces the
 five-crop-mean identity gate with one strict nine-group `tokens.identity`, a
 painted **frame report** (`collage` writes `build/<id>/frame-report.json`), one
 `style:identity` verdict tied to score + identity + frame + video hashes, a

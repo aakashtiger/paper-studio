@@ -37,10 +37,22 @@ export type MixCueInput = {
   levelDb?: number;
 };
 
+export type VoiceGain = {
+  start: number;
+  duration: number;
+  gainDb: number;
+};
+
 export type MixOptions = {
   sampleRate: number;
   duration: number;
   voice?: Float32Array | null;
+  /**
+   * A line may be deliberately quieter than the film around it. The gain is
+   * applied to the voice before the highpass and the duck key, so the sidechain
+   * follows the room's attention rather than the file's level.
+   */
+  voiceGains?: VoiceGain[];
   cues: MixCueInput[];
   voiceHpfHz?: number;
   tailFade?: number;
@@ -357,6 +369,33 @@ export type MixResult = {
   cues: MixCueReport[];
 };
 
+/**
+ * Apply the score's per-line gains to the voice, with a short fade at each
+ * edge so a quiet line cannot click. A gain of 0 dB returns the input array
+ * itself; the mix never mutates the caller's samples.
+ */
+export function applyVoiceGains(
+  voice: Float32Array,
+  sampleRate: number,
+  gains: readonly VoiceGain[],
+): Float32Array {
+  if (gains.length === 0) return voice;
+  const out = new Float32Array(voice);
+  for (const gain of gains) {
+    if (!Number.isFinite(gain.gainDb) || gain.gainDb === 0) continue;
+    const from = Math.max(0, Math.floor(gain.start * sampleRate));
+    const to = Math.min(out.length, Math.ceil((gain.start + gain.duration) * sampleRate));
+    if (to <= from) continue;
+    const target = 10 ** (gain.gainDb / 20);
+    const fade = Math.max(1, Math.round(0.04 * sampleRate));
+    for (let i = from; i < to; i += 1) {
+      const edge = Math.min(1, (i - from) / fade, (to - i) / fade);
+      out[i] = (out[i] ?? 0) * (1 + (target - 1) * edge);
+    }
+  }
+  return out;
+}
+
 export function mixFilm(options: MixOptions): MixResult {
   const sr = options.sampleRate;
   const total = Math.max(1, Math.ceil(options.duration * sr));
@@ -364,7 +403,9 @@ export function mixFilm(options: MixOptions): MixResult {
   const dryR = new Float32Array(total);
   const sendBus = new Float32Array(total);
 
-  const voice = options.voice ?? null;
+  const voice = options.voice
+    ? applyVoiceGains(options.voice, sr, options.voiceGains ?? [])
+    : null;
   const voiced = voice ? applyBiquad(voice, highpassCoeffs(options.voiceHpfHz ?? 75, sr)) : null;
   const presence = voiced ? applyBiquad(voiced, bandpassCoeffs(1000, 4000, sr)) : null;
   // The sidechain is the voice's own presence, gated against its local level,

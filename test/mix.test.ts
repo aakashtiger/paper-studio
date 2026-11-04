@@ -56,6 +56,25 @@ test("the voice is highpassed above 75 Hz", () => {
   assert.ok(rms(mid.left) > rms(low.left) * 3, "40 Hz should be well below 1 kHz after the highpass");
 });
 
+test("a line gain lowers that line only", () => {
+  // P0.9 asks for a quiet 3 s window. A narrated film earns it by leaning in on
+  // one line, not by inventing a hole: the words stay, the level drops.
+  const voice = sine(220, 2, 0.3);
+  const input = { sampleRate: SR, duration: 2, voice, cues: [] };
+  const full = mixFilm(input);
+  const quiet = mixFilm({ ...input, voiceGains: [{ start: 0.5, duration: 1, gainDb: -16 }] });
+  const window = (signal: Float32Array, from: number, to: number) =>
+    rms(signal.subarray(Math.round(from * SR), Math.round(to * SR)));
+  assert.ok(
+    window(quiet.left, 0.6, 1.4) < window(full.left, 0.6, 1.4) * 0.2,
+    "a -16 dB line should lose about 16 dB, not a little",
+  );
+  assert.ok(
+    window(quiet.left, 0, 0.4) > window(full.left, 0, 0.4) * 0.95,
+    "the line before it must not move",
+  );
+});
+
 test("the voice ducks a cue in the 1-4 kHz band", () => {
   const cue = { id: "c", kind: "snap", at: 0, samples: sine(2000, 0.8), send: 0, duckDb: 8, band: [1000, 4000] as [number, number] };
   const voice = sine(2000, 0.8, 0.6);

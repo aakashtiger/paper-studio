@@ -291,12 +291,17 @@ first film must author `word` events; Same Alarm has none. **492 tests.**
 **The first film under the new order is *The Uber Cut* (`films/uber-model/`).**
 30 s, 10 shots, 5 lines, 91 words at 182 wpm, **84.6% voiced**, made through
 story -> beats -> voice -> scenes -> score -> cut. It passed `gate:7` at 24
-checks when it shipped; under **0053** it is **FAIL by design at 28 checks**
-(`preflight`, `styleIdentity`, `closeUps`, `lra`, `soundContrast`), and its
-delivered file is unchanged. ASR heard **91/91** words; the file is
-`films/uber-model/uber-model.mp4`. `docs/ASSUMPTIONS.md` records every best-case
-assumption and the parked items (P0.5 workflow, the `reproduce` legacy marker,
-a semantic vision check, music).
+checks when it shipped; under **0053** it failed by design at 28 checks. It was
+**rebuilt under 0055** as a presenter-show: Rider (star) and Driver (foil) on
+the `performer@0.1.0` rig, full-bleed stage fields, phone/city/fare props beside
+the performer, short captions, no bars, no office-worker leads. It now passes
+`style:identity --video` with **0 findings** and `gate:7` with **28 checks,
+nothing manual**; `film:review --gate --reuse` is **PASS**. ASR heard **91/91**
+words, through the deliberate `gainDb: -16` v04 (0054) that gives the film
+**17.8 LU** 3 s contrast and **16.5 LU** LRA without a narration hole. The file
+is `films/uber-model/uber-model.mp4`. `docs/ASSUMPTIONS.md` records every
+best-case assumption and the parked items (P0.5 workflow, a semantic vision
+check, music).
 
 **The visual is authored before the recipe is chosen (0051).** A scene publishes
 `visual` (subject, setting, action, props); a shot publishes `visual` (shows,
@@ -320,17 +325,21 @@ frame-report hash and - on delivery - the video hash. Missing or null is a
 finding. `preflight` reads the score/cast half before a browser opens;
 `render:film --check` proves the report chain without painting; `gate:7` is
 **28 checks** (`preflight`, `closeUps`, `lra`, `soundContrast` added).
-The reference film is inside the film bands (100.9 / 21.8 / 12.6); the Uber
-film fails 17 findings, including bars, plate, centroid, height rhythm, local
-contrast, blue-on-blue, cast, performance, palette and motifs. **The Uber film
-is red by design; its delivered MP4, score and pose files are unchanged.**
-`npm run identity:accept` proves the reference passes and Uber fails.
+The reference film is inside the film bands (100.9 / 21.8 / 12.6); the rebuilt
+Uber film is **inside the bands and 0 findings** (video report luma 112.2,
+saturation 29.0, edges 8.6; bars 0%, plate 0%, centroid 100%, close-ups 30%,
+local contrast 35.1 median in 100%, blue-on-blue 0%). **The Uber film is the
+passing example now; the 0053 red state is historical.** `npm run
+identity:accept` remains the 0053 calibration (reference passes, old Uber
+fails) and is not the rebuilt film's verdict.
 
 **The plan is `docs/PLAN-v2.md`.** It is the end-to-end process in plain English,
 the video checklist, the P0/P1/P2 gap list and a ten-session build order.
-P0.1–P0.4, P0.6, P0.8 and P0.9 are built; P0.7 is partial (probe output,
-resume and reuse guards, report requirements); P0.5 and the legacy marker remain
-parked, not silently passed.
+P0.1–P0.4, P0.6, P0.8 and **P0.9 are built and closed**; P0.7 is partial
+(probe output, resume and reuse guards, report requirements; the `reproduce`
+inference now compares the picture to the render manifest, so only an old file
+without a matching manifest needs a `legacy` marker); P0.5 remains parked, not
+silently passed.
 
 **Still open, and named:** the identity frame report uses a chest/head/leg
 aperture, not a drawn silhouette, and one sample per shot; there is no chorus

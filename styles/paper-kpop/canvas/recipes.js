@@ -7,9 +7,76 @@
 
 
 
-function bgPaper() {
+function bgPaper(shot) {
+  // A film may declare a full-bleed stage field. With no declaration the pack
+  // keeps its warm paper card, so every existing recipe is unchanged.
+  if (shot && shot.slots && shot.slots["stage.field"]) {
+    stageField(shot, 0);
+    return;
+  }
   ctx.fillStyle = PAL.paper;
   ctx.fillRect(0, 0, W, H);
+}
+
+const STAGE_FIELDS = {
+  paper: PAL.paper,
+  cream: PAL.cream,
+  kraft: PAL.paper3,
+  marigold: PAL.gold,
+  gold: PAL.gold,
+  tomato: PAL.red,
+  oxblood: PAL.redD,
+  ink: PAL.ink,
+  black: PAL.black,
+  blue: PAL.blueD,
+  cobalt: PAL.blue,
+  teal: PAL.teal,
+  acid: PAL.acid,
+  pink: PAL.pink,
+  orange: PAL.orange,
+};
+
+/**
+ * A full-bleed stage: one field colour, a floor, a torn lip and a practical.
+ * The field reaches every edge; the diagram or prop lives inside the world.
+ */
+function stageField(shot, t) {
+  const role = shot.slots["stage.field"] || "paper";
+  const field = STAGE_FIELDS[role] || PAL.paper;
+  ctx.fillStyle = field;
+  ctx.fillRect(0, 0, W, H);
+
+  const floorY = Number(shot.slots["stage.floorY"] || 840);
+  const floor = C.shade(field, role === "ink" || role === "black" ? 14 : -18);
+  ctx.save();
+  ctx.globalAlpha = 0.55;
+  ctx.fillStyle = floor;
+  ctx.beginPath();
+  ctx.moveTo(-60, floorY);
+  ctx.lineTo(W + 60, floorY);
+  ctx.lineTo(W + 160, H + 80);
+  ctx.lineTo(-160, H + 80);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+  ctx.strokeStyle = C.rgba(PAL.cream, 0.28);
+  ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(-60, floorY); ctx.lineTo(W + 60, floorY); ctx.stroke();
+
+  const device = shot.slots["stage.device"] || "none";
+  if (device === "sunburst") {
+    sunburst(ctx, W / 2, floorY - 40, 110, 920, 32, C.rgba(PAL.cream, 0.08), C.rgba(PAL.gold, 0.08), t * 0.04);
+  }
+  if (device === "ring") {
+    ctx.strokeStyle = C.rgba(PAL.gold, 0.7);
+    ctx.lineWidth = 12;
+    ctx.beginPath(); ctx.arc(W / 2, 480, 360, 0, TAU); ctx.stroke();
+  }
+  if (shot.slots["stage.spot"] !== "0") {
+    spotlight(ctx, W * 0.5, -100, 1180, 36, 620, PAL.cream, 0.12);
+    spotlight(ctx, W * 0.2, -100, 880, 26, 380, PAL.gold, 0.08, 0.12);
+  }
+  halftone(ctx, 0, 0, W, H, PAL.ink, 22, 0.32, 0.045);
 }
 
 /* ---- type on a 1920 frame ------------------------------------------------
@@ -411,7 +478,7 @@ function cueLamp(x, y, scale, t) {
 }
 
 function paperOpen(shot, lt, t) {
-  bgPaper();
+  bgPaper(shot);
   const d = shot.duration;
   shotCam(shot, lt, d, W / 2, 500, 0.6, t);
   beginCam(ctx);
@@ -467,7 +534,7 @@ function paperOpen(shot, lt, t) {
 }
 
 function portrait(shot, lt, t) {
-  bgPaper();
+  bgPaper(shot);
   const d = shot.duration;
   // Who the portrait is of comes from the score: the shot's cast, or the film's
   // lead. The `content.names` slot is the *label* the film prints, so a renamed
@@ -642,7 +709,7 @@ function stage(shot, lt, t) {
   }
 }
 function sticker(shot, lt, t) {
-  bgPaper();
+  bgPaper(shot);
   const d = shot.duration;
   shotCam(shot, lt, d, W / 2, 500, 0, t);
   beginCam(ctx);
@@ -719,7 +786,7 @@ function paperHand(x, y, s, rot, alpha) {
 }
 
 function macro(shot, lt, t) {
-  bgPaper();
+  bgPaper(shot);
   const d = shot.duration;
   // The hand enters and misses on the score's own events, not on a constant
   // typed into the recipe.
@@ -1996,7 +2063,11 @@ function explainerBody(shot, t, x = 120, y = 930, width = 1600) {
 function explainerActor(shot, lt, t, index, x, y, scale) {
   const who = (shot.direction?.cast ?? [])[index];
   if (!who) return null;
-  return officeActor(shot, lt, t, who, x, y, scale, null, 1, {});
+  const slot = (key, fallback) => {
+    const value = Number(shot.slots?.[`stage.${key}${index}`] ?? shot.slots?.[`stage.${key}`]);
+    return Number.isFinite(value) ? value : fallback;
+  };
+  return officeActor(shot, lt, t, who, slot("x", x), slot("y", y), slot("scale", scale), null, 1, {});
 }
 
 /**
@@ -2004,7 +2075,10 @@ function explainerActor(shot, lt, t, index, x, y, scale) {
  * halftone screen. They are the channel's colour on every explainer shot; the
  * diagram or prop lives on the cream centre between them.
  */
-function explainerWings() {
+function explainerWings(shot) {
+  // Off by default. A film may re-enable the wings only by declaring them; the
+  // reference stage is full-bleed, not a cream plate framed by two bars.
+  if (!shot || shot.slots?.["stage.wings"] !== "1") return;
   paper(ctx, () => tornRectPath(ctx, -140, -90, 580, H + 180, 30, 17), {
     fill: PAL.blue, edge: C.rgba(PAL.ink, 0.6), edgeW: 3,
     shadow: C.rgba(PAL.ink, 0.24), sx: 10, sy: 14,
@@ -2066,13 +2140,17 @@ function routeAt(k, points) {
 
 function phoneRoute(shot, lt, t) {
   const d = shot.duration;
-  bgPaper();
+  bgPaper(shot);
   shotCam(shot, lt, d, W / 2, 520, 0.18, t);
   beginCam(ctx);
   ctx.save();
   ctx.translate(Math.sin(t * 1.35) * 10, Math.cos(t * 1.15) * 8);
-  explainerWings();
+  explainerWings(shot);
   explainerActor(shot, lt, t, 0, 270, 1015, 1.25);
+  // The phone is a prop beside the performer, not the stage. Shift it right so
+  // the star keeps a clean field around them.
+  ctx.save();
+  ctx.translate(430, 0);
   paper(ctx, () => tornRectPath(ctx, 430, 70, 1060, 940, 22, 19), {
     fill: PAL.ink3, edge: C.rgba(PAL.ink, 0.4), edgeW: 3,
     shadow: C.rgba(PAL.ink, 0.2), sx: 12, sy: 16,
@@ -2127,16 +2205,16 @@ function phoneRoute(shot, lt, t) {
   ctx.restore();
   ctx.restore();
   ctx.restore();
+  ctx.restore();
   endCam(ctx);
   explainerCaption(shot, t);
 }
 
 function cityRoute(shot, lt, t) {
   const d = shot.duration;
-  bgPaper();
+  bgPaper(shot);
   shotCam(shot, lt, d, W / 2 + 30, 520, 0.16, t);
   beginCam(ctx);
-  explainerActor(shot, lt, t, 0, 300, 1035, 1.2);
   // paper city: blocks and streets
   for (let row = 0; row < 4; row++) {
     for (let col = 0; col < 7; col++) {
@@ -2148,7 +2226,7 @@ function cityRoute(shot, lt, t) {
       });
     }
   }
-  explainerWings();
+  explainerWings(shot);
   const points = [[260, 820], [460, 760], [520, 560], [860, 520], [1040, 360], [1440, 300], [1760, 420]];
   const k = C.smooth(C.clamp((lt - 0.2) / 1.8));
   ctx.strokeStyle = PAL.red; ctx.lineWidth = 14; ctx.lineCap = "round"; ctx.lineJoin = "round";
@@ -2169,21 +2247,24 @@ function cityRoute(shot, lt, t) {
     paper(ctx, () => blobPath(ctx, px, py - 24, 18, 22, 6, 0.02, 4), { fill: PAL.gold, edge: PAL.ink, edgeW: 3 });
     TY.text(ctx, label, px, py + 16, 18, { family: "DMMono", color: PAL.ink, align: "center" });
   }
+  // The performer stands in the city, not behind it: a figure the blocks hide
+  // is not on stage.
+  explainerActor(shot, lt, t, 0, 300, 1035, 1.2);
   endCam(ctx);
   explainerCaption(shot, t);
 }
 
 function fareSplit(shot, lt, t) {
   const d = shot.duration;
-  bgPaper();
+  bgPaper(shot);
   shotCam(shot, lt, d, W / 2, 520, 0.12, t);
   beginCam(ctx);
   ctx.save();
   ctx.translate(Math.sin(t * 1.2) * 36, Math.cos(t * 1.4) * 20);
-  explainerWings();
+  explainerWings(shot);
   explainerActor(shot, lt, t, 0, 170, 1015, 1.1);
   explainerActor(shot, lt, t, 1, 1750, 1015, 1.1);
-  const x = 220, y = 430, w = 1480, h = 210;
+  const x = 500, y = 120, w = 920, h = 210;
   const split = 0.72 + Math.sin(lt * 2.1) * 0.006;
   paper(ctx, () => roundRectPath(ctx, x, y, w, h, 26), {
     fill: PAL.blueL, edge: C.rgba(PAL.ink, 0.6), edgeW: 4, shadow: C.rgba(PAL.ink, 0.24), sx: 10, sy: 14,
@@ -2216,13 +2297,17 @@ function fareSplit(shot, lt, t) {
 
 function appMenu(shot, lt, t) {
   const d = shot.duration;
-  bgPaper();
+  bgPaper(shot);
   shotCam(shot, lt, d, W / 2, 520, 0.12, t);
   beginCam(ctx);
   ctx.save();
   ctx.translate(Math.sin(t * 1.45) * 30, Math.cos(t * 1.2) * 20);
-  explainerWings();
+  explainerWings(shot);
   explainerActor(shot, lt, t, 0, 260, 1030, 1.3);
+  // The app is a prop, not a wall. The phone moves right so the performer's
+  // aperture ring is field, not cream screen.
+  ctx.save();
+  ctx.translate(320, 0);
   paperPhone(760, 90, 400, 820);
   const sx = 786, sy = 124, sw = 348, sh = 752;
   ctx.save();
@@ -2270,8 +2355,8 @@ function appMenu(shot, lt, t) {
     ctx.fillText(label, 0, 58);
     ctx.textAlign = "left";
     ctx.restore();
-    ctx.restore();
   });
+  ctx.restore();
   ctx.restore();
   ctx.restore();
   endCam(ctx);
@@ -2281,12 +2366,12 @@ function appMenu(shot, lt, t) {
 
 function networkWeb(shot, lt, t) {
   const d = shot.duration;
-  bgPaper();
+  bgPaper(shot);
   shotCam(shot, lt, d, W / 2, 520, 0.14, t);
   beginCam(ctx);
   ctx.save();
   ctx.translate(Math.sin(t * 1.25) * 32, Math.cos(t * 1.1) * 22);
-  explainerWings();
+  explainerWings(shot);
   explainerActor(shot, lt, t, 0, 250, 1035, 1.05);
   explainerActor(shot, lt, t, 1, 1660, 1035, 1.05);
   const nodes = [
@@ -2331,10 +2416,12 @@ function networkWeb(shot, lt, t) {
 
 function moneyFlow(shot, lt, t) {
   const d = shot.duration;
-  bgPaper();
+  bgPaper(shot);
   shotCam(shot, lt, d, W / 2, 520, 0.12, t);
   beginCam(ctx);
-  explainerWings();
+  explainerWings(shot);
+  explainerActor(shot, lt, t, 0, 420, 1030, 1.0);
+  explainerActor(shot, lt, t, 1, 1500, 1030, 0.95);
   const labels = [
     [300, "RIDER", PAL.blueL],
     [960, "DRIVER", PAL.cream],

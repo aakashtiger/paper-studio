@@ -17,8 +17,16 @@ window.SCORE = {
       "start": 0,
       "duration": 2.6,
       "slots": {
-        "content.body": "THE NETWORK",
-        "content.caption": "NOT THE FLEET"
+        "content.caption": "FLEET",
+        "stage.field": "oxblood",
+        "stage.scale0": "0.72",
+        "stage.scale1": "0.68",
+        "stage.x0": "640",
+        "stage.x1": "1280",
+        "stage.floorY": "820",
+        "stage.device": "none",
+        "stage.spot": "0",
+        "content.body": "THE NETWORK"
       },
       "camera": {
         "move": "orbit",
@@ -35,8 +43,8 @@ window.SCORE = {
         "exit": "routes draw and nodes appear",
         "spine": "the line says Uber owns the network, not the cars",
         "cast": [
-          "Kiran",
-          "Vaz"
+          "Rider",
+          "Driver"
         ],
         "events": [
           {
@@ -75,8 +83,14 @@ window.SCORE = {
       "start": 2.6,
       "duration": 3.6,
       "slots": {
-        "content.body": "THE APP",
-        "content.caption": "RIDERS · DRIVERS"
+        "content.caption": "RIDERS",
+        "stage.field": "blue",
+        "stage.scale0": "0.8",
+        "stage.x0": "640",
+        "stage.floorY": "820",
+        "stage.device": "none",
+        "stage.spot": "0",
+        "content.body": "THE APP"
       },
       "camera": {
         "move": "push_in",
@@ -93,7 +107,7 @@ window.SCORE = {
         "exit": "the four tiles drop into the phone",
         "spine": "the network is reached through one app; the app is the front door",
         "cast": [
-          "Kiran"
+          "Rider"
         ],
         "events": [
           {
@@ -137,7 +151,13 @@ window.SCORE = {
       "start": 6.2,
       "duration": 2.8,
       "slots": {
-        "content.caption": "A RIDER TAPS"
+        "content.caption": "TAPS",
+        "stage.field": "blue",
+        "stage.scale0": "0.95",
+        "stage.x0": "640",
+        "stage.floorY": "800",
+        "stage.device": "none",
+        "stage.spot": "0"
       },
       "camera": {
         "move": "push_in",
@@ -154,7 +174,7 @@ window.SCORE = {
         "exit": "a thumb taps the route and the line draws toward the driver",
         "spine": "the line says riders open the app and the trip is matched",
         "cast": [
-          "Kiran"
+          "Rider"
         ],
         "events": [
           {
@@ -192,7 +212,13 @@ window.SCORE = {
       "start": 9,
       "duration": 3,
       "slots": {
-        "content.caption": "A DRIVER MOVES"
+        "content.caption": "DRIVER",
+        "stage.field": "kraft",
+        "stage.scale0": "0.62",
+        "stage.x0": "640",
+        "stage.floorY": "820",
+        "stage.device": "ring",
+        "stage.spot": "1"
       },
       "camera": {
         "move": "pan",
@@ -209,7 +235,7 @@ window.SCORE = {
         "exit": "the car crosses the blocks toward the rider",
         "spine": "the line says drivers use their own cars; the car is the trip",
         "cast": [
-          "Vaz"
+          "Driver"
         ],
         "events": [
           {
@@ -246,8 +272,16 @@ window.SCORE = {
       "start": 12,
       "duration": 3.3,
       "slots": {
-        "content.body": "THE FARE",
-        "content.caption": "DRIVER KEEPS THE REST"
+        "content.caption": "SPLIT",
+        "stage.field": "ink",
+        "stage.scale0": "0.8",
+        "stage.scale1": "0.8",
+        "stage.x0": "700",
+        "stage.x1": "1250",
+        "stage.floorY": "800",
+        "stage.device": "sunburst",
+        "stage.spot": "0",
+        "content.body": "THE FARE"
       },
       "camera": {
         "move": "push_in",
@@ -264,8 +298,8 @@ window.SCORE = {
         "exit": "the split line settles and a coin is divided",
         "spine": "the line says Uber takes a service fee and the driver keeps the rest",
         "cast": [
-          "Kiran",
-          "Vaz"
+          "Rider",
+          "Driver"
         ],
         "events": [
           {
@@ -304,8 +338,16 @@ window.SCORE = {
       "start": 15.3,
       "duration": 2.2,
       "slots": {
-        "content.body": "SERVICE FEE",
-        "content.caption": "UBER TAKES A SMALL CUT"
+        "content.caption": "UBER TAKES A SMALL CUT",
+        "stage.field": "ink",
+        "stage.scale0": "1.55",
+        "stage.scale1": "1.45",
+        "stage.x0": "720",
+        "stage.x1": "1200",
+        "stage.floorY": "820",
+        "stage.device": "ring",
+        "stage.spot": "0",
+        "content.body": "SERVICE FEE"
       },
       "camera": {
         "move": "pull_back",
@@ -321,7 +363,10 @@ window.SCORE = {
         "entry": "paper coins leaving a rider and stopping at a driver, with one small coin reaching Uber",
         "exit": "the coins arc from rider to driver and one to the platform",
         "spine": "the line says the platform keeps the match, not the whole fare",
-        "cast": [],
+        "cast": [
+          "Rider",
+          "Driver"
+        ],
         "events": [
           {
             "t": 0.2,
@@ -357,8 +402,14 @@ window.SCORE = {
       "start": 17.5,
       "duration": 3,
       "slots": {
-        "content.body": "ONE APP",
-        "content.caption": "DELIVERY · FREIGHT · ADS · UBER ONE"
+        "content.caption": "MORE",
+        "stage.field": "red",
+        "stage.scale0": "0.75",
+        "stage.x0": "640",
+        "stage.floorY": "820",
+        "stage.device": "sunburst",
+        "stage.spot": "1",
+        "content.body": "ONE APP"
       },
       "camera": {
         "move": "push_in",
@@ -375,7 +426,7 @@ window.SCORE = {
         "exit": "each revenue tile lands in the app",
         "spine": "the line lists the four other things the network sells",
         "cast": [
-          "Kiran"
+          "Rider"
         ],
         "events": [
           {
@@ -419,7 +470,13 @@ window.SCORE = {
       "start": 20.5,
       "duration": 3.2,
       "slots": {
-        "content.caption": "MORE THAN A RIDE"
+        "content.caption": "MORE THAN A RIDE",
+        "stage.field": "cream",
+        "stage.scale0": "1.4",
+        "stage.x0": "640",
+        "stage.floorY": "820",
+        "stage.device": "ring",
+        "stage.spot": "1"
       },
       "camera": {
         "move": "pan",
@@ -436,7 +493,7 @@ window.SCORE = {
         "exit": "the two routes cross the city at once",
         "spine": "the line says one network earns in more than one way",
         "cast": [
-          "Vaz"
+          "Driver"
         ],
         "events": [
           {
@@ -474,8 +531,16 @@ window.SCORE = {
       "start": 23.7,
       "duration": 3,
       "slots": {
-        "content.body": "MORE NODES",
-        "content.caption": "SHORTER WAITS"
+        "content.caption": "WAITS",
+        "stage.field": "oxblood",
+        "stage.scale0": "0.8",
+        "stage.scale1": "0.75",
+        "stage.x0": "640",
+        "stage.x1": "1280",
+        "stage.floorY": "820",
+        "stage.device": "none",
+        "stage.spot": "0",
+        "content.body": "MORE NODES"
       },
       "camera": {
         "move": "orbit",
@@ -492,8 +557,8 @@ window.SCORE = {
         "exit": "nodes multiply and the wait bar shortens",
         "spine": "the line says more riders and drivers shorten the wait",
         "cast": [
-          "Kiran",
-          "Vaz"
+          "Rider",
+          "Driver"
         ],
         "events": [
           {
@@ -531,7 +596,13 @@ window.SCORE = {
       "start": 26.7,
       "duration": 3.3,
       "slots": {
-        "content.caption": "HARDER TO LEAVE"
+        "content.caption": "LEAVE",
+        "stage.field": "blue",
+        "stage.scale0": "0.85",
+        "stage.x0": "640",
+        "stage.floorY": "800",
+        "stage.device": "none",
+        "stage.spot": "0"
       },
       "camera": {
         "move": "push_in",
@@ -548,7 +619,7 @@ window.SCORE = {
         "exit": "the car pin arrives almost immediately",
         "spine": "the button says the network gets harder to leave; the ride is already there",
         "cast": [
-          "Kiran"
+          "Rider"
         ],
         "events": [
           {
@@ -579,7 +650,75 @@ window.SCORE = {
     }
   ],
   "warnings": [
-    "poses \"asleep\" and \"slump\" are too close in silhouette"
+    "poses \"asleep\" and \"slump\" are too close in silhouette",
+    "slot \"stage.field\" is not declared by \"network_web\"",
+    "slot \"stage.scale0\" is not declared by \"network_web\"",
+    "slot \"stage.scale1\" is not declared by \"network_web\"",
+    "slot \"stage.x0\" is not declared by \"network_web\"",
+    "slot \"stage.x1\" is not declared by \"network_web\"",
+    "slot \"stage.floorY\" is not declared by \"network_web\"",
+    "slot \"stage.device\" is not declared by \"network_web\"",
+    "slot \"stage.spot\" is not declared by \"network_web\"",
+    "slot \"stage.field\" is not declared by \"app_menu\"",
+    "slot \"stage.scale0\" is not declared by \"app_menu\"",
+    "slot \"stage.x0\" is not declared by \"app_menu\"",
+    "slot \"stage.floorY\" is not declared by \"app_menu\"",
+    "slot \"stage.device\" is not declared by \"app_menu\"",
+    "slot \"stage.spot\" is not declared by \"app_menu\"",
+    "slot \"stage.field\" is not declared by \"phone_route\"",
+    "slot \"stage.scale0\" is not declared by \"phone_route\"",
+    "slot \"stage.x0\" is not declared by \"phone_route\"",
+    "slot \"stage.floorY\" is not declared by \"phone_route\"",
+    "slot \"stage.device\" is not declared by \"phone_route\"",
+    "slot \"stage.spot\" is not declared by \"phone_route\"",
+    "slot \"stage.field\" is not declared by \"city_route\"",
+    "slot \"stage.scale0\" is not declared by \"city_route\"",
+    "slot \"stage.x0\" is not declared by \"city_route\"",
+    "slot \"stage.floorY\" is not declared by \"city_route\"",
+    "slot \"stage.device\" is not declared by \"city_route\"",
+    "slot \"stage.spot\" is not declared by \"city_route\"",
+    "slot \"stage.field\" is not declared by \"fare_split\"",
+    "slot \"stage.scale0\" is not declared by \"fare_split\"",
+    "slot \"stage.scale1\" is not declared by \"fare_split\"",
+    "slot \"stage.x0\" is not declared by \"fare_split\"",
+    "slot \"stage.x1\" is not declared by \"fare_split\"",
+    "slot \"stage.floorY\" is not declared by \"fare_split\"",
+    "slot \"stage.device\" is not declared by \"fare_split\"",
+    "slot \"stage.spot\" is not declared by \"fare_split\"",
+    "slot \"stage.field\" is not declared by \"money_flow\"",
+    "slot \"stage.scale0\" is not declared by \"money_flow\"",
+    "slot \"stage.scale1\" is not declared by \"money_flow\"",
+    "slot \"stage.x0\" is not declared by \"money_flow\"",
+    "slot \"stage.x1\" is not declared by \"money_flow\"",
+    "slot \"stage.floorY\" is not declared by \"money_flow\"",
+    "slot \"stage.device\" is not declared by \"money_flow\"",
+    "slot \"stage.spot\" is not declared by \"money_flow\"",
+    "slot \"stage.field\" is not declared by \"app_menu\"",
+    "slot \"stage.scale0\" is not declared by \"app_menu\"",
+    "slot \"stage.x0\" is not declared by \"app_menu\"",
+    "slot \"stage.floorY\" is not declared by \"app_menu\"",
+    "slot \"stage.device\" is not declared by \"app_menu\"",
+    "slot \"stage.spot\" is not declared by \"app_menu\"",
+    "slot \"stage.field\" is not declared by \"city_route\"",
+    "slot \"stage.scale0\" is not declared by \"city_route\"",
+    "slot \"stage.x0\" is not declared by \"city_route\"",
+    "slot \"stage.floorY\" is not declared by \"city_route\"",
+    "slot \"stage.device\" is not declared by \"city_route\"",
+    "slot \"stage.spot\" is not declared by \"city_route\"",
+    "slot \"stage.field\" is not declared by \"network_web\"",
+    "slot \"stage.scale0\" is not declared by \"network_web\"",
+    "slot \"stage.scale1\" is not declared by \"network_web\"",
+    "slot \"stage.x0\" is not declared by \"network_web\"",
+    "slot \"stage.x1\" is not declared by \"network_web\"",
+    "slot \"stage.floorY\" is not declared by \"network_web\"",
+    "slot \"stage.device\" is not declared by \"network_web\"",
+    "slot \"stage.spot\" is not declared by \"network_web\"",
+    "slot \"stage.field\" is not declared by \"phone_route\"",
+    "slot \"stage.scale0\" is not declared by \"phone_route\"",
+    "slot \"stage.x0\" is not declared by \"phone_route\"",
+    "slot \"stage.floorY\" is not declared by \"phone_route\"",
+    "slot \"stage.device\" is not declared by \"phone_route\"",
+    "slot \"stage.spot\" is not declared by \"phone_route\""
   ],
   "brief": "films/uber-model/brief.json",
   "clock": {
@@ -607,7 +746,8 @@ window.SCORE = {
         "id": "v04",
         "text": "The app sells delivery, freight, advertising and memberships, so one network earns in more than one way.",
         "start": 17.5,
-        "duration": 5.8
+        "duration": 5.8,
+        "gainDb": -16
       },
       {
         "id": "v05",
@@ -953,8 +1093,8 @@ window.SCORE = {
     {
       "id": "character.lead",
       "type": "character",
-      "version": "0.1.0",
-      "hash": "sha256:9254b556cd1b9544051554f822b1235267867df3bab47db9495ee8de0a622f86",
+      "version": "1.0.0",
+      "hash": "sha256:fc1fa91ba0116e04816d76ba7f47c1cb199eb899053b0f24c193d59a1fa3f5cb",
       "source": "reused",
       "anchors": [
         "face",
@@ -964,14 +1104,14 @@ window.SCORE = {
         "foot-left",
         "foot-right"
       ],
-      "path": "library/characters/kiran/poses.json",
-      "character": "Kiran"
+      "path": "library/characters/rider/poses.json",
+      "character": "Rider"
     },
     {
       "id": "character.second",
       "type": "character",
-      "version": "0.1.0",
-      "hash": "sha256:31affba2abed7dccc21e69aedee9c34be9a1453aa35cb8f06bb56a605d0baacf",
+      "version": "1.0.0",
+      "hash": "sha256:57b09006575b46b7eb00979e1311e396514a9e338aba4fc698e281bdc0403abc",
       "source": "reused",
       "anchors": [
         "face",
@@ -981,14 +1121,14 @@ window.SCORE = {
         "foot-left",
         "foot-right"
       ],
-      "path": "library/characters/vaz/poses.json",
-      "character": "Vaz"
+      "path": "library/characters/driver/poses.json",
+      "character": "Driver"
     },
     {
       "id": "frame.paper-window",
       "type": "frame",
       "version": "0.1.0",
-      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
+      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -997,7 +1137,7 @@ window.SCORE = {
       "id": "hud.meter",
       "type": "hud",
       "version": "0.1.0",
-      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
+      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1006,7 +1146,7 @@ window.SCORE = {
       "id": "prop.object",
       "type": "prop",
       "version": "0.1.0",
-      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
+      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1015,7 +1155,7 @@ window.SCORE = {
       "id": "prop.paper-sticker",
       "type": "prop",
       "version": "0.1.0",
-      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
+      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1024,7 +1164,7 @@ window.SCORE = {
       "id": "set.corridor",
       "type": "set",
       "version": "0.1.0",
-      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
+      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1033,7 +1173,7 @@ window.SCORE = {
       "id": "set.paper-card",
       "type": "set",
       "version": "0.1.0",
-      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
+      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1042,7 +1182,7 @@ window.SCORE = {
       "id": "set.stage",
       "type": "set",
       "version": "0.1.0",
-      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
+      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1051,7 +1191,7 @@ window.SCORE = {
       "id": "set.tabletop",
       "type": "set",
       "version": "0.1.0",
-      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
+      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1060,7 +1200,7 @@ window.SCORE = {
       "id": "texture.halftone",
       "type": "texture",
       "version": "0.1.0",
-      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
+      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1069,7 +1209,7 @@ window.SCORE = {
       "id": "texture.paper-fibre",
       "type": "texture",
       "version": "0.1.0",
-      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
+      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1078,7 +1218,7 @@ window.SCORE = {
       "id": "prop.car",
       "type": "prop",
       "version": "0.1.0",
-      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
+      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1087,7 +1227,7 @@ window.SCORE = {
       "id": "prop.coin",
       "type": "prop",
       "version": "0.1.0",
-      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
+      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1096,7 +1236,7 @@ window.SCORE = {
       "id": "prop.phone",
       "type": "prop",
       "version": "0.1.0",
-      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
+      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1104,21 +1244,21 @@ window.SCORE = {
   ],
   "cast": [
     {
-      "character": "Kiran",
-      "poses": "library/characters/kiran/poses.json",
-      "rig": "worker@0.1.0"
+      "character": "Rider",
+      "poses": "library/characters/rider/poses.json",
+      "rig": "performer@0.1.0"
     },
     {
-      "character": "Vaz",
-      "poses": "library/characters/vaz/poses.json",
-      "rig": "supervisor@0.1.0"
+      "character": "Driver",
+      "poses": "library/characters/driver/poses.json",
+      "rig": "performer@0.1.0"
     }
   ]
 };
 window.POSES = {
-  "Kiran": {
-    "character": "Kiran",
-    "rig": "worker@0.1.0",
+  "Rider": {
+    "character": "Rider",
+    "rig": "performer@0.1.0",
     "body": {
       "arm": {
         "upper": 92,
@@ -1143,8 +1283,12 @@ window.POSES = {
       "waist"
     ],
     "colors": {
-      "shirt": "blueL",
+      "shirt": "red",
       "trouser": "blueD",
+      "jacket": "gold",
+      "skirt": "blue",
+      "petal": "gold",
+      "boot": "ink",
       "hair": "ink",
       "skin": "#F0C9A4"
     },
@@ -1598,11 +1742,31 @@ window.POSES = {
           "browLift": 0.6
         }
       }
+    ],
+    "archetype": "paper-pop-performer",
+    "stageRoles": [
+      "star"
+    ],
+    "appearance": {
+      "faceStyle": "drawn-cartoon",
+      "headLayers": 3,
+      "hairLayers": 3,
+      "bradMetal": "#C68E2E",
+      "fingers": false
+    },
+    "thumbOptional": false,
+    "visualHeadToBody": [
+      3.4,
+      4.5
+    ],
+    "headOrnamentDiameterPct": [
+      0.45,
+      0.65
     ]
   },
-  "Vaz": {
-    "character": "Vaz",
-    "rig": "supervisor@0.1.0",
+  "Driver": {
+    "character": "Driver",
+    "rig": "performer@0.1.0",
     "body": {
       "arm": {
         "upper": 92,
@@ -1629,7 +1793,10 @@ window.POSES = {
     "colors": {
       "shirt": "cream",
       "trouser": "ink2",
-      "jacket": "ink",
+      "jacket": "red",
+      "skirt": "redD",
+      "petal": "pink",
+      "boot": "ink2",
       "hair": "ink3",
       "skin": "#D9A87E"
     },
@@ -2075,6 +2242,26 @@ window.POSES = {
           "browLift": 0.6
         }
       }
+    ],
+    "archetype": "paper-pop-performer",
+    "stageRoles": [
+      "foil"
+    ],
+    "appearance": {
+      "faceStyle": "drawn-cartoon",
+      "headLayers": 3,
+      "hairLayers": 3,
+      "bradMetal": "#C68E2E",
+      "fingers": false
+    },
+    "thumbOptional": false,
+    "visualHeadToBody": [
+      3.4,
+      4.5
+    ],
+    "headOrnamentDiameterPct": [
+      0.45,
+      0.65
     ]
   }
 };

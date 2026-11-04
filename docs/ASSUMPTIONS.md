@@ -1,6 +1,6 @@
 # Assumptions made for *The Uber Cut*, and what is parked
 
-**Date:** 4 Nov 2026
+**Date:** 5 Nov 2026 (rebuilt under 0055; first written 4 Nov 2026).
 **Film:** `films/uber-model/` — 30 s, 10 shots, 5 narration lines, 91 words.
 
 The user asked for the whole plan to be completed, best-case assumptions
@@ -22,17 +22,20 @@ recorded, and anything not done moved to a parked list. This is that record.
    caption. `voice --from-story` now writes `<line>.<n>` chunks, and
    `checkCaptions`, the score audit and the SRT generator accept a chunk that
    is a contiguous word run of its line.
-4. **Casting.** Kiran is the rider, Vaz is the driver. This is the only invented
-   fact; both names live in `brief.json`. No Uber logo, brand mark, city, date,
-   person, revenue number or take rate is invented.
+4. **Casting is role-first.** `Rider` is the star and `Driver` is the foil;
+   both are paper-pop performers, not the old office pair. They are **roles**,
+   not new personal names: the narration never claims a name, and no new fact
+   is invented. The brief's Kiran/Vaz are retired from this film; the brief is
+   still the source of the business model. No Uber logo, brand mark, city,
+   date, person, revenue number or take rate is invented.
 5. **The visuals are the subject, not the office set.** Six explainer recipes
    were added to the pack: a phone map with a route and pins, a paper city with
    a car, a fare split, an app menu with four revenue tiles, a rider/driver
-   network, and coins moving to driver and platform. Kiran and Vaz are staged in
-   9 of 10 shots; cobalt and tomato paper wings with a gold seam frame every
-   explainer shot. The film has no lamp, no banner and no sunburst title card;
-   the first image is the network. The
-   narration carries the business model, and the frame now shows it.
+   network, and coins moving to driver and platform. Every shot is a full-bleed
+   paper stage; the phone, city and fare card are props beside the performer,
+   not a cream plate between two wings. Rider/Driver are staged in 10 of 10
+   shots. The film has no lamp, no banner, no office-worker lead and no
+   sunburst title card; the first image is the network.
 6. **Facts are public and general:** Uber is asset-light; the driver keeps the
    fare minus a service fee; the same app also sells delivery, freight,
    advertising and memberships (Uber One); more riders and drivers make the
@@ -40,9 +43,11 @@ recorded, and anything not done moved to a parked list. This is that record.
 7. **Same Alarm is history.** It has no `story.json`, so the new `writing` gate
    fails it. Its picture and audio are left untouched; it is not re-rendered to
    make an old film pass a new row.
-8. **The character library is the reusable cast.** Kiran/Vaz have 8 unique
-   poses and 14 unique faces; Vaz keeps the old pose names because Same Alarm's
-   score names them. The sheet is the visual proof.
+8. **The character library is the reusable cast.** Rider/Driver join Kiran/Vaz:
+   each has 8 unique poses and 14 unique faces, a rig, an archetype, a licence
+   and a hash. Vaz keeps the old pose names because Same Alarm's score names
+   them. The library sheet is the visual proof. The 8/14 shapes are unique; a
+   pixel-level proof of the 14 faces is still parked.
 9. **`assets:new` adds missing entries but does not refresh a changed hash.**
    Editing `styles/paper-kpop/canvas/recipes.js` required a manual hash refresh
    for the film's recipe assets. A `--refresh` mode is parked.
@@ -52,8 +57,8 @@ recorded, and anything not done moved to a parked list. This is that record.
 | Item | Why / what remains |
 |---|---|
 | **P0.5 - 7 read-only analysis agents + up to 4 rebuild worktrees** | parked by the user earlier. The single agent/critic pass and the gate are what shipped. The analysis half still applies; the rebuild half is blocked until `canvas/recipes.js` is split and `manifest.ts` hashes more than that one file. |
-| **P0.7 - the `reproduce` legacy marker** | probe/draft output, `--skip-render`, `--from gate|review`, whole-film render requirements, gate type/rig score ties and `--allow-none` are now guarded. `reproduce` is still inferred from an existing MP4; the render refuses a whole-film paint without a `legacy` marker, but old scores are not edited. |
-| **P0.9 - 3 s LU contrast, LRA, hand/face close-up count** | built in 0053: LRA floor 4 LU, 3 s short-term contrast floor 15 LU, close-ups (>=55% height) 20-60% of shots. The Uber film is red on all three by design. |
+| **P0.7 - the `reproduce` legacy marker** | probe/draft output, `--skip-render`, `--from gate|review`, whole-film render requirements, gate type/rig score ties and `--allow-none` are guarded. The inference now compares the existing picture to the render manifest: a re-render of the current film is not a reproduction, while an old file without a matching manifest still needs a `legacy` marker. Old scores are not edited. |
+| **P0.9 - 3 s LU contrast, LRA, hand/face close-up count** | built in 0053 and **closed by 0054/0055**: a narration line may declare `gainDb`; *The Uber Cut* uses v04 at -16 dB, giving 17.8 LU 3 s contrast and 16.5 LU LRA with no narration hole. Close-ups are 30% of shots. The old "red by design" state is historical. |
 | **A semantic vision check** | `visual:check` is textual: it proves the brief names the subject and the recipe declares it can draw that subject. A person still judges the frame. |
 | **Exact Uber financials / take rate** | deliberately omitted; no number was invented. |
 | **Music** | no score/music track; narration + 9 code-generated cues. |
@@ -67,8 +72,8 @@ recorded, and anything not done moved to a parked list. This is that record.
 
 ## What is proven
 
-- `npm run identity:accept -- --ref ... --film films/uber-model/score.json` -> **PASS**: reference 100.9 / 21.8 / 12.6 inside the film bands; Uber fails 17 findings.
-- `style:identity -- films/uber-model/score.json --video` -> **FAIL**, 17 findings; the report is tied to score, identity, frame and video hashes.
-- `gate:7` -> **28 checks**, **FAIL** on `preflight`, `styleIdentity`, `closeUps`, `lra`, `soundContrast`. The Uber film is red by design; its MP4 and score are unchanged.
-- The reference film's surface remains the six crops; the film bands are the film's own.
-- ASR of the delivered file: **91/91 words, 100.0%**.
+- `npm run style:identity -- films/uber-model/score.json --video` -> **PASS, 0 findings**; the report is tied to score, identity, frame and video hashes.
+- `npm run gate:7 -- films/uber-model/score.json` -> **PASS, 28 checks, nothing manual**.
+- `npm run film:review -- films/uber-model/score.json --gate --reuse` -> **PASS**; the one sheet is `build/uber-model/final-sheet.png`.
+- ASR of the delivered file: **91/91 words, 100.0%**, even through the deliberate -16 dB v04.
+- `npm run identity:accept` remains the 0053 calibration on the **old** film: the reference passes and the old Uber fails. The rebuilt film is now the positive example, not the negative control.
