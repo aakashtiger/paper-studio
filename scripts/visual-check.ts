@@ -2,9 +2,10 @@
  * `visual:check` — was the picture asked for before it was painted?
  *
  * Reads the score's `shots[].visual`, the pack's recipe `subjects`, and the
- * score's clock lines. Refuses a missing visual brief, a line that does not
- * exist, a one-word reason, a recipe that cannot draw the named subject, a
- * default opening card, and one recipe doing more than 40% of the film.
+ * score's clock lines. Refuses a missing phrase or device, a phrase outside the
+ * linked line or its shot's measured words, a repeated phrase/shows/device, a
+ * near-identical action, a recipe used twice, and a staged body the words do
+ * not need.
  *
  * usage: npm run visual:check -- films/<id>/score.json
  */
@@ -13,7 +14,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { join, resolve } from "node:path";
 import { FilmScoreSchema } from "../src/engine/treatment.js";
 import { ScenesSchema } from "../src/engine/scenes.js";
-import { checkVisuals, type RecipeVisual } from "../src/engine/visual.js";
+import { checkVisuals, VISUAL_CONTRACT_VERSION, type RecipeVisual } from "../src/engine/visual.js";
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
@@ -43,22 +44,44 @@ const scenesPath = resolve(root, "films", score.id, "scenes.json");
 const scenes = existsSync(scenesPath)
   ? ScenesSchema.parse(JSON.parse(readFileSync(scenesPath, "utf8").replace(/^\uFEFF/, ""))).scenes
   : undefined;
-const shots = score.shots.map((shot, index) => ({
-  id: `s${String(index + 1).padStart(2, "0")}`,
-  recipe: shot.recipe,
-  beat: shot.beat,
-  scene: shot.scene,
-  visual: shot.visual,
-}));
-const result = checkVisuals(shots, recipes, lines, scenes);
+const wordsPath = resolve(root, "films", score.id, "words.json");
+const timedWords = existsSync(wordsPath)
+  ? (JSON.parse(readFileSync(wordsPath, "utf8")) as { words?: { w: string; start: number; end: number }[] }).words
+  : undefined;
+let clock = 0;
+const shots = score.shots.map((shot, index) => {
+  const entry = {
+    id: `s${String(index + 1).padStart(2, "0")}`,
+    recipe: shot.recipe,
+    beat: shot.beat,
+    scene: shot.scene,
+    cast: shot.direction.cast,
+    start: clock,
+    duration: shot.duration,
+    visual: shot.visual,
+  };
+  clock += shot.duration;
+  return entry;
+});
+const result = checkVisuals(
+  shots,
+  recipes,
+  lines.map((line) => ({ id: line.id, text: line.text })),
+  scenes,
+  timedWords,
+);
 const report = {
   film: score.id,
+  contract: VISUAL_CONTRACT_VERSION,
   score: `sha256:${createHash("sha256").update(readFileSync(resolve(root, file))).digest("hex")}`,
   pass: result.findings.length === 0,
   shots: shots.length,
   checked: result.checked,
   recipes: result.recipes,
   scenes: result.scenes,
+  staged: result.staged,
+  phrases: result.phrases,
+  signatures: result.signatures,
   findings: result.findings,
 };
 mkdirSync(resolve(root, "build", score.id), { recursive: true });
@@ -66,13 +89,16 @@ const out = resolve(root, "build", score.id, "visual-check.json");
 writeFileSync(out, `${JSON.stringify(report, null, 2)}\n`, "utf8");
 
 for (const shot of shots) {
+  const phrase = shot.visual?.phrase ? `"${shot.visual.phrase}"` : "NO PHRASE";
+  const device = shot.visual?.device ? `[${shot.visual.device}]` : "[NO DEVICE]";
   console.log(
-    `visual: ${shot.id.padEnd(4)} ${shot.recipe.padEnd(14)} ${shot.visual ? `"${shot.visual.shows}"` : "NO BRIEF"}`,
+    `visual: ${shot.id.padEnd(4)} ${shot.recipe.padEnd(14)} ${device.padEnd(18)} ${phrase}`,
   );
 }
 for (const finding of result.findings) console.error(`  FAIL ${finding.code}: ${finding.message}`);
 console.log(
-  `visual: ${result.checked}/${shots.length} shots with a brief · ${recipes.length} recipes · ` +
+  `visual: contract ${VISUAL_CONTRACT_VERSION} · ${result.checked}/${shots.length} briefs · ` +
+    `${result.staged} staged · ${result.phrases} phrase(s) · ${recipes.length} recipes · ` +
     `${result.findings.length} finding(s) · ${report.pass ? "pass" : "FAIL"} · ${out}`,
 );
 if (!report.pass) process.exit(1);

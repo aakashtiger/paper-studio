@@ -276,6 +276,7 @@ const result = checkStyleIdentity({
   field: identity.field,
   composition: identity.composition,
   castRule: identityCastRule(identity),
+  performanceMode: score.performance?.mode,
   frame,
 });
 const findings = [...scoreFindings, ...result.findings];
@@ -296,6 +297,8 @@ const report = {
   dimension: identity.envelope.dimension,
   pass: findings.length === 0,
   stagedRatio: Number(result.stagedRatio.toFixed(3)),
+  performanceMode: score.performance?.mode ?? null,
+  stagedBand: result.stagedBand,
   stages: { shots: score.shots.length, stagedShots },
   cast,
   metrics,

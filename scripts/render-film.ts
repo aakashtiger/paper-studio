@@ -30,6 +30,7 @@ import type { RenderManifest } from "../src/engine/manifest.js";
 import { FilmScoreSchema } from "../src/engine/treatment.js";
 import { scoreDataText } from "../src/engine/score-data.js";
 import { fileHash, videoStreamHash } from "../src/engine/video.js";
+import { VISUAL_CONTRACT_VERSION } from "../src/engine/visual.js";
 
 const MIME: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
@@ -143,6 +144,7 @@ function requireVisuals(cwd: string, id: string, scoreFile: string): void {
     throw new Error(`refusing to paint ${id}: no visual check. Run \`${run}\` first`);
   }
   const written = JSON.parse(readFileSync(reportPath, "utf8")) as {
+    contract?: number;
     pass?: boolean;
     score?: string;
     findings?: { code: string; message: string }[];
@@ -150,6 +152,9 @@ function requireVisuals(cwd: string, id: string, scoreFile: string): void {
   const hash = fileHash(scoreFile);
   if (written.score !== hash) {
     throw new Error(`refusing to paint ${id}: build/${id}/visual-check.json describes a different score. Run \`${run}\` again`);
+  }
+  if (written.contract !== VISUAL_CONTRACT_VERSION) {
+    throw new Error(`refusing to paint ${id}: build/${id}/visual-check.json predates the phrase/device/performer rules. Run \`${run}\` again`);
   }
   if (!written.pass) {
     const findings = written.findings ?? [];

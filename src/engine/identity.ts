@@ -12,6 +12,7 @@ export const PERFORMANCE_MODES = [
   "stage-show",
   "presenter-show",
   "creature-show",
+  "diagram-show",
 ] as const;
 
 export const ENTRANCE_VIAS = [

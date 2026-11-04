@@ -332,6 +332,19 @@ export function filmGaps(score: unknown, options: { requireVisual?: boolean } = 
       ) {
         gaps.push(`${where}.visual: shows, action, focus, the line it answers, and why`);
       }
+      if (options.requireVisual && (!text(visual.phrase) || !text(visual.device))) {
+        gaps.push(`${where}.visual: the exact narrated phrase and one device`);
+      }
+      if (options.requireVisual) {
+        if (!Array.isArray(direction.cast)) {
+          gaps.push(`${where}.direction.cast: an explicit list, even if it is empty`);
+        } else if (direction.cast.length > 0) {
+          const performers = list(visual.performers);
+          if (performers.length !== direction.cast.length) {
+            gaps.push(`${where}.visual.performers: one block per staged character (who, does, why)`);
+          }
+        }
+      }
     });
   }
 

@@ -45,12 +45,12 @@
         "headTurn": -0.02,
         "hairSwing": 2,
         "armL": [
-          -0.1,
-          -0.12
+          0.05,
+          0.03
         ],
         "armR": [
-          0.1,
-          0.12
+          -0.05,
+          -0.03
         ],
         "footL": [
           -16,
@@ -306,6 +306,111 @@
           -0.01
         ]
       }
+    },
+    {
+      "name": "tap",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": 0.05,
+        "headTilt": -0.06,
+        "headTurn": 0.08,
+        "hairSwing": 2,
+        "armL": [
+          0.05,
+          0.03
+        ],
+        "armR": [
+          -0.8,
+          0.55
+        ],
+        "footL": [
+          -16,
+          -8
+        ],
+        "footR": [
+          16,
+          -8
+        ],
+        "legL": [
+          0.03,
+          0.01
+        ],
+        "legR": [
+          -0.03,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "hold",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": 0.04,
+        "headTilt": -0.04,
+        "headTurn": 0.04,
+        "hairSwing": 2,
+        "armL": [
+          0.05,
+          0.03
+        ],
+        "armR": [
+          -0.5,
+          0.95
+        ],
+        "footL": [
+          -16,
+          -8
+        ],
+        "footR": [
+          16,
+          -8
+        ],
+        "legL": [
+          0.03,
+          0.01
+        ],
+        "legR": [
+          -0.03,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "accept",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": -0.02,
+        "headTilt": 0.02,
+        "headTurn": -0.04,
+        "hairSwing": 2,
+        "armL": [
+          0.05,
+          0.03
+        ],
+        "armR": [
+          -1.15,
+          0.35
+        ],
+        "footL": [
+          -16,
+          -8
+        ],
+        "footR": [
+          16,
+          -8
+        ],
+        "legL": [
+          0.03,
+          0.01
+        ],
+        "legR": [
+          -0.03,
+          -0.01
+        ]
+      }
     }
   ],
   "expressions": [
@@ -494,7 +599,7 @@
     "headLayers": 3,
     "hairLayers": 3,
     "bradMetal": "#C68E2E",
-    "fingers": false
+    "fingers": true
   },
   "thumbOptional": false,
   "visualHeadToBody": [

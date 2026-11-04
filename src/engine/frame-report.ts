@@ -83,6 +83,8 @@ export type ProbeAnchor = {
   character: string;
   part: string;
   local: [number, number];
+  /** Local width/height of a boxed anchor (face, hand). Zero when unboxed. */
+  size?: [number, number];
   m: [number, number, number, number, number, number];
 };
 

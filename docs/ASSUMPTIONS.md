@@ -3,6 +3,15 @@
 **Date:** 5 Nov 2026 (rebuilt under 0055; first written 4 Nov 2026).
 **Film:** `films/uber-model/` — 30 s, 10 shots, 5 narration lines, 91 words.
 
+**0056 update (5 Nov 2026):** the visual contract now requires an exact
+narration phrase, a unique device, no repeated recipe/phrase/shows, and a
+physical action for every staged character; `diagram-show` makes cast optional at
+20–60%; the probe records a face box and text-over-face fails; the rig draws both
+hands with fingers and publishes hand anchors. The 0055 Uber score is
+**pre-0056** and `visual:check` refuses it with 48 findings. Its delivered MP4
+and 0055 gate are historical evidence. The next film is written under 0056; see
+`docs/proposals/next-film.md`.
+
 The user asked for the whole plan to be completed, best-case assumptions
 recorded, and anything not done moved to a parked list. This is that record.
 

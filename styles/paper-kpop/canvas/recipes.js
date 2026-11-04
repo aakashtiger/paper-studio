@@ -2444,7 +2444,8 @@ function moneyFlow(shot, lt, t) {
     paper(ctx, () => blobPath(ctx, x, y, 34, 34, 17, 0.02, 5), {
       fill: PAL.gold, edge: PAL.ink, edgeW: 2.5, shadow: C.rgba(PAL.ink, 0.2), sx: 3, sy: 5,
     });
-    TY.text(ctx, "$", x, y + 12, 26, { family: "Archivo Black", color: PAL.ink, align: "center" });
+    // The coin shape is the symbol; a `$` on every coin is a label wall and
+    // can land on a face.
   }
   ctx.strokeStyle = C.rgba(PAL.ink, 0.42); ctx.lineWidth = 4;
   ctx.beginPath(); ctx.moveTo(450, 730); ctx.lineTo(810, 730); ctx.stroke();

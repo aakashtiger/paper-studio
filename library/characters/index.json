@@ -26,20 +26,20 @@
       "name": "Rider",
       "rig": "performer@0.1.0",
       "poses": "library/characters/rider/poses.json",
-      "version": "1.0.0",
-      "source": "paper-kpop / Uber Cut rebuild (8 poses, 14 expressions)",
+      "version": "1.1.0",
+      "source": "paper-kpop / Uber Cut rebuild (11 poses, 14 expressions)",
       "licence": "proprietary",
-      "hash": "sha256:fc1fa91ba0116e04816d76ba7f47c1cb199eb899053b0f24c193d59a1fa3f5cb"
+      "hash": "sha256:976fd2f1b26fe20fda3082381171465c3c07547b31f629a8e4cefed674eda07f"
     },
     {
       "id": "driver",
       "name": "Driver",
       "rig": "performer@0.1.0",
       "poses": "library/characters/driver/poses.json",
-      "version": "1.0.0",
-      "source": "paper-kpop / Uber Cut rebuild (8 poses, 14 expressions)",
+      "version": "1.1.0",
+      "source": "paper-kpop / Uber Cut rebuild (11 poses, 14 expressions)",
       "licence": "proprietary",
-      "hash": "sha256:57b09006575b46b7eb00979e1311e396514a9e338aba4fc698e281bdc0403abc"
+      "hash": "sha256:52b1a13ccd35d96f64930324826f5b527583253f8cd69c944604d6b6a96a8013"
     }
   ]
 }

@@ -338,7 +338,7 @@ window.SCORE = {
       "start": 15.3,
       "duration": 2.2,
       "slots": {
-        "content.caption": "UBER TAKES A SMALL CUT",
+        "content.caption": "SMALL CUT",
         "stage.field": "ink",
         "stage.scale0": "1.55",
         "stage.scale1": "1.45",
@@ -1094,7 +1094,7 @@ window.SCORE = {
       "id": "character.lead",
       "type": "character",
       "version": "1.0.0",
-      "hash": "sha256:fc1fa91ba0116e04816d76ba7f47c1cb199eb899053b0f24c193d59a1fa3f5cb",
+      "hash": "sha256:976fd2f1b26fe20fda3082381171465c3c07547b31f629a8e4cefed674eda07f",
       "source": "reused",
       "anchors": [
         "face",
@@ -1111,7 +1111,7 @@ window.SCORE = {
       "id": "character.second",
       "type": "character",
       "version": "1.0.0",
-      "hash": "sha256:57b09006575b46b7eb00979e1311e396514a9e338aba4fc698e281bdc0403abc",
+      "hash": "sha256:52b1a13ccd35d96f64930324826f5b527583253f8cd69c944604d6b6a96a8013",
       "source": "reused",
       "anchors": [
         "face",
@@ -1128,7 +1128,7 @@ window.SCORE = {
       "id": "frame.paper-window",
       "type": "frame",
       "version": "0.1.0",
-      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
+      "hash": "sha256:78cf2787003d20dec40871ab3163a2b967cba92cd39078ad7cff107e7a23e310",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1137,7 +1137,7 @@ window.SCORE = {
       "id": "hud.meter",
       "type": "hud",
       "version": "0.1.0",
-      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
+      "hash": "sha256:78cf2787003d20dec40871ab3163a2b967cba92cd39078ad7cff107e7a23e310",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1146,7 +1146,7 @@ window.SCORE = {
       "id": "prop.object",
       "type": "prop",
       "version": "0.1.0",
-      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
+      "hash": "sha256:78cf2787003d20dec40871ab3163a2b967cba92cd39078ad7cff107e7a23e310",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1155,7 +1155,7 @@ window.SCORE = {
       "id": "prop.paper-sticker",
       "type": "prop",
       "version": "0.1.0",
-      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
+      "hash": "sha256:78cf2787003d20dec40871ab3163a2b967cba92cd39078ad7cff107e7a23e310",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1164,7 +1164,7 @@ window.SCORE = {
       "id": "set.corridor",
       "type": "set",
       "version": "0.1.0",
-      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
+      "hash": "sha256:78cf2787003d20dec40871ab3163a2b967cba92cd39078ad7cff107e7a23e310",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1173,7 +1173,7 @@ window.SCORE = {
       "id": "set.paper-card",
       "type": "set",
       "version": "0.1.0",
-      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
+      "hash": "sha256:78cf2787003d20dec40871ab3163a2b967cba92cd39078ad7cff107e7a23e310",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1182,7 +1182,7 @@ window.SCORE = {
       "id": "set.stage",
       "type": "set",
       "version": "0.1.0",
-      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
+      "hash": "sha256:78cf2787003d20dec40871ab3163a2b967cba92cd39078ad7cff107e7a23e310",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1191,7 +1191,7 @@ window.SCORE = {
       "id": "set.tabletop",
       "type": "set",
       "version": "0.1.0",
-      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
+      "hash": "sha256:78cf2787003d20dec40871ab3163a2b967cba92cd39078ad7cff107e7a23e310",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1200,7 +1200,7 @@ window.SCORE = {
       "id": "texture.halftone",
       "type": "texture",
       "version": "0.1.0",
-      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
+      "hash": "sha256:78cf2787003d20dec40871ab3163a2b967cba92cd39078ad7cff107e7a23e310",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1209,7 +1209,7 @@ window.SCORE = {
       "id": "texture.paper-fibre",
       "type": "texture",
       "version": "0.1.0",
-      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
+      "hash": "sha256:78cf2787003d20dec40871ab3163a2b967cba92cd39078ad7cff107e7a23e310",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1218,7 +1218,7 @@ window.SCORE = {
       "id": "prop.car",
       "type": "prop",
       "version": "0.1.0",
-      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
+      "hash": "sha256:78cf2787003d20dec40871ab3163a2b967cba92cd39078ad7cff107e7a23e310",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1227,7 +1227,7 @@ window.SCORE = {
       "id": "prop.coin",
       "type": "prop",
       "version": "0.1.0",
-      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
+      "hash": "sha256:78cf2787003d20dec40871ab3163a2b967cba92cd39078ad7cff107e7a23e310",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1236,7 +1236,7 @@ window.SCORE = {
       "id": "prop.phone",
       "type": "prop",
       "version": "0.1.0",
-      "hash": "sha256:4f34dff5df7660070d284e6d0afa8c83cbf02d432f9d5719d30b31a1e74f7850",
+      "hash": "sha256:78cf2787003d20dec40871ab3163a2b967cba92cd39078ad7cff107e7a23e310",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1303,12 +1303,12 @@ window.POSES = {
           "headTurn": -0.02,
           "hairSwing": 2,
           "armL": [
-            -0.1,
-            -0.12
+            0.05,
+            0.03
           ],
           "armR": [
-            0.1,
-            0.12
+            -0.05,
+            -0.03
           ],
           "footL": [
             -16,
@@ -1564,6 +1564,111 @@ window.POSES = {
             -0.01
           ]
         }
+      },
+      {
+        "name": "tap",
+        "params": {
+          "bounce": 0,
+          "sway": 0,
+          "lean": 0.05,
+          "headTilt": -0.06,
+          "headTurn": 0.08,
+          "hairSwing": 2,
+          "armL": [
+            0.05,
+            0.03
+          ],
+          "armR": [
+            -0.8,
+            0.55
+          ],
+          "footL": [
+            -16,
+            -8
+          ],
+          "footR": [
+            16,
+            -8
+          ],
+          "legL": [
+            0.03,
+            0.01
+          ],
+          "legR": [
+            -0.03,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "hold",
+        "params": {
+          "bounce": 0,
+          "sway": 0,
+          "lean": 0.04,
+          "headTilt": -0.04,
+          "headTurn": 0.04,
+          "hairSwing": 2,
+          "armL": [
+            0.05,
+            0.03
+          ],
+          "armR": [
+            -0.5,
+            0.95
+          ],
+          "footL": [
+            -16,
+            -8
+          ],
+          "footR": [
+            16,
+            -8
+          ],
+          "legL": [
+            0.03,
+            0.01
+          ],
+          "legR": [
+            -0.03,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "accept",
+        "params": {
+          "bounce": 0,
+          "sway": 0,
+          "lean": -0.02,
+          "headTilt": 0.02,
+          "headTurn": -0.04,
+          "hairSwing": 2,
+          "armL": [
+            0.05,
+            0.03
+          ],
+          "armR": [
+            -1.15,
+            0.35
+          ],
+          "footL": [
+            -16,
+            -8
+          ],
+          "footR": [
+            16,
+            -8
+          ],
+          "legL": [
+            0.03,
+            0.01
+          ],
+          "legR": [
+            -0.03,
+            -0.01
+          ]
+        }
       }
     ],
     "expressions": [
@@ -1752,7 +1857,7 @@ window.POSES = {
       "headLayers": 3,
       "hairLayers": 3,
       "bradMetal": "#C68E2E",
-      "fingers": false
+      "fingers": true
     },
     "thumbOptional": false,
     "visualHeadToBody": [
@@ -1811,12 +1916,12 @@ window.POSES = {
           "headTurn": 0.02,
           "hairSwing": 0,
           "armL": [
-            -0.08,
-            -0.06
+            0.05,
+            0.03
           ],
           "armR": [
-            0.08,
-            0.06
+            -0.05,
+            -0.03
           ],
           "footL": [
             -18,
@@ -2064,6 +2169,111 @@ window.POSES = {
             -0.01
           ]
         }
+      },
+      {
+        "name": "tap",
+        "params": {
+          "bounce": 0,
+          "sway": 0,
+          "lean": 0.05,
+          "headTilt": -0.06,
+          "headTurn": 0.08,
+          "hairSwing": 0,
+          "armL": [
+            0.05,
+            0.03
+          ],
+          "armR": [
+            -0.8,
+            0.55
+          ],
+          "footL": [
+            -18,
+            -8
+          ],
+          "footR": [
+            18,
+            -8
+          ],
+          "legL": [
+            0.03,
+            0.01
+          ],
+          "legR": [
+            -0.03,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "hold",
+        "params": {
+          "bounce": 0,
+          "sway": 0,
+          "lean": 0.04,
+          "headTilt": -0.04,
+          "headTurn": 0.04,
+          "hairSwing": 0,
+          "armL": [
+            0.05,
+            0.03
+          ],
+          "armR": [
+            -0.5,
+            0.95
+          ],
+          "footL": [
+            -18,
+            -8
+          ],
+          "footR": [
+            18,
+            -8
+          ],
+          "legL": [
+            0.03,
+            0.01
+          ],
+          "legR": [
+            -0.03,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "accept",
+        "params": {
+          "bounce": 0,
+          "sway": 0,
+          "lean": -0.02,
+          "headTilt": 0.02,
+          "headTurn": -0.04,
+          "hairSwing": 0,
+          "armL": [
+            0.05,
+            0.03
+          ],
+          "armR": [
+            -1.15,
+            0.35
+          ],
+          "footL": [
+            -18,
+            -8
+          ],
+          "footR": [
+            18,
+            -8
+          ],
+          "legL": [
+            0.03,
+            0.01
+          ],
+          "legR": [
+            -0.03,
+            -0.01
+          ]
+        }
       }
     ],
     "expressions": [
@@ -2252,7 +2462,7 @@ window.POSES = {
       "headLayers": 3,
       "hairLayers": 3,
       "bradMetal": "#C68E2E",
-      "fingers": false
+      "fingers": true
     },
     "thumbOptional": false,
     "visualHeadToBody": [

@@ -69,7 +69,7 @@ const mayReuseReports = args.includes("--reuse");
 const steps: Step[] = [
   { name: "preflight", script: "scripts/preflight.ts", detail: "score, cast and identity before the paint", tie: "score", report: `build/${id}/preflight.json` },
   { name: "audit", script: "scripts/audit.ts", detail: "score-level contracts" },
-  { name: "visual:check", script: "scripts/visual-check.ts", detail: "every shot has a visual brief that its recipe can draw" },
+  { name: "visual:check", script: "scripts/visual-check.ts", detail: "every shot answers its exact words with one device and a purposeful cast" },
   { name: "board", script: "scripts/board.ts", detail: "cards, one image" },
   { name: "storyboard", script: "scripts/storyboard.ts", detail: "one frame per shot" },
   { name: "sheet", script: "scripts/sheet.ts", detail: "character / pose sheet" },

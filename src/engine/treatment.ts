@@ -41,6 +41,29 @@ export const ShotVisualSchema = z.object({
   link: z.string().min(1),
   /** Why this image is the right one for that line, in the director's words. */
   why: z.string().min(1),
+  /**
+   * The exact words of `link` this image answers. A line can carry two or three
+   * images; a shot that quotes the whole line is not a shot, it is a slide.
+   * Required by visual:check (contract 2); optional so old scores still parse.
+   */
+  phrase: z.string().min(1).optional(),
+  /** The one concrete visual device that makes this image its own. */
+  device: z.string().min(1).optional(),
+  /**
+   * One block per character staged in this shot. `does` is the physical action
+   * the narration needs; a character with no action is a floating sticker.
+   */
+  performers: z
+    .array(
+      z
+        .object({
+          who: z.string().min(1),
+          does: z.string().min(1),
+          why: z.string().min(1),
+        })
+        .strict(),
+    )
+    .optional(),
 });
 
 export const TreatmentShotSchema = z.object({

@@ -26,16 +26,25 @@ import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
+import { faceBoxes, textOnFace, type FaceBox, type TextOnFace } from "../src/engine/text-face.js";
+import { VISUAL_CONTRACT_VERSION } from "../src/engine/visual.js";
 
 type TextBox = { text: string; x: number; y: number; w: number; h: number; copy?: boolean };
-type ProbeFile = { frames: { time: number; textBoxes: TextBox[] }[] };
+type ProbeFile = {
+  frames: { time: number; textBoxes: TextBox[]; rigRecords?: unknown[] }[];
+};
 type Score = {
   id: string;
   style?: string;
   duration: number;
   fps?: number;
   aspect?: string;
-  shots?: { duration: number; slots?: Record<string, string> }[];
+  shots?: {
+    duration: number;
+    slots?: Record<string, string>;
+    direction?: { cast?: string[] };
+    visual?: { phrase?: string };
+  }[];
 };
 
 const AUTHORED_WIDTH = 390;
@@ -175,12 +184,20 @@ async function main(): Promise<void> {
   const outside: { time: number; text: string; box: TextBox; over: number }[] = [];
   const belowFloor: { time: number; text: string; box: TextBox; px: number }[] = [];
   const misMarked: { time: number; text: string; shot: string }[] = [];
+  const onFace: Array<TextOnFace & { time: number; shot: string }> = [];
+  const facesByShot = new Map<string, Set<string>>();
   // The score stores each shot's duration, not its start: the start is the sum
   // of the durations before it. One place computes it, so the sample and the
   // shot can never disagree about where a shot begins.
   let clock = 0;
   const shots = (score.shots ?? []).map((shot, index) => {
-    const entry = { index, start: clock, duration: shot.duration, slots: shot.slots ?? {} };
+    const entry = {
+      index,
+      start: clock,
+      duration: shot.duration,
+      slots: shot.slots ?? {},
+      cast: shot.direction?.cast ?? [],
+    };
     clock += shot.duration;
     return entry;
   });
@@ -206,6 +223,14 @@ async function main(): Promise<void> {
   for (const frame of data.frames) {
     const copy = copyAt(frame.time);
     const shot = shotAt(frame.time);
+    const shotLabel = shot ? label(shot) : "?";
+    const faces = faceBoxes((frame.rigRecords ?? []) as Parameters<typeof faceBoxes>[0]);
+    for (const face of faces) {
+      if (!shot) continue;
+      const set = facesByShot.get(shotLabel) ?? new Set<string>();
+      set.add(face.character);
+      facesByShot.set(shotLabel, set);
+    }
     for (const box of frame.textBoxes) {
       boxes++;
       const over = Math.max(
@@ -216,6 +241,9 @@ async function main(): Promise<void> {
       );
       // 1 px of tolerance: antialiasing and glyph side bearings are not layout.
       if (over > 1) outside.push({ time: frame.time, text: box.text, box, over: Math.round(over * 10) / 10 });
+      for (const hit of textOnFace([box], faces)) {
+        onFace.push({ ...hit, time: frame.time, shot: shotLabel });
+      }
       if (box.copy !== true) continue;
       copyBoxes++;
       if (shot) shotsWithCopy.add(label(shot));
@@ -232,18 +260,29 @@ async function main(): Promise<void> {
     }
   }
   const unmarked = [...shotsWithSlots].filter((shot) => !shotsWithCopy.has(shot));
+  const requiresFaces = (score.shots ?? []).some(
+    (shot) => typeof shot.visual?.phrase === "string" && shot.visual.phrase.length > 0,
+  );
+  const unmeasuredFaces = shots.flatMap((shot) => {
+    const labelText = label(shot);
+    const seen = facesByShot.get(labelText) ?? new Set<string>();
+    return shot.cast.filter((character) => !seen.has(character)).map((character) => `${labelText}:${character}`);
+  });
 
   const pass =
     outside.length === 0 &&
     belowFloor.length === 0 &&
     misMarked.length === 0 &&
     copyBoxes > 0 &&
-    unmarked.length === 0;
+    unmarked.length === 0 &&
+    onFace.length === 0 &&
+    (!requiresFaces || unmeasuredFaces.length === 0);
   // The tie that lets a review reuse this report (decision 0033): the score it
   // measured, so a report about a different edit cannot be mistaken for fresh.
   const scoreHash = `sha256:${createHash("sha256").update(await readFile(resolve(root, scorePath), "utf8")).digest("hex")}`;
   const report = {
     film: score.id,
+    contract: VISUAL_CONTRACT_VERSION,
     score: scoreHash,
     pass,
     frame: { width, height },
@@ -258,11 +297,21 @@ async function main(): Promise<void> {
     belowFloor,
     misMarked,
     unmarked,
+    faces: {
+      boxes: [...facesByShot.values()].reduce((sum, set) => sum + set.size, 0),
+      characters: [...new Set([...facesByShot.values()].flatMap((set) => [...set]))],
+      shots: [...facesByShot.keys()],
+      unmeasured: unmeasuredFaces,
+      required: requiresFaces,
+    },
+    textOnFace: onFace,
     checks: {
       insideSafe: outside.length === 0,
       copyMarked: copyBoxes > 0 && unmarked.length === 0,
       copyAtFloor: belowFloor.length === 0,
       copyMatchesScore: misMarked.length === 0,
+      faceClear: onFace.length === 0,
+      faceMeasured: !requiresFaces || unmeasuredFaces.length === 0,
     },
     probe: `sha256:${createHash("sha256")
       .update(await readFile(resolve(root, "src/engine/paint-probe.js")))
@@ -290,6 +339,21 @@ async function main(): Promise<void> {
     for (const shot of unmarked.slice(0, 12)) {
       console.log(`  NO-COPY-MARKED ${shot}: the shot has a slot and no marked copy box`);
     }
+  }
+  console.log(
+    `face: ${report.faces.boxes} box(es) on ${report.faces.characters.length} character(s) · ` +
+      `${report.faces.shots.length} shot(s) measured · ${unmeasuredFaces.length} unmeasured · ${onFace.length} text-on-face`,
+  );
+  for (const item of onFace.slice(0, 12)) {
+    console.log(
+      `  TEXT-ON-FACE ${item.time.toFixed(2)}s "${item.text}" over ${item.face.character} (${Math.round(item.share * 100)}% of face)`,
+    );
+  }
+  for (const item of unmeasuredFaces.slice(0, 12)) {
+    if (requiresFaces) console.log(`  NO-FACE ${item}: a staged character with no face anchor`);
+  }
+  if (!requiresFaces && unmeasuredFaces.length > 0) {
+    console.log(`face: ${unmeasuredFaces.length} unmeasured on a pre-contract rig; no face box to check`);
   }
   console.log(
     `type: ${data.frames.length} frames · ${boxes} text boxes (${copyBoxes} copy) · safe ${safe.x0},${safe.y0}–${safe.x1},${safe.y1} (${Math.round(margin * 100)}% from ${resolved.source}) · copy floor ${floorPx}px (${floor.px} at ${AUTHORED_WIDTH}px, ${floor.source}) · ${pass ? "pass" : `FAIL ${outside.length} outside, ${belowFloor.length} under the floor, ${misMarked.length} mis-marked, ${unmarked.length} shots unmarked`}`,

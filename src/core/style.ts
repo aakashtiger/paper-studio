@@ -840,9 +840,23 @@ export const StyleIdentitySchema = z
     performance: z
       .object({
         modes: z
-          .array(z.enum(["stage-show", "presenter-show", "creature-show"]))
+          .array(z.enum(["stage-show", "presenter-show", "creature-show", "diagram-show"]))
           .min(1),
-        defaultMode: z.enum(["stage-show", "presenter-show", "creature-show"]),
+        defaultMode: z.enum(["stage-show", "presenter-show", "creature-show", "diagram-show"]),
+        /**
+         * Optional per-mode staged-shot band. A diagram show may stage 20-60%
+         * of its shots; a stage/presenter show keeps the pack's high floor.
+         * Absent means the cast.stagedShare floor, as before.
+         */
+        stagedShareByMode: z
+          .object({
+            "stage-show": z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]).optional(),
+            "presenter-show": z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]).optional(),
+            "creature-show": z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]).optional(),
+            "diagram-show": z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]).optional(),
+          })
+          .strict()
+          .optional(),
       })
       .strict(),
     motifs: z
@@ -878,6 +892,7 @@ export function identityCastRule(identity: StyleIdentity): {
   stageRoles: string[];
   principals: { min: number; max: number };
   stagedShare: number;
+  stagedShareByMode?: Partial<Record<string, readonly [number, number]>>;
   posesMin: number;
   expressionsMin: number;
   anchors: string[];
@@ -888,6 +903,7 @@ export function identityCastRule(identity: StyleIdentity): {
     stageRoles: identity.cast.stageRoles,
     principals: identity.cast.principals,
     stagedShare: identity.cast.stagedShare,
+    stagedShareByMode: identity.performance.stagedShareByMode,
     posesMin: identity.cast.posesMin,
     expressionsMin: identity.cast.expressionsMin,
     anchors: identity.cast.anchors,

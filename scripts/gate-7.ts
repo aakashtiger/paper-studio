@@ -24,6 +24,7 @@ import { StorySchema, BeatsSchema, checkStory, checkNarrationSync } from "../src
 import { ScenesSchema, checkScenes } from "../src/engine/scenes.js";
 import { inputMismatches, type RenderInputs } from "../src/engine/manifest.js";
 import { checkTwinEvidence, type TwinEvidence } from "../src/engine/determinism.js";
+import { VISUAL_CONTRACT_VERSION } from "../src/engine/visual.js";
 /**
  * The bounds the mix contract sets on the master come from `loudness.ts`, not
  * from a copy here. The mix refuses a film past them and the gate refuses a
@@ -214,6 +215,7 @@ async function main(): Promise<void> {
   const paint = read<{ pass: boolean; sampled: number; worst: { time: number; psnr: number }; videoHash: string | null }>("paint-match.json");
   const motion = read<{ pass: boolean; videoHash: string | null; weak: string[]; shots: { id: string; median: number }[] }>("motion-audit.json");
   const type = read<{
+    contract?: number;
     pass: boolean;
     score?: string;
     sampled: number;
@@ -222,6 +224,8 @@ async function main(): Promise<void> {
     floor?: { px: number };
     outside: unknown[];
     belowFloor?: unknown[];
+    textOnFace?: unknown[];
+    faces?: { unmeasured?: string[] };
   }>("type-audit.json");
   const rig = read<{
     pass: boolean;
@@ -404,6 +408,7 @@ async function main(): Promise<void> {
       // is tied to the score and lists the brief, the recipe match and the
       // scene/shot link; the render refuses without it, and the gate re-reads it.
       const report = read<{
+        contract?: number;
         pass: boolean;
         score: string;
         checked: number;
@@ -413,6 +418,7 @@ async function main(): Promise<void> {
       const current = `sha256:${hashFile(resolve(root, scorePath))}`;
       if (!report) return { ok: false, detail: "no visual check — run `npm run visual:check -- <score>`" };
       if (report.score !== current) return { ok: false, detail: "the visual check measured a different score" };
+      if (report.contract !== VISUAL_CONTRACT_VERSION) return { ok: false, detail: "the visual check predates the phrase/device/performer rules - re-run it" };
       if (!report.pass) {
         return { ok: false, detail: `${report.findings.length} visual finding(s): ${report.findings[0]?.message ?? "see visual-check.json"}` };
       }
@@ -632,11 +638,14 @@ async function main(): Promise<void> {
     typeSafeArea: {
       ok:
         type?.pass === true &&
+        type.contract === VISUAL_CONTRACT_VERSION &&
         type.score === `sha256:${hashFile(resolve(root, scorePath))}`,
       detail: type
-        ? type.score !== `sha256:${hashFile(resolve(root, scorePath))}`
-          ? "type audit measured a different score"
-          : `${type.boxes} boxes in ${type.sampled} frames (${type.copyBoxes ?? 0} copy), ${type.outside.length} outside, ${type.belowFloor?.length ?? 0} under the ${type.floor?.px ?? "?"}px copy floor`
+        ? type.contract !== VISUAL_CONTRACT_VERSION
+          ? "type audit predates the face check - re-run it"
+          : type.score !== `sha256:${hashFile(resolve(root, scorePath))}`
+            ? "type audit measured a different score"
+            : `${type.boxes} boxes in ${type.sampled} frames (${type.copyBoxes ?? 0} copy), ${type.outside.length} outside, ${type.belowFloor?.length ?? 0} under the ${type.floor?.px ?? "?"}px copy floor, ${type.textOnFace?.length ?? 0} on a face`
         : "no type-audit report",
     },
     rigSeam: {

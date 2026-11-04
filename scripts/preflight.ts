@@ -38,8 +38,9 @@ import {
 } from "../src/engine/story.js";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
 import { pictureMatches } from "../src/engine/video.js";
-import { StyleIdentitySchema } from "../src/core/style.js";
+import { StyleIdentitySchema, identityCastRule } from "../src/core/style.js";
 import { FIELD_ROLES, checkFilmIdentity } from "../src/engine/identity.js";
+import { stagedBand } from "../src/engine/style-identity.js";
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
@@ -432,10 +433,13 @@ if (!parsedIdentity.success) {
   }
   const staged = score.shots.filter((shot) => (shot.direction.cast?.length ?? 0) > 0).length;
   const stagedShare = score.shots.length === 0 ? 0 : staged / score.shots.length;
-  if (stagedShare + 1e-9 < identity.cast.stagedShare) {
+  const band = stagedBand(score.performance?.mode, identityCastRule(identity));
+  if (stagedShare + 1e-9 < band.min || stagedShare - 1e-9 > band.max) {
     identityFindings.push({
       code: "identity:staged",
-      message: `${staged}/${score.shots.length} shots stage a character (${(stagedShare * 100).toFixed(0)}%); the style needs at least ${(identity.cast.stagedShare * 100).toFixed(0)}%`,
+      message:
+        `${staged}/${score.shots.length} shots stage a character (${(stagedShare * 100).toFixed(0)}%); ` +
+        `${score.performance?.mode ?? "this style"} allows ${(band.min * 100).toFixed(0)}-${(band.max * 100).toFixed(0)}%`,
     });
   }
 }

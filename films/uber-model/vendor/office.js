@@ -40,6 +40,9 @@ const FACE_BY_POSE = {
   nod: { eyes: "dot", browLift: 0.8 },
   leave: { eyes: "dot", browLift: -1.2 },
   listen: { eyes: "dot", browLift: -0.8 },
+  tap: { eyes: "dot", browLift: 2.2 },
+  hold: { eyes: "dot", browLift: 0.6 },
+  accept: { eyes: "happy", browLift: 2.8 },
 };
 
 function officeFigure(ctx, x, y, s, o = {}) {
@@ -91,13 +94,8 @@ function officeFigure(ctx, x, y, s, o = {}) {
   if (o.shadow !== 0) shadowEllipse(ctx, 0, 0, (boss ? 44 : 40) * s, 9 * s, 0.22);
   ctx.scale(flip * s, s);
 
-  // Far arm: behind the torso, and it rides the lean like the near arm.
-  ctx.save();
-  ctx.translate(0, bounce);
-  ctx.translate(0, HIP + 2); ctx.rotate(lean); ctx.translate(0, -(HIP + 2));
-  drawArm(-1, armL, true);
-  ctx.restore();
-
+  // Far arm: drawn after the torso, before the near arm, so its hand is not
+  // swallowed by the shirt, belt or skirt. The far shade keeps the depth read.
   // Legs. Feet are IK targets when the pose gives one, so a planted foot bends
   // its knee instead of sliding.
   drawLeg(-1, legL, true);
@@ -151,6 +149,7 @@ function officeFigure(ctx, x, y, s, o = {}) {
   // Torso: leans from the waist, so every garment, the neck and the arms move
   // together. The anchor is what `audit:rig` holds still in chest space.
   ctx.save();
+  ctx.translate(0, bounce);
   ctx.translate(0, HIP + 2); ctx.rotate(lean); ctx.translate(0, -(HIP + 2));
   rigAnchor(ctx, "chest", 0, SHOULDER);
 
@@ -276,6 +275,7 @@ function officeFigure(ctx, x, y, s, o = {}) {
   ctx.save();
   ctx.translate(0, HEAD);
   rigAnchor(ctx, "hair", 0, 0);
+  rigAnchor(ctx, "face", 0, 0, 76, 88);
   if (performer) {
     // The petal halo is the character's silhouette: it must read from 390 px.
     ctx.strokeStyle = C.rgba(PAL.gold, 0.9);
@@ -436,7 +436,10 @@ function officeFigure(ctx, x, y, s, o = {}) {
   ctx.restore(); // face at HEAD
   ctx.restore(); // head pivot
 
-  drawArm(1, armR, false);
+  const farWrist = drawArm(-1, armL, true);
+  const nearWrist = drawArm(1, armR, false);
+  drawHand(farWrist, -1, true, armL[0] + armL[1]);
+  drawHand(nearWrist, 1, false, armR[0] + armR[1]);
 
   function drawArm(side, ang, far) {
     // The far arm hangs behind the torso. At ±38 it was almost entirely hidden
@@ -463,13 +466,50 @@ function officeFigure(ctx, x, y, s, o = {}) {
       ctx.strokeRect(-2, -9, 9, 18);
       ctx.restore();
     }
-    paper(ctx, () => blobPath(ctx, wrist[0], wrist[1] + 10, 9, 13, 10, 0.08, 5), {
-      fill: far ? SKIN_D : SKIN, edge: C.rgba(PAL.ink, 0.45), edgeW: 1.2,
-    });
-    paper(ctx, () => blobPath(ctx, wrist[0] + 7, wrist[1] + 14, 4, 6, 4, 0.1, 4), {
-      fill: far ? SKIN_D : SKIN, edge: C.rgba(PAL.ink, 0.4), edgeW: 1,
-    });
     return wrist;
+  }
+
+  function drawHand(wrist, side, far, ang) {
+    const poseKey = String(o.poseKey || "");
+    const open = ["wake", "reach", "accept", "look", "point"].includes(poseKey);
+    const point = poseKey === "tap" || poseKey === "point";
+    const folded = ["hold", "type", "asleep", "slump"].includes(poseKey);
+    const lengths = open
+      ? [7, 9, 8, 6]
+      : point
+        ? [9, 2.2, 2.2, 2.2]
+        : folded
+          ? [4, 4, 4, 4]
+          : [6, 7, 6, 5];
+    const skin = far ? SKIN_D : SKIN;
+    const edge = C.rgba(PAL.ink, far ? 0.5 : 0.45);
+    const sleeve = jacket ? (far ? C.shade(jacket, -14) : jacket) : (far ? C.shade(shirt, -14) : shirt);
+    ctx.save();
+    ctx.translate(wrist[0], wrist[1]);
+    ctx.rotate(ang);
+    // The cuff is the sleeve's end, so the hand is a part, not a floating leaf.
+    ctx.fillStyle = C.shade(sleeve, -10);
+    ctx.fillRect(-9, -5, 18, 6);
+    ctx.strokeStyle = C.rgba(PAL.ink, 0.45);
+    ctx.lineWidth = 1;
+    ctx.strokeRect(-9, -5, 18, 6);
+    paper(ctx, () => roundRectPath(ctx, -8, -1, 16, 16, 4), { fill: skin, edge, edgeW: 1.4 });
+    for (let i = 0; i < 4; i += 1) {
+      const x = -6.6 + i * 4.2;
+      paper(ctx, () => roundRectPath(ctx, x, 12, 3.2, lengths[i] ?? 5, 1.5), {
+        fill: skin,
+        edge,
+        edgeW: 1,
+      });
+    }
+    // The thumb sits proud of the palm on the body-facing side.
+    paper(ctx, () => roundRectPath(ctx, side < 0 ? 8 : -13, 2, 4.6, 9, 2), {
+      fill: skin,
+      edge,
+      edgeW: 1,
+    });
+    rigAnchor(ctx, side < 0 ? "hand-left" : "hand-right", 0, 0, 18, 26);
+    ctx.restore();
   }
 
   ctx.restore(); // torso

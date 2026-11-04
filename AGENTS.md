@@ -292,16 +292,26 @@ first film must author `word` events; Same Alarm has none. **493 tests.**
 30 s, 10 shots, 5 lines, 91 words at 182 wpm, **84.6% voiced**, made through
 story -> beats -> voice -> scenes -> score -> cut. It passed `gate:7` at 24
 checks when it shipped; under **0053** it failed by design at 28 checks. It was
-**rebuilt under 0055** as a presenter-show: Rider (star) and Driver (foil) on
-the `performer@0.1.0` rig, full-bleed stage fields, phone/city/fare props beside
-the performer, short captions, no bars, no office-worker leads. It now passes
-`style:identity --video` with **0 findings** and `gate:7` with **28 checks,
-nothing manual**; `film:review --gate --reuse` is **PASS**. ASR heard **91/91**
-words, through the deliberate `gainDb: -16` v04 (0054) that gives the film
-**17.8 LU** 3 s contrast and **16.5 LU** LRA without a narration hole. The file
-is `films/uber-model/uber-model.mp4`. `docs/ASSUMPTIONS.md` records every
-best-case assumption and the parked items (P0.5 workflow, a semantic vision
-check, music).
+rebuilt under **0055** as a presenter-show and passed 28 checks then. Under
+**0056** it is a pre-contract film: `visual:check` refuses it with 48 findings
+(no phrases/devices, floating cast, four recipes used twice), and
+`storyboard --check` refuses it. Its delivered MP4 and 0055 gate are historical
+evidence, not a current pass. The next film is written under 0056; the proposal
+is `docs/proposals/next-film.md`.
+
+**The visual contract is exact words, one image, a body that earns its frame
+(0056).** `shots[].visual.phrase` is a contiguous quote of the linked narration
+line; `device` names the one concrete image; `performers` says what each staged
+character physically does and why the line needs them. `visual:check` and
+`storyboard --check` refuse a missing phrase/device, a repeated phrase/shows/
+device, two near-identical actions, a recipe used more than once, and a body the
+words never ask for. `diagram-show` gives a diagram film a 20–60% staged band;
+`stage-show`/`presenter-show` keep the high floor. The probe now records a face
+box, and `audit:type` refuses text over a face. The rig draws both hands last,
+with fingers and thumb, and publishes `hand-left`/`hand-right`; the library has
+`tap`, `hold` and `accept` poses. **512 tests.** The 0055 Uber score is
+pre-0056 and `visual:check` refuses it with 48 findings; its 28-check pass is
+historical. `docs/proposals/next-film.md` recommends the next shape.
 
 **The visual is authored before the recipe is chosen (0051).** A scene publishes
 `visual` (subject, setting, action, props); a shot publishes `visual` (shows,

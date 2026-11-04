@@ -41,6 +41,7 @@ export type CastIdentity = {
   stageRoles: string[];
   principals: { min: number; max: number };
   stagedShare: number;
+  stagedShareByMode?: Partial<Record<string, readonly [number, number]>>;
   posesMin: number;
   expressionsMin: number;
   anchors: string[];
@@ -137,6 +138,28 @@ function measured(
   return true;
 }
 
+export type StagedBand = {
+  min: number;
+  max: number;
+  source: "pack-mode" | "mode" | "cast";
+};
+
+/**
+ * How many shots of this film should stage a character.
+ *
+ * A performance film stages almost every shot. A diagram film stages a person
+ * only when the narration gives them something to do; mandating a body in every
+ * diagram is how characters became floating stickers. The pack can override a
+ * mode; otherwise `stage-show`/`presenter-show` keep the cast floor and
+ * `diagram-show` gets the 20-60% band.
+ */
+export function stagedBand(mode: string | undefined, castRule: CastIdentity): StagedBand {
+  const configured = mode ? castRule.stagedShareByMode?.[mode] : undefined;
+  if (configured) return { min: configured[0], max: configured[1], source: "pack-mode" };
+  if (mode === "diagram-show") return { min: 0.2, max: 0.6, source: "mode" };
+  return { min: castRule.stagedShare, max: 1, source: "cast" };
+}
+
 export function checkStyleIdentity(input: {
   shots: number;
   stagedShots: number;
@@ -146,10 +169,12 @@ export function checkStyleIdentity(input: {
   field: FieldBands;
   composition: CompositionBands;
   castRule: CastIdentity;
+  performanceMode?: string;
   frame: FrameSummary | null;
-}): { findings: IdentityFinding[]; stagedRatio: number } {
+}): { findings: IdentityFinding[]; stagedRatio: number; stagedBand: StagedBand } {
   const findings: IdentityFinding[] = [];
   const stagedRatio = input.shots > 0 ? input.stagedShots / input.shots : 0;
+  const band = stagedBand(input.performanceMode, input.castRule);
 
   if (input.cast.length === 0) {
     findings.push({
@@ -221,12 +246,20 @@ export function checkStyleIdentity(input: {
       findings.push({ code: "identity:cast", message: `${member.character}: ${error.message}` });
     }
   }
-  if (stagedRatio + 1e-9 < input.castRule.stagedShare) {
+  if (stagedRatio + 1e-9 < band.min) {
     findings.push({
       code: "identity:staged",
       message:
         `${input.stagedShots}/${input.shots} shots stage a character (${(stagedRatio * 100).toFixed(0)}%); ` +
-        `this style needs at least ${(input.castRule.stagedShare * 100).toFixed(0)}% - a diagram is not the channel`,
+        `this ${input.performanceMode ?? "style"} needs at least ${(band.min * 100).toFixed(0)}%`,
+    });
+  }
+  if (stagedRatio - 1e-9 > band.max) {
+    findings.push({
+      code: "identity:staged",
+      message:
+        `${input.stagedShots}/${input.shots} shots stage a character (${(stagedRatio * 100).toFixed(0)}%); ` +
+        `this ${input.performanceMode ?? "style"} allows at most ${(band.max * 100).toFixed(0)}% - bodies must earn their frame`,
     });
   }
 
@@ -250,7 +283,7 @@ export function checkStyleIdentity(input: {
       code: "identity:frames",
       message: "no frame report; run `npm run collage` first - the painted frame is the evidence",
     });
-    return { findings, stagedRatio };
+    return { findings, stagedRatio, stagedBand: band };
   }
   const frame = input.frame;
   if (frame.barShotShare > 0.1) {
@@ -317,5 +350,5 @@ export function checkStyleIdentity(input: {
     });
   }
 
-  return { findings, stagedRatio };
+  return { findings, stagedRatio, stagedBand: band };
 }

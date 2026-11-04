@@ -166,13 +166,14 @@
   // anchors; the audit reports the character as unmeasured instead.
   const rigAnchor = window.rigAnchor;
   if (typeof rigAnchor === "function") {
-    window.rigAnchor = function (ctx, part, x, y) {
+    window.rigAnchor = function (ctx, part, x, y, w, h) {
       const m = transform(ctx);
       window.__rigRecords.push({
         kind: "anchor",
         character,
         part: String(part || ""),
         local: [Number(x) || 0, Number(y) || 0],
+        size: [Number(w) || 0, Number(h) || 0],
         m: [m.a, m.b, m.c, m.d, m.e, m.f],
       });
       return rigAnchor.apply(this, arguments);

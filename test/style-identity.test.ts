@@ -111,6 +111,31 @@ test("a film that stages no character is not the channel", () => {
   assert.ok(result.findings.some((finding) => finding.code === "identity:staged"));
 });
 
+test("a diagram show may stage 20-60% of shots", () => {
+  const four = checkStyleIdentity({ ...input, stagedShots: 4, performanceMode: "diagram-show" });
+  assert.deepEqual(four.findings, []);
+  assert.deepEqual(four.stagedBand, { min: 0.2, max: 0.6, source: "mode" });
+  const one = checkStyleIdentity({ ...input, stagedShots: 1, performanceMode: "diagram-show" });
+  assert.ok(one.findings.some((finding) => finding.code === "identity:staged"));
+  const seven = checkStyleIdentity({ ...input, stagedShots: 7, performanceMode: "diagram-show" });
+  assert.ok(seven.findings.some((finding) => finding.code === "identity:staged"));
+});
+
+test("a presenter show still needs the cast floor", () => {
+  const result = checkStyleIdentity({ ...input, stagedShots: 6, performanceMode: "presenter-show" });
+  assert.ok(result.findings.some((finding) => finding.code === "identity:staged"));
+});
+
+test("a pack can override the mode band", () => {
+  const result = checkStyleIdentity({
+    ...input,
+    stagedShots: 4,
+    performanceMode: "diagram-show",
+    castRule: { ...castRule, stagedShareByMode: { "diagram-show": [0.5, 0.5] } },
+  });
+  assert.ok(result.findings.some((finding) => finding.code === "identity:staged"));
+});
+
 test("a character without anchors, body, archetype or stage role is refused", () => {
   const broken: CastLibraryFact[] = [
     {

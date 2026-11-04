@@ -16,13 +16,15 @@
  *
  * usage: npm run storyboard -- films/understudy/score.json [--tile 640] [--cols 3] [--at 0.5]
  */
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { spawn } from "node:child_process";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
 import { packFontPath } from "../src/engine/plan.js";
 import { renderGrid } from "../src/engine/grid.js";
 import { shotTimes } from "../src/engine/sampling.js";
+import { ScenesSchema } from "../src/engine/scenes.js";
+import { checkVisuals, VISUAL_CONTRACT_VERSION, type RecipeVisual } from "../src/engine/visual.js";
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
@@ -49,6 +51,86 @@ async function main(): Promise<void> {
   const at = Number(arg("at") ?? 0.5);
   const tileW = Number(arg("tile") ?? 640);
   const tileH = Math.round((tileW * 9) / 16);
+
+  // The storyboard is the first place a person sees the cut as pictures, so it
+  // must refuse the same visual contract `visual:check` enforces. A sheet that
+  // paints repeated or unmoored images is the failure 0056 exists to stop.
+  const recipeDir = resolve(root, "styles", score.style, "recipes");
+  const recipes: RecipeVisual[] = existsSync(recipeDir)
+    ? readdirSync(recipeDir)
+        .filter((name) => name.endsWith(".json"))
+        .map((name) => {
+          const doc = JSON.parse(readFileSync(join(recipeDir, name), "utf8")) as {
+            id: string;
+            subjects?: string[];
+            openingDefault?: boolean;
+          };
+          return { id: doc.id, subjects: doc.subjects, openingDefault: doc.openingDefault === true };
+        })
+    : [];
+  const lines = score.clock.mode === "narration" ? score.clock.lines : [];
+  const scenesPath = resolve(root, "films", score.id, "scenes.json");
+  const scenes = existsSync(scenesPath)
+    ? ScenesSchema.parse(JSON.parse(readFileSync(scenesPath, "utf8").replace(/^\uFEFF/, ""))).scenes
+    : undefined;
+  const wordsPath = resolve(root, "films", score.id, "words.json");
+  const timedWords = existsSync(wordsPath)
+    ? (JSON.parse(readFileSync(wordsPath, "utf8")) as { words?: { w: string; start: number; end: number }[] }).words
+    : undefined;
+  let visualClock = 0;
+  const visualShots = score.shots.map((shot, index) => {
+    const entry = {
+      id: `s${String(index + 1).padStart(2, "0")}`,
+      recipe: shot.recipe,
+      beat: shot.beat,
+      scene: shot.scene,
+      cast: shot.direction.cast,
+      start: visualClock,
+      duration: shot.duration,
+      visual: shot.visual,
+    };
+    visualClock += shot.duration;
+    return entry;
+  });
+  const visual = checkVisuals(
+    visualShots,
+    recipes,
+    lines.map((line) => ({ id: line.id, text: line.text })),
+    scenes,
+    timedWords,
+  );
+  const visualPass = visual.findings.length === 0;
+  if (args.includes("--check")) {
+    console.log(
+      `storyboard: visual contract ${VISUAL_CONTRACT_VERSION} · ${visual.checked}/${score.shots.length} briefs · ` +
+        `${visual.findings.length} finding(s) · ${visualPass ? "pass" : "FAIL"}`,
+    );
+    for (const finding of visual.findings) console.error(`  FAIL ${finding.code}: ${finding.message}`);
+    process.exit(visualPass ? 0 : 1);
+  }
+  if (!visualPass) {
+    const outDir = resolve(root, "build", score.id, "storyboard");
+    mkdirSync(outDir, { recursive: true });
+    writeFileSync(
+      join(outDir, "storyboard.json"),
+      `${JSON.stringify(
+        {
+          film: score.id,
+          contract: VISUAL_CONTRACT_VERSION,
+          pass: false,
+          visual: { pass: false, checked: visual.checked, findings: visual.findings },
+          checks: { visualContract: false },
+          generatedAt: new Date().toISOString(),
+        },
+        null,
+        2,
+      )}\n`,
+      "utf8",
+    );
+    for (const finding of visual.findings) console.error(`  FAIL ${finding.code}: ${finding.message}`);
+    console.error(`storyboard: refusing to paint — ${visual.findings.length} visual finding(s); run \`npm run visual:check -- ${scorePath}\``);
+    process.exit(1);
+  }
 
   const outDir = resolve(root, "build", score.id, "storyboard");
   const framesDir = join(outDir, "frames");
@@ -104,6 +186,7 @@ async function main(): Promise<void> {
   });
 
   const checks = {
+    visualContract: visualPass,
     onePerShot: frames.length === plan.shots.length,
     inShotOrder: frames.every((frame, index) => frame.shot.id === plan.shots[index]?.id),
     everyShotPainted: missing.length === 0,
@@ -112,7 +195,9 @@ async function main(): Promise<void> {
   const pass = Object.values(checks).every(Boolean);
   const report = {
     film: score.id,
+    contract: VISUAL_CONTRACT_VERSION,
     pass,
+    visual: { pass: true, checked: visual.checked, findings: [] },
     at,
     tile: { width: tileW, height: tileH },
     grid: { cols: grid.cols, rows: grid.rows },
