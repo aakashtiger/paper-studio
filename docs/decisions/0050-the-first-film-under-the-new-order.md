@@ -47,8 +47,9 @@ Kiran (rider) and Vaz (driver) are the only invented names, and they live in
   duck 8/8; 4 declared breaths; tail −28.5 → −80.8 dBFS.
 - Picture: 900 frames, 15 cuts, 0 blank, 0 pops, 0 holds >0.4 s; palette/clipping
   pass; paint-match 31 frames, worst 38.1 dB.
-- `gate:7` **PASS · 23 checks · nothing manual**; picture
-  `sha256:2a9c9a7bff0…`; `film:review` **PASS**; `visual:check` **10/10**.
+- `gate:7` **PASS · 24 checks · nothing manual**; picture
+  `sha256:d00badf1fab…`; `film:review` **PASS**; `visual:check` **10/10**;
+  `style:identity` **9/10** staged, Δ luma −1.0, Δ saturation −4.1, palette 43.0.
 - One sheet: `build/uber-model/final-sheet.png`. Delivered:
   `films/uber-model/uber-model.mp4`.
 
@@ -56,7 +57,8 @@ Kiran (rider) and Vaz (driver) are the only invented names, and they live in
 
 - The visuals are the six explainer recipes added in 0051 — phone map, city
   route, fare split, app menu, network web, money flow — not a literal 3D car or
-  a live map. The film opens on the network, has no lamp and no banner.
+  a live map. Kiran and Vaz are staged in 9/10 shots on cobalt/tomato/gold paper
+  wings. The film opens on the network, has no lamp and no banner.
 - No music; narration + code-generated cues.
 - P0.7 bypasses and P0.9 sound-contrast/LRA/close-up rows are parked (see
   `docs/ASSUMPTIONS.md`); the gate that ran is the 22-check gate, all green.

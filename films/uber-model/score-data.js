@@ -34,7 +34,10 @@ window.SCORE = {
         "entry": "a paper city map with rider and driver nodes joining into one network",
         "exit": "routes draw and nodes appear",
         "spine": "the line says Uber owns the network, not the cars",
-        "cast": [],
+        "cast": [
+          "Kiran",
+          "Vaz"
+        ],
         "events": [
           {
             "t": 0,
@@ -89,7 +92,9 @@ window.SCORE = {
         "entry": "a phone screen with the app's four taps: rides, delivery, freight, Uber One",
         "exit": "the four tiles drop into the phone",
         "spine": "the network is reached through one app; the app is the front door",
-        "cast": [],
+        "cast": [
+          "Kiran"
+        ],
         "events": [
           {
             "t": 0.2,
@@ -148,7 +153,9 @@ window.SCORE = {
         "entry": "a phone map with a rider pin and a driver pin",
         "exit": "a thumb taps the route and the line draws toward the driver",
         "spine": "the line says riders open the app and the trip is matched",
-        "cast": [],
+        "cast": [
+          "Kiran"
+        ],
         "events": [
           {
             "t": 0,
@@ -201,7 +208,9 @@ window.SCORE = {
         "entry": "a paper city with a car moving along a red route between pins",
         "exit": "the car crosses the blocks toward the rider",
         "spine": "the line says drivers use their own cars; the car is the trip",
-        "cast": [],
+        "cast": [
+          "Vaz"
+        ],
         "events": [
           {
             "t": 0.2,
@@ -254,7 +263,10 @@ window.SCORE = {
         "entry": "a fare bar split into a large driver share and a small red service fee",
         "exit": "the split line settles and a coin is divided",
         "spine": "the line says Uber takes a service fee and the driver keeps the rest",
-        "cast": [],
+        "cast": [
+          "Kiran",
+          "Vaz"
+        ],
         "events": [
           {
             "t": 0,
@@ -362,7 +374,9 @@ window.SCORE = {
         "entry": "the same phone with rides, delivery, freight and Uber One tiles",
         "exit": "each revenue tile lands in the app",
         "spine": "the line lists the four other things the network sells",
-        "cast": [],
+        "cast": [
+          "Kiran"
+        ],
         "events": [
           {
             "t": 0.2,
@@ -421,7 +435,9 @@ window.SCORE = {
         "entry": "paper city blocks with two routes crossing: a delivery bag and a freight crate",
         "exit": "the two routes cross the city at once",
         "spine": "the line says one network earns in more than one way",
-        "cast": [],
+        "cast": [
+          "Vaz"
+        ],
         "events": [
           {
             "t": 0.2,
@@ -475,7 +491,10 @@ window.SCORE = {
         "entry": "more rider and driver nodes connecting while a paper wait bar shrinks",
         "exit": "nodes multiply and the wait bar shortens",
         "spine": "the line says more riders and drivers shorten the wait",
-        "cast": [],
+        "cast": [
+          "Kiran",
+          "Vaz"
+        ],
         "events": [
           {
             "t": 0,
@@ -528,7 +547,9 @@ window.SCORE = {
         "entry": "a phone map with a short route and a nearby car pin",
         "exit": "the car pin arrives almost immediately",
         "spine": "the button says the network gets harder to leave; the ride is already there",
-        "cast": [],
+        "cast": [
+          "Kiran"
+        ],
         "events": [
           {
             "t": 0.3,
@@ -967,7 +988,7 @@ window.SCORE = {
       "id": "frame.paper-window",
       "type": "frame",
       "version": "0.1.0",
-      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
+      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -976,7 +997,7 @@ window.SCORE = {
       "id": "hud.meter",
       "type": "hud",
       "version": "0.1.0",
-      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
+      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -985,7 +1006,7 @@ window.SCORE = {
       "id": "prop.object",
       "type": "prop",
       "version": "0.1.0",
-      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
+      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -994,7 +1015,7 @@ window.SCORE = {
       "id": "prop.paper-sticker",
       "type": "prop",
       "version": "0.1.0",
-      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
+      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1003,7 +1024,7 @@ window.SCORE = {
       "id": "set.corridor",
       "type": "set",
       "version": "0.1.0",
-      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
+      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1012,7 +1033,7 @@ window.SCORE = {
       "id": "set.paper-card",
       "type": "set",
       "version": "0.1.0",
-      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
+      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1021,7 +1042,7 @@ window.SCORE = {
       "id": "set.stage",
       "type": "set",
       "version": "0.1.0",
-      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
+      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1030,7 +1051,7 @@ window.SCORE = {
       "id": "set.tabletop",
       "type": "set",
       "version": "0.1.0",
-      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
+      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1039,7 +1060,7 @@ window.SCORE = {
       "id": "texture.halftone",
       "type": "texture",
       "version": "0.1.0",
-      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
+      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1048,7 +1069,7 @@ window.SCORE = {
       "id": "texture.paper-fibre",
       "type": "texture",
       "version": "0.1.0",
-      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
+      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1057,7 +1078,7 @@ window.SCORE = {
       "id": "prop.car",
       "type": "prop",
       "version": "0.1.0",
-      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
+      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1066,7 +1087,7 @@ window.SCORE = {
       "id": "prop.coin",
       "type": "prop",
       "version": "0.1.0",
-      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
+      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1075,7 +1096,7 @@ window.SCORE = {
       "id": "prop.phone",
       "type": "prop",
       "version": "0.1.0",
-      "hash": "sha256:94e7ee1b74979f4ec7ae9a296b0bd3145ca3969908ba3e3eaa1658c822028c58",
+      "hash": "sha256:b826560c9376626d882b943a84a77ea9f8da3ef6142fc41396d13dd5fa97daf4",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"

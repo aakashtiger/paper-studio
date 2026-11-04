@@ -99,6 +99,7 @@ npm run style:approve -- <id> --by "<name>"
 npm run style:resolve -- --style <path> --seed <n> --brief <file> --format <file>
 npm run style:sheet -- styles/paper-kpop          # derived style sheet into build/
 npm run style:measure -- --ref <dir|video> [--specimen <dir|video>] [--camera]   # measure a style, then our frames against it; x/y/z camera (0036, 0039)
+npm run style:identity -- <score> [--video]       # the film is still this channel: cast construction + measured bands (0052)
 npm run library:check -- library/characters/index.json   # reusable characters: file, rig, poses, 12+ expressions, licence (0038)
 npm run library:add -- --character <id> --kind pose|expression --from <file.json>   # add one pose/expression once, reuse it
 npm run library:use -- --score <score.json> --character <id> --apply   # point a film's cast and asset at a library character
@@ -140,6 +141,7 @@ score.json   the shots, each bound to a scene and a beat, with a reason     (002
    → npm run voice --apply    accept the measured read into the score (0035)
    → npm run camera:check   ~1 s   every shot moves, and the film varies it (0041)
    → npm run visual:check          every shot's image is asked for and its recipe can draw it (0051)
+   → npm run style:identity        the film is still this channel: cast + measured bands (0052)
    → npm run assets:new -- --score <score> --write   the manifest names what the recipes draw (0045)
    → npm run assets:coverage         every recipe asset is in the manifest (0042)
    → npm run audit:body              arms bend, hands are hands (P0.4)
@@ -249,7 +251,7 @@ file with **8 poses and 14 expressions**, a rig, a source, a licence and a
 `sha256`; `library:check` refuses one that is not reusable, `library:add` adds a
 pose once, and `library:use` points a film's cast and asset at it. A pose event
 can name an expression, and the painter maps it to the rig's eyes/brow/mouth.
-**471 tests.**
+**476 tests.**
 
 **The story now speaks first, the camera is a grammar, and assets have names.**
 `voice:story` reads `story.json` + `beats.json`, speaks the lines, listens with
@@ -282,11 +284,11 @@ Kiran and Vaz hand 18×26, pass; a 5×6 hand and a 0.000/0.000 elbow fail).
 `event.word` binds an event to a clock line, and `audit:reaction` requires it to
 land **0–3 frames after the measured word** (12.40 s passes at +0.0, 12.30 s
 fails at −3.0). The frame audit now refuses a one-frame luma pop at a cut. The
-first film must author `word` events; Same Alarm has none. **471 tests.**
+first film must author `word` events; Same Alarm has none. **476 tests.**
 
 **The first film under the new order is *The Uber Cut* (`films/uber-model/`).**
 30 s, 10 shots, 5 lines, 91 words at 182 wpm, **84.6% voiced**, made through
-story → beats → voice → scenes → score → cut. `gate:7` is **PASS · 23 checks ·
+story → beats → voice → scenes → score → cut. `gate:7` is **PASS · 24 checks ·
 nothing manual**, ASR heard **91/91** words, and the delivered file is
 `films/uber-model/uber-model.mp4`. `docs/ASSUMPTIONS.md` records every best-case
 assumption and the parked items (P0.5 workflow, P0.7 bypasses, P0.9 sound
@@ -302,6 +304,15 @@ pack's default opening, and one recipe doing more than 40% of the film.
 **10/10** briefed; it opens on a network map, has no lamp and no banner, and the
 pack gained six explainer recipes: phone map, city route, fare split, app menu,
 network web, money flow. Render and `gate:7` both require the visual report.
+
+**The film is still the channel (0052).** `style:identity` reads the pack's
+`tokens.identity`, measures the film against its reference frames with the
+existing `style:measure`, and checks the cast construction. A new character is
+allowed if it has the paper-puppet anchors, body, 8 poses and 14 expressions;
+the shared library is a source, not a requirement. The Uber film stages Kiran
+and Vaz in **9/10** shots, sits at **Δ luma −1.0, Δ saturation −4.1, palette
+43.0** inside the bands, and passes. `render:film` requires the identity report;
+`gate:7` re-runs it on the delivered video and prints **24 checks**.
 
 **The plan is `docs/PLAN-v2.md`.** It is the end-to-end process in plain English,
 the video checklist, the P0/P1/P2 gap list and a ten-session build order.

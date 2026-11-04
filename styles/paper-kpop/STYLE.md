@@ -6,9 +6,9 @@
 
 ## Intent
 
-Paper K-pop is a style for short music films that treat a pop stage as a hand-cut diorama. It is for a song drop, a tour or release announcement, a vertical Short, or any brief that needs a loud graphic hit on a handmade surface. It is not a glossy 3D render, a gold-foil invitation, a clean vector explainer, a scrapbook of nostalgia or a children's craft project.
+Paper K-pop is a style for short films that treat a pop stage as a hand-cut diorama. It is for a song drop, a tour or release announcement, a vertical Short, a paper explainer, or any brief that needs a loud graphic hit on a handmade surface. It is not a glossy 3D render, a gold-foil invitation, a clean vector explainer, a scrapbook of nostalgia or a children's craft project.
 
-The film should feel loud, witty, handmade and kinetic: precise cutting, cheap materials, expensive timing. The paper performs. The humour is dry and graphic, never cute. Up to two performers. Eight words per content slot. Four colours in a frame. A 16:9 stage and a 9:16 re-stage. The style does not invent a story, a name, a date, a song line or a venue; those come from the content brief.
+The film should feel loud, witty, handmade and kinetic: precise cutting, cheap materials, expensive timing. The paper performs. The humour is dry and graphic, never cute. Up to two performers. A performer may be a shared library character or a **new** character built to the same paper-puppet construction, rig, anchors, face vocabulary and palette; the cast is a type, not a fixed identity. Eight words per content slot. Four colours in a frame. A 16:9 stage and a 9:16 re-stage. The style does not invent a story, a name, a date, a song line or a venue; those come from the content brief.
 
 ## Materials & surface
 
@@ -98,7 +98,7 @@ Paper shadow is the one open choice, `paper-shadow`: Collage gives every layer a
 ## Not for
 
 - Photo-led weddings, family archives and memorial films.
-- Corporate explainers, product launches and advertorials.
+- Clean vector infographics, glossy corporate decks and advertorials that do not use paper performance.
 - Civic ceremony films and formal institutional work.
 - Children's books, cute animal stories and classroom craft.
 - Briefs that need Devanagari, Arabic, CJK or another non-Latin script.

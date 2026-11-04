@@ -378,8 +378,7 @@ async function main(): Promise<void> {
         return { ok: false, detail: error instanceof Error ? error.message : "writing check failed" };
       }
     })(),
-    visual: (() => {
-      // The picture must have been asked for before it was painted. The report
+    visual: (() => {      // The picture must have been asked for before it was painted. The report
       // is tied to the score and lists the brief, the recipe match and the
       // scene/shot link; the render refuses without it, and the gate re-reads it.
       const report = read<{
@@ -396,6 +395,25 @@ async function main(): Promise<void> {
         return { ok: false, detail: `${report.findings.length} visual finding(s): ${report.findings[0]?.message ?? "see visual-check.json"}` };
       }
       return { ok: true, detail: `${report.checked}/${report.shots} shots have a visual brief its recipe can draw` };
+    })(),
+    styleIdentity: (() => {
+      // The film's own picture, not the score's promise: the identity report is
+      // re-run on the delivered video and carries its videoHash.
+      const report = read<{
+        pass: boolean;
+        score: string;
+        videoHash: string | null;
+        stagedRatio: number;
+        findings: { code: string; message: string }[];
+      }>("style-identity/style-identity.json");
+      const current = `sha256:${hashFile(resolve(root, scorePath))}`;
+      if (!report) return { ok: false, detail: "no style-identity report — run `npm run style:identity -- <score> --video`" };
+      if (report.score !== current) return { ok: false, detail: "the identity report measured a different score" };
+      if (report.videoHash !== frozenHash) return { ok: false, detail: "the identity report measured a different picture" };
+      if (!report.pass) {
+        return { ok: false, detail: `${report.findings.length} identity finding(s): ${report.findings[0]?.message ?? "see the report"}` };
+      }
+      return { ok: true, detail: `staged ${(report.stagedRatio * 100).toFixed(0)}% · look inside the pack's bands` };
     })(),
     determinism: (() => {
       // The painter is a pure function of the score and the time (decision 0032).

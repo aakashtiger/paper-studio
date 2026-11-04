@@ -446,7 +446,7 @@ claimed); story and score lengths are compared; shots must land on the frame
 grid; the chain runs `tests → voice → embed`, so the page data cannot be one cut
 old; `render:film` refuses a stale `score-data.js` before a browser opens; and
 `style:measure --score` separates the score's 10 authored shots from the 12 raw
-scene changes it used to call 13 shots. **471 tests**, typecheck clean.
+scene changes it used to call 13 shots. **476 tests**, typecheck clean.
 
 `docs/PLAN-v2.md` is the full end-to-end plan in plain English: the video
 checklist, every process stage, the P0/P1/P2 gap list, the seven-analysis /

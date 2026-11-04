@@ -1992,6 +1992,39 @@ function explainerBody(shot, t, x = 120, y = 930, width = 1600) {
   });
 }
 
+/** Stage a film character in an explainer recipe. New character, same rig. */
+function explainerActor(shot, lt, t, index, x, y, scale) {
+  const who = (shot.direction?.cast ?? [])[index];
+  if (!who) return null;
+  return officeActor(shot, lt, t, who, x, y, scale, null, 1, {});
+}
+
+/**
+ * The paper wings: a bright cobalt field and a tomato-red field, torn, with a
+ * halftone screen. They are the channel's colour on every explainer shot; the
+ * diagram or prop lives on the cream centre between them.
+ */
+function explainerWings() {
+  paper(ctx, () => tornRectPath(ctx, -140, -90, 580, H + 180, 30, 17), {
+    fill: PAL.blue, edge: C.rgba(PAL.ink, 0.6), edgeW: 3,
+    shadow: C.rgba(PAL.ink, 0.24), sx: 10, sy: 14,
+  });
+  paper(ctx, () => tornRectPath(ctx, W - 430, -90, 580, H + 180, 26, 31), {
+    fill: PAL.red, edge: C.rgba(PAL.ink, 0.6), edgeW: 3,
+    shadow: C.rgba(PAL.ink, 0.24), sx: -10, sy: 14,
+  });
+  // The gold seam is the pack's accent: a thin torn strip where the colour
+  // field meets the cream stage, present in every explainer frame.
+  paper(ctx, () => tornRectPath(ctx, 408, -90, 54, H + 180, 10, 23), {
+    fill: PAL.gold, edge: C.rgba(PAL.ink, 0.55), edgeW: 2, shadow: null,
+  });
+  paper(ctx, () => tornRectPath(ctx, W - 462, -90, 54, H + 180, 10, 29), {
+    fill: PAL.gold, edge: C.rgba(PAL.ink, 0.55), edgeW: 2, shadow: null,
+  });
+  halftone(ctx, -100, -60, 500, H + 120, PAL.ink, 22, 0.5, 0.1);
+  halftone(ctx, W - 400, -60, 500, H + 120, PAL.ink, 22, 0.5, 0.1);
+}
+
 function paperPhone(x, y, w, h) {
   paper(ctx, () => roundRectPath(ctx, x, y, w, h, 46), {
     fill: PAL.ink, edge: C.rgba(PAL.ink, 0.8), edgeW: 4,
@@ -2038,6 +2071,8 @@ function phoneRoute(shot, lt, t) {
   beginCam(ctx);
   ctx.save();
   ctx.translate(Math.sin(t * 1.35) * 10, Math.cos(t * 1.15) * 8);
+  explainerWings();
+  explainerActor(shot, lt, t, 0, 270, 1015, 1.25);
   paper(ctx, () => tornRectPath(ctx, 430, 70, 1060, 940, 22, 19), {
     fill: PAL.ink3, edge: C.rgba(PAL.ink, 0.4), edgeW: 3,
     shadow: C.rgba(PAL.ink, 0.2), sx: 12, sy: 16,
@@ -2101,6 +2136,7 @@ function cityRoute(shot, lt, t) {
   bgPaper();
   shotCam(shot, lt, d, W / 2 + 30, 520, 0.16, t);
   beginCam(ctx);
+  explainerActor(shot, lt, t, 0, 300, 1035, 1.2);
   // paper city: blocks and streets
   for (let row = 0; row < 4; row++) {
     for (let col = 0; col < 7; col++) {
@@ -2112,6 +2148,7 @@ function cityRoute(shot, lt, t) {
       });
     }
   }
+  explainerWings();
   const points = [[260, 820], [460, 760], [520, 560], [860, 520], [1040, 360], [1440, 300], [1760, 420]];
   const k = C.smooth(C.clamp((lt - 0.2) / 1.8));
   ctx.strokeStyle = PAL.red; ctx.lineWidth = 14; ctx.lineCap = "round"; ctx.lineJoin = "round";
@@ -2143,6 +2180,9 @@ function fareSplit(shot, lt, t) {
   beginCam(ctx);
   ctx.save();
   ctx.translate(Math.sin(t * 1.2) * 36, Math.cos(t * 1.4) * 20);
+  explainerWings();
+  explainerActor(shot, lt, t, 0, 170, 1015, 1.1);
+  explainerActor(shot, lt, t, 1, 1750, 1015, 1.1);
   const x = 220, y = 430, w = 1480, h = 210;
   const split = 0.72 + Math.sin(lt * 2.1) * 0.006;
   paper(ctx, () => roundRectPath(ctx, x, y, w, h, 26), {
@@ -2181,6 +2221,8 @@ function appMenu(shot, lt, t) {
   beginCam(ctx);
   ctx.save();
   ctx.translate(Math.sin(t * 1.45) * 30, Math.cos(t * 1.2) * 20);
+  explainerWings();
+  explainerActor(shot, lt, t, 0, 260, 1030, 1.3);
   paperPhone(760, 90, 400, 820);
   const sx = 786, sy = 124, sw = 348, sh = 752;
   ctx.save();
@@ -2234,7 +2276,7 @@ function appMenu(shot, lt, t) {
   ctx.restore();
   endCam(ctx);
   explainerCaption(shot, t);
-  explainerBody(shot, t, 180, 940, 1560);
+  explainerBody(shot, t, 560, 940, 800);
 }
 
 function networkWeb(shot, lt, t) {
@@ -2244,6 +2286,9 @@ function networkWeb(shot, lt, t) {
   beginCam(ctx);
   ctx.save();
   ctx.translate(Math.sin(t * 1.25) * 32, Math.cos(t * 1.1) * 22);
+  explainerWings();
+  explainerActor(shot, lt, t, 0, 250, 1035, 1.05);
+  explainerActor(shot, lt, t, 1, 1660, 1035, 1.05);
   const nodes = [
     [360, 300, 0], [600, 210, 1], [820, 330, 0], [1060, 220, 1], [1260, 360, 0],
     [500, 520, 1], [760, 560, 0], [1020, 520, 1], [1240, 600, 0], [620, 740, 1], [960, 760, 0],
@@ -2281,7 +2326,7 @@ function networkWeb(shot, lt, t) {
   ctx.restore();
   endCam(ctx);
   explainerCaption(shot, t);
-  explainerBody(shot, t, 180, 980, 1560);
+  explainerBody(shot, t, 500, 980, 920);
 }
 
 function moneyFlow(shot, lt, t) {
@@ -2289,6 +2334,7 @@ function moneyFlow(shot, lt, t) {
   bgPaper();
   shotCam(shot, lt, d, W / 2, 520, 0.12, t);
   beginCam(ctx);
+  explainerWings();
   const labels = [
     [300, "RIDER", PAL.blueL],
     [960, "DRIVER", PAL.cream],
@@ -2318,7 +2364,7 @@ function moneyFlow(shot, lt, t) {
   ctx.beginPath(); ctx.moveTo(1110, 730); ctx.lineTo(1430, 730); ctx.stroke();
   endCam(ctx);
   explainerCaption(shot, t);
-  explainerBody(shot, t, 180, 980, 1560);
+  explainerBody(shot, t, 500, 980, 920);
 }
 
 Object.assign(window.PAPER_BACKEND.shots, {

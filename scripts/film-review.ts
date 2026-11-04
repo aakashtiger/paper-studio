@@ -41,7 +41,7 @@ const GATE_TIES: Record<string, { tie: ReportTie; report: (id: string) => string
   "rig-audit": { tie: "score", report: (id) => `build/${id}/rig-audit.json` },
 };
 
-type Step = { name: string; script: string; detail: string; tie?: ReportTie; report?: string };
+type Step = { name: string; script: string; detail: string; args?: string[]; tie?: ReportTie; report?: string };
 
 const root = process.cwd();
 const scorePath = file as string;
@@ -94,6 +94,7 @@ if (wantGate) {
   // Nothing in this chain rewrites `render-manifest.json`: the renderer is its
   // only writer (see `src/engine/manifest.ts`).
   steps.push({ name: "deliver", script: "scripts/deliver.ts", detail: "master into the picture, measured" });
+  steps.push({ name: "style:identity", script: "scripts/style-identity.ts", detail: "the picture is still this channel", args: ["--video"] });
   steps.push({ name: "gate:7", script: "scripts/gate-7.ts", detail: "the final gate" });
 }
 
@@ -122,6 +123,8 @@ function artifact(name: string): string | null {
       return `build/${id}/mix/mix-report.json`;
     case "deliver":
       return `build/${id}/deliver.json`;
+    case "style:identity":
+      return `build/${id}/style-identity/style-identity.json`;
     case "gate:7":
       return `build/${id}/gate-7.json`;
     default:
@@ -184,7 +187,7 @@ function newestPaintChange(film: string): number | null {
 
 async function runStep(step: Step): Promise<StepResult> {  const before = stamp(step.name);
   return new Promise((done) => {
-    const child = spawn(process.execPath, ["--import", "tsx", step.script, scorePath], {
+    const child = spawn(process.execPath, ["--import", "tsx", step.script, scorePath, ...(step.args ?? [])], {
       cwd: root,
       stdio: ["ignore", "pipe", "pipe"],
     });
@@ -347,6 +350,17 @@ function describe(name: string): string | null {
       if (!report) return null;
       if (!report.pass) return `FAIL · ${report.findings[0]?.message ?? "the visual check failed"}`;
       return `${report.checked}/${report.shots} shots with a visual brief · its recipe can draw the subject`;
+    }
+    case "style:identity": {
+      const report = readJson<{
+        pass: boolean;
+        stagedRatio: number;
+        delta: { luma: number | null; saturation: number | null; palette: number | null };
+        findings: Array<{ message: string }>;
+      }>(`build/${id}/style-identity/style-identity.json`);
+      if (!report) return null;
+      if (!report.pass) return `FAIL · ${report.findings[0]?.message ?? "the identity check failed"}`;
+      return `staged ${(report.stagedRatio * 100).toFixed(0)}% · Δ luma ${report.delta.luma?.toFixed(1) ?? "?"} · Δ sat ${report.delta.saturation?.toFixed(1) ?? "?"} · palette ${report.delta.palette?.toFixed(1) ?? "?"}`;
     }
     case "board": {
       const report = readJson<{ entries: number; sheet: { width: number; height: number } | null }>(

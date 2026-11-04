@@ -69,7 +69,8 @@
     "inspect": "tsx scripts/inspect.ts",
     "draft": "tsx scripts/draft.ts",
     "visual:check": "tsx scripts/visual-check.ts",
-    "recipes:list": "tsx scripts/recipes.ts"
+    "recipes:list": "tsx scripts/recipes.ts",
+    "style:identity": "tsx scripts/style-identity.ts"
   },
   "dependencies": {
     "zod": "^3.24.1"

@@ -160,6 +160,31 @@ function requireVisuals(cwd: string, id: string, scoreFile: string): void {
   }
 }
 
+function requireStyleIdentity(cwd: string, id: string, scoreFile: string): void {
+  const reportPath = join(cwd, "build", id, "style-identity", "style-identity.json");
+  const run = `npm run style:identity -- ${relative(cwd, scoreFile).replace(/\\/g, "/")}`;
+  if (!existsSync(reportPath)) {
+    throw new Error(`refusing to paint ${id}: no style-identity report. Run \`${run}\` first`);
+  }
+  const written = JSON.parse(readFileSync(reportPath, "utf8")) as {
+    pass?: boolean;
+    score?: string;
+    findings?: { code: string; message: string }[];
+  };
+  const hash = fileHash(scoreFile);
+  if (written.score !== hash) {
+    throw new Error(`refusing to paint ${id}: build/${id}/style-identity/style-identity.json describes a different score. Run \`${run}\` again`);
+  }
+  if (!written.pass) {
+    const findings = written.findings ?? [];
+    throw new Error(
+      `refusing to paint ${id}: ${findings.length} style-identity finding(s):\n` +
+        findings.map((finding) => `  ${finding.code}  ${finding.message}`).join("\n") +
+        `\n  see build/${id}/style-identity/style-identity.json`,
+    );
+  }
+}
+
 function requirePreflight(cwd: string, id: string, scoreFile: string, scorePath: string): void {
   const reportPath = join(cwd, "build", id, "preflight.json");
   const run = `npm run preflight -- ${relative(cwd, scoreFile).replace(/\\/g, "/")}`;
@@ -719,6 +744,7 @@ async function main(): Promise<void> {
   // mistaken for the deliverable.
   if (!stills && fullRange && !has("draft")) {
     requireVisuals(cwd, score.id, scoreFile);
+  requireStyleIdentity(cwd, score.id, scoreFile);
   requirePreflight(cwd, score.id, scoreFile, scorePath);
     requireCollage(cwd, score.id, scoreFile);
     requireMotion(cwd, score.id, scoreFile);

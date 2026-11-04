@@ -28,8 +28,10 @@ recorded, and anything not done moved to a parked list. This is that record.
 5. **The visuals are the subject, not the office set.** Six explainer recipes
    were added to the pack: a phone map with a route and pins, a paper city with
    a car, a fare split, an app menu with four revenue tiles, a rider/driver
-   network, and coins moving to driver and platform. The film has no lamp, no
-   banner and no sunburst title card; the first image is the network. The
+   network, and coins moving to driver and platform. Kiran and Vaz are staged in
+   9 of 10 shots; cobalt and tomato paper wings with a gold seam frame every
+   explainer shot. The film has no lamp, no banner and no sunburst title card;
+   the first image is the network. The
    narration carries the business model, and the frame now shows it.
 6. **Facts are public and general:** Uber is asset-light; the driver keeps the
    fare minus a service fee; the same app also sells delivery, freight,
@@ -58,6 +60,7 @@ recorded, and anything not done moved to a parked list. This is that record.
 | **`assets:sheet` for props and sets** | `library:sheet` draws characters; props/sets have no sheet. |
 | **Asset-first derivation from scenes/shots** | `assets:new` derives from recipe ids, not from scene/shot slots. |
 | **Immutable library versions** | hashes are pinned per library entry; version immutability is parked. |
+| **Per-film character choice: reuse the library or design a new one** | the style contract must allow a new character built to the same paper-puppet construction, rig, face vocabulary and palette. The library is a source, not a membership rule. The choosing/creating workflow and its review surface are parked; the style rule itself is not optional. |
 | **14 expressions → 14 unique pixel faces** | the 14 names now map to 14 different face parameter sets and shapes, and duplicate parameter sets are refused; a pixel-level uniqueness proof is not built. |
 | **A true 3D walk** | the flat 2D rig cannot bend a knee toward camera; the walk is a paper stride with leg angles. |
 | **`voice --from-story` word-level caption timing** | captions are proportional within the measured line; word times exist in `words.json` and could drive exact chunk boundaries. |
@@ -65,9 +68,10 @@ recorded, and anything not done moved to a parked list. This is that record.
 ## What is proven
 
 - `npm run film:review -- films/uber-model/score.json --gate --reuse` → **PASS**.
-- `gate:7` → **PASS · 23 checks · nothing manual**; picture `sha256:2a9c9a7bff0…`.
+- `gate:7` → **PASS · 24 checks · nothing manual**; picture `sha256:d00badf1fab…`.
+- `style:identity`: **9/10** shots staged; Δ luma −1.0, Δ saturation −4.1, palette 43.0, inside the pack bands.
 - ASR of the delivered file: **91/91 words, 100.0%**.
 - Delivered audio: **−14.1 LUFS / −2.3 dBTP**.
-- `npm test` → **471 tests**, typecheck clean.
+- `npm test` → **476 tests**, typecheck clean.
 - The film is `films/uber-model/uber-model.mp4`; the one-sheet is
   `build/uber-model/final-sheet.png`.
