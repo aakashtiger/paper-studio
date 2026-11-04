@@ -15,9 +15,10 @@ library gains `tap`, `hold` and `accept` poses. **512 tests**, typecheck clean.
 `npm run visual:check -- films/uber-model/score.json` now refuses the 0055
 score with **48 findings** (0 phrases, 10 staged with no action, four recipes
 used twice); `storyboard --check` refuses it. The 0055 28-check pass and MP4 are
-historical evidence, not a current pass. The next film is written under 0056;
-`docs/proposals/next-film.md` is the style-fit recommendation and the ten-shot
-Uber v2 plan.
+historical evidence, not a current pass. The next film is decided:
+***Lakshmi and the Lights*** — 60 s, Paper Myth, 12 visual beats, nine
+narration lines, Samudra Manthan + the home ritual + one regional line; the
+treatment and sources are in `docs/proposals/lakshmi-and-the-lights.md`.
 
 **Update 2026-11-05 (historical, superseded by the 0056 block above):** decision **0055** rebuilds *The Uber Cut* as
 the first passing example of the identity gate. The film is a presenter-show:

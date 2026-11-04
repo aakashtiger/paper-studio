@@ -311,7 +311,9 @@ box, and `audit:type` refuses text over a face. The rig draws both hands last,
 with fingers and thumb, and publishes `hand-left`/`hand-right`; the library has
 `tap`, `hold` and `accept` poses. **512 tests.** The 0055 Uber score is
 pre-0056 and `visual:check` refuses it with 48 findings; its 28-check pass is
-historical. `docs/proposals/next-film.md` recommends the next shape.
+historical. The next film is decided: ***Lakshmi and the Lights*** — 60 s,
+Paper Myth, 12 visual beats, nine narration lines; the treatment and sources are
+in `docs/proposals/lakshmi-and-the-lights.md`.
 
 **The visual is authored before the recipe is chosen (0051).** A scene publishes
 `visual` (subject, setting, action, props); a shot publishes `visual` (shows,
