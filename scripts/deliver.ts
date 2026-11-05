@@ -234,6 +234,10 @@ const report = {
 };
 mkdirSync(buildDir, { recursive: true });
 writeFileSync(resolve(buildDir, "deliver.json"), JSON.stringify(report, null, 2) + "\n", "utf8");
+// The full hash beside the delivered file, so it can be read without opening
+// JSON or trusting a truncated console line.
+const shaPath = out.replace(/\.mp4$/i, ".sha256");
+writeFileSync(shaPath, `video ${streamHash}\nfile ${fileHash(out)}\n`, "utf8");
 
 // `render-manifest.json` is **not** touched here. It is the render's record of
 // what it painted from, and the renderer is its only writer; a second writer

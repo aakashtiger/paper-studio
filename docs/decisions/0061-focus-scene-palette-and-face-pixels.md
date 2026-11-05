@@ -82,7 +82,8 @@
 
 `films/lakshmi-proof/` (17.2 s, 6 shots, 3 lines, 47 words):
 
-- picture `sha256:a35472f3def7…` (delivered)
+- picture `sha256:a35472f3def7…` (delivered); the full hash is written beside the
+  film in `films/lakshmi-proof/lakshmi-proof.sha256` and printed by `gate:7`
 - `gate:7` **PASS, 30 checks**; `film:review --gate --reuse` **PASS**
 - focus 12.8% / 13.1%; scene palette 4/99.1, 3/99.5, 2/99.9
 - face 2/2 measured, 0 findings

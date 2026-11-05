@@ -839,6 +839,7 @@ async function main(): Promise<void> {
       pending.length === 0 ? "nothing manual" : `${pending.length} still manual`
     }`,
   );
+  if (frozenHash) console.log(`picture: ${frozenHash}`);
   if (!pass) process.exit(1);
 }
 
