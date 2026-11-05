@@ -14,7 +14,7 @@
  * still judge meaning.
  */
 
-export const VISUAL_CONTRACT_VERSION = 2;
+export const VISUAL_CONTRACT_VERSION = 3;
 /** A recipe, device and phrase are unique in a film. Ten shots need ten ideas. */
 export const VISUAL_RECIPE_MAX = 1;
 /** Action/focus descriptions this close are the same gesture reworded. */
@@ -30,6 +30,10 @@ export type VisualShot = {
   /** Cumulative start and duration, for the measured-word check. */
   start?: number;
   duration?: number;
+  /** The staged action. A cast member that never changes pose is a still. */
+  direction?: {
+    events: { t: number; kind: string; who?: string; pose?: string }[];
+  };
   visual?: {
     shows: string;
     action: string;
@@ -79,7 +83,8 @@ export type VisualFinding = {
     | "visual:performer-duplicate"
     | "visual:performer-does"
     | "visual:performer-why"
-    | "visual:performer-unearned";
+    | "visual:performer-unearned"
+    | "visual:performer-static";
   message: string;
   shot?: string;
   /** For repeats/similarity: which field and which other shot. */
@@ -181,6 +186,7 @@ export function checkVisuals(
   lines: { id: string; text?: string }[],
   scenes?: { id: string; visual?: { subject: string }; lines: string[] }[],
   timedWords?: readonly TimedWord[],
+  options?: { contract?: number },
 ): {
   findings: VisualFinding[];
   checked: number;
@@ -191,6 +197,7 @@ export function checkVisuals(
   signatures: { shot: string; phrase: string; device: string; shows: string }[];
 } {
   const findings: VisualFinding[] = [];
+  const contract = options?.contract ?? 2;
   const byRecipe = new Map(recipes.map((recipe) => [recipe.id, recipe]));
   const lineById = new Map(lines.map((line) => [line.id, line]));
   const lineIds = new Set(lines.map((line) => line.id));
@@ -451,6 +458,18 @@ export function checkVisuals(
         message: `${shot.id} declares performer action but casts nobody — unstage the words or add the cast`,
         shot: shot.id,
       });
+    }
+    if (contract >= 3 && cast.length > 0) {
+      const poses = (shot.direction?.events ?? []).filter(
+        (event) => event.kind === "pose" && event.t > 0 && cast.includes(event.who ?? ""),
+      );
+      if (poses.length === 0) {
+        findings.push({
+          code: "visual:performer-static",
+          message: `${shot.id} stages ${cast.join(", ")} with no pose change — a body in the frame is not a performance`,
+          shot: shot.id,
+        });
+      }
     }
 
     signatures.push({

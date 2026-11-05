@@ -656,7 +656,10 @@ window.SCORE = {
       }
     }
   ],
-  "warnings": [],
+  "warnings": [
+    "\"Kiran\" publishes no arm/hand box; audit:body cannot measure it",
+    "\"Vaz\" publishes no arm/hand box; audit:body cannot measure it"
+  ],
   "brief": "films/same-alarm/brief.json",
   "clock": {
     "mode": "narration",
@@ -714,6 +717,7 @@ window.SCORE = {
   },
   "audio": {
     "mode": "narration",
+    "dynamics": "dynamic",
     "narration": {
       "source": "tts",
       "provider": "kokoro",
@@ -1696,7 +1700,7 @@ window.SCORE = {
       "id": "character.office-rig",
       "type": "character",
       "version": "0.1.0",
-      "hash": "sha256:af1bf54424c40ae3bc1ed3468d687262a7c8fe7bf90c00df95c52f4d36c1f253",
+      "hash": "sha256:8443c5107758b5bf2c5f7b9802db30224697851396c66e8247723249b8b911a0",
       "source": "new",
       "anchors": [
         "face",

@@ -86,6 +86,16 @@ const MYTH = [
   "myth_windows",
   "myth_pass_light",
 ];
+// The 17.8 s proof's six recipes. They are film-local vocabulary on the same
+// pack, proved by the same gate, and no sealed plan names them.
+const PROOF = [
+  "proof_door",
+  "proof_street",
+  "proof_river",
+  "proof_hands",
+  "proof_rangoli",
+  "proof_puja",
+];
 
 // The two plans as they were sealed at 0.1.0, recipe for recipe.
 const SONG_PLAN = [
@@ -140,13 +150,13 @@ test("0.2.0 gate: the live pack is REVIEWABLE with exactly one open choice", () 
   assert.ok(card.includes(capabilities.identity.version), "the card does not show 0.2.0");
 });
 
-test("0.2.0 gate: thirty-five recipes, 22 pack and 13 film, each with a beat role", () => {
+test("0.2.0 gate: forty-one recipes, 22 pack and 19 film, each with a beat role", () => {
   const recipes = readdirSync(join(PACK, "recipes"))
     .filter((file) => file.endsWith(".json"))
     .map((file) => readStyleJson(join(PACK, "recipes", file)) as { id: string; beatRoles: string[] });
   const ids = recipes.map((recipe) => recipe.id).sort();
-  assert.deepEqual(ids, [...SHIPPED, ...OFFICE, ...EXPLAINER, ...MYTH].sort());
-  assert.equal(new Set(ids).size, 35, "a recipe id is listed twice");
+  assert.deepEqual(ids, [...SHIPPED, ...OFFICE, ...EXPLAINER, ...MYTH, ...PROOF].sort());
+  assert.equal(new Set(ids).size, 41, "a recipe id is listed twice");
   for (const recipe of recipes) {
     assert.ok(recipe.beatRoles.length > 0, `${recipe.id} has no beat role`);
   }
@@ -179,7 +189,7 @@ test("0.2.0 gate: a format names its recipes, so the office set cannot re-cut a 
   }
 });
 
-test("0.2.0 gate: all thirty-five recipes fit their text in both aspects at the 14 px floor", () => {
+test("0.2.0 gate: all forty-one recipes fit their text in both aspects at the 14 px floor", () => {
   assertPackGeometry(PACK);
 });
 

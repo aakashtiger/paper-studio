@@ -1,6 +1,9 @@
 # *Lakshmi and the Lights* — a 60-second Paper K-pop film with a film-local myth cast
 
-**Status:** built and delivered, 2026-11-05. This is the first film under 0057.
+**Status:** the 60 s cut was **rejected on the picture** after passing its old
+28 checks (2026-11-05). The rebuilt **17.2 s proof** is `films/lakshmi-proof/`;
+it passes `gate:7` **29 checks** and `film:review`. The 60 s evidence below is
+historical.
 **Style:** `paper-kpop` 0.2.0 — the same identity. The film brings its own
 characters, props, sets and recipes.
 **Format:** 60 s, 16:9, 30 fps, narration.
@@ -112,17 +115,27 @@ needed if the measured read lands there.
 7. `gate:7` 28 checks, `film:review`, ASR. The old 0055 Uber evidence stays
    historical.
 
-## What shipped
+## What the 60 s cut did, and why it was rejected
 
 The treatment's 12 visual beats became a **13-shot** cut: the opening line is
 two images (the first diya, then the row of lamps), and the closing line is two
-images (three windows, then the flame passed between two hands). The film is
-60 s, 5 beats, 5 scenes, 13 shots, 9 narration lines, **159 words at 81%
-voiced**; 5 generated SFX cues; the master is **-14.1 LUFS / -1.8 dBTP** with
-LRA **10.3 LU** and 3 s contrast **20.5 LU**. The delivered picture passed the
-**28-check `gate:7`** and `film:review --gate --reuse`; ASR heard **96.9%** of
-the script. The picture hash and the reports tied to it are in
-`build/lakshmi-diwali/` (gitignored evidence).
+images (three windows, then the flame passed between two hands). It is 60 s,
+5 beats, 5 scenes, 13 shots, 9 lines, **159 words at 81% voiced**, and it passed
+the old **28-check `gate:7`**. But the review of the picture found empty upper
+halves, a Lakshmi that read as a sunflower, symbolic cards where a street,
+ocean, churn or rangoli should have been, 6.9 s shots with only a camera move,
+and a `-19 dB` line inserted to pass LRA. That cut and its reports are historical.
+
+## What the 17.2 s proof does instead
+
+`films/lakshmi-proof/` is written fresh: **17.2 s, 6 shots, 3 lines, 47 words,
+3 cues**, no shot over **3.7 s**; a warm doorway and a street of tiled roofs, a
+four-armed `LakshmiV2` rising from a giant lotus, an eight-fold rangoli, and a
+brass puja thali. It has no on-screen labels (the SRT carries the words), no
+voice attenuation (`audio.dynamics: "continuous"`), all six shots above the
+motion floor, and the longest hold is **0.00 s**. `gate:7` is **29 checks**; the
+picture is `sha256:95292d82a47d58b13bb8a5efc245c769ebbcaf6c312bc285d32fde85077ec597`;
+the evidence is `build/lakshmi-proof/` (gitignored).
 
 ## Sources
 

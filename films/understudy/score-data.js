@@ -550,6 +550,7 @@ window.SCORE = {
   },
   "audio": {
     "mode": "narration",
+    "dynamics": "dynamic",
     "narration": {
       "source": "tts",
       "provider": "kokoro",

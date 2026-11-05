@@ -1,0 +1,295 @@
+{
+  "film": "lakshmi-proof",
+  "source": "asr",
+  "audio": "films/lakshmi-proof/voice.wav",
+  "audioHash": "sha256:21a8b7030bbfb9a85e44ce75b4e2c430904ab692f6a4ee15693493ec4a5344d1",
+  "model": "small.en",
+  "duration": 17.26,
+  "scriptWords": 47,
+  "heardWords": 47,
+  "matched": 46,
+  "coverage": 0.9787,
+  "scriptWpm": 163.4,
+  "spokenWpm": 203.9,
+  "speech": 13.83,
+  "speechCoverage": 0.801,
+  "silence": 3.428,
+  "longestSilence": 0.574,
+  "longestSilenceAt": 10.378,
+  "first": 0,
+  "lastEnd": 16.62,
+  "hole": 0.64,
+  "holeAt": 16.62,
+  "unheard": [
+    "rangoli."
+  ],
+  "checks": {
+    "everyLineSpoken": true,
+    "everyWordHeard": true,
+    "firstLine": true,
+    "hole": true,
+    "coverage": true,
+    "withinFilm": true
+  },
+  "pass": true,
+  "lines": [
+    {
+      "id": "v01",
+      "text": "On the darkest night of Diwali, one lamp is lit, and the flame passes from hand to hand.",
+      "start": 0,
+      "duration": 5.86,
+      "beat": "b01"
+    },
+    {
+      "id": "v02",
+      "text": "At the river, a lotus opens, and Lakshmi rises with four hands: a lotus, and palms that say give.",
+      "start": 6.42,
+      "duration": 6.64,
+      "beat": "b02"
+    },
+    {
+      "id": "v03",
+      "text": "Draw the rangoli. Light the diya. Share what you have.",
+      "start": 13.7,
+      "duration": 2.92,
+      "beat": "b03"
+    }
+  ],
+  "words": [
+    {
+      "w": "On",
+      "start": 0,
+      "end": 0.42
+    },
+    {
+      "w": "the",
+      "start": 0.42,
+      "end": 0.56
+    },
+    {
+      "w": "darkest",
+      "start": 0.56,
+      "end": 0.9
+    },
+    {
+      "w": "night",
+      "start": 0.9,
+      "end": 1.16
+    },
+    {
+      "w": "of",
+      "start": 1.16,
+      "end": 1.34
+    },
+    {
+      "w": "Diwali,",
+      "start": 1.34,
+      "end": 1.78
+    },
+    {
+      "w": "one",
+      "start": 2.18,
+      "end": 2.44
+    },
+    {
+      "w": "lamp",
+      "start": 2.44,
+      "end": 2.7
+    },
+    {
+      "w": "is",
+      "start": 2.7,
+      "end": 2.92
+    },
+    {
+      "w": "lit,",
+      "start": 2.92,
+      "end": 3.2
+    },
+    {
+      "w": "and",
+      "start": 3.2,
+      "end": 3.8
+    },
+    {
+      "w": "the",
+      "start": 3.8,
+      "end": 3.92
+    },
+    {
+      "w": "flame",
+      "start": 3.92,
+      "end": 4.26
+    },
+    {
+      "w": "passes",
+      "start": 4.26,
+      "end": 4.76
+    },
+    {
+      "w": "from",
+      "start": 4.76,
+      "end": 5.02
+    },
+    {
+      "w": "hand",
+      "start": 5.02,
+      "end": 5.34
+    },
+    {
+      "w": "to",
+      "start": 5.34,
+      "end": 5.52
+    },
+    {
+      "w": "hand.",
+      "start": 5.52,
+      "end": 5.86
+    },
+    {
+      "w": "At",
+      "start": 6.42,
+      "end": 6.5
+    },
+    {
+      "w": "the",
+      "start": 6.5,
+      "end": 6.62
+    },
+    {
+      "w": "river,",
+      "start": 6.62,
+      "end": 6.86
+    },
+    {
+      "w": "a",
+      "start": 7.18,
+      "end": 7.26
+    },
+    {
+      "w": "lotus",
+      "start": 7.26,
+      "end": 7.62
+    },
+    {
+      "w": "opens,",
+      "start": 7.62,
+      "end": 7.98
+    },
+    {
+      "w": "and",
+      "start": 7.98,
+      "end": 8.48
+    },
+    {
+      "w": "Lakshmi",
+      "start": 8.48,
+      "end": 8.96
+    },
+    {
+      "w": "rises",
+      "start": 8.96,
+      "end": 9.36
+    },
+    {
+      "w": "with",
+      "start": 9.36,
+      "end": 9.66
+    },
+    {
+      "w": "four",
+      "start": 9.66,
+      "end": 9.88
+    },
+    {
+      "w": "hands:",
+      "start": 9.88,
+      "end": 10.32
+    },
+    {
+      "w": "a",
+      "start": 10.92,
+      "end": 11.04
+    },
+    {
+      "w": "lotus,",
+      "start": 11.04,
+      "end": 11.58
+    },
+    {
+      "w": "and",
+      "start": 11.58,
+      "end": 11.84
+    },
+    {
+      "w": "palms",
+      "start": 11.84,
+      "end": 12.22
+    },
+    {
+      "w": "that",
+      "start": 12.22,
+      "end": 12.5
+    },
+    {
+      "w": "say",
+      "start": 12.5,
+      "end": 12.74
+    },
+    {
+      "w": "give.",
+      "start": 12.74,
+      "end": 13.06
+    },
+    {
+      "w": "Draw",
+      "start": 13.7,
+      "end": 13.8
+    },
+    {
+      "w": "the",
+      "start": 13.8,
+      "end": 13.94
+    },
+    {
+      "w": "rangoli.",
+      "start": 13.94,
+      "end": 14.4
+    },
+    {
+      "w": "Light",
+      "start": 14.94,
+      "end": 15.02
+    },
+    {
+      "w": "the",
+      "start": 15.02,
+      "end": 15.18
+    },
+    {
+      "w": "diya.",
+      "start": 15.18,
+      "end": 15.52
+    },
+    {
+      "w": "Share",
+      "start": 15.68,
+      "end": 15.94
+    },
+    {
+      "w": "what",
+      "start": 15.94,
+      "end": 16.14
+    },
+    {
+      "w": "you",
+      "start": 16.14,
+      "end": 16.28
+    },
+    {
+      "w": "have.",
+      "start": 16.28,
+      "end": 16.62
+    }
+  ]
+}

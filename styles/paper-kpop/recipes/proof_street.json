@@ -1,0 +1,50 @@
+{
+  "id": "proof_street",
+  "beatRoles": [
+    "detail"
+  ],
+  "duration": {
+    "min": 2,
+    "max": 4.5,
+    "default": 3.25
+  },
+  "transitionOut": "cut",
+  "failureModes": [
+    "a picture that does not show the subject the shot names",
+    "a label outside the safe area",
+    "a subject that floats without a surface or a shadow"
+  ],
+  "camera": {
+    "op": "camera",
+    "move": "push_in",
+    "from": 1,
+    "to": 1.04,
+    "ease": "easeOut"
+  },
+  "slots": [],
+  "assets": [
+    "texture.halftone"
+  ],
+  "composition": [
+    {
+      "op": "camera",
+      "move": "push_in",
+      "from": 1,
+      "to": 1.04,
+      "ease": "easeOut"
+    },
+    {
+      "op": "transition",
+      "kind": "cut"
+    }
+  ],
+  "subjects": [
+    "child",
+    "diya",
+    "street",
+    "roof",
+    "lamp",
+    "people"
+  ],
+  "subject": "a child carrying a diya down a street of tiled roofs"
+}

@@ -15,12 +15,15 @@ library gains `tap`, `hold` and `accept` poses. **513 tests**, typecheck clean.
 `npm run visual:check -- films/uber-model/score.json` now refuses the 0055
 score with **48 findings** (0 phrases, 10 staged with no action, four recipes
 used twice); `storyboard --check` refuses it. The 0055 28-check pass and MP4 are
-historical evidence, not a current pass. The first film under **0057** is
-***Lakshmi and the Lights***: 60 s, 13 shots, 5 beats, 159 words at 81% voiced,
-four film-local characters (Lakshmi, Vishnu, Householder, Child), 13 film-local
-recipes, all on `paper-kpop@0.2.0`. It passed **`gate:7` 28 checks** and
-`film:review --gate --reuse`; the treatment, sources and shipped evidence are in
-`docs/proposals/lakshmi-and-the-lights.md`.
+historical evidence, not a current pass. The 60 s *Lakshmi and the Lights* was
+**rejected on the picture** after passing its old 28 checks. Decision **0058**
+makes the voice one level (`audio.dynamics: "continuous"`, `voiceLevel`), caps a
+short/reel shot at 4.5 s, and refuses a staged body with no pose change
+(`visualContract: 3`). The new **17.2 s proof** is `films/lakshmi-proof/`:
+6 shots, 3 lines, 47 words, no shot over 3.7 s, new `LakshmiV2`/`ChildV2` rigs,
+a real lotus/river reveal, an eight-fold rangoli and a brass thali. It passes
+**`gate:7` 29 checks** and `film:review --gate --reuse`; the 60 s film and its
+evidence stay historical.
 
 **Update 2026-11-05 (historical, superseded by the 0056 block above):** decision **0055** rebuilds *The Uber Cut* as
 the first passing example of the identity gate. The film is a presenter-show:

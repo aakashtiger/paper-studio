@@ -1,0 +1,719 @@
+{
+  "id": "lakshmi-proof",
+  "brief": "films/lakshmi-proof/brief.json",
+  "style": "paper-kpop",
+  "styleVersion": "0.2.0",
+  "aspect": "16:9",
+  "duration": 17.2,
+  "fps": 30,
+  "seed": 20261105,
+  "edit": {
+    "minShot": 1.5,
+    "medianShot": 3,
+    "maxShot": 4.2
+  },
+  "clock": {
+    "mode": "narration",
+    "lines": [
+      {
+        "id": "v01",
+        "text": "On the darkest night of Diwali, one lamp is lit, and the flame passes from hand to hand.",
+        "start": 0,
+        "duration": 5.866666666666666
+      },
+      {
+        "id": "v02",
+        "text": "At the river, a lotus opens, and Lakshmi rises with four hands: a lotus, and palms that say give.",
+        "start": 6.433333333333334,
+        "duration": 6.633333333333334
+      },
+      {
+        "id": "v03",
+        "text": "Draw the rangoli. Light the diya. Share what you have.",
+        "start": 13.7,
+        "duration": 2.933333333333333
+      }
+    ]
+  },
+  "audio": {
+    "mode": "narration",
+    "narration": {
+      "source": "tts",
+      "provider": "kokoro",
+      "voice": "films/lakshmi-proof/voice.wav",
+      "voiceId": "af_heart",
+      "transcript": "films/lakshmi-proof/transcript.json",
+      "srt": "films/lakshmi-proof/captions.srt"
+    },
+    "sfx": {
+      "source": "generated",
+      "cues": [
+        {
+          "id": "match",
+          "at": 0.0333,
+          "kind": "snap",
+          "note": "the match",
+          "gain": 0.2,
+          "duckDb": 8
+        },
+        {
+          "id": "first-lamp",
+          "at": 0.5,
+          "kind": "lamp",
+          "note": "the wick catches",
+          "gain": 0.24,
+          "duckDb": 8
+        },
+        {
+          "id": "pass",
+          "at": 3.6,
+          "kind": "lamp",
+          "note": "the flame passes",
+          "gain": 0.18,
+          "duckDb": 9
+        }
+      ],
+      "silences": [
+        {
+          "from": 6.05,
+          "to": 6.4,
+          "why": "a breath before the river"
+        },
+        {
+          "from": 13.25,
+          "to": 13.6,
+          "why": "a breath before the home"
+        }
+      ]
+    },
+    "dynamics": "continuous"
+  },
+  "captions": {
+    "source": "films/lakshmi-proof/captions.srt",
+    "lines": [
+      {
+        "id": "v01.1",
+        "text": "On the darkest night of Diwali,",
+        "start": 0,
+        "end": 1.9666666666666666
+      },
+      {
+        "id": "v01.2",
+        "text": "one lamp is lit,",
+        "start": 1.9666666666666666,
+        "end": 3.2666666666666666
+      },
+      {
+        "id": "v01.3",
+        "text": "and the flame passes from hand to hand.",
+        "start": 3.2666666666666666,
+        "end": 5.866666666666666
+      },
+      {
+        "id": "v02.1",
+        "text": "At the river, a lotus opens,",
+        "start": 6.433333333333334,
+        "end": 8.533333333333333
+      },
+      {
+        "id": "v02.2",
+        "text": "and Lakshmi rises with four hands:",
+        "start": 8.533333333333333,
+        "end": 10.633333333333333
+      },
+      {
+        "id": "v02.3",
+        "text": "a lotus, and palms that say give.",
+        "start": 10.633333333333333,
+        "end": 13.066666666666666
+      },
+      {
+        "id": "v03.1",
+        "text": "Draw the rangoli. Light the diya.",
+        "start": 13.7,
+        "end": 15.466666666666667
+      },
+      {
+        "id": "v03.2",
+        "text": "Share what you have.",
+        "start": 15.466666666666667,
+        "end": 16.633333333333333
+      }
+    ]
+  },
+  "assets": [
+    {
+      "id": "character.lakshmi-v2",
+      "type": "character",
+      "version": "1.0.0",
+      "hash": "sha256:0d8ca1854aba8338e8b606f84a9646974f8a004b8836bcfb8449e7182d1bae21",
+      "source": "new",
+      "path": "films/lakshmi-proof/cast/lakshmi-v2.poses.json",
+      "character": "LakshmiV2",
+      "anchors": [
+        "face",
+        "hair",
+        "hand-left",
+        "hand-right",
+        "hand-upper-left",
+        "hand-upper-right",
+        "foot-left",
+        "foot-right"
+      ]
+    },
+    {
+      "id": "texture.halftone",
+      "type": "texture",
+      "version": "0.1.0",
+      "hash": "sha256:78cf2787003d20dec40871ab3163a2b967cba92cd39078ad7cff107e7a23e310",
+      "source": "reused",
+      "path": "styles/paper-kpop/canvas/recipes.js",
+      "anchors": []
+    },
+    {
+      "id": "character.child-v2",
+      "type": "character",
+      "version": "1.0.0",
+      "hash": "sha256:1cada6111ec677e733db7a36435558abfe0afd633a9763942016bc24350bcf55",
+      "source": "new",
+      "path": "films/lakshmi-proof/cast/child-v2.poses.json",
+      "character": "ChildV2",
+      "anchors": [
+        "face",
+        "head",
+        "hair",
+        "hand-left",
+        "hand-right",
+        "foot-left",
+        "foot-right"
+      ]
+    }
+  ],
+  "cast": [
+    {
+      "character": "LakshmiV2",
+      "poses": "films/lakshmi-proof/cast/lakshmi-v2.poses.json",
+      "rig": "lakshmi-v2@0.1.0"
+    },
+    {
+      "character": "ChildV2",
+      "poses": "films/lakshmi-proof/cast/child-v2.poses.json",
+      "rig": "child-v2@0.1.0"
+    }
+  ],
+  "performance": {
+    "mode": "diagram-show",
+    "star": "LakshmiV2",
+    "entrance": {
+      "beat": "b02",
+      "via": "spotlight"
+    },
+    "exit": {
+      "beat": "b03",
+      "via": "bow"
+    },
+    "signature": {
+      "name": "the four hands"
+    }
+  },
+  "paletteScript": [
+    {
+      "beat": "b01",
+      "field": "red"
+    },
+    {
+      "beat": "b02",
+      "field": "blue"
+    },
+    {
+      "beat": "b03",
+      "field": "cream"
+    }
+  ],
+  "motifs": [
+    {
+      "motif": "flame",
+      "kind": "object",
+      "meaning": "the light that is passed"
+    },
+    {
+      "motif": "lotus",
+      "kind": "object",
+      "meaning": "the goddess and the river"
+    },
+    {
+      "motif": "rangoli",
+      "kind": "object",
+      "meaning": "the welcome at the door"
+    }
+  ],
+  "shots": [
+    {
+      "id": "s01",
+      "beat": "b01",
+      "scene": "sc01",
+      "recipe": "proof_door",
+      "duration": 3,
+      "link": "v01",
+      "phrase": "On the darkest night",
+      "device": "threshold_lamp",
+      "shows": "a village street at night, a low doorway with a warm room inside, a hand lighting one clay diya on the threshold, a child watching",
+      "action": "the match touches the wick and the child leans into the new light",
+      "focus": "the first flame and the child's lit face",
+      "why": "the line names the darkest night and the first lamp; the door is the edge of the home",
+      "performers": [],
+      "field": "ink",
+      "music": "one match, one flame",
+      "visual": {
+        "shows": "a village street at night, a low doorway with a warm room inside, a hand lighting one clay diya on the threshold, a child watching",
+        "action": "the match touches the wick and the child leans into the new light",
+        "focus": "the first flame and the child's lit face",
+        "link": "v01",
+        "why": "the line names the darkest night and the first lamp; the door is the edge of the home",
+        "phrase": "On the darkest night",
+        "device": "clay_diya"
+      },
+      "slots": {},
+      "camera": {
+        "move": "pan",
+        "from": 1,
+        "to": 1.09,
+        "ease": "linear"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "a village street at night, a low doorway with a warm room inside, a hand lighting one clay diya on the threshold, a child watching",
+        "exit": "the match touches the wick and the child leans into the new light",
+        "spine": "the line names the darkest night and the first lamp; the door is the edge of the home",
+        "cast": [],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the first flame and the child's lit face",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.2,
+            "kind": "build",
+            "note": "the match touches the wick and the child leans into the new light",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2.7666666666666666,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "flame"
+    },
+    {
+      "id": "s02",
+      "beat": "b01",
+      "scene": "sc01",
+      "recipe": "proof_street",
+      "duration": 2.9,
+      "link": "v02",
+      "phrase": "The flame passes",
+      "device": "passing_flame",
+      "shows": "a child carries the diya along a street of tiled roofs, people at their doors, lamps answering down the row",
+      "action": "the child walks and the neighbours lift their lamps as she passes",
+      "focus": "the flame moving between hands",
+      "why": "the line says the flame passes hand to hand; the street is the hands",
+      "performers": [],
+      "field": "ink",
+      "music": "soft footsteps and small flames",
+      "visual": {
+        "shows": "a child carries the diya along a street of tiled roofs, people at their doors, lamps answering down the row",
+        "action": "the child walks and the neighbours lift their lamps as she passes",
+        "focus": "the flame moving between hands",
+        "link": "v01",
+        "why": "the line says the flame passes hand to hand; the street is the hands",
+        "phrase": "the flame passes",
+        "device": "child_with_diya",
+        "performers": [
+          {
+            "who": "ChildV2",
+            "does": "carries the flame down the street",
+            "why": "the line says the flame passes hand to hand, so the child is the hand"
+          }
+        ]
+      },
+      "slots": {},
+      "camera": {
+        "move": "pan",
+        "from": 1,
+        "to": 1.07,
+        "ease": "linear"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "a child carries the diya along a street of tiled roofs, people at their doors, lamps answering down the row",
+        "exit": "the child walks and the neighbours lift their lamps as she passes",
+        "spine": "the line says the flame passes hand to hand; the street is the hands",
+        "cast": [
+          "ChildV2"
+        ],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the flame moving between hands",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.1,
+            "kind": "pose",
+            "who": "ChildV2",
+            "pose": "walk",
+            "expression": "happy",
+            "note": "she starts walking with the diya",
+            "quiet": "the street carries the beat"
+          },
+          {
+            "t": 0.2,
+            "kind": "build",
+            "note": "the child walks and the neighbours lift their lamps as she passes",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.3,
+            "kind": "pose",
+            "who": "ChildV2",
+            "pose": "carry",
+            "expression": "awed",
+            "note": "she lifts the diya as the lamps answer",
+            "quiet": "the street carries the beat"
+          },
+          {
+            "t": 2.566666666666667,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "flame"
+    },
+    {
+      "id": "s03",
+      "beat": "b02",
+      "scene": "sc02",
+      "recipe": "proof_river",
+      "duration": 3.7,
+      "link": "v03",
+      "phrase": "Lakshmi rises",
+      "device": "river_rising",
+      "shows": "a wide river at night, a giant lotus opening on the water, Lakshmi rising with four arms, gold sari, crown and a lotus in each upper hand",
+      "action": "the lotus opens, the water rings out, and she rises until she stands on the flower",
+      "focus": "Lakshmi's face and the four arms",
+      "why": "the line says the lotus opens and Lakshmi rises; the river is the reveal",
+      "performers": [
+        {
+          "who": "LakshmiV2",
+          "does": "rises from the lotus and raises her upper hands",
+          "why": "the line names her rising"
+        }
+      ],
+      "field": "blue",
+      "music": "one slow water swell",
+      "visual": {
+        "shows": "a wide river at night, a giant lotus opening on the water, Lakshmi rising with four arms, gold sari, crown and a lotus in each upper hand",
+        "action": "the lotus opens, the water rings out, and she rises until she stands on the flower",
+        "focus": "Lakshmi's face and the four arms",
+        "link": "v02",
+        "why": "the line says the lotus opens and Lakshmi rises; the river is the reveal",
+        "phrase": "a lotus opens",
+        "device": "river_rising",
+        "performers": [
+          {
+            "who": "LakshmiV2",
+            "does": "rises from the lotus and raises her upper hands",
+            "why": "the narration names her rising, so the river must answer with her body"
+          }
+        ]
+      },
+      "slots": {},
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.12,
+        "ease": "linear"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "a wide river at night, a giant lotus opening on the water, Lakshmi rising with four arms, gold sari, crown and a lotus in each upper hand",
+        "exit": "the lotus opens, the water rings out, and she rises until she stands on the flower",
+        "spine": "the line says the lotus opens and Lakshmi rises; the river is the reveal",
+        "cast": [
+          "LakshmiV2"
+        ],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "Lakshmi's face and the four arms",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.16666666666666666,
+            "kind": "pose",
+            "who": "LakshmiV2",
+            "pose": "rise",
+            "expression": "awe",
+            "note": "she begins to rise",
+            "quiet": "the water carries the beat"
+          },
+          {
+            "t": 0.2,
+            "kind": "build",
+            "note": "the lotus opens, the water rings out, and she rises until she stands on the flower",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.5333333333333333,
+            "kind": "reaction",
+            "note": "the lotus opens on the word",
+            "word": "v02",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 2.4,
+            "kind": "pose",
+            "who": "LakshmiV2",
+            "pose": "open",
+            "expression": "kind",
+            "note": "she opens her upper hands",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 3.3666666666666667,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "lotus"
+    },
+    {
+      "id": "s04",
+      "beat": "b02",
+      "scene": "sc02",
+      "recipe": "proof_hands",
+      "duration": 3.7,
+      "link": "v04",
+      "phrase": "Four hands",
+      "device": "four_hands",
+      "shows": "a close view of Lakshmi's four hands: upper hands hold pink lotuses, lower right palm open in blessing, lower left palm open in giving, gold bangles and a floating diya",
+      "action": "the fingers open and the lotuses turn toward the light",
+      "focus": "the open palms",
+      "why": "the line counts the four hands and names the lotus and the giving palms",
+      "performers": [
+        {
+          "who": "LakshmiV2",
+          "does": "opens the two lower palms and turns the lotuses",
+          "why": "the line explains what the four hands carry"
+        }
+      ],
+      "field": "blue",
+      "music": "one soft chime",
+      "visual": {
+        "shows": "a close view of Lakshmi's four hands: upper hands hold pink lotuses, lower right palm open in blessing, lower left palm open in giving, gold bangles and a floating diya",
+        "action": "the fingers open and the lotuses turn toward the light",
+        "focus": "the open palms",
+        "link": "v02",
+        "why": "the line counts the four hands and names the lotus and the giving palms",
+        "phrase": "four hands",
+        "device": "four_hands",
+        "performers": [
+          {
+            "who": "LakshmiV2",
+            "does": "opens her four hands, palms and lotuses toward the light",
+            "why": "the line explains what the four hands carry"
+          }
+        ]
+      },
+      "slots": {},
+      "camera": {
+        "move": "pan",
+        "from": 1,
+        "to": 1.09,
+        "ease": "linear"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "a close view of Lakshmi's four hands: upper hands hold pink lotuses, lower right palm open in blessing, lower left palm open in giving, gold bangles and a floating diya",
+        "exit": "the fingers open and the lotuses turn toward the light",
+        "spine": "the line counts the four hands and names the lotus and the giving palms",
+        "cast": [
+          "LakshmiV2"
+        ],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the open palms",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.1,
+            "kind": "pose",
+            "who": "LakshmiV2",
+            "pose": "stand",
+            "expression": "blessing",
+            "note": "the four hands hold still",
+            "quiet": "the chime carries the beat"
+          },
+          {
+            "t": 0.2,
+            "kind": "build",
+            "note": "the fingers open and the lotuses turn toward the light",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.1,
+            "kind": "pose",
+            "who": "LakshmiV2",
+            "pose": "bless",
+            "expression": "giving",
+            "note": "the palms open",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 3.433333333333333,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "lotus"
+    },
+    {
+      "id": "s05",
+      "beat": "b03",
+      "scene": "sc03",
+      "recipe": "proof_rangoli",
+      "duration": 2,
+      "link": "v05",
+      "phrase": "Draw the rangoli",
+      "device": "rangoli_bloom",
+      "shows": "a courtyard floor with a real eight-fold rangoli being drawn in red, gold, green and cream, marigold garland, a hanging lamp, hands and powder bowls",
+      "action": "the hands pull the lines outward and the pattern blooms around the lamp",
+      "focus": "the rangoli lines and the hands",
+      "why": "the line asks for the rangoli, and the image is the drawing of it",
+      "performers": [],
+      "field": "cream",
+      "music": "powder on stone",
+      "visual": {
+        "shows": "a courtyard floor with a real eight-fold rangoli being drawn in red, gold, green and cream, marigold garland, a hanging lamp, hands and powder bowls",
+        "action": "the hands pull the lines outward and the pattern blooms around the lamp",
+        "focus": "the rangoli lines and the hands",
+        "link": "v03",
+        "why": "the line asks for the rangoli, and the image is the drawing of it",
+        "phrase": "Draw the rangoli",
+        "device": "rangoli_bloom"
+      },
+      "slots": {},
+      "camera": {
+        "move": "pan",
+        "from": 1,
+        "to": 1.07,
+        "ease": "linear"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "a courtyard floor with a real eight-fold rangoli being drawn in red, gold, green and cream, marigold garland, a hanging lamp, hands and powder bowls",
+        "exit": "the hands pull the lines outward and the pattern blooms around the lamp",
+        "spine": "the line asks for the rangoli, and the image is the drawing of it",
+        "cast": [],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the rangoli lines and the hands",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.2,
+            "kind": "build",
+            "note": "the hands pull the lines outward and the pattern blooms around the lamp",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.6666666666666667,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "rangoli"
+    },
+    {
+      "id": "s06",
+      "beat": "b03",
+      "scene": "sc03",
+      "recipe": "proof_puja",
+      "duration": 1.9,
+      "link": "v05",
+      "phrase": "Share what you have",
+      "device": "puja_offer",
+      "shows": "a brass thali with a lit diya, marigolds, a coconut and a banana, two hands offering, incense smoke, a warm wall and a hanging lamp",
+      "action": "the hands set the flower down and the flame leans toward the camera",
+      "focus": "the flame and the offered flower",
+      "why": "the line closes on sharing; the thali is the offering and the flame is passed on",
+      "performers": [],
+      "field": "red",
+      "music": "brass and one small flame",
+      "visual": {
+        "shows": "a brass thali with a lit diya, marigolds, a coconut and a banana, two hands sharing an offering, incense smoke, a warm wall and a hanging lamp",
+        "action": "the hands share the flower and the flame leans toward the camera",
+        "focus": "the flame and the offered flower",
+        "link": "v03",
+        "why": "the line closes on sharing; the thali is the offering and the flame is passed on",
+        "phrase": "Share what you have",
+        "device": "puja_offer"
+      },
+      "slots": {},
+      "camera": {
+        "move": "pull_back",
+        "from": 1.08,
+        "to": 1,
+        "ease": "linear"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "a brass thali with a lit diya, marigolds, a coconut and a banana, two hands offering, incense smoke, a warm wall and a hanging lamp",
+        "exit": "the hands set the flower down and the flame leans toward the camera",
+        "spine": "the line closes on sharing; the thali is the offering and the flame is passed on",
+        "cast": [],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the flame and the offered flower",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.2,
+            "kind": "build",
+            "note": "the hands set the flower down and the flame leans toward the camera",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.4666666666666666,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "rangoli"
+    }
+  ],
+  "visualContract": 3
+}

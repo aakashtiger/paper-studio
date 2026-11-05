@@ -1,0 +1,87 @@
+{
+  "id": "lakshmi-proof",
+  "scenes": [
+    {
+      "id": "sc01",
+      "beat": "b01",
+      "title": "the dark street and the first lamp",
+      "place": "a village street at night, a low doorway, tiled roofs, marigold garlands",
+      "summary": "A hand lights one diya on a threshold; a child carries the flame down the street and the neighbours answer.",
+      "cast": [],
+      "lines": [
+        "v01"
+      ],
+      "duration": 5.9,
+      "visual": {
+        "subject": "one clay diya, a warm doorway, a child, a row of lamps",
+        "setting": "indigo night, cream walls, clay-tile roofs, a temple silhouette, marigold",
+        "action": "the match touches the wick; the child lifts the diya and walks; lamps light behind her",
+        "props": [
+          "diya",
+          "match",
+          "doorway",
+          "tiled roof",
+          "marigold garland",
+          "street lamp",
+          "powder bowls"
+        ]
+      }
+    },
+    {
+      "id": "sc02",
+      "beat": "b02",
+      "title": "the river and the goddess",
+      "place": "a wide river at night, ghats, a giant lotus, a low moon",
+      "summary": "The lotus opens on the water and Lakshmi rises with four arms, gold sari, crown, lotuses in her upper hands.",
+      "cast": [
+        "LakshmiV2"
+      ],
+      "lines": [
+        "v02"
+      ],
+      "duration": 7.4,
+      "visual": {
+        "subject": "Lakshmi rising from a lotus, four arms, crown, gold sari",
+        "setting": "dark teal water, ripples, reflections, distant ghats and a temple, moon and fireflies",
+        "action": "petals open, the water rings out, she rises until she stands on the flower and raises the upper hands",
+        "props": [
+          "lotus",
+          "water",
+          "ghats",
+          "temple",
+          "moon",
+          "fireflies",
+          "gold jewellery"
+        ]
+      }
+    },
+    {
+      "id": "sc03",
+      "beat": "b03",
+      "title": "the home, the rangoli, the offering",
+      "place": "a warm courtyard with a real eight-fold rangoli, then a brass puja thali",
+      "summary": "Hands draw the rangoli around a lamp; the same hands set a flower on the thali and the flame leans out.",
+      "cast": [],
+      "lines": [
+        "v03"
+      ],
+      "duration": 3.9,
+      "visual": {
+        "subject": "rangoli, powder bowls, marigold, a brass thali, a lit diya, offering hands",
+        "setting": "ochre wall, wooden door, hanging lamp, garland, warm night courtyard",
+        "action": "the hands pull the rangoli lines outward; the pattern blooms; a flower is offered and the flame leans toward the lens",
+        "props": [
+          "rangoli",
+          "powder",
+          "marigold",
+          "thali",
+          "diya",
+          "coconut",
+          "banana",
+          "incense",
+          "bell"
+        ]
+      }
+    }
+  ]
+}

@@ -52,7 +52,8 @@ const score = JSON.parse(readFileSync(resolve(root, file), "utf8")) as {
   style: string;
   duration: number;
   aspect: string;
-  clock?: { lines?: { id: string; text: string; start: number; duration: number }[] };
+  clock?: { lines?: { id: string; text: string; start: number; duration: number; gainDb?: number }[] };
+  audio?: { dynamics?: string };
   shots?: { slots?: Record<string, string> }[];
   cast?: { character: string }[];
 };
@@ -203,6 +204,14 @@ async function main(): Promise<void> {
     inputs?: { score: string | null; sfx: string | null; voice: string | null };
     files: { hash: string };
   }>("mix/mix-report.json");
+  // A continuous-narration film keeps the voice at one level. The old way to
+  // pass LRA was to turn a line down; the audience hears that as a mistake.
+  const continuousNarration = score.audio?.dynamics === "continuous";
+  const lineGains = (score.clock?.lines ?? []).map((line) => line.gainDb ?? 0);
+  const voiceLevel = lineGains.every((gain) => Math.abs(gain) <= 0.5);
+  const voiceLevelDetail = lineGains.length === 0
+    ? "no narration lines"
+    : `${lineGains.length} narration line(s), worst attenuation ${Math.max(0, ...lineGains.map((gain) => -gain)).toFixed(1)} dB; every line stays at its recorded level`;
   const sfx = read<{ cues: SfxRecordLike[] }>("sfx/sfx.json");
   const palette = read<{
     pass: boolean;
@@ -472,19 +481,28 @@ async function main(): Promise<void> {
       }
       return { ok: true, detail: `${(share * 100).toFixed(0)}% of shots are close-ups` };
     })(),
+    voiceLevel: {
+      ok: voiceLevel,
+      detail: voiceLevelDetail,
+    },
     lra: {
-      ok: typeof mix?.measured.lra === "number" && mix.measured.lra >= 4,
-      detail:
-        typeof mix?.measured.lra === "number"
+      ok: continuousNarration
+        ? voiceLevel
+        : typeof mix?.measured.lra === "number" && mix.measured.lra >= 4,
+      detail: continuousNarration
+        ? `continuous narration: every line is at its recorded level (LRA ${typeof mix?.measured.lra === "number" ? mix.measured.lra.toFixed(1) : "-"} LU is informational)`
+        : typeof mix?.measured.lra === "number"
           ? `LRA ${mix.measured.lra.toFixed(1)} LU (floor 4)`
           : "no LRA in the mix report",
     },
     soundContrast: {
-      ok:
-        typeof mix?.shortTerm?.contrastLu === "number" &&
-        mix.shortTerm.contrastLu >= 15,
-      detail:
-        typeof mix?.shortTerm?.contrastLu === "number"
+      ok: continuousNarration
+        ? voiceLevel
+        : typeof mix?.shortTerm?.contrastLu === "number" &&
+          mix.shortTerm.contrastLu >= 15,
+      detail: continuousNarration
+        ? "continuous narration: contrast comes from the picture and cues, not from turning a line down"
+        : typeof mix?.shortTerm?.contrastLu === "number"
           ? `${mix.shortTerm.contrastLu.toFixed(1)} LU between the quietest and loudest 3 s window (floor 15)`
           : "no 3 s short-term contrast in the mix report",
     },

@@ -263,6 +263,8 @@ export const DirectionSchema = z.object({
 export const FilmScoreSchema = TreatmentSchema.omit({ proof: true })
   .extend({
     brief: z.string().min(1),
+    /** The visual contract this film was authored against. Older films omit it. */
+    visualContract: z.number().int().min(2).max(3).optional(),
     /**
      * A sealed pre-identity film. It may be reproduced, never re-rendered as a
      * new film; the marker is the difference between history and a bypass.

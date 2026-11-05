@@ -1,0 +1,41 @@
+{
+  "id": "lakshmi-proof",
+  "beats": [
+    {
+      "id": "b01",
+      "title": "the dark street and the first lamp",
+      "purpose": "hook",
+      "share": 40,
+      "energy": 2,
+      "sound": {
+        "world": "a quiet street, one match, clay and marigold",
+        "signature": "a match and one flame",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b02",
+      "title": "the river and the goddess",
+      "purpose": "turn",
+      "share": 40,
+      "energy": 5,
+      "sound": {
+        "world": "the river moves under a wide sky",
+        "signature": "the voice and the water",
+        "quiet": true
+      }
+    },
+    {
+      "id": "b03",
+      "title": "the home, the rangoli, the offering",
+      "purpose": "button",
+      "share": 20,
+      "energy": 4,
+      "sound": {
+        "world": "a courtyard, powder, a brass thali",
+        "signature": "the voice and one small flame",
+        "quiet": true
+      }
+    }
+  ]
+}

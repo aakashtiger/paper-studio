@@ -1,0 +1,49 @@
+{
+  "id": "proof_hands",
+  "beatRoles": [
+    "detail"
+  ],
+  "duration": {
+    "min": 2,
+    "max": 5,
+    "default": 3.5
+  },
+  "transitionOut": "cut",
+  "failureModes": [
+    "a picture that does not show the subject the shot names",
+    "a label outside the safe area",
+    "a subject that floats without a surface or a shadow"
+  ],
+  "camera": {
+    "op": "camera",
+    "move": "push_in",
+    "from": 1,
+    "to": 1.04,
+    "ease": "easeOut"
+  },
+  "slots": [],
+  "assets": [
+    "texture.halftone"
+  ],
+  "composition": [
+    {
+      "op": "camera",
+      "move": "push_in",
+      "from": 1,
+      "to": 1.04,
+      "ease": "easeOut"
+    },
+    {
+      "op": "transition",
+      "kind": "cut"
+    }
+  ],
+  "subjects": [
+    "hands",
+    "lotus",
+    "bangles",
+    "diya",
+    "water"
+  ],
+  "subject": "four hands, two lotuses, two open palms"
+}

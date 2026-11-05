@@ -56,9 +56,10 @@ film, not a new pack. It is 60 s, 13 shots, 159 words at 81% voiced, with four
 film-local characters (Lakshmi, Vishnu, Householder, Child), 11 poses and 14
 expressions each, and 13 film-local recipes. The recipes live in the pack's
 `recipes/` vocabulary because the resolver and the painter read one directory;
-the 0.2.0 gate now lists **35** recipes (22 pack + 13 film) and proves all 35
-fit their text in both aspects at the 14 px floor. `capabilities.proof.frames`
-names all 35. No sealed plan names a myth recipe.
+the live pack gate now lists **41** recipes (22 pack + 19 film: the 13 myth
+scenes and the six proof scenes) and proves all 41 fit their text in both
+aspects at the 14 px floor. `capabilities.proof.frames` names all 41. No sealed
+plan names a film-local recipe.
 
 The delivered picture is
 `sha256:94635053253d76b596ba797c05699f6907522b3b45e4aa6088152b2ae188e435`.
@@ -67,6 +68,12 @@ both tied to that picture. `audit:body` passes 4/4 cast members; `audit:reaction
 has one word-bound event (the rangoli turns on `v06` at 31.80 s, **+0.0
 frames**). The score audit has four warnings, all the library's known
 `asleep`/`slump` silhouette similarity; they are warnings, not findings.
+
+**Superseded on the picture, 2026-11-05.** That 60 s cut passed the 28 checks
+and was then rejected on the picture. Decision **0058** fixes the causes (one
+voice level, 4.5 s reel ceiling, a pose change for every staged body) and the
+17.2 s `films/lakshmi-proof/` is the current proof. The 60 s evidence above is
+historical, not a current pass.
 
 ## Staging slots are not recipe slots
 

@@ -273,7 +273,7 @@ async function main(): Promise<void> {
     outside.length === 0 &&
     belowFloor.length === 0 &&
     misMarked.length === 0 &&
-    copyBoxes > 0 &&
+    (copyBoxes > 0 || shotsWithSlots.size === 0) &&
     unmarked.length === 0 &&
     onFace.length === 0 &&
     (!requiresFaces || unmeasuredFaces.length === 0);
@@ -307,7 +307,7 @@ async function main(): Promise<void> {
     textOnFace: onFace,
     checks: {
       insideSafe: outside.length === 0,
-      copyMarked: copyBoxes > 0 && unmarked.length === 0,
+      copyMarked: (copyBoxes > 0 || shotsWithSlots.size === 0) && unmarked.length === 0,
       copyAtFloor: belowFloor.length === 0,
       copyMatchesScore: misMarked.length === 0,
       faceClear: onFace.length === 0,

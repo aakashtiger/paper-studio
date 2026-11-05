@@ -1,0 +1,22 @@
+{
+  "id": "lakshmi-proof",
+  "title": "Lakshmi and the First Lamp",
+  "audience": "A 20-second visual proof for the Diwali film: families and festival audiences, phones first.",
+  "style": "paper-kpop",
+  "styleVersion": "0.2.0",
+  "aspect": "16:9",
+  "duration": 17.2,
+  "fps": 30,
+  "audioMode": "narration",
+  "references": [
+    "pattachitra",
+    "rajasthani-miniature",
+    "papercut-red"
+  ],
+  "mustSay": [
+    "Lakshmi",
+    "Diwali",
+    "rangoli"
+  ],
+  "notes": "This is a fresh 17.8 s proof, not a re-cut of the 60 s film. It tests the corrected staging rules: six shots, none over 4.2 s; real set dressing in every third; a new four-armed Lakshmi with a crown, a lotus base and open palms; a child and a street with lamps; a river with a lotus opening; a real eight-fold rangoli; a brass puja thali. Facts are the same public framing as the long treatment: Lakshmi is the goddess of prosperity and abundance; the lamp is the welcome; the lotus is her attribute. No invented date, place, person or family is used. The village is a generic Indian street, not a named city. The regional Kali/Rama/account-book line belongs to the longer film and is not in this proof."
+}

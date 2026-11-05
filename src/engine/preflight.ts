@@ -41,6 +41,9 @@ export const MAX_CUE_SHARE = 0.25;
 /** No shot may run longer than this multiple of the film's median. */
 export const LONGEST_SHOT_FACTOR = 2;
 
+/** A short/reel has no room for a scene sitting still. */
+export const REEL_MAX_SHOT = 4.5;
+
 /**
  * How long the film may go with no narration in it.
  *
@@ -315,6 +318,16 @@ export function preflightFilm(input: PreflightInput): PreflightReport {
     }
     const longest = Math.max(...lengths);
     const slowest = plan.shots.find((shot) => shot.duration === longest);
+    // A reel/short is not a scene. Under a minute, 4.5 s is the ceiling even
+    // when the median is small enough for the factor rule to pass.
+    if (duration <= 60 && longest > REEL_MAX_SHOT + 1e-9) {
+      add("pacing", {
+        code: "pacing:reel",
+        message:
+          `shot "${slowest?.id}" runs ${secs(longest)}; a short/reel shot may not exceed ` +
+          `${REEL_MAX_SHOT}s - cut the picture, do not hold it`,
+      });
+    }
     if (mid > 0 && longest > mid * LONGEST_SHOT_FACTOR) {
       add("pacing", {
         code: "pacing:long",

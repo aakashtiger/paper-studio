@@ -59,20 +59,23 @@ const shots = score.shots.map((shot, index) => {
     start: clock,
     duration: shot.duration,
     visual: shot.visual,
+    direction: { events: shot.direction.events },
   };
   clock += shot.duration;
   return entry;
 });
+const contract = (score as { visualContract?: number }).visualContract ?? 2;
 const result = checkVisuals(
   shots,
   recipes,
   lines.map((line) => ({ id: line.id, text: line.text })),
   scenes,
   timedWords,
+  { contract },
 );
 const report = {
   film: score.id,
-  contract: VISUAL_CONTRACT_VERSION,
+  contract,
   score: `sha256:${createHash("sha256").update(readFileSync(resolve(root, file))).digest("hex")}`,
   pass: result.findings.length === 0,
   shots: shots.length,
@@ -97,7 +100,7 @@ for (const shot of shots) {
 }
 for (const finding of result.findings) console.error(`  FAIL ${finding.code}: ${finding.message}`);
 console.log(
-  `visual: contract ${VISUAL_CONTRACT_VERSION} · ${result.checked}/${shots.length} briefs · ` +
+  `visual: contract ${contract} · ${result.checked}/${shots.length} briefs · ` +
     `${result.staged} staged · ${result.phrases} phrase(s) · ${recipes.length} recipes · ` +
     `${result.findings.length} finding(s) · ${report.pass ? "pass" : "FAIL"} · ${out}`,
 );

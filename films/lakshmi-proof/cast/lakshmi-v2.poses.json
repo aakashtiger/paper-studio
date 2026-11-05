@@ -1,0 +1,505 @@
+{
+  "character": "LakshmiV2",
+  "rig": "lakshmi-v2@0.1.0",
+  "archetype": "paper-divine",
+  "stageRoles": [
+    "divine",
+    "star"
+  ],
+  "colors": {
+    "sari": "red",
+    "blouse": "redD",
+    "gold": "gold",
+    "goldD": "goldD",
+    "skin": "#E9B26F",
+    "skinD": "#C98A4B",
+    "hair": "ink",
+    "lotus": "pink",
+    "lotusL": "pinkL",
+    "leaf": "green"
+  },
+  "appearance": {
+    "faceStyle": "drawn-cartoon",
+    "headLayers": 3,
+    "hairLayers": 3,
+    "bradMetal": "#C68E2E",
+    "fingers": true
+  },
+  "body": {
+    "arm": {
+      "upper": 104,
+      "fore": 92,
+      "minElbow": 0.02
+    },
+    "hand": {
+      "w": 22,
+      "h": 30,
+      "thumbW": 9,
+      "thumbH": 13
+    }
+  },
+  "anchors": [
+    "face",
+    "hair",
+    "hand-left",
+    "hand-right",
+    "hand-upper-left",
+    "hand-upper-right",
+    "foot-left",
+    "foot-right",
+    "chest",
+    "waist"
+  ],
+  "poses": [
+    {
+      "name": "stand",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": 0,
+        "headTilt": 0.02,
+        "headTurn": 0,
+        "hairSwing": 0,
+        "armL": [
+          0.32,
+          1.5
+        ],
+        "armR": [
+          -0.32,
+          -1.5
+        ],
+        "footL": [
+          -18,
+          -8
+        ],
+        "footR": [
+          18,
+          -8
+        ],
+        "legL": [
+          0.02,
+          0.01
+        ],
+        "legR": [
+          -0.02,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "rise",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": -0.05,
+        "headTilt": -0.08,
+        "headTurn": 0,
+        "hairSwing": 0,
+        "armL": [
+          0.55,
+          2.2
+        ],
+        "armR": [
+          -0.55,
+          -2.2
+        ],
+        "footL": [
+          -18,
+          -8
+        ],
+        "footR": [
+          18,
+          -8
+        ],
+        "legL": [
+          0.02,
+          0.01
+        ],
+        "legR": [
+          -0.02,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "open",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": 0,
+        "headTilt": 0.04,
+        "headTurn": 0,
+        "hairSwing": 0,
+        "armL": [
+          0.7,
+          1.9
+        ],
+        "armR": [
+          -0.7,
+          -1.9
+        ],
+        "footL": [
+          -18,
+          -8
+        ],
+        "footR": [
+          18,
+          -8
+        ],
+        "legL": [
+          0.02,
+          0.01
+        ],
+        "legR": [
+          -0.02,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "offer",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": 0.06,
+        "headTilt": 0,
+        "headTurn": 0,
+        "hairSwing": 0,
+        "armL": [
+          0.42,
+          0.95
+        ],
+        "armR": [
+          -0.42,
+          -0.95
+        ],
+        "footL": [
+          -18,
+          -8
+        ],
+        "footR": [
+          18,
+          -8
+        ],
+        "legL": [
+          0.02,
+          0.01
+        ],
+        "legR": [
+          -0.02,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "bless",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": 0,
+        "headTilt": 0.06,
+        "headTurn": 0,
+        "hairSwing": 0,
+        "armL": [
+          0.28,
+          1.25
+        ],
+        "armR": [
+          -0.62,
+          -0.55
+        ],
+        "footL": [
+          -18,
+          -8
+        ],
+        "footR": [
+          18,
+          -8
+        ],
+        "legL": [
+          0.02,
+          0.01
+        ],
+        "legR": [
+          -0.02,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "turn",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": 0.03,
+        "headTilt": 0,
+        "headTurn": 0.45,
+        "hairSwing": 0,
+        "armL": [
+          0.45,
+          1.15
+        ],
+        "armR": [
+          -0.2,
+          -0.65
+        ],
+        "footL": [
+          -18,
+          -8
+        ],
+        "footR": [
+          18,
+          -8
+        ],
+        "legL": [
+          0.02,
+          0.01
+        ],
+        "legR": [
+          -0.02,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "lower",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": 0,
+        "headTilt": 0.1,
+        "headTurn": 0,
+        "hairSwing": 0,
+        "armL": [
+          0.15,
+          0.35
+        ],
+        "armR": [
+          -0.15,
+          -0.35
+        ],
+        "footL": [
+          -18,
+          -8
+        ],
+        "footR": [
+          18,
+          -8
+        ],
+        "legL": [
+          0.02,
+          0.01
+        ],
+        "legR": [
+          -0.02,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "still",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": 0,
+        "headTilt": 0.12,
+        "headTurn": 0,
+        "hairSwing": 0,
+        "armL": [
+          0.05,
+          0.3
+        ],
+        "armR": [
+          -0.05,
+          -0.3
+        ],
+        "footL": [
+          -18,
+          -8
+        ],
+        "footR": [
+          18,
+          -8
+        ],
+        "legL": [
+          0.02,
+          0.01
+        ],
+        "legR": [
+          -0.02,
+          -0.01
+        ]
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "name": "calm",
+      "params": {
+        "open": 0.9,
+        "brow": 0,
+        "lookX": 0,
+        "lookY": 0,
+        "eyes": "soft",
+        "mouth": "smile",
+        "browLift": 0
+      }
+    },
+    {
+      "name": "kind",
+      "params": {
+        "open": 0.8,
+        "brow": 0.15,
+        "lookX": 0.1,
+        "lookY": 0.05,
+        "eyes": "soft",
+        "mouth": "smile",
+        "browLift": 1
+      }
+    },
+    {
+      "name": "radiant",
+      "params": {
+        "open": 1.05,
+        "brow": 0.2,
+        "lookX": 0,
+        "lookY": 0,
+        "eyes": "wide",
+        "mouth": "smile",
+        "browLift": 2
+      }
+    },
+    {
+      "name": "compassion",
+      "params": {
+        "open": 0.72,
+        "brow": 0.3,
+        "lookX": -0.1,
+        "lookY": 0.1,
+        "eyes": "half",
+        "mouth": "soft",
+        "browLift": 1
+      }
+    },
+    {
+      "name": "blessing",
+      "params": {
+        "open": 0.85,
+        "brow": 0.1,
+        "lookX": 0,
+        "lookY": 0.15,
+        "eyes": "soft",
+        "mouth": "smile",
+        "browLift": 0
+      }
+    },
+    {
+      "name": "still",
+      "params": {
+        "open": 0.75,
+        "brow": 0,
+        "lookX": 0,
+        "lookY": 0,
+        "eyes": "half",
+        "mouth": "flat",
+        "browLift": 0
+      }
+    },
+    {
+      "name": "resolve",
+      "params": {
+        "open": 0.95,
+        "brow": 0.5,
+        "lookX": 0,
+        "lookY": 0,
+        "eyes": "wide",
+        "mouth": "flat",
+        "browLift": 3
+      }
+    },
+    {
+      "name": "wonder",
+      "params": {
+        "open": 1.15,
+        "brow": 0.7,
+        "lookX": 0,
+        "lookY": -0.1,
+        "eyes": "wide",
+        "mouth": "o",
+        "browLift": 4
+      }
+    },
+    {
+      "name": "tender",
+      "params": {
+        "open": 0.7,
+        "brow": 0.2,
+        "lookX": 0,
+        "lookY": 0.15,
+        "eyes": "soft",
+        "mouth": "soft",
+        "browLift": 1
+      }
+    },
+    {
+      "name": "serene",
+      "params": {
+        "open": 0.65,
+        "brow": 0,
+        "lookX": 0,
+        "lookY": 0,
+        "eyes": "closed",
+        "mouth": "smile",
+        "browLift": 0
+      }
+    },
+    {
+      "name": "fierce",
+      "params": {
+        "open": 1,
+        "brow": 0.8,
+        "lookX": 0,
+        "lookY": 0,
+        "eyes": "wide",
+        "mouth": "flat",
+        "browLift": 4
+      }
+    },
+    {
+      "name": "listening",
+      "params": {
+        "open": 0.85,
+        "brow": 0.25,
+        "lookX": 0.15,
+        "lookY": 0,
+        "eyes": "soft",
+        "mouth": "flat",
+        "browLift": 1
+      }
+    },
+    {
+      "name": "giving",
+      "params": {
+        "open": 0.8,
+        "brow": 0.1,
+        "lookX": 0,
+        "lookY": 0.2,
+        "eyes": "soft",
+        "mouth": "smile",
+        "browLift": 0
+      }
+    },
+    {
+      "name": "awe",
+      "params": {
+        "open": 1.1,
+        "brow": 0.6,
+        "lookX": 0,
+        "lookY": -0.15,
+        "eyes": "wide",
+        "mouth": "o",
+        "browLift": 3
+      }
+    }
+  ]
+}

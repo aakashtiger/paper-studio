@@ -1,0 +1,49 @@
+{
+  "id": "lakshmi-proof",
+  "title": "Lakshmi and the First Lamp",
+  "duration": 17.2,
+  "audience": "A 20-second visual proof for the Diwali film: families and festival audiences, phones first.",
+  "tone": "warm, quiet, luminous; a myth told by a friend, not a lecture",
+  "logline": "One lamp is lit, the flame travels, and Lakshmi rises from the river with four hands: a lotus, and palms that give.",
+  "spine": {
+    "want": "to see why a lamp is lit for Lakshmi",
+    "obstacle": "the night is dark and the goddess is far away",
+    "turn": "the flame is carried hand to hand, and the river answers with a lotus",
+    "button": "the same flame reaches the home, the rangoli and the offering"
+  },
+  "pace": {
+    "wpm": [
+      145,
+      170
+    ],
+    "medianShot": [
+      2.8,
+      3.4
+    ]
+  },
+  "narration": [
+    {
+      "id": "v01",
+      "beat": "b01",
+      "text": "On the darkest night of Diwali, one lamp is lit, and the flame passes from hand to hand.",
+      "tone": "warm"
+    },
+    {
+      "id": "v02",
+      "beat": "b02",
+      "text": "At the river, a lotus opens, and Lakshmi rises with four hands: a lotus, and palms that say give.",
+      "tone": "wonder"
+    },
+    {
+      "id": "v03",
+      "beat": "b03",
+      "text": "Draw the rangoli. Light the diya. Share what you have.",
+      "tone": "button"
+    }
+  ],
+  "mustSay": [
+    "Lakshmi",
+    "Diwali",
+    "rangoli"
+  ]
+}

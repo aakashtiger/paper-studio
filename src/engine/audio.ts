@@ -85,6 +85,13 @@ export const SfxPlanSchema = z.object({
 
 export const AudioPlanSchema = z.object({
   mode: z.enum(["music", "narration", "sfx", "hybrid"]),
+  /**
+   * How the film earns its dynamic range. `continuous` means the narration is
+   * the floor as well as the lead: the voice stays at one level, and contrast
+   * comes from the picture and the cues. It exists because turning a line down
+   * to pass an LRA check is audible, and the audience hears it as a mistake.
+   */
+  dynamics: z.enum(["dynamic", "continuous"]).default("dynamic"),
   narration: NarrationPlanSchema.optional(),
   music: MusicPlanSchema.optional(),
   sfx: SfxPlanSchema.optional(),
