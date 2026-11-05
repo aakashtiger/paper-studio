@@ -63,9 +63,10 @@ gaps that no check could see:
   (`visual:pose-continuity`). This is the floor; the painter still eases the
   actual body between poses (`blendAt`/`blendPose`), and the rig probe refuses a
   part that leaves its parent's transform.
-- The proof's s01 child is in `watch` before the cut; s02 blends
-  walk→look→hold; s03 rise→open; s04 the giving hand rises continuously with a
-  lotus; s05 hold→place; s06 hold→offer/accept.
+- The proof's s01 child is in `watch` before the cut; s02 is a procedural walk
+  cycle (the rig phases legs and arms from the clock, not from pose events);
+  s03 rise→open; s04 the giving hand rises continuously with a lotus; s05
+  hold→place; s06 hold→offer/accept.
 
 ### Hands are the cast's hands
 
@@ -82,9 +83,9 @@ gaps that no check could see:
 
 `films/lakshmi-proof/` (17.2 s, 6 shots, 3 lines, 47 words):
 
-- picture `sha256:d7241395fd7d…` (the delivered file, current run)
+- picture `sha256:ac4cb75f259f…` (the delivered file, current run)
 - `gate:7` **PASS, 29 checks**; `film:review --gate --reuse` **PASS**
-- 6/6 staged shots (stage-show), mood night, luma 78.8 / sat 22.2 / edges 10.7
+- 6/6 staged shots (stage-show), mood night, luma 78.9 / sat 22.2 / edges 10.8
 - palette 4 hue families, top 98.6%, clipping 0.03%
 - motion floor 6/6, longest hold 0.00 s; `inspect` motion/type/rig PASS
 - ASR 97.9% (47/47; `rangoli` → `Rangali`)

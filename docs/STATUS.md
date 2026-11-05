@@ -36,7 +36,7 @@ score's `mood` selects one; the palette-family audit still holds. `visual:check`
 refuses a first pose after 0.25 s or two pose changes closer than 0.3 s
 (`visual:pose-continuity`), and every pose transition in the proof is blended.
 The palette row reports **4 hue families / top 98.6%**, not the always-zero
-outlier. Current delivered picture `sha256:d7241395fd7d…`; `gate:7` **29
+outlier. Current delivered picture `sha256:ac4cb75f259f…`; `gate:7` **29
 checks**, `film:review` **PASS**, ASR 97.9%, motion floor 6/6. **519 tests.**
 
 **Update 2026-11-05 (historical, superseded by the 0056 block above):** decision **0055** rebuilds *The Uber Cut* as

@@ -333,7 +333,7 @@ are both legal while the palette-family audit still holds. `visual:check` now
 refuses a first pose after 0.25 s or two pose changes closer than 0.3 s
 (`visual:pose-continuity`); the proof blends every pose change. The palette row
 reports **4 hue families / top 98.6%** instead of the always-zero outlier. The
-17.2 s proof is 6/6 staged, mood night, 78.8 / 22.2 / 10.7; **519 tests**.
+17.2 s proof is 6/6 staged, mood night, 78.9 / 22.2 / 10.8; **519 tests**.
 
 **The visual is authored before the recipe is chosen (0051).** A scene publishes
 `visual` (subject, setting, action, props); a shot publishes `visual` (shows,

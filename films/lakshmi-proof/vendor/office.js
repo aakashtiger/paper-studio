@@ -51,7 +51,11 @@ function officeFigure(ctx, x, y, s, o = {}) {
   const f = o.face || FACE_BY_POSE[o.poseKey] || {};
   const flip = o.flip || 1;
   const pose = o.pose || {};
-  const bounce = pose.bounce || 0;
+  // A walk is a cycle, not a sequence of pose events every third of a second.
+  // Phase the legs and arms from the clock so one `walk` pose is continuous.
+  const walkPhase = o.poseKey === "walk" ? Math.sin(t * 6.2) : 0;
+  const walkBounce = o.poseKey === "walk" ? Math.abs(walkPhase) * 4 : 0;
+  const bounce = (pose.bounce || 0) + walkBounce;
   const lean = p.lean || 0;
   const headTilt = p.headTilt || 0;
   const headTurn = p.headTurn || 0;
@@ -59,6 +63,10 @@ function officeFigure(ctx, x, y, s, o = {}) {
   const armR = p.armR || [-0.16, -0.08];
   const legL = p.legL || [0.03, 0.01];
   const legR = p.legR || [-0.03, -0.01];
+  const walkArmL = [armL[0] - 0.3 * walkPhase, armL[1] - 0.08 * walkPhase];
+  const walkArmR = [armR[0] + 0.3 * walkPhase, armR[1] + 0.08 * walkPhase];
+  const walkLegL = [legL[0] + 0.38 * walkPhase, legL[1] + 0.08 * Math.abs(walkPhase)];
+  const walkLegR = [legR[0] - 0.38 * walkPhase, legR[1] + 0.08 * Math.abs(walkPhase)];
 
   const boss = o.outfit === "supervisor";
   const performer = o.outfit === "performer";
@@ -104,8 +112,8 @@ function officeFigure(ctx, x, y, s, o = {}) {
   // swallowed by the shirt, belt or skirt. The far shade keeps the depth read.
   // Legs. Feet are IK targets when the pose gives one, so a planted foot bends
   // its knee instead of sliding.
-  drawLeg(-1, legL, true);
-  drawLeg(1, legR, false);
+  drawLeg(-1, walkLegL, true);
+  drawLeg(1, walkLegR, false);
   function drawLeg(side, ang, far) {
     const hx = side * (boss ? 16 : 14);
     const hy = HIP + bounce;
@@ -460,10 +468,10 @@ function officeFigure(ctx, x, y, s, o = {}) {
   ctx.restore(); // face at HEAD (inside the head scale)
   ctx.restore(); // head pivot
 
-  const farWrist = drawArm(-1, armL, true);
-  const nearWrist = drawArm(1, armR, false);
-  drawHand(farWrist, -1, true, armL[0] + armL[1]);
-  drawHand(nearWrist, 1, false, armR[0] + armR[1]);
+  const farWrist = drawArm(-1, walkArmL, true);
+  const nearWrist = drawArm(1, walkArmR, false);
+  drawHand(farWrist, -1, true, walkArmL[0] + walkArmL[1]);
+  drawHand(nearWrist, 1, false, walkArmR[0] + walkArmR[1]);
 
   function drawArm(side, ang, far) {
     // The far arm hangs behind the torso. At ±38 it was almost entirely hidden

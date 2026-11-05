@@ -695,10 +695,9 @@
     spot.addColorStop(0, C.rgba(C2.ink, 0.65));
     spot.addColorStop(1, C.rgba(C2.ink, 0));
     ctx.fillStyle = spot; ctx.fillRect(cx - 420, 430, 840, 640);
-    const childBlend = lt < 1.5
-      ? blendAt("Child", "walk", "look", lt / 1.5)
-      : blendAt("Child", "look", "hold", (lt - 1.5) / 1.2);
-    drawCharacter("Child", cx, 1000, 0.7, "walk", 1, childBlend, t, {
+    // One walk cycle, not eight pose events a second: the rig phases the legs
+    // and arms from the clock, so the child never snaps between poses.
+    drawCharacter("Child", cx, 1000, 0.8, "walk", 1, null, t, {
       face: { eyes: "wide", mouth: "smile", look: [1, 0] },
     });
     // neighbours

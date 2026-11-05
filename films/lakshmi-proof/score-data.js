@@ -112,7 +112,7 @@ window.SCORE = {
           {
             "t": 0.1,
             "kind": "pose",
-            "note": "the walk continues",
+            "note": "the child walks with the flame",
             "quiet": "the line carries the beat",
             "who": "Child",
             "pose": "walk",
@@ -125,67 +125,10 @@ window.SCORE = {
             "quiet": "the line carries this beat"
           },
           {
-            "t": 0.4666666666666667,
-            "kind": "pose",
-            "note": "the other foot lands",
-            "quiet": "the line carries the beat",
-            "who": "Child",
-            "pose": "look",
-            "expression": "laugh"
-          },
-          {
-            "t": 0.8,
-            "kind": "pose",
-            "note": "the walk continues",
-            "quiet": "the line carries the beat",
-            "who": "Child",
-            "pose": "hold",
-            "expression": "laugh"
-          },
-          {
-            "t": 1.1666666666666667,
-            "kind": "pose",
-            "note": "the other foot lands",
-            "quiet": "the line carries the beat",
-            "who": "Child",
-            "pose": "walk",
-            "expression": "laugh"
-          },
-          {
-            "t": 1.5,
-            "kind": "pose",
-            "note": "the walk continues",
-            "quiet": "the line carries the beat",
-            "who": "Child",
-            "pose": "reach",
-            "expression": "laugh"
-          },
-          {
-            "t": 1.8666666666666667,
-            "kind": "pose",
-            "note": "the other foot lands",
-            "quiet": "the line carries the beat",
-            "who": "Child",
-            "pose": "look",
-            "expression": "laugh"
-          },
-          {
-            "t": 2.2,
-            "kind": "pose",
-            "note": "the walk continues",
-            "quiet": "the line carries the beat",
-            "who": "Child",
-            "pose": "walk",
-            "expression": "laugh"
-          },
-          {
-            "t": 2.566666666666667,
-            "kind": "pose",
-            "note": "the other foot lands",
-            "quiet": "the line carries the beat",
-            "who": "Child",
-            "pose": "hold",
-            "expression": "laugh"
+            "t": 1.4,
+            "kind": "action",
+            "note": "the neighbours lift their lamps",
+            "quiet": "the line carries the beat"
           },
           {
             "t": 2.566666666666667,
