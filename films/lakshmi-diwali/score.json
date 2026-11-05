@@ -974,6 +974,13 @@
             "quiet": "the line carries this beat"
           },
           {
+            "t": 0.5,
+            "kind": "reaction",
+            "note": "the rangoli turns as the line names it",
+            "word": "v06",
+            "quiet": "the line carries this beat"
+          },
+          {
             "t": 6.199999999999999,
             "kind": "transition",
             "note": "cut",

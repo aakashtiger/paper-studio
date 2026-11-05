@@ -481,6 +481,13 @@ window.SCORE = {
             "quiet": "the line carries this beat"
           },
           {
+            "t": 0.5,
+            "kind": "reaction",
+            "note": "the rangoli turns as the line names it",
+            "quiet": "the line carries this beat",
+            "word": "v06"
+          },
+          {
             "t": 6.199999999999999,
             "kind": "transition",
             "note": "cut",

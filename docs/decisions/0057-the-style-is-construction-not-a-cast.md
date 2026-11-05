@@ -63,8 +63,10 @@ names all 35. No sealed plan names a myth recipe.
 The delivered picture is
 `sha256:94635053253d76b596ba797c05699f6907522b3b45e4aa6088152b2ae188e435`.
 `gate:7` is **PASS, 28 checks**, and `film:review --gate --reuse` is **PASS**,
-both tied to that picture. The score audit has four warnings, all the library's
-known `asleep`/`slump` silhouette similarity; they are warnings, not findings.
+both tied to that picture. `audit:body` passes 4/4 cast members; `audit:reaction`
+has one word-bound event (the rangoli turns on `v06` at 31.80 s, **+0.0
+frames**). The score audit has four warnings, all the library's known
+`asleep`/`slump` silhouette similarity; they are warnings, not findings.
 
 ## Staging slots are not recipe slots
 
