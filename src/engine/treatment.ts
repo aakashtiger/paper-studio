@@ -976,7 +976,10 @@ function checkRecipe(
     }
   }
   for (const slot of Object.keys(shot.slots)) {
-    if (!declared.has(slot)) {
+    // `stage.*` is the painter's staging namespace (field, floor, device,
+    // spot). It is read by the backend, not by a recipe's composition, so it
+    // is intentionally not declared by every recipe that can be staged.
+    if (!slot.startsWith("stage.") && !declared.has(slot)) {
       warnings.push({
         code: "slot_unknown",
         message: `slot "${slot}" is not declared by "${shot.recipe}"`,

@@ -1,21 +1,21 @@
-# *Lakshmi and the Lights* — a 60-second Paper Myth film
+# *Lakshmi and the Lights* — a 60-second Paper K-pop film with a film-local myth cast
 
-**Status:** decided, 2026-11-05. This is the next film, not another option.
-**Style:** `paper-myth` 0.1.0 — a sibling of Paper K-pop, not a recolour.
+**Status:** built and delivered, 2026-11-05. This is the first film under 0057.
+**Style:** `paper-kpop` 0.2.0 — the same identity. The film brings its own
+characters, props, sets and recipes.
 **Format:** 60 s, 16:9, 30 fps, narration.
 **Audience:** families and festival audiences; a shareable Diwali explainer that
 is warm, clear and respectful.
 
 ## The decision
 
-I am not making “Paper K-pop with Indian colours.” Paper K-pop is a performance
-grammar: stage, chorus, pop-idol framing. Lakshmi needs a **myth grammar**:
-iconic stillness, lotus and diya, cosmic scale, a narrator, and a source.
-
-`paper-myth` keeps the paper-cut construction — torn edge, layered 2.5D,
-halftone, one practical light — and changes the identity, palette, cast, rig and
-motifs. The 0056 visual contract still applies: every shot quotes an exact
-narration phrase, every device is unique, every body acts, no text on a face.
+I am not making “Paper K-pop with Indian colours” as a new identity. The Paper
+K-pop identity is the construction: cut paper, brads, torn edges, one hard key,
+halftone, drawn-cartoon faces, visible hands, full-bleed fields. The film brings
+its own myth characters, props and sets. That is the flexibility the style was
+missing, not a new identity. The 0056 visual contract still applies: every shot
+quotes an exact narration phrase, every device is unique, every body acts, no
+text on a face.
 
 ## The facts, and how they are framed
 
@@ -101,15 +101,28 @@ needed if the measured read lands there.
 
 ## Build order
 
-1. `styles/paper-myth` 0.1.0: tokens, identity, palette, 12 recipes, card.
-2. `lakshmi@0.1.0` and `vishnu@0.1.0` rigs: four arms, attributes, crowns,
-   halos, hand anchors; `Householder` and `Child` on the paper-human rig.
+1. Film-local characters: `Lakshmi` (four arms, lotus, crown, halo), `Vishnu`
+   (blue, conch/chakra) and `Householder`/`Child`, all built to the Paper K-pop
+   construction; 11 poses and 14 expressions each.
+2. Film-local props/sets and thirteen recipes added to the `paper-kpop` vocabulary.
 3. `films/lakshmi-diwali`: brief, story, beats, scenes.
 4. `voice:story` → measured read → `voice --from-story --apply`.
 5. Score under 0056: exact phrase, unique device, purposeful cast, no repeats.
 6. `collage` → `storyboard --check` → `preflight` → `draft` → one render.
 7. `gate:7` 28 checks, `film:review`, ASR. The old 0055 Uber evidence stays
    historical.
+
+## What shipped
+
+The treatment's 12 visual beats became a **13-shot** cut: the opening line is
+two images (the first diya, then the row of lamps), and the closing line is two
+images (three windows, then the flame passed between two hands). The film is
+60 s, 5 beats, 5 scenes, 13 shots, 9 narration lines, **159 words at 81%
+voiced**; 5 generated SFX cues; the master is **-14.1 LUFS / -1.8 dBTP** with
+LRA **10.3 LU** and 3 s contrast **20.5 LU**. The delivered picture passed the
+**28-check `gate:7`** and `film:review --gate --reuse`; ASR heard **96.9%** of
+the script. The picture hash and the reports tied to it are in
+`build/lakshmi-diwali/` (gitignored evidence).
 
 ## Sources
 

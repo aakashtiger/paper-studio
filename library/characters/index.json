@@ -40,6 +40,46 @@
       "source": "paper-kpop / Uber Cut rebuild (11 poses, 14 expressions)",
       "licence": "proprietary",
       "hash": "sha256:52b1a13ccd35d96f64930324826f5b527583253f8cd69c944604d6b6a96a8013"
+    },
+    {
+      "id": "lakshmi",
+      "name": "Lakshmi",
+      "rig": "lakshmi@0.1.0",
+      "poses": "library/characters/lakshmi/poses.json",
+      "version": "1.0.0",
+      "source": "paper-kpop / Lakshmi and the Lights (11 poses, 14 expressions)",
+      "licence": "proprietary",
+      "hash": "sha256:ff18fe5e4c037589e006dc9562a4f1b501dd6c71fbb335b6fe85b6c40af3a3aa"
+    },
+    {
+      "id": "vishnu",
+      "name": "Vishnu",
+      "rig": "vishnu@0.1.0",
+      "poses": "library/characters/vishnu/poses.json",
+      "version": "1.0.0",
+      "source": "paper-kpop / Lakshmi and the Lights (11 poses, 14 expressions)",
+      "licence": "proprietary",
+      "hash": "sha256:96801903c0cf2e919c0bd1ef3ee2aa343ed0fda4bac1a71d51c56f126b0d0bca"
+    },
+    {
+      "id": "householder",
+      "name": "Householder",
+      "rig": "mortal@0.1.0",
+      "poses": "library/characters/householder/poses.json",
+      "version": "1.0.0",
+      "source": "paper-kpop / Lakshmi and the Lights (11 poses, 14 expressions)",
+      "licence": "proprietary",
+      "hash": "sha256:582320d2c53a0e7c5de15a4d3cdbf2cdf77ceab3ee69cf4b767a8390d94179ed"
+    },
+    {
+      "id": "child",
+      "name": "Child",
+      "rig": "mortal@0.1.0",
+      "poses": "library/characters/child/poses.json",
+      "version": "1.0.0",
+      "source": "paper-kpop / Lakshmi and the Lights (11 poses, 14 expressions)",
+      "licence": "proprietary",
+      "hash": "sha256:540e9626606b9c6c280df8ea1cdd34bdd38e0e550d1232a7e8ebfc284c5a8739"
     }
   ]
 }

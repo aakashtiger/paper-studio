@@ -398,12 +398,7 @@ if (!parsedIdentity.success) {
     if (!library.archetype) {
       identityFindings.push({
         code: "identity:cast",
-        message: `${member.character} declares no stage archetype; the style needs "${identity.cast.archetype}"`,
-      });
-    } else if (library.archetype !== identity.cast.archetype) {
-      identityFindings.push({
-        code: "identity:cast",
-        message: `${member.character} is "${library.archetype}"; this style stages "${identity.cast.archetype}"`,
+        message: `${member.character} declares no construction archetype - the style needs a paper puppet, the film names its own kind`,
       });
     }
     if (!library.stageRoles || library.stageRoles.length === 0) {
@@ -417,6 +412,15 @@ if (!parsedIdentity.success) {
         code: "identity:cast",
         message: `${member.character} declares no appearance (face, head, hair, metal, fingers)`,
       });
+    } else {
+      for (const key of ["faceStyle", "headLayers", "hairLayers", "bradMetal", "fingers"] as const) {
+        if (library.appearance[key] !== identity.cast.appearance[key]) {
+          identityFindings.push({
+            code: "identity:cast",
+            message: `${member.character} ${key} is ${JSON.stringify(library.appearance[key])}; this style builds it as ${JSON.stringify(identity.cast.appearance[key])}`,
+          });
+        }
+      }
     }
     if (library.poses.length < identity.cast.posesMin) {
       identityFindings.push({

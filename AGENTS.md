@@ -309,11 +309,13 @@ words never ask for. `diagram-show` gives a diagram film a 20–60% staged band;
 `stage-show`/`presenter-show` keep the high floor. The probe now records a face
 box, and `audit:type` refuses text over a face. The rig draws both hands last,
 with fingers and thumb, and publishes `hand-left`/`hand-right`; the library has
-`tap`, `hold` and `accept` poses. **512 tests.** The 0055 Uber score is
+`tap`, `hold` and `accept` poses. **513 tests.** The 0055 Uber score is
 pre-0056 and `visual:check` refuses it with 48 findings; its 28-check pass is
-historical. The next film is decided: ***Lakshmi and the Lights*** — 60 s,
-Paper Myth, 12 visual beats, nine narration lines; the treatment and sources are
-in `docs/proposals/lakshmi-and-the-lights.md`.
+historical. The first film under 0057 is ***Lakshmi and the Lights***: 60 s,
+13 shots, 5 beats, 9 narration lines, 159 words at 81% voiced, four film-local
+characters and 13 film-local recipes, all on `paper-kpop@0.2.0`; the treatment,
+sources and shipped evidence are in
+`docs/proposals/lakshmi-and-the-lights.md`.
 
 **The visual is authored before the recipe is chosen (0051).** A scene publishes
 `visual` (subject, setting, action, props); a shot publishes `visual` (shows,

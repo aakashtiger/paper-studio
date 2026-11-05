@@ -1,0 +1,14 @@
+{
+  "id": "lakshmi-diwali",
+  "title": "Lakshmi and the Lights",
+  "audience": "Families and festival audiences; a one-minute Diwali explainer about why Lakshmi is welcomed with light.",
+  "style": "paper-kpop",
+  "styleVersion": "0.2.0",
+  "aspect": "16:9",
+  "duration": 60,
+  "fps": 30,
+  "audioMode": "narration",
+  "references": ["pattachitra", "rajasthani-miniature", "papercut-red"],
+  "mustSay": ["Lakshmi", "Diwali", "diyas"],
+  "notes": "The user asked for a one-minute Diwali film explaining why Lakshmi is prayed to. The facts are framed as one beloved story and qualified where traditions differ: Lakshmi is the goddess of prosperity and abundance; the Samudra Manthana is narrated in the Vishnu Purana and Bhagavata Purana; Lakshmi emerged from the churning and chose Vishnu; Lakshmi Puja is held on the new-moon night in most of India; homes are cleaned, rangoli drawn, windows opened and diyas lit; in Bengal the same night is Kali Puja, in the north it marks Rama's return, and in the west businesses open new account books. Sources: Britannica (Lakshmi, Samudra Manthana, Lakshmi Puja, Diwali), BBC Religions (Lakshmi), Sahapedia (Diwali origins), Yale Hindu Life (Lakshmi and dana). No exact date, city, person, family or quote is invented. The characters are film-local paper-puppet characters (Lakshmi, Vishnu, Householder, Child), built to the Paper K-pop construction; they are not a new style identity. No fireworks are shown: the film is about lamps, not smoke."
+}

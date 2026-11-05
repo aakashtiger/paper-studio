@@ -28,7 +28,7 @@
       45,
       60
     ],
-    "maxCast": 2,
+    "maxCast": 4,
     "maxWords": 8
   },
   "adaptation": {
@@ -319,7 +319,20 @@
       "fare_split",
       "app_menu",
       "network_web",
-      "money_flow"
+      "money_flow",
+      "myth_birth",
+      "myth_churn",
+      "myth_dana",
+      "myth_first_diya",
+      "myth_garland",
+      "myth_labor",
+      "myth_lakshmi",
+      "myth_lamp_row",
+      "myth_pass_light",
+      "myth_puja",
+      "myth_rangoli",
+      "myth_treasures",
+      "myth_windows"
     ],
     "aspects": [
       "16:9",

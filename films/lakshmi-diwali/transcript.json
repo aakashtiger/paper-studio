@@ -1,0 +1,875 @@
+{
+  "film": "lakshmi-diwali",
+  "voice": "films/lakshmi-diwali/voice.wav",
+  "source": "asr",
+  "duration": 60,
+  "lines": [
+    {
+      "id": "v01",
+      "text": "On the darkest night of Kartik, India lights a row of lamps. This is Diwali, the festival of lights.",
+      "start": 0,
+      "duration": 6.1,
+      "words": [
+        {
+          "w": "On",
+          "start": 0,
+          "end": 0.42
+        },
+        {
+          "w": "the",
+          "start": 0.42,
+          "end": 0.54
+        },
+        {
+          "w": "darkest",
+          "start": 0.54,
+          "end": 0.84
+        },
+        {
+          "w": "night",
+          "start": 0.84,
+          "end": 1.1
+        },
+        {
+          "w": "of",
+          "start": 1.1,
+          "end": 1.4
+        },
+        {
+          "w": "Kartik,",
+          "start": 1.4,
+          "end": 1.64
+        },
+        {
+          "w": "India",
+          "start": 1.96,
+          "end": 2.24
+        },
+        {
+          "w": "lights",
+          "start": 2.24,
+          "end": 2.52
+        },
+        {
+          "w": "a",
+          "start": 2.52,
+          "end": 2.68
+        },
+        {
+          "w": "row",
+          "start": 2.68,
+          "end": 2.82
+        },
+        {
+          "w": "of",
+          "start": 2.82,
+          "end": 3.06
+        },
+        {
+          "w": "lamps.",
+          "start": 3.06,
+          "end": 3.28
+        },
+        {
+          "w": "This",
+          "start": 4.02,
+          "end": 4.14
+        },
+        {
+          "w": "is",
+          "start": 4.14,
+          "end": 4.36
+        },
+        {
+          "w": "Diwali,",
+          "start": 4.36,
+          "end": 4.84
+        },
+        {
+          "w": "the",
+          "start": 5.12,
+          "end": 5.24
+        },
+        {
+          "w": "festival",
+          "start": 5.24,
+          "end": 5.56
+        },
+        {
+          "w": "of",
+          "start": 5.56,
+          "end": 5.84
+        },
+        {
+          "w": "lights.",
+          "start": 5.84,
+          "end": 6.1
+        }
+      ]
+    },
+    {
+      "id": "v02",
+      "text": "Why Lakshmi? She is the goddess of prosperity and abundance. Her lotus rises from muddy water and still opens clean.",
+      "start": 6.66,
+      "duration": 6.96,
+      "words": [
+        {
+          "w": "Why",
+          "start": 6.66,
+          "end": 6.82
+        },
+        {
+          "w": "Lakshmi?",
+          "start": 6.82,
+          "end": 7.3
+        },
+        {
+          "w": "She",
+          "start": 7.72,
+          "end": 7.84
+        },
+        {
+          "w": "is",
+          "start": 7.84,
+          "end": 7.96
+        },
+        {
+          "w": "the",
+          "start": 7.96,
+          "end": 8.12
+        },
+        {
+          "w": "goddess",
+          "start": 8.12,
+          "end": 8.34
+        },
+        {
+          "w": "of",
+          "start": 8.34,
+          "end": 8.62
+        },
+        {
+          "w": "prosperity",
+          "start": 8.62,
+          "end": 9.08
+        },
+        {
+          "w": "and",
+          "start": 9.08,
+          "end": 9.46
+        },
+        {
+          "w": "abundance.",
+          "start": 9.46,
+          "end": 9.84
+        },
+        {
+          "w": "Her",
+          "start": 10.58,
+          "end": 10.7
+        },
+        {
+          "w": "lotus",
+          "start": 10.7,
+          "end": 11.1
+        },
+        {
+          "w": "rises",
+          "start": 11.1,
+          "end": 11.52
+        },
+        {
+          "w": "from",
+          "start": 11.52,
+          "end": 11.84
+        },
+        {
+          "w": "muddy",
+          "start": 11.84,
+          "end": 12.04
+        },
+        {
+          "w": "water",
+          "start": 12.04,
+          "end": 12.34
+        },
+        {
+          "w": "and",
+          "start": 12.34,
+          "end": 12.62
+        },
+        {
+          "w": "still",
+          "start": 12.62,
+          "end": 12.86
+        },
+        {
+          "w": "opens",
+          "start": 12.86,
+          "end": 13.3
+        },
+        {
+          "w": "clean.",
+          "start": 13.3,
+          "end": 13.62
+        }
+      ]
+    },
+    {
+      "id": "v03",
+      "text": "One beloved story begins in the churning of the cosmic ocean, when gods and asuras sought the nectar of immortality.",
+      "start": 14.2,
+      "duration": 6.72,
+      "words": [
+        {
+          "w": "One",
+          "start": 14.2,
+          "end": 14.36
+        },
+        {
+          "w": "beloved",
+          "start": 14.36,
+          "end": 14.7
+        },
+        {
+          "w": "story",
+          "start": 14.7,
+          "end": 15.18
+        },
+        {
+          "w": "begins",
+          "start": 15.18,
+          "end": 15.56
+        },
+        {
+          "w": "in",
+          "start": 15.56,
+          "end": 15.84
+        },
+        {
+          "w": "the",
+          "start": 15.84,
+          "end": 15.96
+        },
+        {
+          "w": "churning",
+          "start": 15.96,
+          "end": 16.46
+        },
+        {
+          "w": "of",
+          "start": 16.46,
+          "end": 16.56
+        },
+        {
+          "w": "the",
+          "start": 16.56,
+          "end": 16.72
+        },
+        {
+          "w": "cosmic",
+          "start": 16.72,
+          "end": 17.1
+        },
+        {
+          "w": "ocean,",
+          "start": 17.1,
+          "end": 17.54
+        },
+        {
+          "w": "when",
+          "start": 18.1,
+          "end": 18.28
+        },
+        {
+          "w": "gods",
+          "start": 18.28,
+          "end": 18.66
+        },
+        {
+          "w": "and",
+          "start": 18.66,
+          "end": 18.9
+        },
+        {
+          "w": "asuras",
+          "start": 18.9,
+          "end": 19.3
+        },
+        {
+          "w": "sought",
+          "start": 19.3,
+          "end": 19.82
+        },
+        {
+          "w": "the",
+          "start": 19.82,
+          "end": 20
+        },
+        {
+          "w": "nectar",
+          "start": 20,
+          "end": 20.2
+        },
+        {
+          "w": "of",
+          "start": 20.2,
+          "end": 20.44
+        },
+        {
+          "w": "immortality.",
+          "start": 20.44,
+          "end": 20.92
+        }
+      ]
+    },
+    {
+      "id": "v04",
+      "text": "Many treasures rose. Then Lakshmi appeared on a lotus, radiant, lotuses in her hands.",
+      "start": 21.6,
+      "duration": 5.1,
+      "words": [
+        {
+          "w": "Many",
+          "start": 21.6,
+          "end": 21.82
+        },
+        {
+          "w": "treasures",
+          "start": 21.82,
+          "end": 22.16
+        },
+        {
+          "w": "rose.",
+          "start": 22.16,
+          "end": 22.52
+        },
+        {
+          "w": "Then",
+          "start": 23.14,
+          "end": 23.28
+        },
+        {
+          "w": "Lakshmi",
+          "start": 23.28,
+          "end": 23.74
+        },
+        {
+          "w": "appeared",
+          "start": 23.74,
+          "end": 24.02
+        },
+        {
+          "w": "on",
+          "start": 24.02,
+          "end": 24.18
+        },
+        {
+          "w": "a",
+          "start": 24.18,
+          "end": 24.34
+        },
+        {
+          "w": "lotus,",
+          "start": 24.34,
+          "end": 24.74
+        },
+        {
+          "w": "radiant,",
+          "start": 24.9,
+          "end": 25.3
+        },
+        {
+          "w": "lotuses",
+          "start": 25.78,
+          "end": 26.06
+        },
+        {
+          "w": "in",
+          "start": 26.06,
+          "end": 26.28
+        },
+        {
+          "w": "her",
+          "start": 26.28,
+          "end": 26.38
+        },
+        {
+          "w": "hands.",
+          "start": 26.38,
+          "end": 26.7
+        }
+      ]
+    },
+    {
+      "id": "v05",
+      "text": "She chose Vishnu. Some call Diwali her birthday; others, her wedding.",
+      "start": 26.7,
+      "duration": 4.42,
+      "words": [
+        {
+          "w": "She",
+          "start": 26.7,
+          "end": 27.36
+        },
+        {
+          "w": "chose",
+          "start": 27.36,
+          "end": 27.64
+        },
+        {
+          "w": "Vishnu.",
+          "start": 27.64,
+          "end": 28.08
+        },
+        {
+          "w": "Some",
+          "start": 28.58,
+          "end": 28.7
+        },
+        {
+          "w": "call",
+          "start": 28.7,
+          "end": 28.98
+        },
+        {
+          "w": "Diwali",
+          "start": 28.98,
+          "end": 29.42
+        },
+        {
+          "w": "her",
+          "start": 29.42,
+          "end": 29.58
+        },
+        {
+          "w": "birthday;",
+          "start": 29.58,
+          "end": 30.02
+        },
+        {
+          "w": "others,",
+          "start": 30.34,
+          "end": 30.52
+        },
+        {
+          "w": "her",
+          "start": 30.52,
+          "end": 30.86
+        },
+        {
+          "w": "wedding.",
+          "start": 30.86,
+          "end": 31.12
+        }
+      ]
+    },
+    {
+      "id": "v06",
+      "text": "So homes are cleaned, rangoli drawn at the door, windows left open, diyas lit, a path for her.",
+      "start": 31.78,
+      "duration": 5.66,
+      "words": [
+        {
+          "w": "So",
+          "start": 31.78,
+          "end": 31.82
+        },
+        {
+          "w": "homes",
+          "start": 31.82,
+          "end": 32.1
+        },
+        {
+          "w": "are",
+          "start": 32.1,
+          "end": 32.32
+        },
+        {
+          "w": "cleaned,",
+          "start": 32.32,
+          "end": 32.72
+        },
+        {
+          "w": "rangoli",
+          "start": 33.32,
+          "end": 33.64
+        },
+        {
+          "w": "drawn",
+          "start": 33.64,
+          "end": 33.9
+        },
+        {
+          "w": "at",
+          "start": 33.9,
+          "end": 34.06
+        },
+        {
+          "w": "the",
+          "start": 34.06,
+          "end": 34.16
+        },
+        {
+          "w": "door,",
+          "start": 34.16,
+          "end": 34.4
+        },
+        {
+          "w": "windows",
+          "start": 35.02,
+          "end": 35.02
+        },
+        {
+          "w": "left",
+          "start": 35.02,
+          "end": 35.28
+        },
+        {
+          "w": "open,",
+          "start": 35.28,
+          "end": 35.7
+        },
+        {
+          "w": "diyas",
+          "start": 36,
+          "end": 36.22
+        },
+        {
+          "w": "lit,",
+          "start": 36.22,
+          "end": 36.4
+        },
+        {
+          "w": "a",
+          "start": 36.68,
+          "end": 36.78
+        },
+        {
+          "w": "path",
+          "start": 36.78,
+          "end": 37
+        },
+        {
+          "w": "for",
+          "start": 37,
+          "end": 37.24
+        },
+        {
+          "w": "her.",
+          "start": 37.24,
+          "end": 37.44
+        }
+      ]
+    },
+    {
+      "id": "v07",
+      "text": "Lakshmi Puja asks for prosperity. The old stories add a condition: wealth stays where there is effort, virtue and generosity.",
+      "start": 38.04,
+      "duration": 7.54,
+      "words": [
+        {
+          "w": "Lakshmi",
+          "start": 38.04,
+          "end": 38.3
+        },
+        {
+          "w": "Puja",
+          "start": 38.3,
+          "end": 38.66
+        },
+        {
+          "w": "asks",
+          "start": 38.66,
+          "end": 39.08
+        },
+        {
+          "w": "for",
+          "start": 39.08,
+          "end": 39.34
+        },
+        {
+          "w": "prosperity.",
+          "start": 39.34,
+          "end": 39.82
+        },
+        {
+          "w": "The",
+          "start": 40.6,
+          "end": 40.62
+        },
+        {
+          "w": "old",
+          "start": 40.62,
+          "end": 40.86
+        },
+        {
+          "w": "stories",
+          "start": 40.86,
+          "end": 41.24
+        },
+        {
+          "w": "add",
+          "start": 41.24,
+          "end": 41.56
+        },
+        {
+          "w": "a",
+          "start": 41.56,
+          "end": 41.68
+        },
+        {
+          "w": "condition:",
+          "start": 41.68,
+          "end": 42.06
+        },
+        {
+          "w": "wealth",
+          "start": 42.8,
+          "end": 42.84
+        },
+        {
+          "w": "stays",
+          "start": 42.84,
+          "end": 43.2
+        },
+        {
+          "w": "where",
+          "start": 43.2,
+          "end": 43.46
+        },
+        {
+          "w": "there",
+          "start": 43.46,
+          "end": 43.58
+        },
+        {
+          "w": "is",
+          "start": 43.58,
+          "end": 43.74
+        },
+        {
+          "w": "effort,",
+          "start": 43.74,
+          "end": 44.12
+        },
+        {
+          "w": "virtue",
+          "start": 44.46,
+          "end": 44.78
+        },
+        {
+          "w": "and",
+          "start": 45.04,
+          "end": 45.1
+        },
+        {
+          "w": "generosity.",
+          "start": 45.1,
+          "end": 45.58
+        }
+      ]
+    },
+    {
+      "id": "v08",
+      "text": "In Bengal the same night is Kali's; in the north, Rama's return; in the west, new account books open.",
+      "start": 46.22,
+      "duration": 6.26,
+      "words": [
+        {
+          "w": "In",
+          "start": 46.22,
+          "end": 46.34
+        },
+        {
+          "w": "Bengal",
+          "start": 46.34,
+          "end": 46.68
+        },
+        {
+          "w": "the",
+          "start": 46.94,
+          "end": 46.98
+        },
+        {
+          "w": "same",
+          "start": 46.98,
+          "end": 47.24
+        },
+        {
+          "w": "night",
+          "start": 47.24,
+          "end": 47.48
+        },
+        {
+          "w": "is",
+          "start": 47.48,
+          "end": 47.7
+        },
+        {
+          "w": "Kali's;",
+          "start": 47.7,
+          "end": 48.28
+        },
+        {
+          "w": "in",
+          "start": 48.6,
+          "end": 48.74
+        },
+        {
+          "w": "the",
+          "start": 48.74,
+          "end": 48.84
+        },
+        {
+          "w": "north,",
+          "start": 48.84,
+          "end": 49.1
+        },
+        {
+          "w": "Rama's",
+          "start": 49.58,
+          "end": 49.82
+        },
+        {
+          "w": "return;",
+          "start": 49.82,
+          "end": 50.16
+        },
+        {
+          "w": "in",
+          "start": 50.64,
+          "end": 50.76
+        },
+        {
+          "w": "the",
+          "start": 50.76,
+          "end": 50.88
+        },
+        {
+          "w": "west,",
+          "start": 50.88,
+          "end": 51.14
+        },
+        {
+          "w": "new",
+          "start": 51.46,
+          "end": 51.56
+        },
+        {
+          "w": "account",
+          "start": 51.56,
+          "end": 51.86
+        },
+        {
+          "w": "books",
+          "start": 51.86,
+          "end": 52.1
+        },
+        {
+          "w": "open.",
+          "start": 52.1,
+          "end": 52.48
+        }
+      ]
+    },
+    {
+      "id": "v09",
+      "text": "Light a lamp. Make room. Share what you have. That is how the light comes in, and stays.",
+      "start": 53.04,
+      "duration": 4.52,
+      "words": [
+        {
+          "w": "Light",
+          "start": 53.04,
+          "end": 53.2
+        },
+        {
+          "w": "a",
+          "start": 53.2,
+          "end": 53.36
+        },
+        {
+          "w": "lamp.",
+          "start": 53.36,
+          "end": 53.58
+        },
+        {
+          "w": "Make",
+          "start": 53.84,
+          "end": 54
+        },
+        {
+          "w": "room.",
+          "start": 54,
+          "end": 54.3
+        },
+        {
+          "w": "Share",
+          "start": 54.6,
+          "end": 54.76
+        },
+        {
+          "w": "what",
+          "start": 54.76,
+          "end": 54.94
+        },
+        {
+          "w": "you",
+          "start": 54.94,
+          "end": 55.08
+        },
+        {
+          "w": "have.",
+          "start": 55.08,
+          "end": 55.44
+        },
+        {
+          "w": "That",
+          "start": 55.44,
+          "end": 56.02
+        },
+        {
+          "w": "is",
+          "start": 56.02,
+          "end": 56.14
+        },
+        {
+          "w": "how",
+          "start": 56.14,
+          "end": 56.3
+        },
+        {
+          "w": "the",
+          "start": 56.3,
+          "end": 56.46
+        },
+        {
+          "w": "light",
+          "start": 56.46,
+          "end": 56.64
+        },
+        {
+          "w": "comes",
+          "start": 56.64,
+          "end": 56.92
+        },
+        {
+          "w": "in,",
+          "start": 56.92,
+          "end": 57.14
+        },
+        {
+          "w": "and",
+          "start": 57.14,
+          "end": 57.3
+        },
+        {
+          "w": "stays.",
+          "start": 57.3,
+          "end": 57.56
+        }
+      ]
+    }
+  ]
+}

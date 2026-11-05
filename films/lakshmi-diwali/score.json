@@ -1,0 +1,1258 @@
+{
+  "id": "lakshmi-diwali",
+  "style": "paper-kpop",
+  "styleVersion": "0.2.0",
+  "aspect": "16:9",
+  "duration": 60,
+  "fps": 30,
+  "seed": 20261105,
+  "edit": {
+    "minShot": 2,
+    "medianShot": 4.6,
+    "maxShot": 8
+  },
+  "clock": {
+    "mode": "narration",
+    "lines": [
+      {
+        "id": "v01",
+        "text": "On the darkest night of Kartik, India lights a row of lamps. This is Diwali, the festival of lights.",
+        "start": 0,
+        "duration": 6.1
+      },
+      {
+        "id": "v02",
+        "text": "Why Lakshmi? She is the goddess of prosperity and abundance. Her lotus rises from muddy water and still opens clean.",
+        "start": 6.7,
+        "duration": 7,
+        "gainDb": -19
+      },
+      {
+        "id": "v03",
+        "text": "One beloved story begins in the churning of the cosmic ocean, when gods and asuras sought the nectar of immortality.",
+        "start": 14.2,
+        "duration": 6.7
+      },
+      {
+        "id": "v04",
+        "text": "Many treasures rose. Then Lakshmi appeared on a lotus, radiant, lotuses in her hands.",
+        "start": 21.6,
+        "duration": 5.1
+      },
+      {
+        "id": "v05",
+        "text": "She chose Vishnu. Some call Diwali her birthday; others, her wedding.",
+        "start": 26.7,
+        "duration": 4.4,
+        "gainDb": 0
+      },
+      {
+        "id": "v06",
+        "text": "So homes are cleaned, rangoli drawn at the door, windows left open, diyas lit, a path for her.",
+        "start": 31.8,
+        "duration": 5.7
+      },
+      {
+        "id": "v07",
+        "text": "Lakshmi Puja asks for prosperity. The old stories add a condition: wealth stays where there is effort, virtue and generosity.",
+        "start": 38,
+        "duration": 7.5
+      },
+      {
+        "id": "v08",
+        "text": "In Bengal the same night is Kali's; in the north, Rama's return; in the west, new account books open.",
+        "start": 46.3,
+        "duration": 6.2
+      },
+      {
+        "id": "v09",
+        "text": "Light a lamp. Make room. Share what you have. That is how the light comes in, and stays.",
+        "start": 53,
+        "duration": 4.5
+      }
+    ]
+  },
+  "audio": {
+    "mode": "narration",
+    "narration": {
+      "source": "tts",
+      "provider": "kokoro",
+      "voice": "films/lakshmi-diwali/voice.wav",
+      "voiceId": "af_heart",
+      "transcript": "films/lakshmi-diwali/transcript.json",
+      "srt": "films/lakshmi-diwali/captions.srt"
+    },
+    "sfx": {
+      "source": "generated",
+      "cues": [
+        {
+          "id": "match",
+          "at": 0.2,
+          "kind": "snap",
+          "note": "the first match",
+          "gain": 0.45
+        },
+        {
+          "id": "first-lamp",
+          "at": 0.8,
+          "kind": "lamp",
+          "note": "the wick catches",
+          "gain": 0.5
+        },
+        {
+          "id": "ocean",
+          "at": 14.5,
+          "kind": "water",
+          "note": "the cosmic ocean turns",
+          "gain": 0.35,
+          "duckDb": 8
+        },
+        {
+          "id": "garland",
+          "at": 27,
+          "kind": "paper",
+          "note": "the garland passes",
+          "gain": 0.5
+        },
+        {
+          "id": "coin",
+          "at": 42,
+          "kind": "glass",
+          "note": "a coin is given",
+          "gain": 0.45
+        }
+      ],
+      "silences": [
+        {
+          "from": 6.299,
+          "to": 6.601,
+          "why": "a breath after the first lamp"
+        },
+        {
+          "from": 13.8,
+          "to": 14.15,
+          "why": "a breath before the churning"
+        },
+        {
+          "from": 21.25,
+          "to": 21.6,
+          "why": "a breath before the treasures"
+        },
+        {
+          "from": 31.3,
+          "to": 31.65,
+          "why": "a breath before the home"
+        },
+        {
+          "from": 37.5,
+          "to": 37.85,
+          "why": "a breath before the puja"
+        },
+        {
+          "from": 45.9,
+          "to": 46.2,
+          "why": "a breath before the many tellings"
+        },
+        {
+          "from": 52.65,
+          "to": 53,
+          "why": "a breath before the last lamp"
+        },
+        {
+          "from": 57.85,
+          "to": 60,
+          "why": "the film holds on the last flame"
+        }
+      ]
+    }
+  },
+  "captions": {
+    "source": "films/lakshmi-diwali/captions.srt",
+    "lines": [
+      {
+        "id": "v01.1",
+        "text": "On the darkest night of Kartik,",
+        "start": 0,
+        "end": 3.2
+      },
+      {
+        "id": "v02.1",
+        "text": "the goddess of prosperity and abundance.",
+        "start": 6.7,
+        "end": 10.4
+      },
+      {
+        "id": "v03.1",
+        "text": "the churning of the cosmic ocean,",
+        "start": 14.2,
+        "end": 17.9
+      },
+      {
+        "id": "v04.1",
+        "text": "Then Lakshmi appeared on a lotus,",
+        "start": 21.6,
+        "end": 26.7
+      },
+      {
+        "id": "v05.1",
+        "text": "She chose Vishnu.",
+        "start": 26.7,
+        "end": 31.1
+      },
+      {
+        "id": "v06.1",
+        "text": "homes are cleaned, rangoli drawn at the door,",
+        "start": 31.8,
+        "end": 37.4
+      },
+      {
+        "id": "v07.1",
+        "text": "wealth stays where there is effort,",
+        "start": 38,
+        "end": 42
+      },
+      {
+        "id": "v08.1",
+        "text": "In Bengal the same night is Kali's;",
+        "start": 46.3,
+        "end": 52.4
+      },
+      {
+        "id": "v09.1",
+        "text": "Light a lamp. Make room. Share",
+        "start": 53,
+        "end": 57.5
+      }
+    ]
+  },
+  "assets": [
+    {
+      "id": "character.lakshmi",
+      "type": "character",
+      "version": "1.0.0",
+      "hash": "sha256:ff18fe5e4c037589e006dc9562a4f1b501dd6c71fbb335b6fe85b6c40af3a3aa",
+      "source": "reused",
+      "anchors": [
+        "face",
+        "hair",
+        "hand-left",
+        "hand-right",
+        "foot-left",
+        "foot-right"
+      ],
+      "path": "library/characters/lakshmi/poses.json",
+      "character": "Lakshmi"
+    },
+    {
+      "id": "character.vishnu",
+      "type": "character",
+      "version": "1.0.0",
+      "hash": "sha256:96801903c0cf2e919c0bd1ef3ee2aa343ed0fda4bac1a71d51c56f126b0d0bca",
+      "source": "reused",
+      "anchors": [
+        "face",
+        "hair",
+        "hand-left",
+        "hand-right",
+        "foot-left",
+        "foot-right"
+      ],
+      "path": "library/characters/vishnu/poses.json",
+      "character": "Vishnu"
+    },
+    {
+      "id": "character.householder",
+      "type": "character",
+      "version": "1.0.0",
+      "hash": "sha256:582320d2c53a0e7c5de15a4d3cdbf2cdf77ceab3ee69cf4b767a8390d94179ed",
+      "source": "reused",
+      "anchors": [
+        "face",
+        "hair",
+        "hand-left",
+        "hand-right",
+        "foot-left",
+        "foot-right"
+      ],
+      "path": "library/characters/householder/poses.json",
+      "character": "Householder"
+    },
+    {
+      "id": "character.child",
+      "type": "character",
+      "version": "1.0.0",
+      "hash": "sha256:540e9626606b9c6c280df8ea1cdd34bdd38e0e550d1232a7e8ebfc284c5a8739",
+      "source": "reused",
+      "anchors": [
+        "face",
+        "hair",
+        "hand-left",
+        "hand-right",
+        "foot-left",
+        "foot-right"
+      ],
+      "path": "library/characters/child/poses.json",
+      "character": "Child"
+    },
+    {
+      "id": "texture.halftone",
+      "type": "texture",
+      "version": "0.1.0",
+      "hash": "sha256:78cf2787003d20dec40871ab3163a2b967cba92cd39078ad7cff107e7a23e310",
+      "source": "reused",
+      "anchors": [],
+      "path": "styles/paper-kpop/canvas/recipes.js"
+    }
+  ],
+  "cast": [
+    {
+      "character": "Lakshmi",
+      "poses": "library/characters/lakshmi/poses.json",
+      "rig": "lakshmi@0.1.0"
+    },
+    {
+      "character": "Vishnu",
+      "poses": "library/characters/vishnu/poses.json",
+      "rig": "vishnu@0.1.0"
+    },
+    {
+      "character": "Householder",
+      "poses": "library/characters/householder/poses.json",
+      "rig": "mortal@0.1.0"
+    },
+    {
+      "character": "Child",
+      "poses": "library/characters/child/poses.json",
+      "rig": "mortal@0.1.0"
+    }
+  ],
+  "performance": {
+    "mode": "diagram-show",
+    "star": "Lakshmi",
+    "entrance": {
+      "beat": "b01",
+      "via": "spotlight"
+    },
+    "exit": {
+      "beat": "b05",
+      "via": "bow"
+    },
+    "signature": {
+      "name": "the lotus hand"
+    }
+  },
+  "paletteScript": [
+    {
+      "beat": "b01",
+      "field": "ink"
+    },
+    {
+      "beat": "b02",
+      "field": "blue"
+    },
+    {
+      "beat": "b03",
+      "field": "red"
+    },
+    {
+      "beat": "b04",
+      "field": "orange"
+    },
+    {
+      "beat": "b05",
+      "field": "cream"
+    }
+  ],
+  "motifs": [
+    {
+      "motif": "halo",
+      "kind": "device",
+      "meaning": "the divine presence"
+    },
+    {
+      "motif": "petal",
+      "kind": "object",
+      "meaning": "the lotus and the offering"
+    },
+    {
+      "motif": "sunburst",
+      "kind": "device",
+      "meaning": "the light that spreads"
+    },
+    {
+      "motif": "stamp",
+      "kind": "device",
+      "meaning": "the account and the mark"
+    }
+  ],
+  "shots": [
+    {
+      "beat": "b01",
+      "scene": "sc01",
+      "visual": {
+        "shows": "an indigo night, a dark threshold, one hand lighting the first diya",
+        "action": "the match touches the wick and the first flame stands up",
+        "focus": "the first flame",
+        "link": "v01",
+        "why": "the line opens on the darkest night, and the image is the first light",
+        "phrase": "On the darkest night",
+        "device": "first_diya"
+      },
+      "recipe": "myth_first_diya",
+      "duration": 2.4,
+      "slots": {
+        "content.caption": "FIRST LIGHT",
+        "stage.field": "oxblood",
+        "stage.floorY": "840",
+        "stage.device": "sunburst",
+        "stage.spot": "1"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.06,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "beat": "b01",
+        "note": "the hand enters from the left and the flame grows"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "an indigo night, a dark threshold, one hand lighting the first diya",
+        "exit": "the match touches the wick and the first flame stands up",
+        "spine": "the line opens on the darkest night, and the image is the first light",
+        "cast": [],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the line opens on the darkest night, and the image is the first light",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.4,
+            "kind": "build",
+            "note": "the hand enters from the left and the flame grows",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "sunburst"
+    },
+    {
+      "beat": "b01",
+      "scene": "sc01",
+      "visual": {
+        "shows": "a paper street with a row of diyas, windows lit one by one",
+        "action": "the row of flames answers the first lamp",
+        "focus": "the row of lamps",
+        "link": "v01",
+        "why": "the line says India lights a row, and the image is that row",
+        "phrase": "a row of lamps",
+        "device": "lamp_row"
+      },
+      "recipe": "myth_lamp_row",
+      "duration": 4,
+      "slots": {
+        "content.caption": "A ROW OF LAMPS",
+        "stage.field": "oxblood",
+        "stage.floorY": "840",
+        "stage.device": "sunburst",
+        "stage.spot": "1"
+      },
+      "camera": {
+        "move": "pan",
+        "from": 1,
+        "to": 1.12,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "beat": "b01",
+        "note": "the flames flicker along the street"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "a paper street with a row of diyas, windows lit one by one",
+        "exit": "the row of flames answers the first lamp",
+        "spine": "the line says India lights a row, and the image is that row",
+        "cast": [],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the line says India lights a row, and the image is that row",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.4,
+            "kind": "build",
+            "note": "the flames flicker along the street",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 3.6,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "sunburst"
+    },
+    {
+      "beat": "b02",
+      "scene": "sc02",
+      "visual": {
+        "shows": "the goddess Lakshmi on a lotus, gold and vermilion, lotus hands",
+        "action": "she raises a lotus and the halo brightens",
+        "focus": "Lakshmi's face and lotus hand",
+        "link": "v02",
+        "why": "the line names her, and the image is her divine form",
+        "phrase": "the goddess of prosperity and abundance",
+        "device": "lotus_darshan",
+        "performers": [
+          {
+            "who": "Lakshmi",
+            "does": "raises a lotus as the goddess of prosperity",
+            "why": "the narration asks who Lakshmi is, so her full divine form answers it"
+          }
+        ]
+      },
+      "recipe": "myth_lakshmi",
+      "duration": 4,
+      "slots": {
+        "content.caption": "LAKSHMI",
+        "stage.field": "red",
+        "stage.floorY": "840",
+        "stage.device": "ring",
+        "stage.spot": "0"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.06,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "beat": "b02",
+        "note": "the lotus pond breathes and the halo turns"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "the goddess Lakshmi on a lotus, gold and vermilion, lotus hands",
+        "exit": "she raises a lotus and the halo brightens",
+        "spine": "the line names her, and the image is her divine form",
+        "cast": [
+          "Lakshmi"
+        ],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the line names her, and the image is her divine form",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.4,
+            "kind": "build",
+            "note": "the lotus pond breathes and the halo turns",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 3.6,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "halo"
+    },
+    {
+      "beat": "b02",
+      "scene": "sc02",
+      "visual": {
+        "shows": "a lotus opens on the dark pond; Lakshmi rises from it",
+        "action": "the lotus opens and she rises with it",
+        "focus": "the opening lotus",
+        "link": "v02",
+        "why": "the line says her lotus rises, and the image is the rise",
+        "phrase": "Her lotus rises from muddy water",
+        "device": "lotus_birth",
+        "performers": [
+          {
+            "who": "Lakshmi",
+            "does": "opens her lotus hands as she rises",
+            "why": "the line says the lotus rises"
+          }
+        ]
+      },
+      "recipe": "myth_birth",
+      "duration": 3.5,
+      "slots": {
+        "content.caption": "THE LOTUS",
+        "stage.field": "red",
+        "stage.floorY": "840",
+        "stage.device": "sunburst",
+        "stage.spot": "0"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.08,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "beat": "b02",
+        "note": "the lotus scales up and the water ripples"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "a lotus opens on the dark pond; Lakshmi rises from it",
+        "exit": "the lotus opens and she rises with it",
+        "spine": "the line says her lotus rises, and the image is the rise",
+        "cast": [
+          "Lakshmi"
+        ],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the line says her lotus rises, and the image is the rise",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.4,
+            "kind": "build",
+            "note": "the lotus scales up and the water ripples",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 3.1,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "halo"
+    },
+    {
+      "beat": "b03",
+      "scene": "sc03",
+      "visual": {
+        "shows": "a paper ocean churning around Mount Mandara, a serpent rope",
+        "action": "the mountain turns and the waves rise",
+        "focus": "the turning mountain",
+        "link": "v03",
+        "why": "the line names the churning, and the image is the ocean turning",
+        "phrase": "the churning of the cosmic ocean",
+        "device": "churn_ocean"
+      },
+      "recipe": "myth_churn",
+      "duration": 4.1,
+      "slots": {
+        "content.caption": "THE CHURN",
+        "stage.field": "blue",
+        "stage.floorY": "840",
+        "stage.device": "ring",
+        "stage.spot": "0"
+      },
+      "camera": {
+        "move": "orbit",
+        "from": 1,
+        "to": 1.12,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "beat": "b03",
+        "note": "the serpent rope pulls the mountain"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "a paper ocean churning around Mount Mandara, a serpent rope",
+        "exit": "the mountain turns and the waves rise",
+        "spine": "the line names the churning, and the image is the ocean turning",
+        "cast": [],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the line names the churning, and the image is the ocean turning",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.4,
+            "kind": "build",
+            "note": "the serpent rope pulls the mountain",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 3.6999999999999997,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "sunburst"
+    },
+    {
+      "beat": "b03",
+      "scene": "sc03",
+      "visual": {
+        "shows": "two rows of paper gods and asuras pull the serpent rope at the churning",
+        "action": "the two rows pull in opposite directions",
+        "focus": "the rope between them",
+        "link": "v03",
+        "why": "the line says gods and asuras, and the image is their labour",
+        "phrase": "when gods and asuras sought the nectar",
+        "device": "churn_labor"
+      },
+      "recipe": "myth_labor",
+      "duration": 3.6,
+      "slots": {
+        "content.caption": "GODS AND ASURAS",
+        "stage.field": "blue",
+        "stage.floorY": "840",
+        "stage.device": "ring",
+        "stage.spot": "0"
+      },
+      "camera": {
+        "move": "pan",
+        "from": 1,
+        "to": 1.12,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "beat": "b03",
+        "note": "the rows lean back and the rope tightens"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "two rows of paper gods and asuras pull the serpent rope at the churning",
+        "exit": "the two rows pull in opposite directions",
+        "spine": "the line says gods and asuras, and the image is their labour",
+        "cast": [],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the line says gods and asuras, and the image is their labour",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.4,
+            "kind": "build",
+            "note": "the rows lean back and the rope tightens",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 3.2,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "sunburst"
+    },
+    {
+      "beat": "b03",
+      "scene": "sc03",
+      "visual": {
+        "shows": "treasures rise from the ocean; Lakshmi emerges from a lotus",
+        "action": "the horse, cow, moon and pot rise; the lotus opens last",
+        "focus": "Lakshmi on the lotus",
+        "link": "v04",
+        "why": "the line says the treasures rose and then she appeared",
+        "phrase": "Then Lakshmi appeared on a lotus",
+        "device": "treasure_rise",
+        "performers": [
+          {
+            "who": "Lakshmi",
+            "does": "rises from the lotus as the treasures settle",
+            "why": "the line says she appeared on a lotus"
+          }
+        ]
+      },
+      "recipe": "myth_treasures",
+      "duration": 5.1,
+      "slots": {
+        "content.caption": "TREASURES",
+        "stage.field": "red",
+        "stage.floorY": "840",
+        "stage.device": "sunburst",
+        "stage.spot": "1"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.14,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "beat": "b03",
+        "note": "the treasures surface in sequence"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "treasures rise from the ocean; Lakshmi emerges from a lotus",
+        "exit": "the horse, cow, moon and pot rise; the lotus opens last",
+        "spine": "the line says the treasures rose and then she appeared",
+        "cast": [
+          "Lakshmi"
+        ],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the line says the treasures rose and then she appeared",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.4,
+            "kind": "build",
+            "note": "the treasures surface in sequence",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 4.699999999999999,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "halo"
+    },
+    {
+      "beat": "b03",
+      "scene": "sc03",
+      "visual": {
+        "shows": "Lakshmi offers a garland to blue Vishnu, conch and chakra at his hands",
+        "action": "the garland passes between their hands",
+        "focus": "the garland",
+        "link": "v05",
+        "why": "the line says she chose Vishnu, and the image is the choice",
+        "phrase": "She chose Vishnu",
+        "device": "garland_choice",
+        "performers": [
+          {
+            "who": "Lakshmi",
+            "does": "offers the garland to Vishnu",
+            "why": "the line says she chose him"
+          },
+          {
+            "who": "Vishnu",
+            "does": "receives the garland from Lakshmi",
+            "why": "the line names Vishnu as her choice"
+          }
+        ]
+      },
+      "recipe": "myth_garland",
+      "duration": 4.6,
+      "slots": {
+        "content.caption": "THE GARLAND",
+        "stage.field": "orange",
+        "stage.floorY": "840",
+        "stage.device": "ring",
+        "stage.spot": "0"
+      },
+      "camera": {
+        "move": "orbit",
+        "from": 1,
+        "to": 1.04,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "beat": "b03",
+        "note": "the garland arcs and settles"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "Lakshmi offers a garland to blue Vishnu, conch and chakra at his hands",
+        "exit": "the garland passes between their hands",
+        "spine": "the line says she chose Vishnu, and the image is the choice",
+        "cast": [
+          "Lakshmi",
+          "Vishnu"
+        ],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the line says she chose Vishnu, and the image is the choice",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.4,
+            "kind": "build",
+            "note": "the garland arcs and settles",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 4.199999999999999,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "petal"
+    },
+    {
+      "beat": "b04",
+      "scene": "sc04",
+      "visual": {
+        "shows": "a courtyard, rangoli at the door, diyas, a householder and a child",
+        "action": "the householder draws and the child places a diya",
+        "focus": "the rangoli at the threshold",
+        "link": "v06",
+        "why": "the line says homes are cleaned and rangoli drawn",
+        "phrase": "homes are cleaned, rangoli drawn at the door",
+        "device": "rangoli_path",
+        "performers": [
+          {
+            "who": "Householder",
+            "does": "draws the rangoli at the door",
+            "why": "the line names the cleaning and the rangoli"
+          },
+          {
+            "who": "Child",
+            "does": "places a diya at the door",
+            "why": "the line says the diyas are lit"
+          }
+        ]
+      },
+      "recipe": "myth_rangoli",
+      "duration": 6.6,
+      "slots": {
+        "content.caption": "RANGOLI",
+        "stage.field": "cream",
+        "stage.floorY": "840",
+        "stage.device": "sunburst",
+        "stage.spot": "1"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.14,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "beat": "b04",
+        "note": "the rangoli fills and the diyas catch"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "a courtyard, rangoli at the door, diyas, a householder and a child",
+        "exit": "the householder draws and the child places a diya",
+        "spine": "the line says homes are cleaned and rangoli drawn",
+        "cast": [
+          "Householder",
+          "Child"
+        ],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the line says homes are cleaned and rangoli drawn",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.4,
+            "kind": "build",
+            "note": "the rangoli fills and the diyas catch",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 6.199999999999999,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "petal"
+    },
+    {
+      "beat": "b04",
+      "scene": "sc04",
+      "visual": {
+        "shows": "a low puja table with a thali, lamps, marigold, offerings; Lakshmi blesses them",
+        "action": "the householder offers the thali and Lakshmi blesses",
+        "focus": "the thali and the lamps",
+        "link": "v07",
+        "why": "the line names the puja, and the image is the offering",
+        "phrase": "Lakshmi Puja asks for prosperity",
+        "device": "puja_thali",
+        "performers": [
+          {
+            "who": "Householder",
+            "does": "offers the puja thali",
+            "why": "the line names Lakshmi Puja"
+          },
+          {
+            "who": "Lakshmi",
+            "does": "blesses the offerings with her hand",
+            "why": "the narration asks for prosperity, so her blessing hand answers the puja"
+          }
+        ]
+      },
+      "recipe": "myth_puja",
+      "duration": 3.9,
+      "slots": {
+        "content.caption": "PUJA",
+        "stage.field": "red",
+        "stage.floorY": "840",
+        "stage.device": "sunburst",
+        "stage.spot": "0"
+      },
+      "camera": {
+        "move": "orbit",
+        "from": 1,
+        "to": 1.04,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "beat": "b04",
+        "note": "the lamps settle and the hand offers"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "a low puja table with a thali, lamps, marigold, offerings and Lakshmi",
+        "exit": "the householder offers the thali and Lakshmi blesses",
+        "spine": "the line names the puja, and the image is the offering",
+        "cast": [
+          "Householder",
+          "Lakshmi"
+        ],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the line names the puja, and the image is the offering",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.4,
+            "kind": "build",
+            "note": "the lamps settle and the hand offers",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 3.5,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "stamp"
+    },
+    {
+      "beat": "b04",
+      "scene": "sc04",
+      "visual": {
+        "shows": "a ledger of wealth, coins, a hand giving a coin to a child",
+        "action": "the coin passes from the householder to the child",
+        "focus": "the coin in the hand",
+        "link": "v07",
+        "why": "the line says wealth stays with generosity, and the image is the giving",
+        "phrase": "wealth stays where there is effort, virtue and generosity",
+        "device": "ledger_dana",
+        "performers": [
+          {
+            "who": "Householder",
+            "does": "shares wealth from the ledger",
+            "why": "the line says wealth stays with generosity"
+          },
+          {
+            "who": "Child",
+            "does": "receives the shared wealth",
+            "why": "the narration says generosity, so the child receiving the coin shows it"
+          }
+        ]
+      },
+      "recipe": "myth_dana",
+      "duration": 3.8,
+      "slots": {
+        "content.caption": "GIVING",
+        "stage.field": "orange",
+        "stage.floorY": "840",
+        "stage.device": "sunburst",
+        "stage.spot": "1"
+      },
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.05,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "beat": "b04",
+        "note": "the ledger opens and the coin crosses"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "a ledger of wealth, coins, a hand giving a coin to a child",
+        "exit": "the coin passes from the householder to the child",
+        "spine": "the line says wealth stays with generosity, and the image is the giving",
+        "cast": [
+          "Householder",
+          "Child"
+        ],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the line says wealth stays with generosity, and the image is the giving",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.4,
+            "kind": "build",
+            "note": "the ledger opens and the coin crosses",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 3.4,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "stamp"
+    },
+    {
+      "beat": "b05",
+      "scene": "sc05",
+      "visual": {
+        "shows": "three windows: Bengal, Ayodhya and accounts, each with a lamp",
+        "action": "the three windows light one after another",
+        "focus": "the three lit windows",
+        "link": "v08",
+        "why": "the line names Bengal and the other tellings, and the image is three windows",
+        "phrase": "In Bengal the same night is Kali's",
+        "device": "three_windows"
+      },
+      "recipe": "myth_windows",
+      "duration": 6.9,
+      "slots": {
+        "content.caption": "ONE NIGHT",
+        "stage.field": "ink",
+        "stage.floorY": "840",
+        "stage.device": "sunburst",
+        "stage.spot": "0"
+      },
+      "camera": {
+        "move": "pan",
+        "from": 1,
+        "to": 1.14,
+        "ease": "easeOut"
+      },
+      "motion": {
+        "beat": "b05",
+        "note": "the windows light in sequence"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "three windows: Bengal, Ayodhya and accounts, each with a lamp",
+        "exit": "the three windows light one after another",
+        "spine": "the line names Bengal and the other tellings, and the image is three windows",
+        "cast": [],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the line names Bengal and the other tellings, and the image is three windows",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.4,
+            "kind": "build",
+            "note": "the windows light in sequence",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 6.5,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "stamp"
+    },
+    {
+      "beat": "b05",
+      "scene": "sc05",
+      "visual": {
+        "shows": "two hands pass one lit diya; its light fills the frame",
+        "action": "the flame crosses from one hand to the other and steadies",
+        "focus": "the flame",
+        "link": "v09",
+        "why": "the line asks for light and sharing, and the image is the passing flame",
+        "phrase": "Light a lamp. Make room. Share what you have.",
+        "device": "pass_light"
+      },
+      "recipe": "myth_pass_light",
+      "duration": 7.5,
+      "slots": {
+        "content.caption": "PASS THE LIGHT",
+        "stage.field": "ink",
+        "stage.floorY": "840",
+        "stage.device": "sunburst",
+        "stage.spot": "0"
+      },
+      "camera": {
+        "move": "pull_back",
+        "from": 1.28,
+        "to": 1,
+        "ease": "linear"
+      },
+      "motion": {
+        "beat": "b05",
+        "note": "the hands meet and the flame steadies"
+      },
+      "transitionOut": "cut",
+      "direction": {
+        "entry": "two hands pass one lit diya; its light fills the frame",
+        "exit": "the flame crosses from one hand to the other and steadies",
+        "spine": "the line asks for light and sharing, and the image is the passing flame",
+        "cast": [],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the line asks for light and sharing, and the image is the passing flame",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.4,
+            "kind": "build",
+            "note": "the hands meet and the flame steadies",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 7.1,
+            "kind": "transition",
+            "note": "cut",
+            "quiet": "the line carries the beat"
+          }
+        ]
+      },
+      "motif": "petal"
+    }
+  ],
+  "brief": "films/lakshmi-diwali/brief.json"
+}

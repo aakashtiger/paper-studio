@@ -22,9 +22,10 @@ import { assertPackGeometry } from "./style-geometry.js";
  * one proves three things about the live pack and nothing more:
  *
  *   1. it is REVIEWABLE, with exactly one open director choice;
- *   2. it has sixteen recipes — the eight it shipped with and the eight the
- *      film added — and every one of them fits its text in both aspects at the
- *      14 px floor (the same proof the sealed gate runs);
+ *   2. it has thirty-five recipes - the twenty-two it shipped with and the
+ *      thirteen the myth film added to its vocabulary - and every one of them
+ *      fits its text in both aspects at the 14 px floor (the same proof the
+ *      sealed gate runs);
  *   3. **adding the office set did not re-cut a sealed plan.** A format names
  *      the recipes it uses, so `paper-kpop-song` and `paper-kpop-shorts` still
  *      resolve to exactly the fourteen and eight shots they resolved to at
@@ -65,6 +66,25 @@ const EXPLAINER = [
   "app_menu",
   "network_web",
   "money_flow",
+];
+// Film-local vocabulary: the thirteen myth scenes *Lakshmi and the Lights*
+// added to the live pack. They are recipes of this pack, so they are proved by
+// the same gate; they are not part of the sealed 0.1.0 set and no sealed plan
+// names them.
+const MYTH = [
+  "myth_first_diya",
+  "myth_lamp_row",
+  "myth_lakshmi",
+  "myth_churn",
+  "myth_labor",
+  "myth_treasures",
+  "myth_birth",
+  "myth_garland",
+  "myth_rangoli",
+  "myth_puja",
+  "myth_dana",
+  "myth_windows",
+  "myth_pass_light",
 ];
 
 // The two plans as they were sealed at 0.1.0, recipe for recipe.
@@ -120,13 +140,13 @@ test("0.2.0 gate: the live pack is REVIEWABLE with exactly one open choice", () 
   assert.ok(card.includes(capabilities.identity.version), "the card does not show 0.2.0");
 });
 
-test("0.2.0 gate: twenty-two recipes, eight shipped, eight office and six explainer, each with a beat role", () => {
+test("0.2.0 gate: thirty-five recipes, 22 pack and 13 film, each with a beat role", () => {
   const recipes = readdirSync(join(PACK, "recipes"))
     .filter((file) => file.endsWith(".json"))
     .map((file) => readStyleJson(join(PACK, "recipes", file)) as { id: string; beatRoles: string[] });
   const ids = recipes.map((recipe) => recipe.id).sort();
-  assert.deepEqual(ids, [...SHIPPED, ...OFFICE, ...EXPLAINER].sort());
-  assert.equal(new Set(ids).size, 22, "a recipe id is listed twice");
+  assert.deepEqual(ids, [...SHIPPED, ...OFFICE, ...EXPLAINER, ...MYTH].sort());
+  assert.equal(new Set(ids).size, 35, "a recipe id is listed twice");
   for (const recipe of recipes) {
     assert.ok(recipe.beatRoles.length > 0, `${recipe.id} has no beat role`);
   }
@@ -159,7 +179,7 @@ test("0.2.0 gate: a format names its recipes, so the office set cannot re-cut a 
   }
 });
 
-test("0.2.0 gate: all twenty-two recipes fit their text in both aspects at the 14 px floor", () => {
+test("0.2.0 gate: all thirty-five recipes fit their text in both aspects at the 14 px floor", () => {
   assertPackGeometry(PACK);
 });
 

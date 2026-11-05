@@ -2,7 +2,7 @@
 
 **Status:** superseded, 2026-11-05. The next film is decided:
 `docs/proposals/lakshmi-and-the-lights.md` — *Lakshmi and the Lights*, 60 s,
-Paper Myth. This file stays as the style-fit analysis and the Uber v2
+Paper K-pop with a film-local myth cast. This file stays as the style-fit analysis and the Uber v2
 alternative.
 
 ## What Paper K-pop is best at

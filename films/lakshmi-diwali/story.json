@@ -1,0 +1,85 @@
+{
+  "id": "lakshmi-diwali",
+  "title": "Lakshmi and the Lights",
+  "duration": 60,
+  "audience": "Families and festival audiences; a one-minute Diwali explainer about why Lakshmi is welcomed with light.",
+  "tone": "warm, clear, devotional without being preachy; a story told by a friend who knows the sources",
+  "logline": "On the darkest night of Kartik, a row of lamps welcomes Lakshmi, the goddess of prosperity, whose story begins in the churning of the cosmic ocean.",
+  "spine": {
+    "want": "to understand why Lakshmi is prayed to on Diwali",
+    "obstacle": "the festival is many traditions at once, and the story is often told as a list of names",
+    "turn": "Lakshmi's own story is about prosperity that returns through effort, virtue and generosity",
+    "button": "light a lamp, make room, share what you have"
+  },
+  "pace": {
+    "wpm": [
+      155,
+      175
+    ],
+    "medianShot": [
+      4,
+      6
+    ]
+  },
+  "narration": [
+    {
+      "id": "v01",
+      "beat": "b01",
+      "text": "On the darkest night of Kartik, India lights a row of lamps. This is Diwali, the festival of lights.",
+      "tone": "warm"
+    },
+    {
+      "id": "v02",
+      "beat": "b02",
+      "text": "Why Lakshmi? She is the goddess of prosperity and abundance. Her lotus rises from muddy water and still opens clean.",
+      "tone": "plain"
+    },
+    {
+      "id": "v03",
+      "beat": "b03",
+      "text": "One beloved story begins in the churning of the cosmic ocean, when gods and asuras sought the nectar of immortality.",
+      "tone": "story"
+    },
+    {
+      "id": "v04",
+      "beat": "b03",
+      "text": "Many treasures rose. Then Lakshmi appeared on a lotus, radiant, lotuses in her hands.",
+      "tone": "wonder"
+    },
+    {
+      "id": "v05",
+      "beat": "b03",
+      "text": "She chose Vishnu. Some call Diwali her birthday; others, her wedding.",
+      "tone": "plain"
+    },
+    {
+      "id": "v06",
+      "beat": "b04",
+      "text": "So homes are cleaned, rangoli drawn at the door, windows left open, diyas lit, a path for her.",
+      "tone": "warm"
+    },
+    {
+      "id": "v07",
+      "beat": "b04",
+      "text": "Lakshmi Puja asks for prosperity. The old stories add a condition: wealth stays where there is effort, virtue and generosity.",
+      "tone": "firm"
+    },
+    {
+      "id": "v08",
+      "beat": "b05",
+      "text": "In Bengal the same night is Kali's; in the north, Rama's return; in the west, new account books open.",
+      "tone": "plain"
+    },
+    {
+      "id": "v09",
+      "beat": "b05",
+      "text": "Light a lamp. Make room. Share what you have. That is how the light comes in, and stays.",
+      "tone": "button"
+    }
+  ],
+  "mustSay": [
+    "Lakshmi",
+    "Diwali",
+    "diyas"
+  ]
+}

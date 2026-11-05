@@ -1,0 +1,65 @@
+{
+  "id": "lakshmi-diwali",
+  "beats": [
+    {
+      "id": "b01",
+      "title": "the dark night and the first lamp",
+      "purpose": "hook",
+      "share": 17,
+      "energy": 2,
+      "sound": {
+        "world": "one match, one wick, a quiet street",
+        "signature": "a match strike and a soft flame",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b02",
+      "title": "who is Lakshmi",
+      "purpose": "setup",
+      "share": 17,
+      "energy": 3,
+      "sound": {
+        "world": "a lotus opens on still water",
+        "signature": "one paper bloom",
+        "quiet": true
+      }
+    },
+    {
+      "id": "b03",
+      "title": "the churning and the choice",
+      "purpose": "escalate",
+      "share": 33,
+      "energy": 5,
+      "sound": {
+        "world": "an ocean turns, a mountain grinds, a serpent rope pulls",
+        "signature": "one deep wave and one paper tear",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b04",
+      "title": "the home and the condition",
+      "purpose": "turn",
+      "share": 17,
+      "energy": 3,
+      "sound": {
+        "world": "a courtyard swept, a rangoli drawn, a coin given",
+        "signature": "one soft broom and one coin",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b05",
+      "title": "many tellings, one light",
+      "purpose": "button",
+      "share": 16,
+      "energy": 4,
+      "sound": {
+        "world": "three windows, three lamps, one flame passed",
+        "signature": "three small flames, then one",
+        "quiet": true
+      }
+    }
+  ]
+}

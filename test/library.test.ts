@@ -39,7 +39,7 @@ test("the shipped library is legal and reusable", () => {
   );
   const report = resolveLibrary(index, { root });
   assert.deepEqual(report.errors, []);
-  assert.equal(report.characters.length, 4);
+  assert.equal(report.characters.length, 8);
   assert.ok(report.characters.every((character) => character.expressionsCount >= 12));
 });
 

@@ -1,0 +1,144 @@
+{
+  "id": "lakshmi-diwali",
+  "scenes": [
+    {
+      "id": "sc01",
+      "beat": "b01",
+      "title": "the dark night and the first lamp",
+      "place": "a paper threshold on the darkest night of Kartik",
+      "summary": "One hand lights the first diya; a street answers with a row of lamps.",
+      "cast": [],
+      "lines": [
+        "v01"
+      ],
+      "duration": 6.4,
+      "visual": {
+        "subject": "a single diya, then a row of lamps across a paper street",
+        "setting": "indigo night, a dark doorway, a paper street",
+        "action": "a hand lights one wick; windows and lamps answer",
+        "props": [
+          "diya",
+          "lamp",
+          "doorway",
+          "street"
+        ]
+      }
+    },
+    {
+      "id": "sc02",
+      "beat": "b02",
+      "title": "who is Lakshmi",
+      "place": "a lotus pond at the edge of the cosmos",
+      "summary": "Lakshmi appears with four arms, a lotus and a gold halo.",
+      "cast": [
+        "Lakshmi"
+      ],
+      "lines": [
+        "v02"
+      ],
+      "duration": 7.5,
+      "visual": {
+        "subject": "Lakshmi, four arms, lotus, gold halo, red and gold sari",
+        "setting": "a dark lotus pond with a low moon",
+        "action": "her upper hands raise lotuses; the lower hands rest open",
+        "props": [
+          "lotus",
+          "halo",
+          "pond",
+          "gold"
+        ]
+      }
+    },
+    {
+      "id": "sc03",
+      "beat": "b03",
+      "title": "the churning and the choice",
+      "place": "the cosmic ocean, Mount Mandara and the court of the gods",
+      "summary": "Gods and asuras churn the ocean; treasures rise; Lakshmi appears and chooses Vishnu.",
+      "cast": [
+        "Lakshmi",
+        "Vishnu"
+      ],
+      "lines": [
+        "v03",
+        "v04",
+        "v05"
+      ],
+      "duration": 17.4,
+      "visual": {
+        "subject": "the churning ocean, rising treasures, Lakshmi on a lotus, the garland to Vishnu",
+        "setting": "a deep indigo ocean, a paper mountain, a gold court",
+        "action": "the mountain turns, the serpent pulls, the lotus opens, the garland passes",
+        "props": [
+          "ocean",
+          "mountain",
+          "serpent",
+          "treasures",
+          "lotus",
+          "garland",
+          "conch",
+          "chakra"
+        ]
+      }
+    },
+    {
+      "id": "sc04",
+      "beat": "b04",
+      "title": "the home and the condition",
+      "place": "a courtyard, a doorway, a low puja table",
+      "summary": "The home is cleaned and lit; the puja asks for prosperity, and the old stories attach a condition.",
+      "cast": [
+        "Householder",
+        "Child",
+        "Lakshmi"
+      ],
+      "lines": [
+        "v06",
+        "v07"
+      ],
+      "duration": 14.3,
+      "visual": {
+        "subject": "rangoli at the door, diyas, a puja thali, a ledger and a coin given",
+        "setting": "a warm cream courtyard and a low puja table",
+        "action": "the householder draws and offers; the child lights and receives; Lakshmi blesses",
+        "props": [
+          "rangoli",
+          "diya",
+          "thali",
+          "marigold",
+          "ledger",
+          "coin"
+        ]
+      }
+    },
+    {
+      "id": "sc05",
+      "beat": "b05",
+      "title": "many tellings, one light",
+      "place": "three paper windows, then a single flame",
+      "summary": "Bengal, Ayodhya and the western account books share the night; the film ends by passing the light.",
+      "cast": [
+        "Householder",
+        "Child"
+      ],
+      "lines": [
+        "v08",
+        "v09"
+      ],
+      "duration": 14.4,
+      "visual": {
+        "subject": "three windows for Bengal, Ayodhya and the account books; two hands pass one diya",
+        "setting": "a dark wall with three lit windows, then a close flame",
+        "action": "three traditions appear; the lamp passes from one hand to another",
+        "props": [
+          "window",
+          "trident",
+          "lamps",
+          "ledger",
+          "diya",
+          "hands"
+        ]
+      }
+    }
+  ]
+}

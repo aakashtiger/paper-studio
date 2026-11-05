@@ -11,14 +11,16 @@ diagram film is not forced to stage a character in every shot. The paint probe
 records a **face box**, and `audit:type` refuses any text over a face (the old
 film's 0:16 caption is now a finding). The rig draws both hands last, with a
 palm, four fingers and a thumb, and publishes `hand-left`/`hand-right`; the
-library gains `tap`, `hold` and `accept` poses. **512 tests**, typecheck clean.
+library gains `tap`, `hold` and `accept` poses. **513 tests**, typecheck clean.
 `npm run visual:check -- films/uber-model/score.json` now refuses the 0055
 score with **48 findings** (0 phrases, 10 staged with no action, four recipes
 used twice); `storyboard --check` refuses it. The 0055 28-check pass and MP4 are
-historical evidence, not a current pass. The next film is decided:
-***Lakshmi and the Lights*** — 60 s, Paper Myth, 12 visual beats, nine
-narration lines, Samudra Manthan + the home ritual + one regional line; the
-treatment and sources are in `docs/proposals/lakshmi-and-the-lights.md`.
+historical evidence, not a current pass. The first film under **0057** is
+***Lakshmi and the Lights***: 60 s, 13 shots, 5 beats, 159 words at 81% voiced,
+four film-local characters (Lakshmi, Vishnu, Householder, Child), 13 film-local
+recipes, all on `paper-kpop@0.2.0`. It passed **`gate:7` 28 checks** and
+`film:review --gate --reuse`; the treatment, sources and shipped evidence are in
+`docs/proposals/lakshmi-and-the-lights.md`.
 
 **Update 2026-11-05 (historical, superseded by the 0056 block above):** decision **0055** rebuilds *The Uber Cut* as
 the first passing example of the identity gate. The film is a presenter-show:

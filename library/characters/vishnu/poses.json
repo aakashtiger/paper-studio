@@ -1,0 +1,613 @@
+{
+  "character": "Vishnu",
+  "rig": "vishnu@0.1.0",
+  "body": {
+    "arm": {
+      "upper": 92,
+      "fore": 78,
+      "minElbow": 0.02
+    },
+    "hand": {
+      "w": 18,
+      "h": 26,
+      "thumbW": 8,
+      "thumbH": 12
+    }
+  },
+  "anchors": [
+    "face",
+    "hair",
+    "hand-left",
+    "hand-right",
+    "foot-left",
+    "foot-right",
+    "chest",
+    "waist"
+  ],
+  "colors": {
+    "shirt": "blue",
+    "trouser": "blueD",
+    "jacket": "gold",
+    "skirt": "blueD",
+    "petal": "blueL",
+    "boot": "ink",
+    "hair": "ink",
+    "skin": "#7FA8C9"
+  },
+  "poses": [
+    {
+      "name": "idle",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": 0.02,
+        "headTilt": 0.02,
+        "headTurn": -0.02,
+        "hairSwing": 2,
+        "armL": [
+          0.05,
+          0.03
+        ],
+        "armR": [
+          -0.05,
+          -0.03
+        ],
+        "footL": [
+          -16,
+          -8
+        ],
+        "footR": [
+          16,
+          -8
+        ],
+        "legL": [
+          0.03,
+          0.01
+        ],
+        "legR": [
+          -0.03,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "asleep",
+      "params": {
+        "bounce": 0,
+        "sway": 0.02,
+        "lean": 0.14,
+        "headTilt": 0.5,
+        "headTurn": 0.2,
+        "hairSwing": 5,
+        "armL": [
+          0.12,
+          0.38
+        ],
+        "armR": [
+          -0.12,
+          -0.38
+        ],
+        "footL": [
+          -16,
+          -8
+        ],
+        "footR": [
+          16,
+          -8
+        ],
+        "legL": [
+          0.02,
+          0.01
+        ],
+        "legR": [
+          -0.02,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "wake",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": -0.05,
+        "headTilt": -0.22,
+        "headTurn": 0,
+        "hairSwing": -2,
+        "armL": [
+          -2.55,
+          -0.18
+        ],
+        "armR": [
+          2.55,
+          0.18
+        ],
+        "footL": [
+          -18,
+          -8
+        ],
+        "footR": [
+          18,
+          -8
+        ],
+        "legL": [
+          0.04,
+          0.01
+        ],
+        "legR": [
+          -0.04,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "reach",
+      "params": {
+        "bounce": 0,
+        "sway": 0.03,
+        "lean": 0.1,
+        "headTilt": -0.08,
+        "headTurn": -0.28,
+        "hairSwing": 1,
+        "armL": [
+          0.3,
+          0.22
+        ],
+        "armR": [
+          1.42,
+          0.16
+        ],
+        "footL": [
+          -16,
+          -8
+        ],
+        "footR": [
+          16,
+          -8
+        ],
+        "legL": [
+          0.03,
+          0.01
+        ],
+        "legR": [
+          -0.03,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "type",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": 0.08,
+        "headTilt": 0.18,
+        "headTurn": 0.05,
+        "hairSwing": 1,
+        "armL": [
+          0.5,
+          -1.05
+        ],
+        "armR": [
+          -0.5,
+          1.05
+        ],
+        "footL": [
+          -16,
+          -8
+        ],
+        "footR": [
+          16,
+          -8
+        ],
+        "legL": [
+          0.02,
+          0.01
+        ],
+        "legR": [
+          -0.02,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "slump",
+      "params": {
+        "bounce": 0,
+        "sway": -0.02,
+        "lean": 0.24,
+        "headTilt": 0.38,
+        "headTurn": -0.12,
+        "hairSwing": 4,
+        "armL": [
+          0.16,
+          0.48
+        ],
+        "armR": [
+          -0.16,
+          -0.48
+        ],
+        "footL": [
+          -20,
+          -8
+        ],
+        "footR": [
+          20,
+          -8
+        ],
+        "legL": [
+          0.02,
+          0.01
+        ],
+        "legR": [
+          -0.02,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "walk",
+      "params": {
+        "bounce": 1,
+        "sway": 0.04,
+        "lean": 0.04,
+        "headTilt": 0.02,
+        "headTurn": 0.08,
+        "hairSwing": 3,
+        "armL": [
+          0.5,
+          0.2
+        ],
+        "armR": [
+          -0.5,
+          -0.2
+        ],
+        "legL": [
+          -0.12,
+          0.06
+        ],
+        "legR": [
+          0.16,
+          -0.08
+        ]
+      }
+    },
+    {
+      "name": "look",
+      "params": {
+        "bounce": 0,
+        "sway": -0.02,
+        "lean": 0.03,
+        "headTilt": -0.08,
+        "headTurn": 0.46,
+        "hairSwing": -1,
+        "armL": [
+          0.12,
+          0.18
+        ],
+        "armR": [
+          2.02,
+          -0.92
+        ],
+        "footL": [
+          -16,
+          -8
+        ],
+        "footR": [
+          16,
+          -8
+        ],
+        "legL": [
+          0.03,
+          0.01
+        ],
+        "legR": [
+          -0.03,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "tap",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": 0.05,
+        "headTilt": -0.06,
+        "headTurn": 0.08,
+        "hairSwing": 2,
+        "armL": [
+          0.05,
+          0.03
+        ],
+        "armR": [
+          -0.8,
+          0.55
+        ],
+        "footL": [
+          -16,
+          -8
+        ],
+        "footR": [
+          16,
+          -8
+        ],
+        "legL": [
+          0.03,
+          0.01
+        ],
+        "legR": [
+          -0.03,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "hold",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": 0.04,
+        "headTilt": -0.04,
+        "headTurn": 0.04,
+        "hairSwing": 2,
+        "armL": [
+          0.05,
+          0.03
+        ],
+        "armR": [
+          -0.5,
+          0.95
+        ],
+        "footL": [
+          -16,
+          -8
+        ],
+        "footR": [
+          16,
+          -8
+        ],
+        "legL": [
+          0.03,
+          0.01
+        ],
+        "legR": [
+          -0.03,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "accept",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": -0.02,
+        "headTilt": 0.02,
+        "headTurn": -0.04,
+        "hairSwing": 2,
+        "armL": [
+          0.05,
+          0.03
+        ],
+        "armR": [
+          -1.15,
+          0.35
+        ],
+        "footL": [
+          -16,
+          -8
+        ],
+        "footR": [
+          16,
+          -8
+        ],
+        "legL": [
+          0.03,
+          0.01
+        ],
+        "legR": [
+          -0.03,
+          -0.01
+        ]
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "name": "neutral",
+      "params": {
+        "open": 0.85,
+        "brow": 0,
+        "lookX": 0,
+        "lookY": 0,
+        "eyes": "dot",
+        "mouth": "flat",
+        "browLift": 0
+      }
+    },
+    {
+      "name": "tired",
+      "params": {
+        "open": 0.55,
+        "brow": 0.05,
+        "lookX": 0,
+        "lookY": 0.1,
+        "eyes": "closed",
+        "mouth": "flat",
+        "browLift": 0.2
+      }
+    },
+    {
+      "name": "alarm",
+      "params": {
+        "open": 1.3,
+        "brow": 0.9,
+        "lookX": 0,
+        "lookY": 0,
+        "eyes": "wide",
+        "mouth": "o",
+        "browLift": 3
+      }
+    },
+    {
+      "name": "blank",
+      "params": {
+        "open": 0.75,
+        "brow": -0.05,
+        "lookX": 0.2,
+        "lookY": 0.05,
+        "eyes": "blank",
+        "mouth": "flat",
+        "browLift": 0
+      }
+    },
+    {
+      "name": "laugh",
+      "params": {
+        "open": 0.4,
+        "brow": 0.5,
+        "lookX": 0,
+        "lookY": 0.1,
+        "eyes": "happy",
+        "mouth": "grin",
+        "browLift": 2
+      }
+    },
+    {
+      "name": "cry",
+      "params": {
+        "open": 0.45,
+        "brow": -0.4,
+        "lookX": 0,
+        "lookY": -0.2,
+        "eyes": "closed",
+        "mouth": "wobble",
+        "browLift": -2,
+        "browTilt": 1.2,
+        "tear": true
+      }
+    },
+    {
+      "name": "angry",
+      "params": {
+        "open": 0.9,
+        "brow": -0.8,
+        "lookX": 0,
+        "lookY": 0,
+        "eyes": "squint",
+        "mouth": "frown",
+        "browLift": -1.8,
+        "browTilt": -2.4
+      }
+    },
+    {
+      "name": "shocked",
+      "params": {
+        "open": 1.5,
+        "brow": 1.2,
+        "lookX": 0,
+        "lookY": 0,
+        "eyes": "wide",
+        "mouth": "O",
+        "browLift": 4.5
+      }
+    },
+    {
+      "name": "sad",
+      "params": {
+        "open": 0.5,
+        "brow": -0.35,
+        "lookX": 0,
+        "lookY": -0.2,
+        "eyes": "half",
+        "mouth": "frown",
+        "browLift": -0.2,
+        "browTilt": 1.8
+      }
+    },
+    {
+      "name": "suspicious",
+      "params": {
+        "open": 0.8,
+        "brow": -0.25,
+        "lookX": 0.6,
+        "lookY": 0,
+        "eyes": "glance",
+        "mouth": "smirk",
+        "browLift": -0.8,
+        "browTilt": -1.2
+      }
+    },
+    {
+      "name": "relieved",
+      "params": {
+        "open": 0.65,
+        "brow": 0.2,
+        "lookX": 0,
+        "lookY": 0.1,
+        "eyes": "happy",
+        "mouth": "smile",
+        "browLift": 1.4
+      }
+    },
+    {
+      "name": "confused",
+      "params": {
+        "open": 1,
+        "brow": 0.35,
+        "lookX": -0.5,
+        "lookY": 0,
+        "eyes": "dot",
+        "mouth": "wobble",
+        "browLift": 1.2,
+        "browTilt": 0.8
+      }
+    },
+    {
+      "name": "determined",
+      "params": {
+        "open": 0.75,
+        "brow": -0.3,
+        "lookX": 0,
+        "lookY": 0.1,
+        "eyes": "squint",
+        "mouth": "grit",
+        "browLift": -1.2,
+        "browTilt": -1.4
+      }
+    },
+    {
+      "name": "bored",
+      "params": {
+        "open": 0.45,
+        "brow": 0,
+        "lookX": 0.6,
+        "lookY": 0.2,
+        "eyes": "half",
+        "mouth": "flat",
+        "browLift": 0.6
+      }
+    }
+  ],
+  "archetype": "paper-divine",
+  "stageRoles": [
+    "divine"
+  ],
+  "appearance": {
+    "faceStyle": "drawn-cartoon",
+    "headLayers": 3,
+    "hairLayers": 3,
+    "bradMetal": "#C68E2E",
+    "fingers": true
+  },
+  "thumbOptional": false,
+  "visualHeadToBody": [
+    3.4,
+    4.5
+  ],
+  "headOrnamentDiameterPct": [
+    0.45,
+    0.65
+  ]
+}

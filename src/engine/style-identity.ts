@@ -222,12 +222,7 @@ export function checkStyleIdentity(input: {
     if (!member.archetype) {
       findings.push({
         code: "identity:cast",
-        message: `${member.character} declares no stage archetype; the style needs "${input.castRule.archetype}"`,
-      });
-    } else if (member.archetype !== input.castRule.archetype) {
-      findings.push({
-        code: "identity:cast",
-        message: `${member.character} is "${member.archetype}"; this style stages "${input.castRule.archetype}"`,
+        message: `${member.character} declares no construction archetype - the style needs a paper puppet, the film names its own kind`,
       });
     }
     if (!member.stageRoles || member.stageRoles.length === 0) {
@@ -241,6 +236,17 @@ export function checkStyleIdentity(input: {
         code: "identity:cast",
         message: `${member.character} declares no appearance (face, head, hair, metal, fingers)`,
       });
+    } else {
+      const expected = input.castRule.appearance;
+      const got = member.appearance;
+      for (const key of ["faceStyle", "headLayers", "hairLayers", "bradMetal", "fingers"] as const) {
+        if (got[key] !== expected[key]) {
+          findings.push({
+            code: "identity:cast",
+            message: `${member.character} ${key} is ${JSON.stringify(got[key])}; this style builds it as ${JSON.stringify(expected[key])}`,
+          });
+        }
+      }
     }
     for (const error of member.errors) {
       findings.push({ code: "identity:cast", message: `${member.character}: ${error.message}` });

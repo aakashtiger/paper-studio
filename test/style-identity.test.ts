@@ -151,13 +151,20 @@ test("a character without anchors, body, archetype or stage role is refused", ()
   assert.ok(result.findings.filter((finding) => finding.code === "identity:cast").length >= 4);
 });
 
-test("a character with a different archetype is refused", () => {
-  const broken: CastLibraryFact[] = [{ ...cast[0]!, archetype: "office-worker" }];
+test("a film-local character archetype is allowed when the construction matches", () => {
+  const custom: CastLibraryFact[] = [{ ...cast[0]!, archetype: "paper-divine" }];
+  const result = checkStyleIdentity({ ...input, cast: custom });
+  assert.deepEqual(result.findings, []);
+});
+
+test("a character that breaks the paper construction is refused", () => {
+  const broken: CastLibraryFact[] = [
+    { ...cast[0]!, appearance: { ...castRule.appearance, headLayers: 2 } },
+  ];
   const result = checkStyleIdentity({ ...input, cast: broken });
   assert.ok(
     result.findings.some(
-      (finding) =>
-        finding.code === "identity:cast" && finding.message.includes("office-worker"),
+      (finding) => finding.code === "identity:cast" && finding.message.includes("headLayers"),
     ),
   );
 });
