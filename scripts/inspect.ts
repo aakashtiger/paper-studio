@@ -132,10 +132,11 @@ async function main(): Promise<void> {
   for (const [name, script] of [
     ["type", "scripts/type-audit.ts"],
     ["rig", "scripts/rig-audit.ts"],
+    ["face", "scripts/face-audit.ts"],
   ] as const) {
     console.log(`inspect: ${name} on the shared probe`);
     try {
-      await run([script, scorePath, "--probe", probePath], root);
+      await run([script, scorePath, "--probe", probePath, "--step", String(step)], root);
     } catch {
       failures.push(name);
     }
@@ -146,7 +147,12 @@ async function main(): Promise<void> {
     score: scoreHash,
     step,
     frames: probe.frames.length,
-    pass: { motion: motion.errors.length === 0, type: !failures.includes("type"), rig: !failures.includes("rig") },
+    pass: {
+      motion: motion.errors.length === 0,
+      type: !failures.includes("type"),
+      rig: !failures.includes("rig"),
+      face: !failures.includes("face"),
+    },
     failures,
   };
   writeFileSync(join(work, "inspect.json"), `${JSON.stringify(summary, null, 2)}\n`, "utf8");
@@ -154,7 +160,7 @@ async function main(): Promise<void> {
   console.log("");
   console.log(
     `inspect: ${probe.frames.length} frames once · motion ${summary.pass.motion ? "PASS" : "FAIL"} · ` +
-      `type ${summary.pass.type ? "PASS" : "FAIL"} · rig ${summary.pass.rig ? "PASS" : "FAIL"}`,
+      `type ${summary.pass.type ? "PASS" : "FAIL"} · rig ${summary.pass.rig ? "PASS" : "FAIL"} · face ${summary.pass.face ? "PASS" : "FAIL"}`,
   );
   console.log(`inspect: build/${score.id}/inspect/inspect.json`);
   if (failures.length > 0) {

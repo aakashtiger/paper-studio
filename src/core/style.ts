@@ -875,6 +875,13 @@ export const StyleIdentitySchema = z
         localContrastMin: z.number().positive(),
         localContrastMedian: z.number().positive(),
         localContrastShare: z.number().min(0).max(1),
+        /** A declared focus must occupy this share of the frame's short side. */
+        focus: z
+          .object({
+            minShortSide: z.number().min(0).max(1),
+          })
+          .strict()
+          .optional(),
       })
       .strict(),
     cast: z

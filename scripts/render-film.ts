@@ -31,6 +31,7 @@ import { FilmScoreSchema } from "../src/engine/treatment.js";
 import { scoreDataText } from "../src/engine/score-data.js";
 import { fileHash, videoStreamHash } from "../src/engine/video.js";
 import { VISUAL_CONTRACT_VERSION } from "../src/engine/visual.js";
+import type { ProbeFocusBox } from "../src/engine/frame-report.js";
 
 const MIME: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
@@ -189,6 +190,7 @@ function requireStyleIdentity(
     frameReport?: string | null;
     frameReportHash?: string | null;
     scenesHash?: string | null;
+    collageHash?: string | null;
     stage?: string;
     findings?: { code: string; message: string }[];
   };
@@ -215,6 +217,12 @@ function requireStyleIdentity(
   if (!existsSync(frameReportPath) || fileHash(frameReportPath) !== written.frameReportHash) {
     throw new Error(
       `refusing to paint ${id}: the frame report was repainted after the identity report. Run \`${run}\` again`,
+    );
+  }
+  const collagePath = join(cwd, "build", id, "frame-report.json");
+  if (existsSync(collagePath) && written.collageHash !== fileHash(collagePath)) {
+    throw new Error(
+      `refusing to paint ${id}: the collage changed after the identity report. Run \`${run}\` again`,
     );
   }
   const scenesPath = join(cwd, "films", id, "scenes.json");
@@ -259,6 +267,7 @@ function requireTypeRig(cwd: string, id: string, scoreFile: string): void {
   for (const [file, command] of [
     ["type-audit.json", "audit:type"],
     ["rig-audit.json", "audit:rig"],
+    ["face-audit.json", "audit:face"],
   ] as const) {
     const reportPath = join(cwd, "build", id, file);
     if (!existsSync(reportPath)) {
@@ -670,7 +679,7 @@ async function drawFrame(
   time: number,
   /** Encode the frame as a PNG. False for a probe-only pass: the audits read numbers only. */
   png = true,
-): Promise<{ data: string; drawnAt: number; textBoxes?: TextBox[]; rigRecords?: RigRecord[]; sample?: number[] }> {
+): Promise<{ data: string; drawnAt: number; textBoxes?: TextBox[]; rigRecords?: RigRecord[]; focusBoxes?: ProbeFocusBox[]; sample?: number[] }> {
   const probe = await cdp.send<{
     result: {
       value?: {
@@ -679,13 +688,14 @@ async function drawFrame(
         drawnAt?: number;
         textBoxes?: TextBox[];
         rigRecords?: RigRecord[];
+        focusBoxes?: ProbeFocusBox[];
         sample?: number[];
       };
     };
     exceptionDetails?: { text?: string };
   }>("Runtime.evaluate", {
     expression: `(() => {
-      if (window.__paintProbe) { window.__textBoxes = []; window.__rigRecords = []; }
+      if (window.__paintProbe) { window.__textBoxes = []; window.__rigRecords = []; window.__focusBoxes = []; }
       window.__draw(${time});
       if (window.__lastDrawError) return { error: String(window.__lastDrawError) };
       return {
@@ -693,6 +703,7 @@ async function drawFrame(
         drawnAt: window.__drawnAt,
         textBoxes: window.__paintProbe ? window.__textBoxes.slice() : undefined,
         rigRecords: window.__paintProbe ? window.__rigRecords.slice() : undefined,
+        focusBoxes: window.__paintProbe ? window.__focusBoxes.slice() : undefined,
         /* A coarse 48x27 sample of the frame, so a movement pass can measure
            "did this shot change at all?" without decoding a PNG. Only while the
            probe is attached: the film render pays nothing for it. */
@@ -724,6 +735,7 @@ async function drawFrame(
     drawnAt: Number(value.drawnAt),
     textBoxes: value.textBoxes,
     rigRecords: value.rigRecords,
+    focusBoxes: value.focusBoxes,
     sample: value.sample,
   };
 }
@@ -954,7 +966,7 @@ async function main(): Promise<void> {
         chunks.map(async (times, index) => {
           const worker = workers[index] ?? first;
           if (probePath) await attachProbe(worker.cdp, cwd);
-          const out: { time: number; textBoxes: TextBox[]; rigRecords: RigRecord[]; sample?: number[] }[] = [];
+          const out: { time: number; textBoxes: TextBox[]; rigRecords: RigRecord[]; focusBoxes?: ProbeFocusBox[]; sample?: number[] }[] = [];
           for (const time of times) {
             const frame = await drawFrame(worker.cdp, time, wantPng);
             const name = `t-${time.toFixed(2).padStart(5, "0")}.png`;
@@ -962,11 +974,12 @@ async function main(): Promise<void> {
               const base64 = frame.data.slice(frame.data.indexOf(",") + 1);
               await writeFile(join(stillsDir, name), Buffer.from(base64, "base64"));
             }
-            if (frame.textBoxes || frame.rigRecords) {
+            if (frame.textBoxes || frame.rigRecords || frame.focusBoxes) {
               out.push({
                 time,
                 textBoxes: frame.textBoxes ?? [],
                 rigRecords: frame.rigRecords ?? [],
+                focusBoxes: frame.focusBoxes,
                 sample: frame.sample,
               });
             }

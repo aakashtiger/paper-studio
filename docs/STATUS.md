@@ -25,7 +25,19 @@ a real lotus/river reveal, an eight-fold rangoli and a brass thali. It passes
 **`gate:7` 29 checks** and `film:review --gate --reuse`; the 60 s film and its
 evidence stay historical.
 
-**Update 2026-11-05 (current, 0060):** the three gaps named in 0059 are closed.
+**Update 2026-11-05 (current, 0061):** the three follow-ups named in 0060 are
+closed. A declared `focusAnchors` box is measured in device space and refused
+below **10%** of frame height; the proof's s01 diya is **12.8%**, the child's
+face **13.1%**. `audit:palette` now applies the family rule per scene — sc01
+**4 / 99.1%**, sc02 **3 / 99.5%**, sc03 **2 / 99.9%**, film **4 / 98.6%** — and
+the gate ties the section to the score and `scenesHash`. The paint probe samples
+each face in face-local space; `audit:face` measures s03 awe→kind **0.115** and
+s04 blessing→giving **0.128**, with 3 in-between samples and no snap. `inspect`
+runs motion/type/rig/face from one probe; `gate:7` is **30 checks**. Delivered
+picture `sha256:a35472f3def7…`; `film:review` **PASS**, ASR 97.9%, motion 6/6,
+**539 tests**.
+
+**Update 2026-11-05 (historical, 0060):** the three gaps named in 0059 are closed.
 `scenes[].mood` inherits the film or names a band; the proof declares sc03
 **interior** while the film is **night**, and the delivered video measures every
 frame of each scene: sc01 **80.2 / 23.1 / 10.5** (177 frames), sc02 **66.4 /

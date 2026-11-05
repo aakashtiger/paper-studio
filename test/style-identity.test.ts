@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  checkFocusSizes,
   checkSceneMoodDeclarations,
   checkStyleIdentity,
   resolveFilmBands,
@@ -203,6 +204,13 @@ test("a scene with no measurement is refused", () => {
     ],
   });
   assert.ok(result.findings.some((finding) => finding.code === "identity:scene-unmeasured"));
+});
+
+test("a declared focus below the short-side floor is refused", () => {
+  const rows = [{ shot: "s01", name: "diya", kind: "object" as const, shortSideShare: 0.08 }];
+  assert.ok(checkFocusSizes(rows, 0.1).some((finding) => finding.code === "identity:focus"));
+  assert.deepEqual(checkFocusSizes([{ ...rows[0]!, shortSideShare: 0.125 }], 0.1), []);
+  assert.ok(checkFocusSizes([{ ...rows[0]!, shortSideShare: null }], 0.1).some((finding) => finding.code === "identity:focus"));
 });
 
 test("a measured doll ratio that matches its library and the pack passes", () => {

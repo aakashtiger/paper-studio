@@ -30,6 +30,14 @@ import { PoseLibrarySchema, resolvePoseLibrary } from "./pose.js";
  * recipe id: those live in `styles/`.
  */
 
+export const FocusAnchorSchema = z
+  .object({
+    /** An object the recipe passes to the probe, or a cast member for face/body. */
+    name: z.string().min(1),
+    kind: z.enum(["object", "face", "body"]),
+  })
+  .strict();
+
 export const ShotVisualSchema = z.object({
   /** What is in the frame, in plain words. */
   shows: z.string().min(1),
@@ -49,6 +57,11 @@ export const ShotVisualSchema = z.object({
   phrase: z.string().min(1).optional(),
   /** The one concrete visual device that makes this image its own. */
   device: z.string().min(1).optional(),
+  /**
+   * What the focus actually is, in a form the probe can measure. Optional, so
+   * an old score still parses; when present, a missing or tiny box is a finding.
+   */
+  focusAnchors: z.array(FocusAnchorSchema).min(1).optional(),
   /**
    * One block per character staged in this shot. `does` is the physical action
    * the narration needs; a character with no action is a floating sticker.

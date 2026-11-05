@@ -319,6 +319,49 @@ test("an expression that lands late or on an absent character is refused", () =>
   assert.ok(absent.findings.some((finding) => finding.code === "visual:expression-cast"));
 });
 
+test("a declared focus anchor must name the object or a cast member", () => {
+  const good = check([
+    {
+      ...phone,
+      visual: {
+        ...phone.visual!,
+        focusAnchors: [
+          { name: "app", kind: "object" },
+          { name: "Rider", kind: "face" },
+        ],
+      },
+    },
+  ]);
+  assert.deepEqual(good.findings, []);
+
+  const badObject = check([
+    { ...phone, visual: { ...phone.visual!, focusAnchors: [{ name: "glow", kind: "object" }] } },
+  ]);
+  assert.ok(badObject.findings.some((finding) => finding.code === "visual:focus"));
+
+  const badCast = check([
+    { ...phone, visual: { ...phone.visual!, focusAnchors: [{ name: "Other", kind: "face" }] } },
+  ]);
+  assert.ok(badCast.findings.some((finding) => finding.code === "visual:focus-cast"));
+
+  const duplicate = check([
+    {
+      ...phone,
+      visual: {
+        ...phone.visual!,
+        focusAnchors: [
+          { name: "app", kind: "object" },
+          { name: "app", kind: "object" },
+        ],
+      },
+    },
+  ]);
+  assert.ok(duplicate.findings.some((finding) => finding.code === "visual:focus-duplicate"));
+
+  const empty = check([{ ...phone, visual: { ...phone.visual!, focusAnchors: [] } }]);
+  assert.ok(empty.findings.some((finding) => finding.code === "visual:focus"));
+});
+
 test("a lamp cannot answer a phone brief", () => {
   const result = check([{ ...phone, recipe: "lamp" }]);
   assert.ok(result.findings.some((finding) => finding.code === "visual:match"));

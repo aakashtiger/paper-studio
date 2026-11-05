@@ -25,6 +25,7 @@ import { ScenesSchema, checkScenes } from "../src/engine/scenes.js";
 import { inputMismatches, type RenderInputs } from "../src/engine/manifest.js";
 import { checkTwinEvidence, type TwinEvidence } from "../src/engine/determinism.js";
 import { VISUAL_CONTRACT_VERSION } from "../src/engine/visual.js";
+import { FACE_AUDIT_VERSION } from "../src/engine/face-audit.js";
 /**
  * The bounds the mix contract sets on the master come from `loudness.ts`, not
  * from a copy here. The mix refuses a film past them and the gate refuses a
@@ -54,10 +55,16 @@ const score = JSON.parse(readFileSync(resolve(root, file), "utf8")) as {
   aspect: string;
   clock?: { lines?: { id: string; text: string; start: number; duration: number; gainDb?: number }[] };
   audio?: { dynamics?: string };
-  shots?: { slots?: Record<string, string> }[];
+  shots?: { scene?: string; slots?: Record<string, string> }[];
   cast?: { character: string }[];
 };
 const dir = resolve(root, "build", score.id);
+const paletteScenesPath = resolve(root, "films", score.id, "scenes.json");
+const paletteScenesRequired =
+  existsSync(paletteScenesPath) || Boolean(score.shots?.some((shot) => shot.scene));
+const paletteScenesHash = existsSync(paletteScenesPath)
+  ? `sha256:${hashFile(paletteScenesPath)}`
+  : null;
 
 function read<T>(name: string): T | null {
   const path = resolve(dir, name);
@@ -218,10 +225,18 @@ async function main(): Promise<void> {
     maxOutlierFraction: number;
     hueFamilies?: number;
     topFamiliesShare?: number;
+    paletteCode?: string | null;
     videoHash: string | null;
     frames?: number;
     expectedFrames?: number;
     clipping?: { pass: boolean; worst: { fraction: number; time: number | null } };
+    scenePalette?: {
+      pass: boolean;
+      score?: string;
+      scenesHash?: string | null;
+      unassignedFrames?: number;
+      scenes: { id: string; frames: number; pass: boolean }[];
+    } | null;
   }>("palette-audit.json");
   const paint = read<{ pass: boolean; sampled: number; worst: { time: number; psnr: number }; videoHash: string | null }>("paint-match.json");
   const motion = read<{ pass: boolean; videoHash: string | null; weak: string[]; shots: { id: string; median: number }[] }>("motion-audit.json");
@@ -250,6 +265,16 @@ async function main(): Promise<void> {
     worstSeamShift?: { units: number; limit: number };
     expectsCast?: boolean;
   }>("rig-audit.json");
+  const face = read<{
+    pass: boolean;
+    contract?: number;
+    score?: string;
+    probe?: string | null;
+    probeFile?: string | null;
+    probeSource?: string | null;
+    events?: { changes: number; measured: number };
+    findings?: { code: string; message: string }[];
+  }>("face-audit.json");
   const asr = read<{
     pass: boolean;
     coverage: number;
@@ -457,6 +482,7 @@ async function main(): Promise<void> {
         frameReport?: string | null;
         frameReportHash?: string | null;
         scenesHash?: string | null;
+        collageHash?: string | null;
         videoHash: string | null;
         stagedRatio: number;
         findings: { code: string; message: string }[];
@@ -477,6 +503,10 @@ async function main(): Promise<void> {
       const frameNow = `sha256:${hashFile(resolve(root, report.frameReport))}`;
       if (report.frameReportHash !== frameNow) {
         return { ok: false, detail: "the frame report was repainted after the identity report - run style:identity again" };
+      }
+      const collagePath = resolve(root, "build", score.id, "frame-report.json");
+      if (existsSync(collagePath) && report.collageHash !== `sha256:${hashFile(collagePath)}`) {
+        return { ok: false, detail: "the collage changed after the identity report - run style:identity again" };
       }
       const scenesPath = resolve(root, "films", score.id, "scenes.json");
       if (existsSync(scenesPath) && report.scenesHash !== `sha256:${hashFile(scenesPath)}`) {
@@ -664,9 +694,17 @@ async function main(): Promise<void> {
         palette?.frames !== undefined &&
         palette.frames === palette.expectedFrames &&
         Boolean(frozenHash) &&
-        palette?.videoHash === frozenHash,
+        palette?.videoHash === frozenHash &&
+        palette?.paletteCode === `sha256:${hashFile(resolve(root, "src/engine/palette.ts"))}` &&
+        (!paletteScenesRequired ||
+          (palette.scenePalette?.pass === true &&
+            palette.scenePalette.score === `sha256:${hashFile(resolve(root, scorePath))}` &&
+            palette.scenePalette.scenesHash === paletteScenesHash &&
+            palette.scenePalette.unassignedFrames === 0 &&
+            (palette.scenePalette.scenes?.length ?? 0) > 0 &&
+            palette.scenePalette.scenes.every((scene) => scene.pass && scene.frames > 0))),
       detail: palette
-        ? `${palette.hueFamilies ?? "?"} hue families · top ${((palette.topFamiliesShare ?? 0) * 100).toFixed(1)}% · worst clipping ${((palette.clipping?.worst.fraction ?? 0) * 100).toFixed(2)}% at ${palette.clipping?.worst.time ?? "?"}s · ${palette.frames ?? 0}/${palette.expectedFrames ?? 0} frames decoded${palette.videoHash === frozenHash ? " · tied to the frozen video" : " · NOT tied to the frozen video"}`
+        ? `${palette.hueFamilies ?? "?"} hue families · top ${((palette.topFamiliesShare ?? 0) * 100).toFixed(1)}% · worst clipping ${((palette.clipping?.worst.fraction ?? 0) * 100).toFixed(2)}% at ${palette.clipping?.worst.time ?? "?"}s · ${palette.frames ?? 0}/${palette.expectedFrames ?? 0} frames decoded${palette.videoHash === frozenHash ? " · tied to the frozen video" : " · NOT tied to the frozen video"}${paletteScenesRequired ? ` · scenes ${palette.scenePalette?.scenes?.map((scene) => `${scene.id} ${scene.pass ? "ok" : "FAIL"}`).join(", ") ?? "MISSING - re-run audit:palette"}` : ""}`
         : "no palette report",
     },
     motionFloor: {
@@ -706,6 +744,19 @@ async function main(): Promise<void> {
             `${rig.anchors ?? 0} anchors / ${rig.anchorPairs ?? 0} pairs on ${(rig.anchoredCharacters ?? []).length} character(s), worst in-parent shift ` +
             `${rig.worstSeamShift?.units ?? "?"} of ${rig.worstSeamShift?.limit ?? "?"} units`
         : "no rig-audit report",
+    },
+    faceMotion: {
+      ok:
+        face?.pass === true &&
+        face.contract === FACE_AUDIT_VERSION &&
+        face.score === `sha256:${hashFile(resolve(root, scorePath))}` &&
+        face.probeSource === `sha256:${hashFile(resolve(root, "src/engine/paint-probe.js"))}` &&
+        Boolean(face.probeFile) &&
+        face.probe === `sha256:${hashFile(resolve(root, face.probeFile ?? ""))}` &&
+        (face.events?.changes === 0 || face.events?.measured === face.events?.changes),
+      detail: face
+        ? `${face.events?.measured ?? 0}/${face.events?.changes ?? 0} expression change(s) measured · ${face.findings?.length ?? 0} finding(s)`
+        : "no face-audit report - run `npm run audit:face -- <score>`",
     },
   };
 

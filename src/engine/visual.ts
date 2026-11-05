@@ -42,6 +42,7 @@ export type VisualShot = {
     why: string;
     phrase?: string;
     device?: string;
+    focusAnchors?: { name: string; kind: "object" | "face" | "body" }[];
     performers?: { who: string; does: string; why: string }[];
   };
 };
@@ -73,6 +74,9 @@ export type VisualFinding = {
     | "visual:phrase-time"
     | "visual:device-missing"
     | "visual:device-match"
+    | "visual:focus"
+    | "visual:focus-cast"
+    | "visual:focus-duplicate"
     | "visual:repeat"
     | "visual:similar"
     | "visual:cast-missing"
@@ -367,6 +371,54 @@ export function checkVisuals(
         message: `${shot.id} device "${device}" does not appear in its own shows/action — the device is a label, not the image`,
         shot: shot.id,
       });
+    }
+
+    // 2b. If the shot declares what the focus *is*, it must be measurable and
+    // the words must actually name it.
+    const anchors = visual.focusAnchors;
+    if (Array.isArray(anchors) && anchors.some((anchor) => !anchor.name.trim())) {
+      findings.push({
+        code: "visual:focus",
+        message: `${shot.id} declares a focus anchor with no name`,
+        shot: shot.id,
+      });
+    }
+    if (Array.isArray(anchors) && anchors.length === 0) {
+      findings.push({
+        code: "visual:focus",
+        message: `${shot.id} declares an empty focusAnchors list — omit it or name the focus`,
+        shot: shot.id,
+      });
+    }
+    const seenAnchor = new Set<string>();
+    for (const anchor of Array.isArray(anchors) ? anchors : []) {
+      const key = `${anchor.kind}:${anchor.name.toLowerCase()}`;
+      if (seenAnchor.has(key)) {
+        findings.push({
+          code: "visual:focus-duplicate",
+          message: `${shot.id} declares focus anchor "${anchor.name}" twice`,
+          shot: shot.id,
+        });
+      }
+      seenAnchor.add(key);
+      if (anchor.kind === "face" || anchor.kind === "body") {
+        if (!cast.includes(anchor.name)) {
+          findings.push({
+            code: "visual:focus-cast",
+            message: `${shot.id} focus ${anchor.kind} "${anchor.name}" is not in the shot's cast`,
+            shot: shot.id,
+          });
+        }
+      } else {
+        const words = content(`${visual.focus} ${device ?? ""}`);
+        if (shared(content(anchor.name), words).length === 0) {
+          findings.push({
+            code: "visual:focus",
+            message: `${shot.id} object focus "${anchor.name}" is not named by its focus/device words`,
+            shot: shot.id,
+          });
+        }
+      }
     }
 
     // 3. The recipe can draw the subject.

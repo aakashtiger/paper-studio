@@ -175,7 +175,7 @@
     }, { fill: C2.gold, edge: C.rgba(C2.redD, 0.65), edgeW: 1.2 });
   }
 
-  function diya(ctx, x, y, s, lit, t) {
+  function diya(ctx, x, y, s, lit, t, focusName) {
     paper(ctx, () => {
       ctx.beginPath();
       ctx.moveTo(x - 34 * s, y);
@@ -201,6 +201,10 @@
     paper(ctx, () => blobPath(ctx, x, y - 16 * s, 4 * s, 9 * s * fl, 8, 0.02, 3), {
       fill: C2.cream, edge: null,
     });
+    if (focusName) {
+      // The solid bowl + flame, not the 48*s glow or the paper shadow.
+      focusAnchor(ctx, focusName, x - 34 * s, y - 46 * s, 68 * s, 74 * s);
+    }
   }
 
   function garland(ctx, x1, y1, x2, y2, t, n = 14) {
@@ -613,7 +617,7 @@
     light.addColorStop(0, C.rgba(C2.goldL, 0.16));
     light.addColorStop(1, C.rgba(C2.goldL, 0));
     ctx.fillStyle = light; ctx.fillRect(dx - 320, dy - 320, 640, 640);
-    diya(ctx, dx, dy, 1.6, lt > 0.5, t);
+    diya(ctx, dx, dy, 1.6, lt > 0.5, t, "diya");
     // the hand with the match, from the right, then carrying the diya
     const handX = (1 - pick) * 1000 + pick * dx;
     const handY = (1 - pick) * 820 + pick * (dy + 26);

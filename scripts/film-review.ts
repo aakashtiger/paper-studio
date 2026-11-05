@@ -37,10 +37,12 @@ const GATE_TIES: Record<string, { tie: ReportTie; report: (id: string) => string
   "frame-audit": { tie: "picture", report: (id) => `build/${id}/frame-audit.json` },
   "paint-match": { tie: "picture", report: (id) => `build/${id}/paint-match.json` },
   "motion-audit": { tie: "picture", report: (id) => `build/${id}/motion-audit.json` },
+  palette: { tie: "picture", report: (id) => `build/${id}/palette-audit.json` },
   // These paint their own frames, so the score is the tie — plus the mtime of
   // the paint code, because the painter is an input too.
   "type-audit": { tie: "score", report: (id) => `build/${id}/type-audit.json` },
   "rig-audit": { tie: "score", report: (id) => `build/${id}/rig-audit.json` },
+  "face-audit": { tie: "score", report: (id) => `build/${id}/face-audit.json` },
 };
 
 type Step = { name: string; script: string; detail: string; args?: string[]; tie?: ReportTie; report?: string };
@@ -82,7 +84,7 @@ if (hasVideo) {
   steps.push({ name: "strips", script: "scripts/strips.ts", detail: "per-shot strips" });
 }
 if (wantGate) {
-  for (const gate of ["frame-audit", "paint-match", "motion-audit", "type-audit", "rig-audit"] as const) {
+  for (const gate of ["frame-audit", "paint-match", "motion-audit", "palette", "type-audit", "rig-audit", "face-audit"] as const) {
     const tie = GATE_TIES[gate];
     steps.push({
       name: gate,
@@ -187,6 +189,9 @@ function newestPaintChange(film: string): number | null {
     for (const entry of readdirSync(vendor)) if (entry.endsWith(".js")) files.push(resolve(vendor, entry));
   }
   files.push(resolve(root, "styles", score.style ?? "", "tokens.json"));
+  files.push(resolve(root, "src/engine/paint-probe.js"));
+  files.push(resolve(root, "src/engine/face-audit.ts"));
+  files.push(resolve(root, "scripts/face-audit.ts"));
   for (const member of score.cast) files.push(resolve(root, member.poses));
   let newest: number | null = null;
   for (const file of files) {
@@ -394,11 +399,16 @@ function describe(name: string): string | null {
         stagedRatio: number;
         metrics: { lumaMean: number | null; saturationMean: number | null; edgesMean: number | null };
         frame: { centroidShare?: number; localContrastMedian?: number; heightTiers?: number } | null;
+        focus?: { rows: { shot: string; name: string; shortSideShare: number | null }[] } | null;
+        scenes?: { scene: string; mood: string | null }[] | null;
         findings: Array<{ code: string; message: string }>;
       }>(`build/${id}/style-identity/style-identity.json`);
       if (!report) return null;
       if (!report.pass) return `FAIL · ${report.findings.length} identity finding(s): ${report.findings[0]?.message ?? "the identity check failed"}`;
-      return `staged ${(report.stagedRatio * 100).toFixed(0)}% · luma ${report.metrics.lumaMean?.toFixed(1) ?? "?"} · sat ${report.metrics.saturationMean?.toFixed(1) ?? "?"} · centroid ${report.frame?.centroidShare !== undefined ? `${(report.frame.centroidShare * 100).toFixed(0)}%` : "?"}`;
+      const focus = report.focus?.rows
+        ?.map((row) => `${row.shot} ${row.name} ${row.shortSideShare === null ? "?" : `${(row.shortSideShare * 100).toFixed(1)}%`}`)
+        .join(", ");
+      return `staged ${(report.stagedRatio * 100).toFixed(0)}% · luma ${report.metrics.lumaMean?.toFixed(1) ?? "?"} · sat ${report.metrics.saturationMean?.toFixed(1) ?? "?"} · focus ${focus ?? "none"} · scenes ${report.scenes?.length ?? 0}`;
     }
     case "board": {
       const report = readJson<{ entries: number; sheet: { width: number; height: number } | null }>(
@@ -463,6 +473,15 @@ function describe(name: string): string | null {
       const weakest = report.shots.reduce((min, shot) => Math.min(min, shot.median), Number.POSITIVE_INFINITY);
       return `${report.shots.length} shots · weakest median ${weakest}`;
     }
+    case "palette": {
+      const report = readJson<{
+        hueFamilies: number;
+        topFamiliesShare: number;
+        scenePalette?: { scenes: { id: string; pass: boolean }[] } | null;
+      }>(`build/${id}/palette-audit.json`);
+      if (!report) return null;
+      return `${report.hueFamilies} families / top ${(report.topFamiliesShare * 100).toFixed(1)}% · scenes ${report.scenePalette?.scenes?.map((scene) => `${scene.id} ${scene.pass ? "ok" : "FAIL"}`).join(", ") ?? "none"}`;
+    }
     case "type-audit": {
       const report = readJson<{
         sampled: number;
@@ -482,6 +501,15 @@ function describe(name: string): string | null {
       );
       return report
         ? `${report.legs} legs · ${report.unpairedSolves} unpaired · worst ankle jump ${report.worstAnkleJump.distance}px`
+        : null;
+    }
+    case "face-audit": {
+      const report = readJson<{
+        events?: { changes: number; measured: number };
+        findings?: { code: string; message: string }[];
+      }>(`build/${id}/face-audit.json`);
+      return report
+        ? `${report.events?.measured ?? 0}/${report.events?.changes ?? 0} expression change(s) measured · ${report.findings?.length ?? 0} finding(s)`
         : null;
     }
     default:

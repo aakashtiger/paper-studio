@@ -50,6 +50,7 @@ type Probe = {
     time: number;
     textBoxes?: { text: string; x: number; y: number; w: number; h: number }[];
     rigRecords?: ProbeFrame["rigRecords"];
+    focusBoxes?: ProbeFrame["focusBoxes"];
   }[];
 };
 
@@ -151,7 +152,7 @@ async function main(): Promise<void> {
 
   // The frame report is the identity evidence. It uses the frames the collage
   // already painted - no second paint pass - and the probe's own anchors.
-  const frameShots = frames.map((frame) => {
+  const frameShots = frames.map((frame, index) => {
     const png = join(framesDir, `t-${frame.time.toFixed(2).padStart(5, "0")}.png`);
     const seen = probe.frames.find((entry) => Math.abs(entry.time - frame.time) < 1e-6);
     return analyzeRgb({
@@ -160,6 +161,9 @@ async function main(): Promise<void> {
       time: frame.time,
       cast: frame.shot.direction.cast ?? [],
       probe: seen as ProbeFrame | undefined,
+      focusAnchors: score.shots[index]?.visual?.focusAnchors ?? [],
+      frameWidth: size.width,
+      frameHeight: size.height,
     });
   });
   const frameReport: FrameReport = {

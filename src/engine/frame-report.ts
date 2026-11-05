@@ -13,6 +13,7 @@
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { median } from "./style-measure.js";
+import { faceBoxes } from "./text-face.js";
 
 export type FrameSummary = {
   shots: number;
@@ -32,6 +33,12 @@ export type FrameSummary = {
   saturatedShare: number;
   largestFlat: number;
   meanLuma: number;
+  focus?: {
+    declared: number;
+    measured: number;
+    missing: number;
+    minShortSide: number | null;
+  };
 };
 
 export type SubjectBox = {
@@ -43,11 +50,36 @@ export type SubjectBox = {
   source: "aperture";
 };
 
+export type FocusKind = "object" | "face" | "body";
+export type FocusAnchorDeclaration = { name: string; kind: FocusKind };
+
+export type ProbeFocusBox = {
+  kind: "focus";
+  name: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  order: number;
+  alpha?: number;
+};
+
+export type FocusMeasurement = {
+  name: string;
+  kind: FocusKind;
+  deviceBox: { x: number; y: number; w: number; h: number } | null;
+  box: { x: number; y: number; w: number; h: number } | null;
+  shortSideShare: number | null;
+  clipped: boolean;
+  paintOrder: number | null;
+};
+
 export type ShotFrameReport = {
   shot: string;
   time: number;
   cast: string[];
   box: SubjectBox | null;
+  focus?: FocusMeasurement[];
   bars: { left: number; right: number; plate: boolean };
   field: {
     largestFlat: number;
@@ -98,6 +130,7 @@ export type ProbeSolve = {
 export type ProbeFrame = {
   time: number;
   rigRecords: Array<ProbeAnchor | ProbeSolve | { kind: string; character?: string }>;
+  focusBoxes?: ProbeFocusBox[];
 };
 
 const GRID_WIDTH = 480;
@@ -164,6 +197,73 @@ export function probeBox(
     };
   }
   return null;
+}
+
+/**
+ * Resolve a shot's declared focus anchors to measured device boxes. The object
+ * box is the painter's rect (no glow), a face uses the rig's face anchor, and a
+ * body uses the same aperture as the subject box. The share is always the
+ * **clipped** short side over the frame height.
+ */
+export function resolveFocusMeasurements(input: {
+  anchors: readonly FocusAnchorDeclaration[];
+  probe: ProbeFrame | undefined;
+  frameWidth: number;
+  frameHeight: number;
+  gridWidth?: number;
+  gridHeight?: number;
+}): FocusMeasurement[] {
+  const gridWidth = input.gridWidth ?? GRID_WIDTH;
+  const gridHeight = input.gridHeight ?? GRID_HEIGHT;
+  const sx = gridWidth / Math.max(1, input.frameWidth);
+  const sy = gridHeight / Math.max(1, input.frameHeight);
+  return input.anchors.map((anchor) => {
+    let raw: { x: number; y: number; w: number; h: number } | null = null;
+    let paintOrder: number | null = null;
+    if (anchor.kind === "object") {
+      const found = (input.probe?.focusBoxes ?? [])
+        .filter((box) => box.name === anchor.name && (box.alpha ?? 1) > 0.05)
+        .sort((a, b) => a.order - b.order)
+        .at(-1);
+      if (found) {
+        raw = { x: found.x, y: found.y, w: found.w, h: found.h };
+        paintOrder = found.order;
+      }
+    } else if (anchor.kind === "face") {
+      const found = faceBoxes(input.probe?.rigRecords ?? [])
+        .filter((box) => box.character === anchor.name)
+        .at(-1);
+      if (found) raw = { x: found.x, y: found.y, w: found.w, h: found.h };
+    } else {
+      const found = probeBox(input.probe, [anchor.name], input.frameWidth, input.frameHeight);
+      if (found) raw = { x: found.x, y: found.y, w: found.w, h: found.h };
+    }
+    if (!raw || !(raw.w > 0) || !(raw.h > 0)) {
+      return { name: anchor.name, kind: anchor.kind, deviceBox: raw, box: null, shortSideShare: null, clipped: false, paintOrder };
+    }
+    const left = Math.max(0, raw.x);
+    const top = Math.max(0, raw.y);
+    const right = Math.min(input.frameWidth, raw.x + raw.w);
+    const bottom = Math.min(input.frameHeight, raw.y + raw.h);
+    if (!(right > left) || !(bottom > top)) {
+      return { name: anchor.name, kind: anchor.kind, deviceBox: raw, box: null, shortSideShare: null, clipped: true, paintOrder };
+    }
+    const clipped = raw.x < 0 || raw.y < 0 || raw.x + raw.w > input.frameWidth || raw.y + raw.h > input.frameHeight;
+    return {
+      name: anchor.name,
+      kind: anchor.kind,
+      deviceBox: raw,
+      box: {
+        x: Number((left * sx).toFixed(2)),
+        y: Number((top * sy).toFixed(2)),
+        w: Number(((right - left) * sx).toFixed(2)),
+        h: Number(((bottom - top) * sy).toFixed(2)),
+      },
+      shortSideShare: Number((Math.min(right - left, bottom - top) / Math.min(input.frameWidth, input.frameHeight)).toFixed(4)),
+      clipped,
+      paintOrder,
+    };
+  });
 }
 
 function hsv(r: number, g: number, b: number): [number, number, number] {
@@ -334,9 +434,15 @@ export function analyzeRgb(input: {
   cast: string[];
   probe: ProbeFrame | undefined;
   boxOverride?: SubjectBox | null;
+  focusAnchors?: readonly FocusAnchorDeclaration[];
+  focusOverride?: readonly FocusMeasurement[];
+  frameWidth?: number;
+  frameHeight?: number;
 }): ShotFrameReport {
   const width = input.width ?? GRID_WIDTH;
   const height = input.height ?? GRID_HEIGHT;
+  const frameWidth = input.frameWidth ?? 1920;
+  const frameHeight = input.frameHeight ?? 1080;
   const rgb = input.rgb;
   if (rgb.length < width * height * 3) {
     throw new Error(`frame-report: expected ${width * height * 3} bytes, got ${rgb.length}`);
@@ -464,6 +570,16 @@ export function analyzeRgb(input: {
     time: input.time,
     cast: input.cast,
     box,
+    focus:
+      (input.focusOverride ? [...input.focusOverride] : undefined) ??
+      resolveFocusMeasurements({
+        anchors: input.focusAnchors ?? [],
+        probe: input.probe,
+        frameWidth,
+        frameHeight,
+        gridWidth: width,
+        gridHeight: height,
+      }),
     bars: { left: barLeft, right: barRight, plate },
     field: {
       largestFlat: largest.share,
@@ -513,6 +629,8 @@ export function summarize(shots: ShotFrameReport[]): FrameSummary {
   const barShots = shots.filter((shot) => shot.bars.plate).length;
   const plateShots = shots.filter((shot) => shot.bars.plate).length;
   const blueShots = shots.filter((shot) => shot.contrast?.blueOnBlue === true).length;
+  const focusRows = shots.flatMap((shot) => shot.focus ?? []);
+  const focusMeasured = focusRows.filter((row) => row.shortSideShare !== null);
   return {
     shots: count,
     barsLeftMax: Math.max(0, ...shots.map((shot) => shot.bars.left)),
@@ -534,6 +652,15 @@ export function summarize(shots: ShotFrameReport[]): FrameSummary {
     largestFlat:
       count === 0 ? 0 : (median(shots.map((shot) => shot.field.largestFlat)) ?? 0),
     meanLuma: count === 0 ? 0 : (median(shots.map((shot) => shot.field.meanLuma)) ?? 0),
+    focus: {
+      declared: focusRows.length,
+      measured: focusMeasured.length,
+      missing: focusRows.length - focusMeasured.length,
+      minShortSide:
+        focusMeasured.length === 0
+          ? null
+          : Math.min(...focusMeasured.map((row) => row.shortSideShare as number)),
+    },
   };
 }
 

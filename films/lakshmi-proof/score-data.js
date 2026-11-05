@@ -637,7 +637,7 @@ window.SCORE = {
       "id": "texture.halftone",
       "type": "texture",
       "version": "0.1.0",
-      "hash": "sha256:bd72e531ef9c21b04e94fb368bdcfc0a63a356dcd3edcae4ee126debdf449429",
+      "hash": "sha256:38ad771bf0ffabcef50697c95ff864c99138ea3512dc3cc8ebca8755f51e96b5",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"

@@ -30,6 +30,7 @@
     "audit:motion": "tsx scripts/motion-audit.ts",
     "audit:type": "tsx scripts/type-audit.ts",
     "audit:rig": "tsx scripts/rig-audit.ts",
+    "audit:face": "tsx scripts/face-audit.ts",
     "audit:body": "tsx scripts/body-audit.ts",
     "audit:reaction": "tsx scripts/reaction-audit.ts",
     "audit:rig:proof": "node scripts/rig-seam-proof.mjs",

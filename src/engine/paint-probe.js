@@ -17,6 +17,7 @@
   window.__paintProbe = true;
   window.__textBoxes = [];
   window.__rigRecords = [];
+  window.__focusBoxes = [];
 
   function transform(ctx) {
     const m = ctx.getTransform ? ctx.getTransform() : null;
@@ -39,6 +40,93 @@
       y: Math.round(top * 10) / 10,
       w: Math.round((Math.max(...xs) - left) * 10) / 10,
       h: Math.round((Math.max(...ys) - top) * 10) / 10,
+    };
+  }
+
+  /**
+   * Sample the face box in face-local space. A head turn or camera move is
+   * removed by the inverse matrix; what remains is the expression (plus a hand
+   * that crosses the window, which the audit reports rather than hides).
+   */
+  function sampleFace(ctx, character, anchor) {
+    const grid = 8;
+    const m = anchor.m;
+    const size = anchor.size;
+    const local = anchor.local;
+    const [ma, mb, mc, md, me, mf] = m;
+    const det = ma * md - mb * mc;
+    if (!(Math.abs(det) > 1e-9) || !(size[0] > 4) || !(size[1] > 4)) {
+      return { kind: "faceSample", character, reason: "bad-anchor", grid, cells: [], validCells: 0 };
+    }
+    const hw = size[0] / 2;
+    const hh = size[1] / 2;
+    const window = { x0: -0.85, x1: 0.85, y0: -0.72, y1: 0.95 };
+    const corners = [
+      [local[0] + window.x0 * hw, local[1] + window.y0 * hh],
+      [local[0] + window.x1 * hw, local[1] + window.y0 * hh],
+      [local[0] + window.x1 * hw, local[1] + window.y1 * hh],
+      [local[0] + window.x0 * hw, local[1] + window.y1 * hh],
+    ].map(([x, y]) => [ma * x + mc * y + me, mb * x + md * y + mf]);
+    const xs = corners.map(([x]) => x);
+    const ys = corners.map(([, y]) => y);
+    const canvas = ctx.canvas;
+    const left = Math.max(0, Math.floor(Math.min(...xs)));
+    const top = Math.max(0, Math.floor(Math.min(...ys)));
+    const right = Math.min(canvas.width, Math.ceil(Math.max(...xs)));
+    const bottom = Math.min(canvas.height, Math.ceil(Math.max(...ys)));
+    if (!(right > left) || !(bottom > top)) {
+      return {
+        kind: "faceSample",
+        character,
+        reason: "bad-bounds",
+        grid,
+        cells: [],
+        validCells: 0,
+        deviceBox: { x: left, y: top, w: right - left, h: bottom - top },
+        canvas: [canvas.width, canvas.height],
+      };
+    }
+    let image;
+    try {
+      image = ctx.getImageData(left, top, right - left, bottom - top);
+    } catch {
+      return { kind: "faceSample", character, reason: "tainted", grid, cells: [], validCells: 0 };
+    }
+    const sums = Array.from({ length: grid * grid * 3 }, () => 0);
+    const counts = new Array(grid * grid).fill(0);
+    for (let y = top; y < bottom; y += 1) {
+      for (let x = left; x < right; x += 1) {
+        const lx = (md * (x + 0.5 - me) - mc * (y + 0.5 - mf)) / det;
+        const ly = (-mb * (x + 0.5 - me) + ma * (y + 0.5 - mf)) / det;
+        const u = (lx - local[0]) / hw;
+        const v = (ly - local[1]) / hh;
+        if (u < window.x0 || u > window.x1 || v < window.y0 || v > window.y1) continue;
+        const gx = Math.max(0, Math.min(grid - 1, Math.floor(((u - window.x0) / (window.x1 - window.x0)) * grid)));
+        const gy = Math.max(0, Math.min(grid - 1, Math.floor(((v - window.y0) / (window.y1 - window.y0)) * grid)));
+        const cell = gy * grid + gx;
+        const at = ((y - top) * (right - left) + (x - left)) * 4;
+        sums[cell * 3] += image.data[at] ?? 0;
+        sums[cell * 3 + 1] += image.data[at + 1] ?? 0;
+        sums[cell * 3 + 2] += image.data[at + 2] ?? 0;
+        counts[cell] += 1;
+      }
+    }
+    const cells = new Array(grid * grid * 3).fill(-1);
+    let validCells = 0;
+    for (let cell = 0; cell < grid * grid; cell += 1) {
+      if ((counts[cell] ?? 0) < 2) continue;
+      validCells += 1;
+      for (let c = 0; c < 3; c += 1) {
+        cells[cell * 3 + c] = Math.round((sums[cell * 3 + c] ?? 0) / (counts[cell] ?? 1));
+      }
+    }
+    return {
+      kind: "faceSample",
+      character,
+      grid,
+      cells,
+      validCells,
+      deviceBox: { x: left, y: top, w: right - left, h: bottom - top },
     };
   }
 
@@ -103,19 +191,58 @@
     };
   }
 
+  // ---- focus ---------------------------------------------------------------
+  // A recipe says where the solid focus object was drawn. The probe records the
+  // device-space box; it never infers it from a glow.
+  const focusAnchor = window.focusAnchor;
+  if (typeof focusAnchor === "function") {
+    window.focusAnchor = function (ctx, name, x, y, w, h) {
+      const alpha = typeof ctx.globalAlpha === "number" ? ctx.globalAlpha : 1;
+      if (alpha > 0.05 && w > 0 && h > 0) {
+        window.__focusBoxes.push({
+          kind: "focus",
+          name: String(name || ""),
+          ...toDevice(transform(ctx), x, y, x + w, y + h),
+          order: window.__focusBoxes.length + 1,
+          alpha: Number(alpha.toFixed(3)),
+        });
+      }
+      return focusAnchor.apply(this, arguments);
+    };
+  }
+
   // ---- rig -----------------------------------------------------------------
   // A character is tagged for the duration of its draw so a joint can be
   // attributed. Nothing is recorded unless drawCharacter is actually called.
   let character = "";
+  let lastFace = null;
   const drawCharacter = window.drawCharacter;
   if (typeof drawCharacter === "function") {
     window.drawCharacter = function (name) {
       const previous = character;
+      const previousFace = lastFace;
       character = String(name || "");
+      lastFace = null;
       try {
-        return drawCharacter.apply(this, arguments);
+        const result = drawCharacter.apply(this, arguments);
+        if (lastFace) {
+          const sample = sampleFace(lastFace.ctx, character, lastFace);
+          window.__rigRecords.push(
+            sample ?? {
+              kind: "faceSample",
+              character,
+              grid: 8,
+              cells: [],
+              validCells: 0,
+              reason: "no-face-box",
+              deviceBox: { x: 0, y: 0, w: 0, h: 0 },
+            },
+          );
+        }
+        return result;
       } finally {
         character = previous;
+        lastFace = previousFace;
       }
     };
   }
@@ -168,6 +295,14 @@
   if (typeof rigAnchor === "function") {
     window.rigAnchor = function (ctx, part, x, y, w, h) {
       const m = transform(ctx);
+      if (part === "face") {
+        lastFace = {
+          ctx,
+          local: [Number(x) || 0, Number(y) || 0],
+          size: [Number(w) || 0, Number(h) || 0],
+          m: [m.a, m.b, m.c, m.d, m.e, m.f],
+        };
+      }
       window.__rigRecords.push({
         kind: "anchor",
         character,

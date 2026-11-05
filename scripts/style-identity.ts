@@ -314,12 +314,32 @@ const collageReportPath = resolve(root, "build", score.id, "frame-report.json");
 const collageReport = existsSync(collageReportPath)
   ? readFrameReport(collageReportPath)
   : null;
+if (collageReport && collageReport.score !== scoreHash) {
+  console.error(
+    "style:identity: the collage report measured a different score; run `npm run collage` again",
+  );
+  process.exit(1);
+}
+const collageHash = collageReport ? fileHash(collageReportPath) : null;
 
 const sceneMetrics: SceneIdentityInput[] = [];
 if (scenesDoc && videoMode && existsSync(resolve(root, specimen))) {
-  let at = 0;
+  // Use the shots' own spans, not the authored scene seconds: the cut may
+  // differ from the scene by the allowed slack, and the palette audit maps the
+  // same frames through the same shot spans.
+  const windows = new Map<string, { from: number; to: number }>();
+  for (const plan of planShots) {
+    if (!plan.scene) continue;
+    const current = windows.get(plan.scene);
+    const from = Math.min(current?.from ?? plan.start, plan.start);
+    const to = Math.max(current?.to ?? plan.start + plan.duration, plan.start + plan.duration);
+    windows.set(plan.scene, { from, to });
+  }
   for (const scene of scenesDoc.scenes) {
-    const measured = windowMetrics(resolve(root, specimen), at, scene.duration);
+    const window = windows.get(scene.id);
+    const measured = window
+      ? windowMetrics(resolve(root, specimen), window.from, window.to - window.from)
+      : { metrics: { lumaMean: null, saturationMean: null, edgesMean: null }, frames: 0 };
     const resolvedScene = resolveSceneBand(identity.filmBands, score.mood, scene.mood);
     sceneMetrics.push({
       scene: scene.id,
@@ -329,7 +349,6 @@ if (scenesDoc && videoMode && existsSync(resolve(root, specimen))) {
       metrics: measured.metrics,
       samples: measured.frames,
     });
-    at += scene.duration;
   }
 } else if (scenesDoc && collageReport) {
   const sceneById = new Map(scenesDoc.scenes.map((scene) => [scene.id, scene]));
@@ -414,6 +433,7 @@ function measureVideo(base: FrameReport): FrameReport {
       cast: shot.direction.cast ?? [],
       probe: undefined,
       boxOverride: source.box,
+      focusOverride: source.focus,
     });
   });
   return {
@@ -449,6 +469,23 @@ if (videoMode) {
     .digest("hex")}`;
 }
 
+const activeFrameReport: FrameReport | null = frameReportPath
+  ? readFrameReport(frameReportPath)
+  : collageReport;
+const focusRows = score.shots.flatMap((shot, index) => {
+  const anchors = shot.visual?.focusAnchors ?? [];
+  const measured = activeFrameReport?.shots.find((entry) => entry.shot === planShots[index]?.id);
+  return anchors.map((anchor) => ({
+    shot: planShots[index]?.id ?? `s${String(index + 1).padStart(2, "0")}`,
+    name: anchor.name,
+    kind: anchor.kind,
+    shortSideShare:
+      measured?.focus?.find(
+        (entry) => entry.name === anchor.name && entry.kind === anchor.kind,
+      )?.shortSideShare ?? null,
+  }));
+});
+
 const activeBands = resolveFilmBands(identity.filmBands, score.mood);
 const result = checkStyleIdentity({
   shots: score.shots.length,
@@ -462,6 +499,7 @@ const result = checkStyleIdentity({
   performanceMode: score.performance?.mode,
   frame,
   scenes: sceneMetrics,
+  focus: focusRows,
 });
 const findings = [...scoreFindings, ...sceneDeclarations, ...result.findings];
 
@@ -472,6 +510,7 @@ const report = {
   score: scoreHash,
   identityHash,
   scenesHash,
+  collageHash,
   manifestHash,
   stage: videoMode ? "video" : "collage",
   specimen,
@@ -491,6 +530,10 @@ const report = {
   metrics,
   filmBands: activeBands,
   scenes: sceneMetrics,
+  focus: {
+    minShortSide: identity.composition.focus?.minShortSide ?? null,
+    rows: focusRows,
+  },
   frame,
   findings,
 };
@@ -512,6 +555,11 @@ console.log(
     `sat ${metrics.saturationMean?.toFixed(1) ?? "?"} (${activeBands.saturationMean[0]}-${activeBands.saturationMean[1]}) · ` +
     `edges ${metrics.edgesMean?.toFixed(1) ?? "?"} (${activeBands.edgesMean[0]}-${activeBands.edgesMean[1]})`,
 );
+for (const row of focusRows) {
+  console.log(
+    `identity: focus ${row.shot} ${row.kind} ${row.name} · ${row.shortSideShare === null ? "unmeasured" : `${(row.shortSideShare * 100).toFixed(1)}%`} (floor ${((identity.composition.focus?.minShortSide ?? 0) * 100).toFixed(0)}%)`,
+  );
+}
 for (const scene of sceneMetrics) {
   console.log(
     `identity: scene ${scene.scene} · ${scene.mood ?? "absolute"}${scene.inherited ? " (inherited)" : ""} · ` +

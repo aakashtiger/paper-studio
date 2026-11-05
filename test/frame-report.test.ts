@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   analyzeRgb,
   probeBox,
+  resolveFocusMeasurements,
   summarize,
   type ProbeFrame,
   type ShotFrameReport,
@@ -125,6 +126,36 @@ test("the summary measures centroid, height rhythm, bars and contrast", () => {
   assert.equal(summary.barShotShare, 1 / 3);
   assert.equal(summary.blueOnBlueShare, 1 / 3);
   assert.equal(summary.localContrastShare, 2 / 3);
+});
+
+test("a focus box is measured and clipped in device space", () => {
+  const probe: ProbeFrame = {
+    time: 1,
+    rigRecords: [],
+    focusBoxes: [
+      { kind: "focus", name: "diya", x: 100, y: 200, w: 160, h: 120, order: 1, alpha: 1 },
+      { kind: "focus", name: "diya", x: 100, y: 200, w: 80, h: 60, order: 2, alpha: 0.02 },
+    ],
+  };
+  const rows = resolveFocusMeasurements({
+    anchors: [{ name: "diya", kind: "object" }],
+    probe,
+    frameWidth: 1920,
+    frameHeight: 1080,
+  });
+  assert.equal(rows[0]?.shortSideShare, Number((120 / 1080).toFixed(4)));
+  assert.equal(rows[0]?.paintOrder, 1);
+  const clipped = resolveFocusMeasurements({
+    anchors: [{ name: "diya", kind: "object" }],
+    probe: {
+      ...probe,
+      focusBoxes: [{ kind: "focus", name: "diya", x: 1900, y: 0, w: 100, h: 100, order: 1, alpha: 1 }],
+    },
+    frameWidth: 1920,
+    frameHeight: 1080,
+  });
+  assert.equal(clipped[0]?.clipped, true);
+  assert.equal(clipped[0]?.shortSideShare, Number((20 / 1080).toFixed(4)));
 });
 
 test("the probe aperture uses the chest, head and leg targets", () => {

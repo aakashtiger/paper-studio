@@ -352,6 +352,18 @@ not trusted by presence. Delivered picture `sha256:a35472f3def7…`; `gate:7`
 **29 checks**, `film:review` **PASS**, palette 4 families / top 98.6%, ASR
 97.9%, **526 tests**.
 
+**The focus has a floor, scenes have families, faces have pixels (0061).**
+`visual.focusAnchors` names what the eye must land on; a pack `focusAnchor`
+records the solid object in device space, and `style:identity` refuses a
+declared focus below **10%** of the frame's short side. The proof's s01 diya is
+**12.8%** and the child's face **13.1%**. `audit:palette` now computes the same
+hue-family rule per scene: sc01 **4 / 99.1%**, sc02 **3 / 99.5%**, sc03 **2 /
+99.9%**, while the film stays **4 / 98.6%**. The paint probe samples each face
+in face-local space; `npm run audit:face` measures the two real expression
+changes — s03 awe→kind **0.115**, s04 blessing→giving **0.128** — and refuses a
+no-change or one-frame snap. `inspect` runs motion/type/rig/face from one probe;
+`gate:7` is **30 checks**. Delivered picture `sha256:a35472f3def7…`, 539 tests.
+
 **The visual is authored before the recipe is chosen (0051).** A scene publishes
 `visual` (subject, setting, action, props); a shot publishes `visual` (shows,
 action, focus, the line it answers, why). `visual:check` refuses a missing brief,
@@ -401,11 +413,11 @@ narration is still spoken from the score (the text is proved identical, one
 stage from 0025); scenes are checked against the read, not auto-fitted;
 props and sets are not derived from shot slots; song films are a marker;
 backgrounds are not cached; the collage and the storyboard each paint their
-own frames; a named focus has no size floor (the s01 lamp is large, but a future
-shot can still name a tiny object); palette families are checked on the film,
-not per scene; the face proof is the vector plus the sheet and stills, not a
-face-pixel audit. P0.5 (the 7-analysis/4-rebuild workflow) and the `reproduce`
-legacy marker remain parked; music and semantic vision remain parked.
+own frames; the focus floor proves size, not occlusion, and is sampled at the
+collage instant; the face audit paints probe frames and has no direct video
+hash; `focusAnchors` is optional, so a shot can still omit a focus declaration.
+P0.5 (the 7-analysis/4-rebuild workflow) and the `reproduce` legacy marker
+remain parked; music and semantic vision remain parked.
 `paint-match` repaints 61 frames in fresh browsers (~73 s), which is the price
 of that proof rather than waste. No new film starts until the user says so.
 

@@ -21,13 +21,18 @@ import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileHash, videoStreamHash } from "../src/engine/video.js";
+import { ScenesSchema } from "../src/engine/scenes.js";
+import {
+  HUE_BINS,
+  PALETTE_POLICY,
+  hueBin,
+  hueFamilyStats,
+  sceneFrameMap,
+} from "../src/engine/palette.js";
 
 const WIDTH = 160;
 const HEIGHT = 90;
 const SAT_MIN = 0.3;
-const FAMILY_MIN = 0.05; // a hue must hold this share to count as a family
-const MAX_FAMILIES = 5;
-const TOP_FAMILIES = 0.85;
 const MAX_OUTLIER = 0.005; // retained for the audit's historical field
 /**
  * The most of a frame that may sit at either end of the scale. Measured, not
@@ -52,8 +57,24 @@ function arg(name: string): string | undefined {
 }
 
 const root = process.cwd();
-const score = JSON.parse(readFileSync(resolve(root, file), "utf8")) as { id: string; fps?: number; duration: number };
+const score = JSON.parse(readFileSync(resolve(root, file), "utf8")) as {
+  id: string;
+  fps?: number;
+  duration: number;
+  style?: string;
+  shots?: { id: string; duration: number; scene?: string }[];
+};
 const fps = Number(score.fps ?? 30);
+const tokensPath = resolve(root, "styles", score.style ?? "", "tokens.json");
+const tokens = existsSync(tokensPath)
+  ? (JSON.parse(readFileSync(tokensPath, "utf8")) as {
+      identity?: { palette?: { maxHueFamilies?: number; minFamilyShare?: number; topFamiliesShare?: number } };
+    })
+  : {};
+const palettePolicy = {
+  ...PALETTE_POLICY,
+  ...(tokens.identity?.palette ?? {}),
+};
 const video = resolve(root, arg("video") ?? resolve("films", score.id, `${score.id}.mp4`));
 if (!existsSync(video)) throw new Error(`video not found: ${video}`);
 
@@ -74,6 +95,21 @@ const frames = Math.floor(pixels.length / frameSize);
 // a clean palette for the frames it happened to read.
 const expectedFrames = Math.round(score.duration * fps);
 const coverageOk = frames === expectedFrames;
+const scenesPath = resolve(root, "films", score.id, "scenes.json");
+const scenesDoc = existsSync(scenesPath)
+  ? ScenesSchema.parse(JSON.parse(readFileSync(scenesPath, "utf8").replace(/^\uFEFF/, "")))
+  : null;
+const frameScene = scenesDoc
+  ? sceneFrameMap(score.shots ?? [], fps, frames)
+  : [];
+const sceneBins = new Map<string, number[]>();
+const sceneCounts = new Map<string, number>();
+if (scenesDoc) {
+  for (const scene of scenesDoc.scenes) {
+    sceneBins.set(scene.id, new Array(HUE_BINS).fill(0));
+    sceneCounts.set(scene.id, 0);
+  }
+}
 let worstFrame = -1;
 let worstOutlier = 0;
 let saturatedSum = 0;
@@ -81,7 +117,8 @@ let worstClipFrame = -1;
 let worstClip = 0;
 let blownTotal = 0;
 let crushedTotal = 0;
-const bins = new Array(12).fill(0);
+const bins = new Array(HUE_BINS).fill(0);
+let unassignedFrames = 0;
 
 for (let frame = 0; frame < frames; frame++) {
   const base = frame * frameSize;
@@ -97,21 +134,21 @@ for (let frame = 0; frame < frames; frame++) {
     const hi = Math.max(r8, g8, b8);
     if (lo >= BLOWN) blown++;
     else if (hi <= CRUSHED) crushed++;
-    const r = r8 / 255;
-    const g = g8 / 255;
-    const b = b8 / 255;
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    const delta = max - min;
-    const sat = max === 0 ? 0 : delta / max;
-    if (sat < SAT_MIN || delta < 0.08) continue;
+    const bin = hueBin(r8, g8, b8);
+    if (bin === null) continue;
     saturated++;
-    let hue = 0;
-    if (max === r) hue = 60 * (((g - b) / delta) % 6);
-    else if (max === g) hue = 60 * ((b - r) / delta + 2);
-    else hue = 60 * ((r - g) / delta + 4);
-    if (hue < 0) hue += 360;
-    bins[Math.min(11, Math.floor(hue / 30))]++;
+    bins[bin]++;
+    const scene = frameScene[frame];
+    if (scene && sceneBins.has(scene)) {
+      const row = sceneBins.get(scene);
+      if (row && bin < row.length) row[bin] = (row[bin] ?? 0) + 1;
+    }
+  }
+  const scene = frameScene[frame];
+  if (scene && sceneCounts.has(scene)) {
+    sceneCounts.set(scene, (sceneCounts.get(scene) ?? 0) + 1);
+  } else {
+    unassignedFrames++;
   }
   saturatedSum += saturated;
   blownTotal += blown;
@@ -123,18 +160,38 @@ for (let frame = 0; frame < frames; frame++) {
   }
 }
 
-const saturatedTotal = bins.reduce((sum, value) => sum + value, 0);
-const shares = bins.map((value) => (saturatedTotal > 0 ? value / saturatedTotal : 0));
-const familyCount = shares.filter((share) => share >= FAMILY_MIN).length;
-const topFamilyShare = [...shares]
-  .sort((a, b) => b - a)
-  .slice(0, MAX_FAMILIES)
-  .reduce((sum, share) => sum + share, 0);
-const familyPass =
-  saturatedTotal === 0 || (familyCount <= MAX_FAMILIES && topFamilyShare >= TOP_FAMILIES);
-const palettePass = familyPass;
+const globalStats = hueFamilyStats(bins, palettePolicy);
+const familyCount = globalStats.hueFamilies;
+const topFamilyShare = globalStats.topFamiliesShare;
+const palettePass = globalStats.pass;
 const clippingPass = worstClip <= MAX_CLIPPED;
-const pass = palettePass && clippingPass && coverageOk;
+const sceneRows = scenesDoc
+  ? scenesDoc.scenes.map((scene) => {
+      const stats = hueFamilyStats(sceneBins.get(scene.id) ?? [], palettePolicy);
+      const sceneFrames = sceneCounts.get(scene.id) ?? 0;
+      return {
+        id: scene.id,
+        frames: sceneFrames,
+        saturatedPixels: stats.saturatedPixels,
+        hueFamilies: stats.hueFamilies,
+        topFamiliesShare: Number(stats.topFamiliesShare.toFixed(3)),
+        measured: stats.measured,
+        pass: sceneFrames > 0 && stats.pass,
+        hueBins30deg: sceneBins.get(scene.id) ?? [],
+      };
+    })
+  : null;
+const scenePalette = sceneRows
+  ? {
+      pass: unassignedFrames === 0 && sceneRows.length > 0 && sceneRows.every((row) => row.pass),
+      score: fileHash(resolve(root, file)),
+      scenesHash: fileHash(scenesPath),
+      policy: palettePolicy,
+      unassignedFrames,
+      scenes: sceneRows,
+    }
+  : null;
+const pass = palettePass && clippingPass && coverageOk && (scenePalette?.pass ?? true);
 // Which film was measured: the audit reads a file, and the file is what the
 // gate has to agree on. Without this the row could read a palette pass from a
 // render the gate never saw. The hash is the video stream, so re-cutting the
@@ -146,6 +203,8 @@ const report = {
   video,
   videoHash,
   videoFileHash,
+  paletteCode: fileHash(resolve(root, "src/engine/palette.ts")),
+  policy: palettePolicy,
   width,
   height,
   frames,
@@ -155,6 +214,7 @@ const report = {
   maxOutlierFraction: Number(worstOutlier.toFixed(5)),
   hueFamilies: familyCount,
   topFamiliesShare: Number(topFamilyShare.toFixed(3)),
+  scenePalette,
   worstFrame,
   meanSaturatedPixels: Number((saturatedSum / Math.max(1, frames)).toFixed(1)),
   hueBins30deg: bins,
@@ -183,6 +243,13 @@ writeFileSync(out, JSON.stringify(report, null, 2) + "\n", "utf8");
 console.log(
   `palette: ${familyCount} hue famil${familyCount === 1 ? "y" : "ies"} · top ${(topFamilyShare * 100).toFixed(1)}% · ${palettePass ? "pass" : "FAIL"}`,
 );
+if (scenePalette) {
+  for (const scene of scenePalette.scenes) {
+    console.log(
+      `scene ${scene.id}: ${scene.frames} frames · ${scene.saturatedPixels} saturated · ${scene.hueFamilies} families · top ${(scene.topFamiliesShare * 100).toFixed(1)}% · ${scene.pass ? "pass" : "FAIL"}`,
+    );
+  }
+}
 console.log(
   `clipping: worst ${(worstClip * 100).toFixed(2)}% of frame ${worstClipFrame} (${report.clipping.worst.time ?? "?"}s) · ${clippingPass ? "pass" : "FAIL"}`,
 );

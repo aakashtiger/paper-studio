@@ -83,6 +83,7 @@ export type CompositionBands = {
   localContrastMin: number;
   localContrastMedian: number;
   localContrastShare: number;
+  focus?: { minShortSide: number };
 };
 
 export type CastIdentity = {
@@ -157,6 +158,7 @@ export type FrameSummary = {
 export type IdentityFindingCode =
   | "identity:cast"
   | "identity:proportion"
+  | "identity:focus"
   | "identity:staged"
   | "identity:scene-mood"
   | "identity:scene-unmeasured"
@@ -259,6 +261,37 @@ export function checkSceneMoodDeclarations(input: {
   return findings;
 }
 
+export type FocusEvidence = {
+  shot: string;
+  name: string;
+  kind: "object" | "face" | "body";
+  shortSideShare: number | null;
+};
+
+/** A declared focus must have a measured box, and that box must be large enough. */
+export function checkFocusSizes(
+  rows: readonly FocusEvidence[],
+  minShortSide?: number,
+): IdentityFinding[] {
+  const findings: IdentityFinding[] = [];
+  for (const row of rows) {
+    if (row.shortSideShare === null || !Number.isFinite(row.shortSideShare)) {
+      findings.push({
+        code: "identity:focus",
+        message: `${row.shot} focus ${row.kind} "${row.name}" has no measured box - the probe never drew it, or it is entirely off frame`,
+      });
+      continue;
+    }
+    if (minShortSide !== undefined && row.shortSideShare + 1e-9 < minShortSide) {
+      findings.push({
+        code: "identity:focus",
+        message: `${row.shot} focus ${row.kind} "${row.name}" is ${(row.shortSideShare * 100).toFixed(1)}% of frame height; the style needs at least ${(minShortSide * 100).toFixed(0)}%`,
+      });
+    }
+  }
+  return findings;
+}
+
 export function checkStyleIdentity(input: {
   shots: number;
   stagedShots: number;
@@ -271,6 +304,7 @@ export function checkStyleIdentity(input: {
   performanceMode?: string;
   frame: FrameSummary | null;
   scenes?: readonly SceneIdentityInput[];
+  focus?: readonly FocusEvidence[];
 }): { findings: IdentityFinding[]; stagedRatio: number; stagedBand: StagedBand } {
   const findings: IdentityFinding[] = [];
   const stagedRatio = input.shots > 0 ? input.stagedShots / input.shots : 0;
@@ -459,6 +493,10 @@ export function checkStyleIdentity(input: {
         });
       }
     }
+  }
+
+  if (input.focus && input.focus.length > 0) {
+    findings.push(...checkFocusSizes(input.focus, input.composition.focus?.minShortSide));
   }
 
   if (!input.frame) {

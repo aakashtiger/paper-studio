@@ -313,6 +313,13 @@ function rigFor(name) {
   return entry.rig;
 }
 
+/* A focus box is a painter's claim, not a pixel guess. The probe wraps this
+ * no-op and records the box in device space; a recipe passes the solid object,
+ * never its glow or shadow. */
+function focusAnchor(ctx, name, x, y, w, h) {
+  return name;
+}
+
 function drawCharacter(name, x, y, scale, poseName, flip, poseOverride, time, extra = {}) {
   const rig = rigFor(name);
   const draw = window.CHARACTERS && window.CHARACTERS[rig];
