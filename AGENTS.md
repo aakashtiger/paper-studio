@@ -288,6 +288,16 @@ land **0–3 frames after the measured word** (12.40 s passes at +0.0, 12.30 s
 fails at −3.0). The frame audit now refuses a one-frame luma pop at a cut. The
 first film must author `word` events; Same Alarm has none. **493 tests.**
 
+**The portrait reel is delivered (0062).** `films/diwali-north/` is
+*The Road Home*: 60 s, 1080×1920, 19 shots, 16 lines, 181 words, 4/19 staged,
+mood `mixed`. It passes `gate:7` at **30 checks**, `film:review` **PASS**, ASR
+92.8%, palette 4 families / top 90.5%, motion floor 19/19, and the delivered
+picture is `sha256:d2948b8f9bea…`. The frame report now scales the probe box by
+the painted frame, so a 9:16 still is measured as 1080×1920, not as a landscape
+crop. The pack gained nineteen `p_*` portrait recipes; the 0.2.0 gate now
+proves **60 recipes** (22 pack + 38 film). The MP4 is `films/diwali-north/diwali-north.mp4`
+(git-ignored); the sheet is `build/diwali-north/final-sheet.png`.
+
 **The first film under the new order is *The Uber Cut* (`films/uber-model/`).**
 30 s, 10 shots, 5 lines, 91 words at 182 wpm, **84.6% voiced**, made through
 story -> beats -> voice -> scenes -> score -> cut. It passed `gate:7` at 24

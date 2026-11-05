@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080, height=1920">
+<script src="vendor/gsap.min.js"></script>
+<style>
+  @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-Regular.ttf"); font-display: block; }
+  @font-face { font-family: "Archivo Black"; src: url("assets/fonts/ArchivoBlack-Regular.ttf"); font-display: block; }
+  @font-face { font-family: "DMMono"; src: url("assets/fonts/DMMono-Regular.ttf"); font-display: block; }
+  @font-face { font-family: "Permanent Marker"; src: url("assets/fonts/PermanentMarker-Regular.ttf"); font-display: block; }
+  html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #0B1738; }
+  #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #0B1738; }
+  #out { display: block; width: 1080px; height: 1920px; }
+</style>
+</head>
+<body>
+<div data-hf-id="hf-diwali-north" id="root" data-composition-id="diwali-north" data-start="0" data-duration="60" data-fps="30" data-width="1080" data-height="1920">
+  <canvas data-hf-id="hf-diwali-north-canvas" id="out" class="clip" data-start="0" data-duration="60" data-track-index="0" width="1080" height="1920"></canvas>
+</div>
+
+<script src="vendor/core.js"></script>
+<script src="vendor/type.js"></script>
+<script src="vendor/characters.js"></script>
+<script src="vendor/office.js"></script>
+<script src="vendor/props.js"></script>
+<script src="vendor/scene_kit.js"></script>
+<script>
+  var cv = document.getElementById("out");
+  var ctx = cv.getContext("2d", { alpha: false });
+</script>
+<script src="score-data.js"></script>
+<script src="../../styles/paper-kpop/canvas/recipes.js"></script>
+<script src="vendor/portrait-recipes.js"></script>
+<script src="vendor/diwali-recipes.js"></script>
+<script src="painter.js"></script>
+</body>
+</html>

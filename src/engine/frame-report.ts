@@ -495,18 +495,22 @@ export function analyzeRgb(input: {
     lumaTotal += luma(r, g, b);
   }
 
+  // The probe's anchors are in the frame's own device pixels. Scale them by
+  // the frame we actually painted, not by 16:9: a 9:16 still is 1080x1920,
+  // and reading its aperture as if it were 1920x1080 put the box (and the
+  // local contrast around it) in the wrong place.
   const rawBox = input.boxOverride
     ? null
-    : probeBox(input.probe, input.cast, 1920, 1080);
+    : probeBox(input.probe, input.cast, frameWidth, frameHeight);
   const box: SubjectBox | null = input.boxOverride
     ? input.boxOverride
     : rawBox
       ? {
           ...rawBox,
-          x: (rawBox.x * width) / 1920,
-          y: (rawBox.y * height) / 1080,
-          w: (rawBox.w * width) / 1920,
-          h: (rawBox.h * height) / 1080,
+          x: (rawBox.x * width) / frameWidth,
+          y: (rawBox.y * height) / frameHeight,
+          w: (rawBox.w * width) / frameWidth,
+          h: (rawBox.h * height) / frameHeight,
         }
       : null;
   let contrast: ShotFrameReport["contrast"] = null;

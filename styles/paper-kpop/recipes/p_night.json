@@ -1,0 +1,50 @@
+{
+  "id": "p_night",
+  "beatRoles": [
+    "open",
+    "detail",
+    "close"
+  ],
+  "duration": {
+    "min": 1.5,
+    "max": 4.5,
+    "default": 3.3
+  },
+  "transitionOut": "cut",
+  "failureModes": [
+    "a picture that does not show the subject the shot names",
+    "a label outside the safe area",
+    "a subject that floats without a surface or a shadow"
+  ],
+  "camera": {
+    "op": "camera",
+    "move": "push_in",
+    "from": 1,
+    "to": 1.04,
+    "ease": "easeOut"
+  },
+  "slots": [],
+  "assets": [
+    "texture.halftone"
+  ],
+  "composition": [
+    {
+      "op": "camera",
+      "move": "push_in",
+      "from": 1,
+      "to": 1.04,
+      "ease": "easeOut"
+    },
+    {
+      "op": "transition",
+      "kind": "cut"
+    }
+  ],
+  "subjects": [
+    "diya",
+    "field",
+    "stars",
+    "flame"
+  ],
+  "subject": "a portrait paper scene with diya, field, stars, flame"
+}

@@ -1,0 +1,133 @@
+{
+  "id": "diwali-north",
+  "title": "The Road Home",
+  "duration": 60,
+  "audience": "North Indian families and a phone-first festival audience; a one-minute portrait reel explaining why Diwali is celebrated",
+  "tone": "warm, clear, storybook; a grandmother answering a child, not a lecture",
+  "logline": "A child asks why the whole street is lit; the answer is a city that once waited for Rama to come home, and a festival that keeps that welcome alive.",
+  "spine": {
+    "want": "to understand why the lamps are lit",
+    "obstacle": "Diwali is many stories at once, and the North Indian story is often reduced to a slogan",
+    "turn": "the lamps are a homecoming: Ayodhya lit the road for Rama after fourteen years",
+    "button": "the child lights the next diya, so the welcome continues"
+  },
+  "pace": {
+    "wpm": [
+      180,
+      190
+    ],
+    "medianShot": [
+      3,
+      3.5
+    ]
+  },
+  "narration": [
+    {
+      "id": "v01",
+      "beat": "b01",
+      "text": "Why do we light so many lamps? the child asks.",
+      "tone": "warm"
+    },
+    {
+      "id": "v02",
+      "beat": "b02",
+      "text": "Because a whole city once waited for someone to come home.",
+      "tone": "plain"
+    },
+    {
+      "id": "v03",
+      "beat": "b03",
+      "text": "In North India, Diwali remembers Rama's return to Ayodhya",
+      "tone": "plain"
+    },
+    {
+      "id": "v04",
+      "beat": "b04",
+      "text": "with Sita and Lakshmana, after fourteen years of exile and his victory over Ravana.",
+      "tone": "story"
+    },
+    {
+      "id": "v05",
+      "beat": "b05",
+      "text": "On the darkest night of Kartik, the people cleaned their homes,",
+      "tone": "wonder"
+    },
+    {
+      "id": "v06",
+      "beat": "b06",
+      "text": "lit a diya at every door, and the road home became a river of light.",
+      "tone": "wonder"
+    },
+    {
+      "id": "v07",
+      "beat": "b07",
+      "text": "That is the heart of Diwali: light over darkness, good over evil,",
+      "tone": "firm"
+    },
+    {
+      "id": "v08",
+      "beat": "b08",
+      "text": "and a home that keeps a lamp burning.",
+      "tone": "warm"
+    },
+    {
+      "id": "v09",
+      "beat": "b09",
+      "text": "The festival is five days: Dhanteras, Chhoti Diwali, Lakshmi Puja,",
+      "tone": "plain"
+    },
+    {
+      "id": "v10",
+      "beat": "b10",
+      "text": "Govardhan Puja, and Bhai Dooj, the bond of brothers and sisters.",
+      "tone": "plain"
+    },
+    {
+      "id": "v11",
+      "beat": "b11",
+      "text": "Homes are cleaned, rangoli drawn at the door, sweets shared,",
+      "tone": "warm"
+    },
+    {
+      "id": "v12",
+      "beat": "b12",
+      "text": "and Lakshmi welcomed with lamps and a prayer for prosperity and peace.",
+      "tone": "warm"
+    },
+    {
+      "id": "v13",
+      "beat": "b13",
+      "text": "In the north, grain and cattle are honoured on Govardhan;",
+      "tone": "plain"
+    },
+    {
+      "id": "v14",
+      "beat": "b14",
+      "text": "brothers and sisters mark Bhai Dooj with a tilak and a shared meal.",
+      "tone": "warm"
+    },
+    {
+      "id": "v15",
+      "beat": "b15",
+      "text": "So the diya is not only a lamp.",
+      "tone": "quiet"
+    },
+    {
+      "id": "v16",
+      "beat": "b16",
+      "text": "It is a city remembering, a family giving, and a promise that light returns to every home.",
+      "tone": "button"
+    }
+  ],
+  "mustSay": [
+    "Diwali",
+    "Rama",
+    "Ayodhya",
+    "North India"
+  ],
+  "voice": {
+    "provider": "kokoro",
+    "voiceId": "af_heart",
+    "speed": 1.1
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "diwali-north",
+  "title": "The Road Home",
+  "audience": "North Indian families and a phone-first festival audience; a one-minute portrait reel explaining why Diwali is celebrated",
+  "style": "paper-kpop",
+  "styleVersion": "0.2.0",
+  "aspect": "9:16",
+  "duration": 60,
+  "fps": 30,
+  "audioMode": "narration",
+  "references": [
+    "pattachitra",
+    "rajasthani-miniature",
+    "papercut-red"
+  ],
+  "mustSay": [
+    "Diwali",
+    "Rama",
+    "Ayodhya",
+    "North India"
+  ],
+  "notes": "Portrait 9:16 test film. The question is why Diwali is celebrated in North India. Facts: Diwali is the festival of lights, a row of clay lamps (diyas); in North India it remembers Rama's return to Ayodhya with Sita and Lakshmana after fourteen years of exile and the defeat of Ravana; the people lit lamps to welcome them home. It is also the night Lakshmi is welcomed, and the five-day sequence is Dhanteras, Naraka Chaturdashi/Chhoti Diwali, Lakshmi Puja, Govardhan Puja and Bhai Dooj. The film says the regional story plainly and does not claim every family tells it the same way. Public sources checked: Britannica, Diwali; Wikipedia, Diwali; National Geographic Kids, Diwali; Chotteylal and Sons, five days of Diwali. No invented date, city, person, family, price or political claim. The village/Ayodhya is a paper evocation, not a historical reconstruction."
+}

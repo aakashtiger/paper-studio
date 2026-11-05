@@ -1,0 +1,370 @@
+{
+  "id": "diwali-north",
+  "scenes": [
+    {
+      "id": "sc01",
+      "beat": "b01",
+      "title": "the child asks",
+      "place": "a courtyard doorway, one diya",
+      "summary": "The child asks why the street is full of lamps.",
+      "cast": [
+        "Child"
+      ],
+      "lines": [
+        "v01"
+      ],
+      "duration": 3.3,
+      "visual": {
+        "subject": "a child and one lit diya",
+        "setting": "indigo night, cream step",
+        "action": "the child kneels into the flame",
+        "props": [
+          "diya",
+          "doorway",
+          "marigold"
+        ]
+      }
+    },
+    {
+      "id": "sc02",
+      "beat": "b02",
+      "title": "a city waits",
+      "place": "Ayodhya at night",
+      "summary": "A whole city waits for a homecoming.",
+      "cast": [],
+      "lines": [
+        "v02"
+      ],
+      "duration": 3.1,
+      "visual": {
+        "subject": "a city silhouette under a wide sky",
+        "setting": "indigo, moon, roofs, river",
+        "action": "the city holds still, one lamp lit",
+        "props": [
+          "city",
+          "moon",
+          "river",
+          "diya"
+        ]
+      }
+    },
+    {
+      "id": "sc03",
+      "beat": "b03",
+      "title": "the name Ayodhya",
+      "place": "the road to Ayodhya",
+      "summary": "The story names Rama's return to Ayodhya.",
+      "cast": [],
+      "lines": [
+        "v03"
+      ],
+      "duration": 3.8,
+      "visual": {
+        "subject": "an arch and a road",
+        "setting": "ochre wall, indigo sky",
+        "action": "three silhouettes walk toward the gate",
+        "props": [
+          "arch",
+          "road",
+          "gate"
+        ]
+      }
+    },
+    {
+      "id": "sc04",
+      "beat": "b04",
+      "title": "fourteen years",
+      "place": "a forest path",
+      "summary": "Fourteen years of exile and the victory over Ravana.",
+      "cast": [],
+      "lines": [
+        "v04"
+      ],
+      "duration": 5.3,
+      "visual": {
+        "subject": "a bow, a path and three small figures",
+        "setting": "dark forest, torn leaves",
+        "action": "the bow rises and the path opens",
+        "props": [
+          "bow",
+          "forest",
+          "path"
+        ]
+      }
+    },
+    {
+      "id": "sc05",
+      "beat": "b05",
+      "title": "the darkest night",
+      "place": "a dark field under Kartik",
+      "summary": "One flame in the darkest night.",
+      "cast": [],
+      "lines": [
+        "v05"
+      ],
+      "duration": 3.4,
+      "visual": {
+        "subject": "one large diya in a dark field",
+        "setting": "ink blue, stars, clay",
+        "action": "the wick catches and the flame grows",
+        "props": [
+          "diya",
+          "stars",
+          "clay"
+        ]
+      }
+    },
+    {
+      "id": "sc06",
+      "beat": "b06",
+      "title": "a diya at every door",
+      "place": "a street of doorways",
+      "summary": "Every door lights a lamp.",
+      "cast": [],
+      "lines": [
+        "v06"
+      ],
+      "duration": 3.8,
+      "visual": {
+        "subject": "doorways with lamps catching",
+        "setting": "ochre wall, indigo night",
+        "action": "the lamps catch one after another",
+        "props": [
+          "doorways",
+          "diya",
+          "marigold"
+        ]
+      }
+    },
+    {
+      "id": "sc07",
+      "beat": "b07",
+      "title": "the road of light",
+      "place": "the road to the city gate",
+      "summary": "The road home becomes a river of light.",
+      "cast": [],
+      "lines": [
+        "v07"
+      ],
+      "duration": 4,
+      "visual": {
+        "subject": "a receding road of lamps",
+        "setting": "night, gate, warm horizon",
+        "action": "the lamps flow toward the gate",
+        "props": [
+          "road",
+          "diya",
+          "gate"
+        ]
+      }
+    },
+    {
+      "id": "sc08",
+      "beat": "b08",
+      "title": "a home keeps a lamp",
+      "place": "a courtyard window",
+      "summary": "A home keeps a lamp burning.",
+      "cast": [],
+      "lines": [
+        "v08"
+      ],
+      "duration": 1.5,
+      "visual": {
+        "subject": "a lit window and a small diya",
+        "setting": "cream wall, warm room",
+        "action": "the window glow steadies",
+        "props": [
+          "window",
+          "diya",
+          "home"
+        ]
+      }
+    },
+    {
+      "id": "sc09",
+      "beat": "b09",
+      "title": "five days",
+      "place": "a paper calendar wall",
+      "summary": "Five paper panels drop into a row, and the first three days are named on three cards.",
+      "cast": [],
+      "lines": [
+        "v09"
+      ],
+      "duration": 5.6,
+      "visual": {
+        "subject": "five tall paper panels and three named cards",
+        "setting": "cream wall, red string, five inks",
+        "action": "the panels drop into a row and the first three name cards turn",
+        "props": [
+          "panels",
+          "cards",
+          "diya",
+          "string"
+        ]
+      }
+    },
+    {
+      "id": "sc10",
+      "beat": "b10",
+      "title": "the last two days",
+      "place": "the same wall",
+      "summary": "The last two panels light, and the tilak card completes the five.",
+      "cast": [],
+      "lines": [
+        "v10"
+      ],
+      "duration": 4.1,
+      "visual": {
+        "subject": "five panels with the last two lit and a tilak card",
+        "setting": "cream wall, red string, gold and green",
+        "action": "the last two lamps catch and the tilak card slides in",
+        "props": [
+          "panels",
+          "tilak",
+          "lamps",
+          "card"
+        ]
+      }
+    },
+    {
+      "id": "sc11",
+      "beat": "b11",
+      "title": "rangoli at the door",
+      "place": "a courtyard floor",
+      "summary": "Rangoli is drawn and a flower is set down.",
+      "cast": [
+        "Child"
+      ],
+      "lines": [
+        "v11"
+      ],
+      "duration": 3.3,
+      "visual": {
+        "subject": "a rangoli and a child's hand",
+        "setting": "cream floor, powder bowls",
+        "action": "the child places a flower at the rim",
+        "props": [
+          "rangoli",
+          "flower",
+          "powder"
+        ]
+      }
+    },
+    {
+      "id": "sc12",
+      "beat": "b12",
+      "title": "Lakshmi welcomed",
+      "place": "a puja thali",
+      "summary": "Lakshmi is welcomed with lamps and a prayer.",
+      "cast": [],
+      "lines": [
+        "v12"
+      ],
+      "duration": 4,
+      "visual": {
+        "subject": "a brass thali, lotus and Lakshmi icon",
+        "setting": "ochre wall, gold, marigold",
+        "action": "the flame leans and the lotus turns",
+        "props": [
+          "thali",
+          "lotus",
+          "Lakshmi",
+          "diya"
+        ]
+      }
+    },
+    {
+      "id": "sc13",
+      "beat": "b13",
+      "title": "Govardhan",
+      "place": "a green field at the edge of town",
+      "summary": "Grain and cattle are honoured.",
+      "cast": [],
+      "lines": [
+        "v13"
+      ],
+      "duration": 3.1,
+      "visual": {
+        "subject": "a hill, a cow and a grain bundle",
+        "setting": "green field, cream sky",
+        "action": "the grain is lifted and the cow bows",
+        "props": [
+          "hill",
+          "cow",
+          "grain"
+        ]
+      }
+    },
+    {
+      "id": "sc14",
+      "beat": "b14",
+      "title": "Bhai Dooj",
+      "place": "a family doorway",
+      "summary": "A sister marks a tilak; a brother offers a sweet.",
+      "cast": [
+        "Householder",
+        "Child"
+      ],
+      "lines": [
+        "v14"
+      ],
+      "duration": 3.9,
+      "visual": {
+        "subject": "two figures, a tilak and a sweet",
+        "setting": "cream doorway, marigold",
+        "action": "the sister marks the tilak; the brother offers a sweet",
+        "props": [
+          "tilak",
+          "sweet",
+          "doorway"
+        ]
+      }
+    },
+    {
+      "id": "sc15",
+      "beat": "b15",
+      "title": "not only a lamp",
+      "place": "the courtyard, close",
+      "summary": "The diya is more than a lamp.",
+      "cast": [],
+      "lines": [
+        "v15"
+      ],
+      "duration": 2,
+      "visual": {
+        "subject": "one flame and a row behind it",
+        "setting": "ink night, gold pool",
+        "action": "the flame steadies and the row answers",
+        "props": [
+          "diya",
+          "row",
+          "stars"
+        ]
+      }
+    },
+    {
+      "id": "sc16",
+      "beat": "b16",
+      "title": "the next lamp",
+      "place": "the courtyard doorway",
+      "summary": "The child lights the next diya.",
+      "cast": [
+        "Child"
+      ],
+      "lines": [
+        "v16"
+      ],
+      "duration": 5.8,
+      "visual": {
+        "subject": "a child's hand and one diya",
+        "setting": "night, cream step, gold",
+        "action": "the match touches the wick and the face lights",
+        "props": [
+          "diya",
+          "match",
+          "marigold"
+        ]
+      }
+    }
+  ]
+}

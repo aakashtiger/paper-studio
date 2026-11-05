@@ -1,0 +1,197 @@
+{
+  "id": "diwali-north",
+  "beats": [
+    {
+      "id": "b01",
+      "title": "the child asks",
+      "purpose": "hook",
+      "share": 5.5,
+      "energy": 2,
+      "sound": {
+        "world": "a quiet courtyard, one match",
+        "signature": "the child's question and one flame",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b02",
+      "title": "a city waits",
+      "purpose": "setup",
+      "share": 5.1667,
+      "energy": 3,
+      "sound": {
+        "world": "a wide night over Ayodhya",
+        "signature": "one low drum",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b03",
+      "title": "the name Ayodhya",
+      "purpose": "setup",
+      "share": 6.3333,
+      "energy": 3,
+      "sound": {
+        "world": "roofs and a river",
+        "signature": "a soft chime",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b04",
+      "title": "fourteen years",
+      "purpose": "escalate",
+      "share": 8.8333,
+      "energy": 4,
+      "sound": {
+        "world": "a forest path and a bow",
+        "signature": "a bowstring",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b05",
+      "title": "the darkest night",
+      "purpose": "escalate",
+      "share": 5.6667,
+      "energy": 3,
+      "sound": {
+        "world": "a single lamp in a dark field",
+        "signature": "one wick catching",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b06",
+      "title": "a diya at every door",
+      "purpose": "escalate",
+      "share": 6.3333,
+      "energy": 4,
+      "sound": {
+        "world": "a street filling with light",
+        "signature": "lamps catching one after another",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b07",
+      "title": "the road of light",
+      "purpose": "turn",
+      "share": 6.6667,
+      "energy": 5,
+      "sound": {
+        "world": "a city gate and a river of lamps",
+        "signature": "one temple bell",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b08",
+      "title": "a home keeps a lamp",
+      "purpose": "setup",
+      "share": 2.5,
+      "energy": 3,
+      "sound": {
+        "world": "a warm window",
+        "signature": "a small flame",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b09",
+      "title": "five days",
+      "purpose": "setup",
+      "share": 9.3333,
+      "energy": 3,
+      "sound": {
+        "world": "paper panels dropping",
+        "signature": "five soft ticks",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b10",
+      "title": "the five names",
+      "purpose": "setup",
+      "share": 6.8333,
+      "energy": 4,
+      "sound": {
+        "world": "a string of lamps",
+        "signature": "the fifth tick",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b11",
+      "title": "rangoli at the door",
+      "purpose": "escalate",
+      "share": 5.5,
+      "energy": 4,
+      "sound": {
+        "world": "powder on stone",
+        "signature": "a flower set down",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b12",
+      "title": "Lakshmi welcomed",
+      "purpose": "escalate",
+      "share": 6.6667,
+      "energy": 4,
+      "sound": {
+        "world": "brass, lotus and a prayer",
+        "signature": "a spoon on a thali",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b13",
+      "title": "Govardhan",
+      "purpose": "escalate",
+      "share": 5.1667,
+      "energy": 3,
+      "sound": {
+        "world": "a green field, grain and cattle",
+        "signature": "a grain bundle",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b14",
+      "title": "Bhai Dooj",
+      "purpose": "escalate",
+      "share": 6.5,
+      "energy": 4,
+      "sound": {
+        "world": "a family doorway",
+        "signature": "a tilak and a shared sweet",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b15",
+      "title": "not only a lamp",
+      "purpose": "escalate",
+      "share": 3.3333,
+      "energy": 3,
+      "sound": {
+        "world": "the courtyard, held",
+        "signature": "one flame",
+        "quiet": true
+      }
+    },
+    {
+      "id": "b16",
+      "title": "the next lamp",
+      "purpose": "button",
+      "share": 9.6667,
+      "energy": 5,
+      "sound": {
+        "world": "the child's hand and the row",
+        "signature": "the next wick catching",
+        "quiet": false
+      }
+    }
+  ]
+}

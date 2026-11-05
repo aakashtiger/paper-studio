@@ -1,0 +1,2037 @@
+{
+  "id": "diwali-north",
+  "style": "paper-kpop",
+  "styleVersion": "0.2.0",
+  "aspect": "9:16",
+  "fps": 30,
+  "duration": 60,
+  "seed": 20261105,
+  "brief": "films/diwali-north/brief.json",
+  "mood": "mixed",
+  "visualContract": 3,
+  "edit": {
+    "minShot": 1.5,
+    "medianShot": 3.3,
+    "maxShot": 4.5
+  },
+  "clock": {
+    "mode": "narration",
+    "lines": [
+      {
+        "id": "v01",
+        "text": "Why do we light so many lamps? the child asks.",
+        "start": 0,
+        "duration": 2.7333333333333334
+      },
+      {
+        "id": "v02",
+        "text": "Because a whole city once waited for someone to come home.",
+        "start": 3.3666666666666667,
+        "duration": 2.6
+      },
+      {
+        "id": "v03",
+        "text": "In North India, Diwali remembers Rama's return to Ayodhya",
+        "start": 6.4,
+        "duration": 3.333333333333332
+      },
+      {
+        "id": "v04",
+        "text": "with Sita and Lakshmana, after fourteen years of exile and his victory over Ravana.",
+        "start": 10.166666666666666,
+        "duration": 4.833333333333334
+      },
+      {
+        "id": "v05",
+        "text": "On the darkest night of Kartik, the people cleaned their homes,",
+        "start": 15.5,
+        "duration": 2.866666666666667
+      },
+      {
+        "id": "v06",
+        "text": "lit a diya at every door, and the road home became a river of light.",
+        "start": 18.933333333333334,
+        "duration": 3.2333333333333343,
+        "hold": 0.13333333333333333
+      },
+      {
+        "id": "v07",
+        "text": "That is the heart of Diwali: light over darkness, good over evil,",
+        "start": 22.666666666666668,
+        "duration": 3.5333333333333314
+      },
+      {
+        "id": "v08",
+        "text": "and a home that keeps a lamp burning.",
+        "start": 26.666666666666668,
+        "duration": 1.5666666666666664,
+        "hold": 0.23333333333333334
+      },
+      {
+        "id": "v09",
+        "text": "The festival is five days: Dhanteras, Chhoti Diwali, Lakshmi Puja,",
+        "start": 28.233333333333334,
+        "duration": 5
+      },
+      {
+        "id": "v10",
+        "text": "Govardhan Puja, and Bhai Dooj, the bond of brothers and sisters.",
+        "start": 33.8,
+        "duration": 3.5333333333333385
+      },
+      {
+        "id": "v11",
+        "text": "Homes are cleaned, rangoli drawn at the door, sweets shared,",
+        "start": 37.93333333333333,
+        "duration": 2.8333333333333357
+      },
+      {
+        "id": "v12",
+        "text": "and Lakshmi welcomed with lamps and a prayer for prosperity and peace.",
+        "start": 41.233333333333334,
+        "duration": 3.5
+      },
+      {
+        "id": "v13",
+        "text": "In the north, grain and cattle are honoured on Govardhan;",
+        "start": 45.166666666666664,
+        "duration": 2.6666666666666714
+      },
+      {
+        "id": "v14",
+        "text": "brothers and sisters mark Bhai Dooj with a tilak and a shared meal.",
+        "start": 48.266666666666666,
+        "duration": 3.5
+      },
+      {
+        "id": "v15",
+        "text": "So the diya is not only a lamp.",
+        "start": 52.233333333333334,
+        "duration": 1.5,
+        "hold": 0.3
+      },
+      {
+        "id": "v16",
+        "text": "It is a city remembering, a family giving, and a promise that light returns to every home.",
+        "start": 54.2,
+        "duration": 4.899999999999999
+      }
+    ]
+  },
+  "audio": {
+    "mode": "narration",
+    "dynamics": "continuous",
+    "narration": {
+      "source": "tts",
+      "provider": "kokoro",
+      "voice": "films/diwali-north/voice.wav",
+      "voiceId": "af_heart",
+      "transcript": "films/diwali-north/transcript.json",
+      "srt": "films/diwali-north/captions.srt"
+    },
+    "sfx": {
+      "source": "generated",
+      "cues": [
+        {
+          "id": "c01-snap",
+          "at": 0.03333333333333333,
+          "kind": "snap",
+          "note": "the child strikes a match",
+          "gain": 0.2
+        },
+        {
+          "id": "c02-lamp",
+          "at": 2,
+          "kind": "lamp",
+          "note": "the first diya catches",
+          "gain": 0.22
+        },
+        {
+          "id": "c03-paper",
+          "at": 2.7,
+          "kind": "paper",
+          "note": "the question settles",
+          "gain": 0.12
+        },
+        {
+          "id": "c04-stone",
+          "at": 3.4,
+          "kind": "stone",
+          "note": "a low drum under the waiting city",
+          "gain": 0.18
+        },
+        {
+          "id": "c05-step",
+          "at": 5.4,
+          "kind": "step",
+          "note": "a step on the road",
+          "gain": 0.16
+        },
+        {
+          "id": "c06-glass",
+          "at": 6,
+          "kind": "glass",
+          "note": "the city holds its breath",
+          "gain": 0.12
+        },
+        {
+          "id": "c07-lamp",
+          "at": 6.6,
+          "kind": "lamp",
+          "note": "one lamp at the gate",
+          "gain": 0.2
+        },
+        {
+          "id": "c42-lamp",
+          "at": 8,
+          "kind": "lamp",
+          "note": "a lamp inside the gate",
+          "gain": 0.12
+        },
+        {
+          "id": "c08-glass",
+          "at": 9.8,
+          "kind": "glass",
+          "note": "the name lands",
+          "gain": 0.14
+        },
+        {
+          "id": "c09-whoosh",
+          "at": 10.3,
+          "kind": "whoosh",
+          "note": "the exile road",
+          "gain": 0.18
+        },
+        {
+          "id": "c10-wood",
+          "at": 11.4,
+          "kind": "wood",
+          "note": "a staff on the path",
+          "gain": 0.16
+        },
+        {
+          "id": "c11-swing",
+          "at": 13.8,
+          "kind": "swing",
+          "note": "the bow",
+          "gain": 0.18
+        },
+        {
+          "id": "c12-lamp",
+          "at": 15.633333333333333,
+          "kind": "lamp",
+          "note": "the darkest night",
+          "gain": 0.2
+        },
+        {
+          "id": "c13-paper",
+          "at": 18,
+          "kind": "paper",
+          "note": "the dark field settles",
+          "gain": 0.12
+        },
+        {
+          "id": "c41-stone",
+          "at": 18.7,
+          "kind": "stone",
+          "note": "the street settles",
+          "gain": 0.08,
+          "duration": 0.3
+        },
+        {
+          "id": "c14-lamp",
+          "at": 19,
+          "kind": "lamp",
+          "note": "doorways catch",
+          "gain": 0.2
+        },
+        {
+          "id": "c15-lamp",
+          "at": 20.2,
+          "kind": "lamp",
+          "note": "the next door",
+          "gain": 0.2
+        },
+        {
+          "id": "c16-step",
+          "at": 22.2,
+          "kind": "step",
+          "note": "a step at the gate",
+          "gain": 0.14
+        },
+        {
+          "id": "c17-knock",
+          "at": 22.5,
+          "kind": "knock",
+          "note": "the gate post",
+          "gain": 0.12
+        },
+        {
+          "id": "c18-wood",
+          "at": 22.8,
+          "kind": "wood",
+          "note": "the gate holds",
+          "gain": 0.14
+        },
+        {
+          "id": "c19-glass",
+          "at": 24.366666666666667,
+          "kind": "glass",
+          "note": "the temple bell",
+          "gain": 0.18
+        },
+        {
+          "id": "c20-lamp",
+          "at": 27,
+          "kind": "lamp",
+          "note": "the home lamp",
+          "gain": 0.2
+        },
+        {
+          "id": "c21-paper",
+          "at": 29,
+          "kind": "paper",
+          "note": "five panels drop",
+          "gain": 0.16
+        },
+        {
+          "id": "c22-paper",
+          "at": 30.166666666666668,
+          "kind": "paper",
+          "note": "the names land",
+          "gain": 0.14
+        },
+        {
+          "id": "c23-paper",
+          "at": 32.6,
+          "kind": "paper",
+          "note": "a name card turns",
+          "gain": 0.14
+        },
+        {
+          "id": "c24-cloth",
+          "at": 33.4,
+          "kind": "cloth",
+          "note": "the cards settle",
+          "gain": 0.12
+        },
+        {
+          "id": "c25-paper",
+          "at": 34,
+          "kind": "paper",
+          "note": "the last panels",
+          "gain": 0.16
+        },
+        {
+          "id": "c26-cloth",
+          "at": 36.5,
+          "kind": "cloth",
+          "note": "the tilak card slides",
+          "gain": 0.14
+        },
+        {
+          "id": "c27-wood",
+          "at": 37.6,
+          "kind": "wood",
+          "note": "the card is pressed",
+          "gain": 0.14
+        },
+        {
+          "id": "c28-paper",
+          "at": 39,
+          "kind": "paper",
+          "note": "rangoli powder",
+          "gain": 0.16
+        },
+        {
+          "id": "c29-step",
+          "at": 41,
+          "kind": "step",
+          "note": "a step at the door",
+          "gain": 0.14
+        },
+        {
+          "id": "c30-swing",
+          "at": 41.36666666666667,
+          "kind": "swing",
+          "note": "the thali",
+          "gain": 0.18
+        },
+        {
+          "id": "c31-glass",
+          "at": 43.266666666666666,
+          "kind": "glass",
+          "note": "the prayer",
+          "gain": 0.16
+        },
+        {
+          "id": "c32-step",
+          "at": 44.9,
+          "kind": "step",
+          "note": "the shrine settles",
+          "gain": 0.12
+        },
+        {
+          "id": "c33-cloth",
+          "at": 46.13333333333333,
+          "kind": "cloth",
+          "note": "the grain bundle",
+          "gain": 0.16
+        },
+        {
+          "id": "c34-cloth",
+          "at": 48,
+          "kind": "cloth",
+          "note": "the field answers",
+          "gain": 0.12
+        },
+        {
+          "id": "c35-wood",
+          "at": 48.6,
+          "kind": "wood",
+          "note": "the tilak",
+          "gain": 0.16
+        },
+        {
+          "id": "c36-wood",
+          "at": 50.4,
+          "kind": "wood",
+          "note": "the shared sweet",
+          "gain": 0.14
+        },
+        {
+          "id": "c37-paper",
+          "at": 51.9,
+          "kind": "paper",
+          "note": "the doorway waits",
+          "gain": 0.1,
+          "duration": 0.28
+        },
+        {
+          "id": "c38-lamp",
+          "at": 54.2,
+          "kind": "lamp",
+          "note": "the next wick",
+          "gain": 0.2
+        },
+        {
+          "id": "c39-lamp",
+          "at": 56,
+          "kind": "lamp",
+          "note": "the row answers",
+          "gain": 0.18
+        },
+        {
+          "id": "c40-lamp",
+          "at": 57.5,
+          "kind": "lamp",
+          "note": "the last flame",
+          "gain": 0.18
+        }
+      ],
+      "silences": [
+        {
+          "from": 15.15,
+          "to": 15.5,
+          "why": "the breath before the dark field"
+        },
+        {
+          "from": 53.9,
+          "to": 54.2,
+          "why": "the last flame holds before the door"
+        },
+        {
+          "from": 59.25,
+          "to": 60,
+          "why": "the tail fade is the ending"
+        }
+      ]
+    }
+  },
+  "captions": {
+    "source": "films/diwali-north/captions.srt",
+    "lines": [
+      {
+        "id": "v01.1",
+        "text": "Why do we light",
+        "start": 0,
+        "end": 0.9
+      },
+      {
+        "id": "v01.2",
+        "text": "so many lamps? the",
+        "start": 0.9,
+        "end": 1.8
+      },
+      {
+        "id": "v01.3",
+        "text": "child asks.",
+        "start": 1.8,
+        "end": 2.7333333333333334
+      },
+      {
+        "id": "v02.1",
+        "text": "Because a whole city",
+        "start": 3.3666666666666667,
+        "end": 4.266666666666667
+      },
+      {
+        "id": "v02.2",
+        "text": "once waited for someone",
+        "start": 4.266666666666667,
+        "end": 5.166666666666667
+      },
+      {
+        "id": "v02.3",
+        "text": "to come home.",
+        "start": 5.166666666666667,
+        "end": 5.966666666666667
+      },
+      {
+        "id": "v03.1",
+        "text": "In North India, Diwali",
+        "start": 6.4,
+        "end": 7.3
+      },
+      {
+        "id": "v03.2",
+        "text": "remembers Rama's return to",
+        "start": 7.3,
+        "end": 8.2
+      },
+      {
+        "id": "v03.3",
+        "text": "Ayodhya",
+        "start": 8.2,
+        "end": 9.733333333333333
+      },
+      {
+        "id": "v04.1",
+        "text": "with Sita and Lakshmana,",
+        "start": 10.166666666666666,
+        "end": 11.066666666666666
+      },
+      {
+        "id": "v04.2",
+        "text": "after fourteen years of",
+        "start": 11.066666666666666,
+        "end": 11.966666666666667
+      },
+      {
+        "id": "v04.3",
+        "text": "exile and his victory",
+        "start": 11.966666666666667,
+        "end": 12.866666666666667
+      },
+      {
+        "id": "v04.4",
+        "text": "over Ravana.",
+        "start": 12.866666666666667,
+        "end": 15
+      },
+      {
+        "id": "v05.1",
+        "text": "On the darkest night",
+        "start": 15.5,
+        "end": 16.4
+      },
+      {
+        "id": "v05.2",
+        "text": "of Kartik, the people",
+        "start": 16.4,
+        "end": 17.3
+      },
+      {
+        "id": "v05.3",
+        "text": "cleaned their homes,",
+        "start": 17.3,
+        "end": 18.366666666666667
+      },
+      {
+        "id": "v06.1",
+        "text": "lit a diya at",
+        "start": 18.933333333333334,
+        "end": 19.833333333333332
+      },
+      {
+        "id": "v06.2",
+        "text": "every door, and the",
+        "start": 19.833333333333332,
+        "end": 20.733333333333334
+      },
+      {
+        "id": "v06.3",
+        "text": "road home became a",
+        "start": 20.733333333333334,
+        "end": 21.633333333333333
+      },
+      {
+        "id": "v06.4",
+        "text": "river of light.",
+        "start": 21.633333333333333,
+        "end": 22.3
+      },
+      {
+        "id": "v07.1",
+        "text": "That is the heart",
+        "start": 22.666666666666668,
+        "end": 23.566666666666666
+      },
+      {
+        "id": "v07.2",
+        "text": "of Diwali: light over",
+        "start": 23.566666666666666,
+        "end": 24.466666666666665
+      },
+      {
+        "id": "v07.3",
+        "text": "darkness, good over evil,",
+        "start": 24.466666666666665,
+        "end": 26.2
+      },
+      {
+        "id": "v08.1",
+        "text": "and a home that",
+        "start": 26.666666666666668,
+        "end": 27.566666666666666
+      },
+      {
+        "id": "v08.2",
+        "text": "keeps a lamp burning.",
+        "start": 27.566666666666666,
+        "end": 28.46666666666667
+      },
+      {
+        "id": "v09.1",
+        "text": "The festival is five",
+        "start": 28.233333333333334,
+        "end": 29.133333333333333
+      },
+      {
+        "id": "v09.2",
+        "text": "days: Dhanteras, Chhoti Diwali,",
+        "start": 29.133333333333333,
+        "end": 30.033333333333335
+      },
+      {
+        "id": "v09.3",
+        "text": "Lakshmi Puja,",
+        "start": 30.033333333333335,
+        "end": 33.233333333333334
+      },
+      {
+        "id": "v10.1",
+        "text": "Govardhan Puja, and Bhai",
+        "start": 33.8,
+        "end": 34.7
+      },
+      {
+        "id": "v10.2",
+        "text": "Dooj, the bond of",
+        "start": 34.7,
+        "end": 35.6
+      },
+      {
+        "id": "v10.3",
+        "text": "brothers and sisters.",
+        "start": 35.6,
+        "end": 37.333333333333336
+      },
+      {
+        "id": "v11.1",
+        "text": "Homes are cleaned, rangoli",
+        "start": 37.93333333333333,
+        "end": 38.833333333333336
+      },
+      {
+        "id": "v11.2",
+        "text": "drawn at the door,",
+        "start": 38.833333333333336,
+        "end": 39.733333333333334
+      },
+      {
+        "id": "v11.3",
+        "text": "sweets shared,",
+        "start": 39.733333333333334,
+        "end": 40.766666666666666
+      },
+      {
+        "id": "v12.1",
+        "text": "and Lakshmi welcomed with",
+        "start": 41.233333333333334,
+        "end": 42.13333333333333
+      },
+      {
+        "id": "v12.2",
+        "text": "lamps and a prayer",
+        "start": 42.13333333333333,
+        "end": 43.03333333333333
+      },
+      {
+        "id": "v12.3",
+        "text": "for prosperity and peace.",
+        "start": 43.03333333333333,
+        "end": 44.733333333333334
+      },
+      {
+        "id": "v13.1",
+        "text": "In the north, grain",
+        "start": 45.166666666666664,
+        "end": 46.06666666666667
+      },
+      {
+        "id": "v13.2",
+        "text": "and cattle are honoured",
+        "start": 46.06666666666667,
+        "end": 46.96666666666667
+      },
+      {
+        "id": "v13.3",
+        "text": "on Govardhan;",
+        "start": 46.96666666666667,
+        "end": 47.833333333333336
+      },
+      {
+        "id": "v14.1",
+        "text": "brothers and sisters mark",
+        "start": 48.266666666666666,
+        "end": 49.166666666666664
+      },
+      {
+        "id": "v14.2",
+        "text": "Bhai Dooj with a",
+        "start": 49.166666666666664,
+        "end": 50.06666666666667
+      },
+      {
+        "id": "v14.3",
+        "text": "tilak and a shared",
+        "start": 50.06666666666667,
+        "end": 50.96666666666667
+      },
+      {
+        "id": "v14.4",
+        "text": "meal.",
+        "start": 50.96666666666667,
+        "end": 51.766666666666666
+      },
+      {
+        "id": "v15.1",
+        "text": "So the diya is",
+        "start": 52.233333333333334,
+        "end": 53.13333333333333
+      },
+      {
+        "id": "v15.2",
+        "text": "not only a lamp.",
+        "start": 53.13333333333333,
+        "end": 54.03333333333333
+      },
+      {
+        "id": "v16.1",
+        "text": "It is a city",
+        "start": 54.2,
+        "end": 55.1
+      },
+      {
+        "id": "v16.2",
+        "text": "remembering, a family giving,",
+        "start": 55.1,
+        "end": 56
+      },
+      {
+        "id": "v16.3",
+        "text": "and a promise that",
+        "start": 56,
+        "end": 56.9
+      },
+      {
+        "id": "v16.4",
+        "text": "light returns to every",
+        "start": 56.9,
+        "end": 57.8
+      },
+      {
+        "id": "v16.5",
+        "text": "home.",
+        "start": 57.8,
+        "end": 59.1
+      }
+    ]
+  },
+  "assets": [
+    {
+      "id": "character.child",
+      "type": "character",
+      "version": "1.0.0",
+      "hash": "sha256:697c4a1d4022a8b295ef3794b39ca3019383d27a5d1bde09ae3259b64aab30f9",
+      "source": "reused",
+      "path": "films/diwali-north/cast/child.poses.json",
+      "character": "Child",
+      "anchors": [
+        "face",
+        "hair",
+        "hand-left",
+        "hand-right",
+        "foot-left",
+        "foot-right"
+      ]
+    },
+    {
+      "id": "character.householder",
+      "type": "character",
+      "version": "1.0.0",
+      "hash": "sha256:08c88a31eaaf00f2bdd98f6a616c85f51b2f8cb393e33419a8e794c31599c2fe",
+      "source": "reused",
+      "path": "films/diwali-north/cast/householder.poses.json",
+      "character": "Householder",
+      "anchors": [
+        "face",
+        "hair",
+        "hand-left",
+        "hand-right",
+        "foot-left",
+        "foot-right"
+      ]
+    },
+    {
+      "id": "texture.halftone",
+      "type": "texture",
+      "version": "0.1.0",
+      "hash": "sha256:38ad771bf0ffabcef50697c95ff864c99138ea3512dc3cc8ebca8755f51e96b5",
+      "source": "reused",
+      "path": "styles/paper-kpop/canvas/recipes.js",
+      "anchors": []
+    }
+  ],
+  "cast": [
+    {
+      "character": "Child",
+      "poses": "films/diwali-north/cast/child.poses.json",
+      "rig": "mortal@0.1.0"
+    },
+    {
+      "character": "Householder",
+      "poses": "films/diwali-north/cast/householder.poses.json",
+      "rig": "mortal@0.1.0"
+    }
+  ],
+  "performance": {
+    "mode": "diagram-show",
+    "star": "Child",
+    "entrance": {
+      "beat": "b01",
+      "via": "door"
+    },
+    "exit": {
+      "beat": "b16",
+      "via": "freeze"
+    },
+    "signature": {
+      "name": "the raised diya"
+    }
+  },
+  "paletteScript": [
+    {
+      "beat": "b01",
+      "field": "ink"
+    },
+    {
+      "beat": "b04",
+      "field": "oxblood"
+    },
+    {
+      "beat": "b07",
+      "field": "orange"
+    },
+    {
+      "beat": "b09",
+      "field": "cream"
+    },
+    {
+      "beat": "b14",
+      "field": "red"
+    }
+  ],
+  "motifs": [
+    {
+      "motif": "diya",
+      "kind": "object",
+      "meaning": "the light that is passed from hand to hand"
+    },
+    {
+      "motif": "tilak",
+      "kind": "object",
+      "meaning": "the mark of the bond between siblings"
+    },
+    {
+      "motif": "doorway",
+      "kind": "object",
+      "meaning": "the threshold where the welcome is made"
+    }
+  ],
+  "shots": [
+    {
+      "beat": "b01",
+      "scene": "sc01",
+      "recipe": "p_door",
+      "duration": 3.3,
+      "motif": "diya",
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.3,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "the child asks",
+        "device": "one clay diya",
+        "shows": "a low doorway at night, one clay diya on the step, a child standing beside it",
+        "action": "the child stands at the clay diya and leans into the flame; the doorway glows",
+        "focus": "the small flame and the child's lit face",
+        "link": "v01",
+        "why": "the question is asked beside the first lamp, so the answer starts at a doorstep",
+        "performers": [
+          {
+            "who": "Child",
+            "does": "stands at the clay diya and leans into the flame",
+            "why": "the question is the child's, and the film answers it at the child's eye level"
+          }
+        ]
+      },
+      "direction": {
+        "entry": "a low doorway, one diya, a child at the step",
+        "exit": "the flame steadies and the child settles beside it",
+        "spine": "the film begins with the question and the smallest lamp",
+        "cast": [
+          "Child"
+        ],
+        "events": [
+          {
+            "t": 0,
+            "kind": "light",
+            "note": "the first flame answers the child's question",
+            "word": "v01",
+            "quiet": "the voice carries the question"
+          },
+          {
+            "t": 0.1,
+            "kind": "pose",
+            "who": "Child",
+            "pose": "watch",
+            "expression": "shocked",
+            "note": "the child watches the first flame",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.4,
+            "kind": "build",
+            "note": "the wick catches",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.7,
+            "kind": "pose",
+            "who": "Child",
+            "pose": "look",
+            "expression": "relieved",
+            "note": "the child looks into the light",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1,
+            "kind": "light",
+            "note": "the doorway glows",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2,
+            "kind": "action",
+            "note": "the child's hand moves toward the flame",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2.4,
+            "kind": "pose",
+            "who": "Child",
+            "pose": "reach",
+            "expression": "relieved",
+            "note": "the child reaches toward the flame",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 3,
+            "kind": "action",
+            "note": "the flame steadies",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    },
+    {
+      "beat": "b02",
+      "scene": "sc02",
+      "recipe": "p_wait",
+      "duration": 3.1,
+      "camera": {
+        "move": "pan",
+        "from": 1,
+        "to": 1.14,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "a whole city once waited",
+        "device": "empty moonlit rooftops",
+        "shows": "a wide moon over Ayodhya, empty rooftops and one lit lamp below",
+        "action": "the city holds still and the lamp does not move",
+        "focus": "the single lamp under the moon",
+        "link": "v02",
+        "why": "the line says a whole city waited, so the frame is the city before anyone arrives"
+      },
+      "direction": {
+        "entry": "a moon over a sleeping city",
+        "exit": "the rooftops hold and the lamp keeps its flame",
+        "spine": "the city is the thing that waits",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.1,
+            "kind": "action",
+            "note": "the moon clears a roof",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.7,
+            "kind": "action",
+            "note": "a shutter shifts in the wind",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.4,
+            "kind": "build",
+            "note": "the lamp flame leans",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2.3,
+            "kind": "action",
+            "note": "the rooftops settle",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    },
+    {
+      "beat": "b03",
+      "scene": "sc03",
+      "recipe": "p_ayodhya",
+      "duration": 3.8,
+      "camera": {
+        "move": "orbit",
+        "from": 1,
+        "to": 1.25,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "Rama's return to Ayodhya",
+        "device": "the city gate",
+        "shows": "three travellers before the city gate of Ayodhya, a river and roofs behind",
+        "action": "Rama leads Sita and Lakshmana toward the gate",
+        "focus": "the tallest traveller and the open gate",
+        "link": "v03",
+        "why": "the line names the return, so the frame is the road into the city that waited"
+      },
+      "direction": {
+        "entry": "a gate, a river and three small travellers",
+        "exit": "the travellers reach the gate and a lamp appears beyond it",
+        "spine": "the city and the road are the same welcome",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "action",
+            "note": "the gate widens",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.9,
+            "kind": "build",
+            "note": "the first figure steps forward",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.7,
+            "kind": "action",
+            "note": "the river catches the moon",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2.6,
+            "kind": "light",
+            "note": "a lamp appears beyond the gate",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 3.4,
+            "kind": "action",
+            "note": "the gate holds",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    },
+    {
+      "beat": "b04",
+      "scene": "sc04",
+      "recipe": "p_exile",
+      "duration": 2.2,
+      "camera": {
+        "move": "pan",
+        "from": 1,
+        "to": 1.14,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "with Sita and Lakshmana",
+        "device": "Sita's silhouette",
+        "shows": "three silhouettes on a forest path, Sita's silhouette between Rama and Lakshmana",
+        "action": "the three walk between torn trunks",
+        "focus": "Sita's still figure",
+        "link": "v04",
+        "why": "the line names who went into exile, so the frame counts the three bodies on the path"
+      },
+      "direction": {
+        "entry": "a dark forest path with three walkers",
+        "exit": "the three pass between the trunks",
+        "spine": "exile is walked by three people, not one",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "action",
+            "note": "a trunk passes the foreground",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.9,
+            "kind": "action",
+            "note": "the middle figure steps over a root",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.6,
+            "kind": "light",
+            "note": "a leaf lets the moon through",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    },
+    {
+      "beat": "b04",
+      "scene": "sc04",
+      "recipe": "p_victory",
+      "duration": 3.1,
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.3,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "his victory over Ravana",
+        "device": "the broken bow",
+        "shows": "Rama under a gold sun, the broken bow of Ravana at his feet",
+        "action": "Rama lifts his crown as the broken bow falls",
+        "focus": "the broken bow on the ground",
+        "link": "v04",
+        "why": "the line names the victory, so the frame shows the weapon that ended the exile"
+      },
+      "direction": {
+        "entry": "a gold sun and a crowned figure",
+        "exit": "the bow lies broken and the crown catches the light",
+        "spine": "the exile ends with a broken bow",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "light",
+            "note": "the sun rises behind Rama",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.8,
+            "kind": "action",
+            "note": "the broken bow tilts",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.6,
+            "kind": "build",
+            "note": "Rama's arm lifts",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2.4,
+            "kind": "action",
+            "note": "the crown catches the light",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    },
+    {
+      "beat": "b05",
+      "scene": "sc05",
+      "recipe": "p_night",
+      "duration": 3.4,
+      "motif": "diya",
+      "camera": {
+        "move": "pull_back",
+        "from": 1.3,
+        "to": 1,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "the darkest night of Kartik",
+        "device": "one lit diya",
+        "shows": "one lit diya in a black field under Kartik stars",
+        "action": "the wick catches and the flame grows",
+        "focus": "the flame in the dark",
+        "link": "v05",
+        "why": "the line names the darkest night, so the frame is one flame with nothing else around it"
+      },
+      "direction": {
+        "entry": "a black field and a single clay lamp",
+        "exit": "the flame stands alone under the stars",
+        "spine": "the night is dark enough that one flame is the picture",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "light",
+            "note": "the wick catches",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.8,
+            "kind": "build",
+            "note": "the flame rises",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.6,
+            "kind": "action",
+            "note": "the stars shift behind it",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2.6,
+            "kind": "action",
+            "note": "the flame steadies",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    },
+    {
+      "beat": "b06",
+      "scene": "sc06",
+      "recipe": "p_lamps",
+      "duration": 3.8,
+      "motif": "doorway",
+      "camera": {
+        "move": "pan",
+        "from": 1,
+        "to": 1.14,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "a diya at every door",
+        "device": "the doorsteps",
+        "shows": "five doorways along a night street, a diya at every doorstep",
+        "action": "the flames catch from door to door",
+        "focus": "the nearest doorstep",
+        "link": "v06",
+        "why": "the line counts the doors, so the frame is a street where each threshold has its own lamp"
+      },
+      "direction": {
+        "entry": "a street of doorways, the first lamp just lit",
+        "exit": "every doorway carries a flame",
+        "spine": "the welcome is repeated at every threshold",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "light",
+            "note": "the first doorstep catches",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.8,
+            "kind": "light",
+            "note": "the second flame answers",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.5,
+            "kind": "light",
+            "note": "the third doorway lights",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2.3,
+            "kind": "action",
+            "note": "the street warms to the end",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 3.2,
+            "kind": "action",
+            "note": "the lamps hold",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    },
+    {
+      "beat": "b07",
+      "scene": "sc07",
+      "recipe": "p_road",
+      "duration": 4,
+      "camera": {
+        "move": "orbit",
+        "from": 1,
+        "to": 1.25,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "light over darkness",
+        "device": "the road of lamps",
+        "shows": "a road of lamps running to the city gate, light opening the dark",
+        "action": "the lamps flow toward the gate and the dark recedes",
+        "focus": "the lit road",
+        "link": "v07",
+        "why": "the line says light over darkness, so the frame is a road made only of flames"
+      },
+      "direction": {
+        "entry": "a dark road with one flame",
+        "exit": "the road reaches the gate in light",
+        "spine": "the road is the argument: light wins by repeating",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.3,
+            "kind": "light",
+            "note": "the first lamp catches",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1,
+            "kind": "build",
+            "note": "the road extends",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.9,
+            "kind": "action",
+            "note": "the gate lifts out of the dark",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2.8,
+            "kind": "light",
+            "note": "the road reaches the gate",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 3.6,
+            "kind": "action",
+            "note": "the flames settle",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    },
+    {
+      "beat": "b08",
+      "scene": "sc08",
+      "recipe": "p_home",
+      "duration": 1.5,
+      "motif": "doorway",
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.3,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "a home that keeps a lamp",
+        "device": "the lit window",
+        "shows": "a house with one lit window and a diya on the sill",
+        "action": "the window glow steadies as the lamp burns",
+        "focus": "the warm window",
+        "link": "v08",
+        "why": "the line names the home, so the frame is one house with one lamp still awake"
+      },
+      "direction": {
+        "entry": "a dark house with one window awake",
+        "exit": "the window holds its glow",
+        "spine": "a home is a lamp that has not gone out",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "light",
+            "note": "the window warms",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.6,
+            "kind": "action",
+            "note": "the sill lamp leans",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1,
+            "kind": "action",
+            "note": "the glow settles",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    },
+    {
+      "beat": "b09",
+      "scene": "sc09",
+      "recipe": "p_five_a",
+      "duration": 1.9,
+      "camera": {
+        "move": "pan",
+        "from": 1,
+        "to": 1.14,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "The festival is five days",
+        "device": "five paper panels",
+        "shows": "five tall paper panels hanging on a cream wall, each with an unlit lamp",
+        "action": "the five panels drop into a row and their lamps catch",
+        "focus": "the row of five panels",
+        "link": "v09",
+        "why": "the line counts the festival, so the frame counts five panels before it names them"
+      },
+      "direction": {
+        "entry": "a bare cream wall and five lamps",
+        "exit": "five panels stand in a row, every lamp lit",
+        "spine": "the festival is counted before it is named",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "build",
+            "note": "the first panel drops",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.6,
+            "kind": "build",
+            "note": "the third panel drops",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1,
+            "kind": "light",
+            "note": "the five lamps catch",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.5,
+            "kind": "action",
+            "note": "the row settles",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    },
+    {
+      "beat": "b09",
+      "scene": "sc09",
+      "recipe": "p_five_b",
+      "duration": 3.7,
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.3,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "Dhanteras, Chhoti Diwali, Lakshmi Puja",
+        "device": "three name cards",
+        "shows": "three paper name cards for Dhanteras, Chhoti Diwali and Lakshmi Puja on a cream wall",
+        "action": "each card turns to face the row of five panels",
+        "focus": "the third name card",
+        "link": "v09",
+        "why": "the line names three of the days, so the frame names the same three in order"
+      },
+      "direction": {
+        "entry": "a cream wall with three blank cards",
+        "exit": "three cards face the five lit panels",
+        "spine": "the first three days are named before the last two",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "action",
+            "note": "the first card turns",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.8,
+            "kind": "action",
+            "note": "the second card turns",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.5,
+            "kind": "action",
+            "note": "the third card turns",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2.3,
+            "kind": "light",
+            "note": "a lamp behind the cards",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 3.1,
+            "kind": "action",
+            "note": "the cards hold",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    },
+    {
+      "beat": "b10",
+      "scene": "sc10",
+      "recipe": "p_names",
+      "duration": 4.1,
+      "motif": "tilak",
+      "camera": {
+        "move": "pull_back",
+        "from": 1.3,
+        "to": 1,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "Govardhan Puja, and Bhai Dooj",
+        "device": "the last two panels",
+        "shows": "five panels on the wall, the last two lit, a tilak card below Govardhan Puja and Bhai Dooj",
+        "action": "the last two lamps catch and the tilak card is stamped",
+        "focus": "the two lit panels",
+        "link": "v10",
+        "why": "the line finishes the five names, so the frame lights only the panels it has just named"
+      },
+      "direction": {
+        "entry": "five panels, the first three waiting",
+        "exit": "the last two panels light and the tilak card holds",
+        "spine": "the last two days finish the row",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "light",
+            "note": "the Govardhan panel lights",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.8,
+            "kind": "light",
+            "note": "the Bhai Dooj panel lights",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.5,
+            "kind": "action",
+            "note": "the first three panels dim",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2.3,
+            "kind": "build",
+            "note": "the tilak card slides in",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 3.2,
+            "kind": "action",
+            "note": "the five panels hold",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    },
+    {
+      "beat": "b11",
+      "scene": "sc11",
+      "recipe": "p_rangoli",
+      "duration": 3.3,
+      "camera": {
+        "move": "orbit",
+        "from": 1,
+        "to": 1.25,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "rangoli drawn at the door",
+        "device": "the rangoli",
+        "shows": "a rangoli blooming on a cream floor, a child placing a marigold at its rim",
+        "action": "the child places a marigold at the rangoli rim and the powder lines settle",
+        "focus": "the flower at the rangoli rim",
+        "link": "v11",
+        "why": "the line names the rangoli at the door, so the frame is the drawing and the hand that finishes it",
+        "performers": [
+          {
+            "who": "Child",
+            "does": "places a marigold at the rangoli rim",
+            "why": "the welcome at the door is made by the child's hand"
+          }
+        ]
+      },
+      "direction": {
+        "entry": "a rangoli half drawn on the floor",
+        "exit": "the flower sits at the rim and the powder holds",
+        "spine": "the welcome is drawn before it is spoken",
+        "cast": [
+          "Child"
+        ],
+        "events": [
+          {
+            "t": 0.1,
+            "kind": "pose",
+            "who": "Child",
+            "pose": "hold",
+            "expression": "determined",
+            "note": "the child lifts the marigold",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.4,
+            "kind": "pose",
+            "who": "Child",
+            "pose": "place",
+            "expression": "relieved",
+            "note": "the child sets it at the rim",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.9,
+            "kind": "action",
+            "note": "the rangoli powder settles",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.7,
+            "kind": "action",
+            "note": "the child's hand withdraws",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2.6,
+            "kind": "light",
+            "note": "a lamp beyond the rangoli warms the floor",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    },
+    {
+      "beat": "b12",
+      "scene": "sc12",
+      "recipe": "p_puja",
+      "duration": 4,
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.3,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "Lakshmi welcomed with lamps",
+        "device": "the brass thali",
+        "shows": "Lakshmi in a red shrine, a brass thali of lamps and marigold before her",
+        "action": "the thali is lifted and the lamps lean toward the shrine",
+        "focus": "the brass thali",
+        "link": "v12",
+        "why": "the line welcomes Lakshmi, so the frame is the offering carried to her"
+      },
+      "direction": {
+        "entry": "a red shrine and a covered thali",
+        "exit": "the thali is raised and the lamps lean",
+        "spine": "the goddess is welcomed with what the house can carry",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "build",
+            "note": "the shrine curtain opens",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.9,
+            "kind": "action",
+            "note": "the thali lifts",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.8,
+            "kind": "light",
+            "note": "the lamps lean",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2.7,
+            "kind": "action",
+            "note": "the marigold settles",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 3.5,
+            "kind": "action",
+            "note": "the thali holds",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    },
+    {
+      "beat": "b13",
+      "scene": "sc13",
+      "recipe": "p_govardhan",
+      "duration": 3.1,
+      "camera": {
+        "move": "pan",
+        "from": 1,
+        "to": 1.14,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "grain and cattle are honoured",
+        "device": "the grain bundle",
+        "shows": "a green hill, a cow and a grain bundle tied with red thread",
+        "action": "the grain bundle is lifted and the cow bows its head",
+        "focus": "the red thread on the grain",
+        "link": "v13",
+        "why": "the line names grain and cattle, so the frame carries both at the edge of the field"
+      },
+      "direction": {
+        "entry": "a green field, a hill, a cow and a grain bundle",
+        "exit": "the grain is raised and the cow bows",
+        "spine": "the field and the animal are thanked together",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "action",
+            "note": "the cow lowers its head",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.8,
+            "kind": "build",
+            "note": "the grain bundle rises",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.6,
+            "kind": "action",
+            "note": "the red thread swings",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2.4,
+            "kind": "light",
+            "note": "the hill catches the sun",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    },
+    {
+      "beat": "b14",
+      "scene": "sc14",
+      "recipe": "p_bhaidooj",
+      "duration": 3.9,
+      "motif": "tilak",
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.3,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "a tilak and a shared meal",
+        "device": "the tilak",
+        "shows": "a sister marking a tilak on her brother's forehead, a sweet for the shared meal on the step",
+        "action": "the sister presses the tilak on the brother's forehead and the brother offers a sweet for the shared meal",
+        "focus": "the red tilak",
+        "link": "v14",
+        "why": "the line names the tilak and the meal, so the frame is the mark and the sweet exchanged at the door",
+        "performers": [
+          {
+            "who": "Householder",
+            "does": "presses the tilak on the brother's forehead",
+            "why": "the line names the tilak, and the elder sibling makes the mark"
+          },
+          {
+            "who": "Child",
+            "does": "offers a sweet for the shared meal",
+            "why": "the line names the shared meal, and the younger sibling gives the sweet"
+          }
+        ]
+      },
+      "direction": {
+        "entry": "two siblings at a lit door",
+        "exit": "the tilak is set and the sweet passes between them",
+        "spine": "the bond is performed as a mark and a gift",
+        "cast": [
+          "Householder",
+          "Child"
+        ],
+        "events": [
+          {
+            "t": 0.1,
+            "kind": "pose",
+            "who": "Householder",
+            "pose": "reach",
+            "expression": "determined",
+            "note": "the elder raises a hand to the forehead",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.16666666666666666,
+            "kind": "pose",
+            "who": "Child",
+            "pose": "hold",
+            "expression": "neutral",
+            "note": "the younger holds the sweet",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.4,
+            "kind": "pose",
+            "who": "Householder",
+            "pose": "tap",
+            "expression": "relieved",
+            "note": "the tilak is pressed",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.8,
+            "kind": "pose",
+            "who": "Child",
+            "pose": "offer",
+            "expression": "laugh",
+            "note": "the younger lifts the sweet",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.6,
+            "kind": "action",
+            "note": "the sweet passes between them",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2.6,
+            "kind": "light",
+            "note": "the doorway warms",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 3.4,
+            "kind": "action",
+            "note": "the two figures hold",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    },
+    {
+      "beat": "b15",
+      "scene": "sc15",
+      "recipe": "p_promise",
+      "duration": 2,
+      "camera": {
+        "move": "pull_back",
+        "from": 1.3,
+        "to": 1,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "the diya is not only a lamp",
+        "device": "the row behind the flame",
+        "shows": "one great diya in the foreground, a row of smaller flames behind it",
+        "action": "the great flame steadies and the row answers",
+        "focus": "the great flame",
+        "link": "v15",
+        "why": "the line turns the lamp into a promise, so the frame shows one flame and the many it stands for"
+      },
+      "direction": {
+        "entry": "one great diya and a dark row behind",
+        "exit": "the row answers the great flame",
+        "spine": "one lamp is a promise because it is repeated",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "light",
+            "note": "the great wick catches",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.8,
+            "kind": "build",
+            "note": "the flame rises",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.4,
+            "kind": "action",
+            "note": "the row behind brightens",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    },
+    {
+      "beat": "b16",
+      "scene": "sc16",
+      "recipe": "p_close",
+      "duration": 2.9,
+      "camera": {
+        "move": "orbit",
+        "from": 1,
+        "to": 1.25,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "a family giving",
+        "device": "the match",
+        "shows": "a match touching a fresh wick, a row of family lamps behind",
+        "action": "the match touches the wick and the fresh flame catches",
+        "focus": "the match and the wick",
+        "link": "v16",
+        "why": "the line names the family giving, so the frame is the flame handed to the next lamp"
+      },
+      "direction": {
+        "entry": "a match above a fresh diya",
+        "exit": "the new wick catches",
+        "spine": "the giving is a small physical act",
+        "cast": [],
+        "events": [
+          {
+            "t": 0.2,
+            "kind": "action",
+            "note": "the match lowers",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.6,
+            "kind": "build",
+            "note": "the wick leans into the heat",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.2,
+            "kind": "light",
+            "note": "the fresh flame catches",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2,
+            "kind": "action",
+            "note": "the match withdraws",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    },
+    {
+      "beat": "b16",
+      "scene": "sc16",
+      "recipe": "p_close_row",
+      "duration": 2.9,
+      "motif": "diya",
+      "camera": {
+        "move": "push_in",
+        "from": 1,
+        "to": 1.3,
+        "ease": "linear"
+      },
+      "visual": {
+        "phrase": "light returns to every home",
+        "device": "the row of diyas",
+        "shows": "the child stands before a long row of flames on the step",
+        "action": "the child watches the row and the light returns along the step",
+        "focus": "the child and the row",
+        "link": "v16",
+        "why": "the promise is kept by the child standing with the row, not by another match",
+        "performers": [
+          {
+            "who": "Child",
+            "does": "watches the row so the light returns to the doorway",
+            "why": "the child is the next keeper of the light, and the row answers the child"
+          }
+        ]
+      },
+      "direction": {
+        "entry": "a row of flames and a child at the end of it",
+        "exit": "the child holds the new flame up and the row answers",
+        "spine": "the child is the next keeper of the light",
+        "cast": [
+          "Child"
+        ],
+        "events": [
+          {
+            "t": 0.1,
+            "kind": "pose",
+            "who": "Child",
+            "pose": "hold",
+            "expression": "determined",
+            "note": "the child lifts the new diya",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.5,
+            "kind": "pose",
+            "who": "Child",
+            "pose": "watch",
+            "expression": "relieved",
+            "note": "the child watches the row answer",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 1.2,
+            "kind": "light",
+            "note": "the row brightens",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2,
+            "kind": "action",
+            "note": "the child holds the diya higher",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 2.7,
+            "kind": "action",
+            "note": "the row answers",
+            "quiet": "the line carries this beat"
+          }
+        ]
+      }
+    }
+  ]
+}
