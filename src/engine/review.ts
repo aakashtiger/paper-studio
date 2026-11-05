@@ -22,7 +22,7 @@
  * wrong reuse prints a lie, while a needless repaint costs seconds.
  */
 
-export type ReportTie = "picture" | "score";
+export type ReportTie = "picture" | "score" | "picture+score";
 
 export type ReuseQuestion = {
   /** The report the step would write, if one exists on disk. */
@@ -33,6 +33,8 @@ export type ReuseQuestion = {
   frozenHash: string | null;
   /** sha256 of the score, now. */
   scoreNow: string;
+  /** sha256 of scenes.json, now, when the report reads authored scenes. */
+  scenesNow?: string | null;
   /** When the report was written, in ms. */
   writtenAt: number | null;
   /** The newest change to any file the painter draws with, in ms. */
@@ -45,21 +47,36 @@ export function mayReuse(question: ReuseQuestion): ReuseAnswer {
   const { report, tie } = question;
   if (!report) return { ok: false, why: "no report on disk" };
 
-  if (tie === "picture") {
+  // Only a report that publishes a scenesHash claims to read scenes. The other
+  // audits keep their score/picture ties, so decision 0033's reuse still holds.
+  const scenesFresh = (): boolean => {
+    if (!question.scenesNow) return true;
+    if (report.scenesHash === undefined) return tie !== "picture+score";
+    return report.scenesHash === question.scenesNow;
+  };
+
+  if (tie === "picture" || tie === "picture+score") {
     if (!question.frozenHash) {
       return { ok: false, why: "no picture hash yet — the render manifest is the tie" };
     }
     const recorded = typeof report.videoHash === "string" ? report.videoHash : null;
     if (!recorded) return { ok: false, why: "the report names no picture" };
-    return recorded === question.frozenHash
-      ? { ok: true, why: `measured on this picture (${recorded.slice(0, 15)}…), not repainted` }
-      : { ok: false, why: "the report measured a different picture" };
+    if (recorded !== question.frozenHash) {
+      return { ok: false, why: "the report measured a different picture" };
+    }
+    if (!scenesFresh()) {
+      return { ok: false, why: "the scenes changed after the report" };
+    }
+    if (tie === "picture") {
+      return { ok: true, why: `measured on this picture (${recorded.slice(0, 15)}…), not repainted` };
+    }
   }
 
-  // tie === "score"
+  // tie === "score" or "picture+score"
   const recorded = typeof report.score === "string" ? report.score : null;
   if (!recorded) return { ok: false, why: "the report names no score, so it cannot be tied to this film" };
   if (recorded !== question.scoreNow) return { ok: false, why: "the report measured a different score" };
+  if (!scenesFresh()) return { ok: false, why: "the scenes changed after the report" };
   if (question.writtenAt === null) return { ok: false, why: "the report has no timestamp" };
   if (question.paintChangedAt !== null && question.writtenAt <= question.paintChangedAt) {
     // The report predates the current painter, so it measured a painter that no

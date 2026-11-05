@@ -27,6 +27,45 @@ export function resolveFilmBands(filmBands: FilmBands, mood?: string): FilmBands
   return selected ? { ...selected } : filmBands;
 }
 
+export type SceneBandResolution = {
+  mood: string | null;
+  inherited: boolean;
+  unknown: boolean;
+  bands: FilmBands;
+};
+
+/**
+ * A scene inherits the film's mood unless it names its own. A named mood that
+ * the pack does not declare is not silently ignored: `unknown` is a finding.
+ */
+export function resolveSceneBand(
+  filmBands: FilmBands,
+  filmMood: string | undefined,
+  sceneMood: string | undefined,
+): SceneBandResolution {
+  const mood = sceneMood ?? filmMood ?? null;
+  const inherited = sceneMood === undefined && filmMood !== undefined;
+  const selected = mood ? filmBands.moods?.[mood] : undefined;
+  if (mood && !selected) {
+    return { mood, inherited, unknown: true, bands: filmBands };
+  }
+  return { mood, inherited, unknown: false, bands: selected ? { ...selected } : filmBands };
+}
+
+export type SceneIdentityInput = {
+  scene: string;
+  mood: string | null;
+  inherited: boolean;
+  bands: FilmBands;
+  metrics: IdentityMetrics;
+  samples: number;
+};
+
+export type SceneMoodDeclaration = {
+  id: string;
+  mood?: string;
+};
+
 export type FieldBands = {
   edgeBarMax: number;
   largestFlat: NumericBand;
@@ -119,6 +158,11 @@ export type IdentityFindingCode =
   | "identity:cast"
   | "identity:proportion"
   | "identity:staged"
+  | "identity:scene-mood"
+  | "identity:scene-unmeasured"
+  | "identity:scene-luma"
+  | "identity:scene-saturation"
+  | "identity:scene-edges"
   | "identity:luma"
   | "identity:saturation"
   | "identity:edges"
@@ -181,6 +225,40 @@ export function stagedBand(mode: string | undefined, castRule: CastIdentity): St
   return { min: castRule.stagedShare, max: 1, source: "cast" };
 }
 
+export function checkSceneMoodDeclarations(input: {
+  scenes: readonly SceneMoodDeclaration[];
+  filmMood?: string;
+  moods?: Record<string, unknown>;
+}): IdentityFinding[] {
+  const findings: IdentityFinding[] = [];
+  if (!input.moods || Object.keys(input.moods).length === 0) {
+    for (const scene of input.scenes) {
+      if (scene.mood) {
+        findings.push({
+          code: "identity:scene-mood",
+          message: `scene "${scene.id}" declares mood "${scene.mood}", but this pack has no mood bands`,
+        });
+      }
+    }
+    return findings;
+  }
+  if (input.filmMood && !input.moods[input.filmMood]) {
+    findings.push({
+      code: "identity:scene-mood",
+      message: `the film mood "${input.filmMood}" is not one of the pack's moods`,
+    });
+  }
+  for (const scene of input.scenes) {
+    if (scene.mood && !input.moods[scene.mood]) {
+      findings.push({
+        code: "identity:scene-mood",
+        message: `scene "${scene.id}" declares mood "${scene.mood}", which the pack does not declare`,
+      });
+    }
+  }
+  return findings;
+}
+
 export function checkStyleIdentity(input: {
   shots: number;
   stagedShots: number;
@@ -192,6 +270,7 @@ export function checkStyleIdentity(input: {
   castRule: CastIdentity;
   performanceMode?: string;
   frame: FrameSummary | null;
+  scenes?: readonly SceneIdentityInput[];
 }): { findings: IdentityFinding[]; stagedRatio: number; stagedBand: StagedBand } {
   const findings: IdentityFinding[] = [];
   const stagedRatio = input.shots > 0 ? input.stagedShots / input.shots : 0;
@@ -347,6 +426,38 @@ export function checkStyleIdentity(input: {
         code: key === "lumaMean" ? "identity:luma" : key === "saturationMean" ? "identity:saturation" : "identity:edges",
         message: `${label} is ${value.toFixed(1)}; the film band is ${filmBand[0]}-${filmBand[1]}`,
       });
+    }
+  }
+
+  for (const scene of input.scenes ?? []) {
+    const mood = scene.mood ? `"${scene.mood}"${scene.inherited ? ", inherited" : ""}` : "absolute band";
+    if (scene.samples <= 0) {
+      findings.push({
+        code: "identity:scene-unmeasured",
+        message: `scene "${scene.scene}" (${mood}) has no measured shot; a missing scene is a failure, not a pass`,
+      });
+      continue;
+    }
+    const sceneBands: Array<["lumaMean" | "saturationMean" | "edgesMean", string, number | null, IdentityFindingCode]> = [
+      ["lumaMean", "luma mean", scene.metrics.lumaMean, "identity:scene-luma"],
+      ["saturationMean", "saturation mean", scene.metrics.saturationMean, "identity:scene-saturation"],
+      ["edgesMean", "edge mean", scene.metrics.edgesMean, "identity:scene-edges"],
+    ];
+    for (const [key, label, value, code] of sceneBands) {
+      if (value === null || !Number.isFinite(value)) {
+        findings.push({
+          code: "identity:scene-unmeasured",
+          message: `scene "${scene.scene}" (${mood}) ${label} was not measured`,
+        });
+        continue;
+      }
+      const band = scene.bands[key];
+      if (!inBand(value, band)) {
+        findings.push({
+          code,
+          message: `scene "${scene.scene}" (${mood}): ${label} is ${value.toFixed(1)}; the scene band is ${band[0]}-${band[1]}`,
+        });
+      }
     }
   }
 

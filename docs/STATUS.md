@@ -25,7 +25,23 @@ a real lotus/river reveal, an eight-fold rangoli and a brass thali. It passes
 **`gate:7` 29 checks** and `film:review --gate --reuse`; the 60 s film and its
 evidence stay historical.
 
-**Update 2026-11-05 (current, 0059):** the proof's humans are measured now.
+**Update 2026-11-05 (current, 0060):** the three gaps named in 0059 are closed.
+`scenes[].mood` inherits the film or names a band; the proof declares sc03
+**interior** while the film is **night**, and the delivered video measures every
+frame of each scene: sc01 **80.2 / 23.1 / 10.5** (177 frames), sc02 **66.4 /
+15.4 / 11.3** (222), sc03 **104.7 / 35.8 / 10.7** (117). `preflight`,
+`visual:check` and `style:identity` publish `scenesHash`; the gate, renderer and
+review check it. The face is a numeric `faceFields` vector blended by `faceAt`;
+`visual:check` refuses a late first expression, a change inside 0.3 s, or an
+expression on someone not in the shot. s01 is re-blocked at 1.02→1.30, diya 1.6,
+hand carrying toward the child, rangoli behind the flame, lamp lit at 0.5 s;
+s02's walking child carries the diya its device names. The render manifest now
+hashes every page script and `tokens.json`; the identity frame report and video
+manifest are re-hashed, not trusted by presence. Delivered picture
+`sha256:a35472f3def7…`; `gate:7` **29 checks**, `film:review` **PASS**, palette
+**4 families / top 98.6%**, ASR 97.9%, motion 6/6, **526 tests**.
+
+**Update 2026-11-05 (historical, 0059):** the proof's humans are measured now.
 `style:identity` computes `body.height / body.head.h` and `body.hand.h /
 body.head.h` and refuses a library whose drawn figure is outside its own
 `visualHeadToBody` band, outside the pack's per-archetype proportions, or

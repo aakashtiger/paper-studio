@@ -276,6 +276,49 @@ test("a pose that lands too late or snaps into the next one is refused", () => {
   assert.ok(snap.findings.some((finding) => finding.code === "visual:pose-continuity"));
 });
 
+test("an expression that lands late or on an absent character is refused", () => {
+  const late = checkVisuals(
+    [
+      {
+        ...continuity,
+        direction: {
+          events: [
+            { t: 0.1, kind: "pose", who: "Rider", pose: "hold" },
+            { t: 0.6, kind: "pose", who: "Rider", pose: "walk", expression: "laugh" },
+            { t: 1.2, kind: "pose", who: "Rider", pose: "reach", expression: "laugh" },
+          ],
+        },
+      },
+    ],
+    recipes,
+    lines,
+    undefined,
+    undefined,
+    { contract: 3 },
+  );
+  assert.ok(late.findings.some((finding) => finding.code === "visual:expression-continuity"));
+
+  const absent = checkVisuals(
+    [
+      {
+        ...continuity,
+        direction: {
+          events: [
+            { t: 0.1, kind: "pose", who: "Rider", pose: "hold" },
+            { t: 0.4, kind: "pose", who: "Other", pose: "walk", expression: "laugh" },
+          ],
+        },
+      },
+    ],
+    recipes,
+    lines,
+    undefined,
+    undefined,
+    { contract: 3 },
+  );
+  assert.ok(absent.findings.some((finding) => finding.code === "visual:expression-cast"));
+});
+
 test("a lamp cannot answer a phone brief", () => {
   const result = check([{ ...phone, recipe: "lamp" }]);
   assert.ok(result.findings.some((finding) => finding.code === "visual:match"));

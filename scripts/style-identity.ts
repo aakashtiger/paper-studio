@@ -34,14 +34,20 @@ import {
 } from "../src/engine/frame-report.js";
 import { PoseLibrarySchema, resolvePoseLibrary } from "../src/engine/pose.js";
 import {
+  checkSceneMoodDeclarations,
   checkStyleIdentity,
   resolveFilmBands,
+  resolveSceneBand,
   type CastLibraryFact,
   type IdentityMetrics,
+  type SceneIdentityInput,
 } from "../src/engine/style-identity.js";
 import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
-import { videoStreamHash } from "../src/engine/video.js";
+import { ScenesSchema } from "../src/engine/scenes.js";
+import { parseSignalStats } from "../src/engine/style-measure.js";
+import { fileHash, videoStreamHash } from "../src/engine/video.js";
 import { findFfmpeg } from "../src/engine/grid.js";
+import { inputMismatches, manifestPath } from "../src/engine/manifest.js";
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
@@ -85,6 +91,13 @@ if (resolved.errors.length > 0) {
   process.exit(1);
 }
 const planShots = resolved.plan.shots;
+const scenesPath = resolve(root, "films", score.id, "scenes.json");
+const scenesDoc = existsSync(scenesPath)
+  ? ScenesSchema.parse(JSON.parse(readFileSync(scenesPath, "utf8").replace(/^\uFEFF/, "")))
+  : null;
+const scenesHash = scenesDoc
+  ? `sha256:${createHash("sha256").update(readFileSync(scenesPath)).digest("hex")}`
+  : null;
 
 const cast: CastLibraryFact[] = [];for (const member of score.cast) {
   const posesPath = resolve(root, member.poses);
@@ -218,10 +231,174 @@ const videoHash = videoMode
   ? videoStreamHash(ffmpeg, resolve(root, specimen))
   : null;
 
+let manifestHash: string | null = null;
+if (videoMode) {
+  const manifestFile = manifestPath(root, score.id);
+  if (!existsSync(manifestFile)) {
+    console.error(`style:identity: no render manifest at ${manifestFile}; render the film first`);
+    process.exit(1);
+  }
+  const manifest = JSON.parse(readFileSync(manifestFile, "utf8")) as {
+    videoHash: string;
+    inputs: { files: { path: string; hash: string | null }[] };
+  };
+  const moved = inputMismatches(manifest.inputs, (path) => fileHash(resolve(root, path)));
+  if (moved.length > 0) {
+    console.error(
+      `style:identity: the picture's inputs moved since the render: ${moved.join(", ")}; re-render before measuring the video`,
+    );
+    process.exit(1);
+  }
+  if (manifest.videoHash !== videoHash) {
+    console.error(
+      `style:identity: the delivered picture (${videoHash?.slice(0, 15)}…) is not the one the render manifest describes (${manifest.videoHash.slice(0, 15)}…)`,
+    );
+    process.exit(1);
+  }
+  manifestHash = fileHash(manifestFile);
+}
+
+/**
+ * One frame, the same units as `style:measure`: YAVG, SATAVG and the edgedetect
+ * YAVG. A scene row is a sample of its shots, not an average of the film.
+ */
+function frameMetrics(input: string, time?: number): IdentityMetrics {
+  const run = (filter: string) => {
+    const args = ["-hide_banner", "-loglevel", "error"];
+    // Seek before the input: an output `-ss` after `-i` was read as frame 0
+    // with `-frames:v 1`, which made every scene the same measurement.
+    if (time !== undefined) args.push("-ss", String(time));
+    args.push("-i", input);
+    args.push("-frames:v", "1", "-vf", `${filter},signalstats,metadata=print:file=-`, "-an", "-f", "null", "-");
+    const result = spawnSync(ffmpeg, args, { encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });
+    const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+    return parseSignalStats(output)[0] ?? null;
+  };
+  const luma = run("scale=320:-2");
+  const edge = run("scale=320:-2,edgedetect=low=0.1:high=0.3");
+  return {
+    lumaMean: luma?.yavg ?? null,
+    saturationMean: luma?.satavg ?? null,
+    edgesMean: edge?.yavg ?? null,
+  };
+}
+
+/** Every frame in a scene window, averaged in the same units as `style:measure`. */
+function windowMetrics(input: string, from: number, duration: number): { metrics: IdentityMetrics; frames: number } {
+  const run = (filter: string) => {
+    const args = [
+      "-hide_banner", "-loglevel", "error",
+      "-ss", String(from), "-t", String(duration), "-i", input,
+      "-vf", `${filter},signalstats,metadata=print:file=-`, "-an", "-f", "null", "-",
+    ];
+    const result = spawnSync(ffmpeg, args, { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+    return parseSignalStats(`${result.stdout ?? ""}\n${result.stderr ?? ""}`);
+  };
+  const luma = run("scale=320:-2");
+  const edge = run("scale=320:-2,edgedetect=low=0.1:high=0.3");
+  const mean = (values: number[]): number | null => {
+    const finite = values.filter((value) => Number.isFinite(value));
+    return finite.length > 0 ? finite.reduce((sum, value) => sum + value, 0) / finite.length : null;
+  };
+  return {
+    metrics: {
+      lumaMean: mean(luma.map((sample) => sample.yavg)),
+      saturationMean: mean(luma.map((sample) => sample.satavg)),
+      edgesMean: mean(edge.map((sample) => sample.yavg)),
+    },
+    frames: luma.length,
+  };
+}
+
 const collageReportPath = resolve(root, "build", score.id, "frame-report.json");
 const collageReport = existsSync(collageReportPath)
   ? readFrameReport(collageReportPath)
   : null;
+
+const sceneMetrics: SceneIdentityInput[] = [];
+if (scenesDoc && videoMode && existsSync(resolve(root, specimen))) {
+  let at = 0;
+  for (const scene of scenesDoc.scenes) {
+    const measured = windowMetrics(resolve(root, specimen), at, scene.duration);
+    const resolvedScene = resolveSceneBand(identity.filmBands, score.mood, scene.mood);
+    sceneMetrics.push({
+      scene: scene.id,
+      mood: resolvedScene.mood,
+      inherited: resolvedScene.inherited,
+      bands: resolvedScene.bands,
+      metrics: measured.metrics,
+      samples: measured.frames,
+    });
+    at += scene.duration;
+  }
+} else if (scenesDoc && collageReport) {
+  const sceneById = new Map(scenesDoc.scenes.map((scene) => [scene.id, scene]));
+  const shotsByScene = new Map<string, { duration: number; metrics: IdentityMetrics }[]>();
+  for (const plan of planShots) {
+    const source = collageReport.shots.find((entry) => entry.shot === plan.id);
+    if (!source) continue;
+    let metrics: IdentityMetrics | null = null;
+    if (videoMode && existsSync(resolve(root, specimen))) {
+      metrics = frameMetrics(resolve(root, specimen), source.time);
+    } else if (!videoMode) {
+      const frame = resolve(
+        root,
+        "build",
+        score.id,
+        "collage",
+        "frames",
+        `t-${source.time.toFixed(2).padStart(5, "0")}.png`,
+      );
+      if (existsSync(frame)) metrics = frameMetrics(frame);
+    }
+    if (!metrics) continue;
+    const sceneId = plan.scene;
+    if (!sceneId) continue;
+    const list = shotsByScene.get(sceneId) ?? [];
+    list.push({ duration: plan.duration, metrics });
+    shotsByScene.set(sceneId, list);
+  }
+  for (const scene of scenesDoc.scenes) {
+    const list = shotsByScene.get(scene.id) ?? [];
+    const total = list.reduce((sum, item) => sum + item.duration, 0);
+    const weighted = (key: keyof IdentityMetrics): number | null => {
+      if (list.length === 0 || total <= 0) return null;
+      let sum = 0;
+      let weight = 0;
+      for (const item of list) {
+        const value = item.metrics[key];
+        if (value === null || !Number.isFinite(value)) continue;
+        sum += value * item.duration;
+        weight += item.duration;
+      }
+      return weight > 0 ? sum / weight : null;
+    };
+    const resolvedScene = resolveSceneBand(identity.filmBands, score.mood, scene.mood);
+    sceneMetrics.push({
+      scene: scene.id,
+      mood: resolvedScene.mood,
+      inherited: resolvedScene.inherited,
+      bands: resolvedScene.bands,
+      metrics: {
+        lumaMean: weighted("lumaMean"),
+        saturationMean: weighted("saturationMean"),
+        edgesMean: weighted("edgesMean"),
+      },
+      samples: list.length,
+    });
+    if (resolvedScene.unknown) {
+      // The declaration check below owns the message; the scene row still
+      // reports the absolute band so the measurement is not hidden.
+      void sceneById;
+    }
+  }
+}
+
+const sceneDeclarations = checkSceneMoodDeclarations({
+  scenes: scenesDoc?.scenes ?? [],
+  filmMood: score.mood,
+  moods: identity.filmBands.moods,
+});
 
 function measureVideo(base: FrameReport): FrameReport {
   const shots = planShots.map((shot, index) => {
@@ -261,7 +438,7 @@ if (videoMode) {
     writeFileSync(frameReportPath, `${JSON.stringify(videoReport, null, 2)}\n`, "utf8");
     frame = videoReport.summary;
     frameReportHash = `sha256:${createHash("sha256")
-      .update(JSON.stringify(videoReport))
+      .update(readFileSync(frameReportPath))
       .digest("hex")}`;
   }
 } else if (collageReport) {
@@ -284,8 +461,9 @@ const result = checkStyleIdentity({
   castRule: identityCastRule(identity),
   performanceMode: score.performance?.mode,
   frame,
+  scenes: sceneMetrics,
 });
-const findings = [...scoreFindings, ...result.findings];
+const findings = [...scoreFindings, ...sceneDeclarations, ...result.findings];
 
 const report = {
   film: score.id,
@@ -293,6 +471,8 @@ const report = {
   styleVersion: score.styleVersion,
   score: scoreHash,
   identityHash,
+  scenesHash,
+  manifestHash,
   stage: videoMode ? "video" : "collage",
   specimen,
   videoHash,
@@ -310,6 +490,7 @@ const report = {
   cast,
   metrics,
   filmBands: activeBands,
+  scenes: sceneMetrics,
   frame,
   findings,
 };
@@ -331,6 +512,12 @@ console.log(
     `sat ${metrics.saturationMean?.toFixed(1) ?? "?"} (${activeBands.saturationMean[0]}-${activeBands.saturationMean[1]}) · ` +
     `edges ${metrics.edgesMean?.toFixed(1) ?? "?"} (${activeBands.edgesMean[0]}-${activeBands.edgesMean[1]})`,
 );
+for (const scene of sceneMetrics) {
+  console.log(
+    `identity: scene ${scene.scene} · ${scene.mood ?? "absolute"}${scene.inherited ? " (inherited)" : ""} · ` +
+      `luma ${scene.metrics.lumaMean?.toFixed(1) ?? "?"} / sat ${scene.metrics.saturationMean?.toFixed(1) ?? "?"} / edges ${scene.metrics.edgesMean?.toFixed(1) ?? "?"} · ${scene.samples} sample(s)`,
+  );
+}
 for (const finding of findings) {
   console.error(`  FAIL ${finding.code}: ${finding.message}`);
 }

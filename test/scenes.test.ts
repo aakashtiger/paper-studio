@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { checkCut } from "../src/engine/cut.js";
-import { checkScenes } from "../src/engine/scenes.js";
+import { ScenesSchema, checkScenes } from "../src/engine/scenes.js";
 import { BeatsSchema, StorySchema, checkNarrationSync } from "../src/engine/story.js";
 
 const root = process.cwd();
@@ -11,6 +11,14 @@ const story = StorySchema.parse(JSON.parse(readFileSync(resolve(root, "fixtures/
 const beats = BeatsSchema.parse(JSON.parse(readFileSync(resolve(root, "fixtures/story-min/beats.json"), "utf8")));
 const fixture = JSON.parse(readFileSync(resolve(root, "fixtures/story-min/scenes.json"), "utf8"));
 const scenes = () => JSON.parse(JSON.stringify(fixture));
+
+test("a scene may declare a mood or inherit the film's", () => {
+  const doc = scenes();
+  doc.scenes[0].mood = "night";
+  assert.equal(ScenesSchema.parse(doc).scenes[0]?.mood, "night");
+  delete doc.scenes[0].mood;
+  assert.equal(ScenesSchema.parse(doc).scenes[0]?.mood, undefined);
+});
 
 /** A measured clock that fits the fixture: about 0.4 s a word, scene by scene. */
 function measured() {

@@ -147,11 +147,51 @@
     });
   }
 
+  const LAKSHMI_FACE_DEFAULTS = {
+    eyeOpen: 0.9, eyeLid: 0, pupil: 5.5, pupilAlpha: 1, catch: 1.5,
+    lookX: 0, lookY: 0, browLift: 0, browTilt: 0, tear: 0,
+    mouthOpen: 10, mouthCurve: 4, mouthWide: 14, mouthRound: 0,
+  };
+  const LAKSHMI_EYES = {
+    soft: { eyeOpen: 0.9, pupil: 5.5, catch: 1.5 },
+    wide: { eyeOpen: 1.15, pupil: 5.5, catch: 1.5 },
+    half: { eyeOpen: 0.55, eyeLid: 0.6, pupil: 5.5 },
+    closed: { eyeOpen: 0.05, pupil: 0 },
+  };
+  const LAKSHMI_MOUTHS = {
+    smile: { mouthOpen: 10, mouthCurve: 4, mouthWide: 14 },
+    soft: { mouthOpen: 6, mouthCurve: 2, mouthWide: 14 },
+    o: { mouthOpen: 9, mouthCurve: 0, mouthWide: 8, mouthRound: 1 },
+    flat: { mouthOpen: 4, mouthCurve: 0, mouthWide: 14 },
+  };
+
+  function lakshmiFaceFields(f = {}) {
+    const out = { ...LAKSHMI_FACE_DEFAULTS };
+    if (typeof f.eyes === "string" && LAKSHMI_EYES[f.eyes]) Object.assign(out, LAKSHMI_EYES[f.eyes]);
+    if (typeof f.mouth === "string" && LAKSHMI_MOUTHS[f.mouth]) Object.assign(out, LAKSHMI_MOUTHS[f.mouth]);
+    for (const key of Object.keys(LAKSHMI_FACE_DEFAULTS)) {
+      if (typeof f[key] === "number" && Number.isFinite(f[key])) out[key] = f[key];
+    }
+    if (typeof f.brow === "number") out.browLift = f.brow * 4;
+    if (typeof f.browLift === "number") out.browLift = f.browLift;
+    if (typeof f.browTilt === "number") out.browTilt = f.browTilt;
+    if (Array.isArray(f.look)) {
+      out.lookX = typeof f.look[0] === "number" ? f.look[0] : 0;
+      out.lookY = typeof f.look[1] === "number" ? f.look[1] : 0;
+    }
+    if (typeof f.lookX === "number") out.lookX = f.lookX;
+    if (typeof f.lookY === "number") out.lookY = f.lookY;
+    if (f.tear === true) out.tear = 1;
+    if (typeof f.tear === "number") out.tear = f.tear;
+    return out;
+  }
+
   function drawFace(ctx, x, y, t, o) {
     const f = o.face || {};
-    const eyes = f.eyes || "soft";
-    const mouth = f.mouth || "smile";
-    const blink = Math.sin(t * 1.7) > 0.985 ? 0.1 : 1;
+    const F = lakshmiFaceFields(f);
+    // No autonomous blink: at 30 fps it landed exactly on the expression
+    // endpoint and made the sheet's AWE→KIND transition read as a closed face.
+    const blink = 1;
     // face
     paper(ctx, () => blobPath(ctx, x, y, 54, 66, 28, 0.02, 4), {
       fill: V.skin, edge: edge(0.55), edgeW: 2.4, shadow: C.rgba(PAL.ink, 0.16), sx: 3, sy: 5,
@@ -164,22 +204,32 @@
     ctx.strokeStyle = V.kohl; ctx.lineWidth = 4; ctx.lineCap = "round";
     for (const s of [-1, 1]) {
       ctx.beginPath();
-      ctx.moveTo(x + s * 12, y - 16);
-      ctx.quadraticCurveTo(x + s * 23, y - 24, x + s * 34, y - 17);
+      ctx.moveTo(x + s * 12, y - 16 - F.browLift);
+      ctx.quadraticCurveTo(x + s * 23, y - 24 - F.browLift, x + s * 34, y - 17 - F.browLift - s * F.browTilt);
       ctx.stroke();
     }
     // eyes — almond, kohl, warm iris
     for (const s of [-1, 1]) {
       const ex = x + s * 22;
-      const open = eyes === "closed" ? 0.05 : eyes === "half" ? 0.55 : eyes === "wide" ? 1.15 : 0.9;
       ctx.save();
       ctx.translate(ex, y - 2);
-      ctx.scale(1, open * blink);
+      ctx.scale(1, Math.max(0.04, F.eyeOpen) * blink);
       ctx.fillStyle = V.cream; ctx.strokeStyle = V.kohl; ctx.lineWidth = 2.4;
       ctx.beginPath(); ctx.ellipse(0, 0, 16, 9, 0, 0, TAU); ctx.fill(); ctx.stroke();
-      ctx.fillStyle = "#6B3B1E"; ctx.beginPath(); ctx.arc(2, 0, 5.5, 0, TAU); ctx.fill();
-      ctx.fillStyle = V.kohl; ctx.beginPath(); ctx.arc(2, 0, 2.8, 0, TAU); ctx.fill();
-      ctx.fillStyle = C.rgba("#FFFFFF", 0.85); ctx.beginPath(); ctx.arc(0, -2, 1.5, 0, TAU); ctx.fill();
+      ctx.globalAlpha = F.pupilAlpha;
+      ctx.fillStyle = "#6B3B1E"; ctx.beginPath(); ctx.arc(F.lookX * 4, F.lookY * 4, F.pupil, 0, TAU); ctx.fill();
+      ctx.fillStyle = V.kohl; ctx.beginPath(); ctx.arc(F.lookX * 4, F.lookY * 4, F.pupil * 0.5, 0, TAU); ctx.fill();
+      ctx.globalAlpha = 1;
+      if (F.catch > 0.1) {
+        ctx.fillStyle = C.rgba("#FFFFFF", 0.85);
+        ctx.beginPath(); ctx.arc(F.lookX * 4 - 2, F.lookY * 4 - 2, F.catch, 0, TAU); ctx.fill();
+      }
+      if (F.eyeLid > 0.05) {
+        ctx.globalAlpha = F.eyeLid;
+        ctx.fillStyle = V.kohl;
+        ctx.beginPath(); ctx.ellipse(0, -4.5, 16, 4, 0, 0, TAU); ctx.fill();
+        ctx.globalAlpha = 1;
+      }
       ctx.strokeStyle = V.kohl; ctx.lineWidth = 2.2;
       ctx.beginPath(); ctx.moveTo(-16, -2); ctx.quadraticCurveTo(0, -13, 16, -2); ctx.stroke();
       ctx.restore();
@@ -189,12 +239,22 @@
     ctx.beginPath(); ctx.moveTo(x - 2, y + 4); ctx.quadraticCurveTo(x - 5, y + 14, x + 2, y + 15); ctx.stroke();
     // lips
     ctx.fillStyle = V.sariD;
-    ctx.beginPath();
-    ctx.moveTo(x - 14, y + 30);
-    ctx.quadraticCurveTo(x, y + (mouth === "o" ? 22 : 26), x + 14, y + 30);
-    ctx.quadraticCurveTo(x, y + (mouth === "smile" ? 40 : 34), x - 14, y + 30);
-    ctx.closePath(); ctx.fill();
+    if (F.mouthRound > 0.5) {
+      ctx.beginPath(); ctx.ellipse(x, y + 31, F.mouthWide, Math.max(1.5, F.mouthOpen), 0, 0, TAU); ctx.fill();
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(x - F.mouthWide, y + 30);
+      ctx.quadraticCurveTo(x, y + 30 - F.mouthCurve, x + F.mouthWide, y + 30);
+      ctx.quadraticCurveTo(x, y + 30 + F.mouthOpen, x - F.mouthWide, y + 30);
+      ctx.closePath(); ctx.fill();
+    }
     ctx.strokeStyle = C.rgba(PAL.ink, 0.35); ctx.lineWidth = 1; ctx.stroke();
+    if (F.tear > 0.01) {
+      ctx.globalAlpha = F.tear;
+      ctx.fillStyle = "#7DB7D9";
+      ctx.beginPath(); ctx.ellipse(x - 22, y + 14, 4, 7, 0, 0, TAU); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
     // bindi
     ctx.fillStyle = V.sari; ctx.beginPath(); ctx.arc(x, y - 30, 4.5, 0, TAU); ctx.fill();
   }
@@ -482,5 +542,6 @@
   window.CHARACTERS["lakshmi-v2@0.1.0"] = function (ctx, x, y, s, o = {}) {
     drawLakshmiV2(ctx, x, y, s, o);
   };
+  window.CHARACTERS["lakshmi-v2@0.1.0"].faceFields = lakshmiFaceFields;
   window.LAKSHMI_V2 = { hand, tapered, bangle, lotusFlower };
 })();

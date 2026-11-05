@@ -306,11 +306,16 @@ async function main(): Promise<void> {
       const report = read<{
         ok: boolean;
         score: string;
+        scenesHash?: string | null;
         identity?: { pass: boolean; findings: { code: string; message: string }[] };
       }>("preflight.json");
       const current = `sha256:${hashFile(resolve(root, scorePath))}`;
       if (!report) return { ok: false, detail: "no preflight report" };
       if (report.score !== current) return { ok: false, detail: "preflight describes a different score" };
+      const scenesPath = resolve(root, "films", score.id, "scenes.json");
+      if (existsSync(scenesPath) && report.scenesHash !== `sha256:${hashFile(scenesPath)}`) {
+        return { ok: false, detail: "preflight describes different scenes" };
+      }
       if (!report.identity) return { ok: false, detail: "preflight has no identity section" };
       if (!report.identity.pass) {
         return {
@@ -422,13 +427,18 @@ async function main(): Promise<void> {
         contract?: number;
         pass: boolean;
         score: string;
+        scenesHash?: string | null;
         checked: number;
         shots: number;
         findings: { code: string; message: string }[];
       }>("visual-check.json");
       const current = `sha256:${hashFile(resolve(root, scorePath))}`;
-      if (!report) return { ok: false, detail: "no visual check — run `npm run visual:check -- <score>`" };
+      if (!report) return { ok: false, detail: "no visual check - run `npm run visual:check -- <score>`" };
       if (report.score !== current) return { ok: false, detail: "the visual check measured a different score" };
+      const visualScenes = resolve(root, "films", score.id, "scenes.json");
+      if (existsSync(visualScenes) && report.scenesHash !== `sha256:${hashFile(visualScenes)}`) {
+        return { ok: false, detail: "the visual check describes different scenes" };
+      }
       if (report.contract !== VISUAL_CONTRACT_VERSION) return { ok: false, detail: "the visual check predates the phrase/device/performer rules - re-run it" };
       if (!report.pass) {
         return { ok: false, detail: `${report.findings.length} visual finding(s): ${report.findings[0]?.message ?? "see visual-check.json"}` };
@@ -444,7 +454,9 @@ async function main(): Promise<void> {
         pass: boolean;
         score: string;
         identityHash?: string;
+        frameReport?: string | null;
         frameReportHash?: string | null;
+        scenesHash?: string | null;
         videoHash: string | null;
         stagedRatio: number;
         findings: { code: string; message: string }[];
@@ -461,7 +473,15 @@ async function main(): Promise<void> {
         .update(JSON.stringify(tokens.identity ?? null))
         .digest("hex")}`;
       if (report.identityHash !== identityHash) return { ok: false, detail: "the identity block changed since the report" };
-      if (!report.frameReportHash) return { ok: false, detail: "the identity report has no frame-report hash" };
+      if (!report.frameReportHash || !report.frameReport) return { ok: false, detail: "the identity report has no frame-report hash" };
+      const frameNow = `sha256:${hashFile(resolve(root, report.frameReport))}`;
+      if (report.frameReportHash !== frameNow) {
+        return { ok: false, detail: "the frame report was repainted after the identity report - run style:identity again" };
+      }
+      const scenesPath = resolve(root, "films", score.id, "scenes.json");
+      if (existsSync(scenesPath) && report.scenesHash !== `sha256:${hashFile(scenesPath)}`) {
+        return { ok: false, detail: "the scenes changed since the identity report" };
+      }
       if (!report.pass) {
         return { ok: false, detail: `${report.findings.length} identity finding(s): ${report.findings[0]?.message ?? "see the report"}` };
       }

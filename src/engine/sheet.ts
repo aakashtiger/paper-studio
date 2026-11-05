@@ -408,10 +408,12 @@ ${options.extra.map((name) => `<script src="${options.vendor}/${name}"></script>
     ctx.save();
     ctx.beginPath(); ctx.rect(x + 8, y + 44, POSE_W - 16, EXPR_H - 52); ctx.clip();
     ctx.translate(x + POSE_W / 2, y + 150);
-    ctx.scale(2.2, 2.2);
+    // The mortals now draw a 2× head; the old 2.2 zoom put the eyes above the
+    // card's clip and cropped the only evidence the sheet exists to show.
+    ctx.scale(PACK ? 2.2 : 1.3, PACK ? 2.2 : 1.3);
     // The pack's crop puts the head on the card's centre line; a measured crop
     // leaves room for the chin, so the face sits a little above it.
-    ctx.translate(0, -zoomY - (PACK ? 0 : 36));
+    ctx.translate(0, -zoomY - (PACK ? 0 : 20));
     figure(POSES[0].params, 0, 0, 1, mapped, true);
     ctx.restore();
   }

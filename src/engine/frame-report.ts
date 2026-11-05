@@ -138,10 +138,15 @@ export function probeBox(
       (record): record is ProbeSolve =>
         record.kind === "solve" && record.character === character,
     );
-    if (solves.length === 0) continue;
-    const feet = solves
+    const solvedFeet = solves
       .map((solve) => apply(chest.m, solve.target[0], solve.target[1]))
       .sort((a, b) => b[1] - a[1])[0];
+    // A procedural walk has no IK target; the rig publishes the ankle it drew.
+    const drawnFeet = anchors
+      .filter((anchor) => anchor.part === "foot-left" || anchor.part === "foot-right")
+      .map((anchor) => apply(anchor.m, anchor.local[0], anchor.local[1]))
+      .sort((a, b) => b[1] - a[1])[0];
+    const feet = solvedFeet ?? drawnFeet;
     if (!feet) continue;
     const core = feet[1] - headPoint[1];
     if (!(core > 0)) continue;

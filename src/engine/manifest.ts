@@ -107,10 +107,22 @@ export async function renderInputs(
     : "";
   const rel = (path: string): string => relative(root, path).replace(/\\/g, "/");
 
+  // Every local script the page loads, not a hand-picked vendor list. The proof's
+  // office, goddess and recipe files are code that changes frames; a manifest
+  // that omits them can call an old picture current after a face or lamp edit.
+  const pageScripts = [...indexHtml.matchAll(/<script[^>]*\bsrc=["']([^"']+)["']/gi)]
+    .map((match) => match[1] ?? "")
+    .filter((src) => src !== "" && !/^(https?:)?\/\//i.test(src) && !src.startsWith("data:"))
+    .map((src) => {
+      const absolute = resolve(filmDir, src);
+      return { path: rel(absolute), absolute };
+    });
+
   const named: { path: string; absolute: string }[] = [
     { path: scorePath.replace(/\\/g, "/"), absolute: resolve(root, scorePath) },
     { path: rel(join(filmDir, "score-data.js")), absolute: join(filmDir, "score-data.js") },
     { path: `styles/${style}/canvas/recipes.js`, absolute: resolve(root, `styles/${style}/canvas/recipes.js`) },
+    { path: `styles/${style}/tokens.json`, absolute: resolve(root, `styles/${style}/tokens.json`) },
     { path: rel(join(filmDir, "painter.js")), absolute: join(filmDir, "painter.js") },
     { path: rel(join(filmDir, "index.html")), absolute: join(filmDir, "index.html") },
     { path: rel(join(filmDir, "captions.srt")), absolute: join(filmDir, "captions.srt") },
@@ -120,6 +132,7 @@ export async function renderInputs(
       path: rel(join(filmDir, "vendor", name)),
       absolute: join(filmDir, "vendor", name),
     })),
+    ...pageScripts,
     // The fonts shape every glyph, and the page names them in one place.
     ...fontUrls(indexHtml).map((url) => ({
       path: rel(join(filmDir, url)),
@@ -138,9 +151,16 @@ export async function renderInputs(
     })),
   ];
 
+  const seen = new Set<string>();
+  const unique = named.filter((file) => {
+    if (seen.has(file.path)) return false;
+    seen.add(file.path);
+    return true;
+  });
+
   return {
     files: await Promise.all(
-      named.map(async (file) => ({ path: file.path, hash: await hashFile(file.absolute) })),
+      unique.map(async (file) => ({ path: file.path, hash: await hashFile(file.absolute) })),
     ),
   };
 }

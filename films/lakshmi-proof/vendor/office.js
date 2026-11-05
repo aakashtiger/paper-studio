@@ -45,6 +45,65 @@ const FACE_BY_POSE = {
   accept: { eyes: "happy", browLift: 2.8 },
 };
 
+/* The numeric face. A string eye/mouth is an endpoint, not the only state:
+ * the proof blends two expressions through these fields, so the face can move
+ * without crossfading two drawings. The endpoint table reproduces the old
+ * shapes exactly; `faceFields` fills every key so a missing field cannot snap at
+ * the blend midpoint. */
+const OFFICE_FACE_DEFAULTS = {
+  eyeOpen: 1, eyeWhite: 0, pupil: 5.6, pupilAlpha: 1, catch: 1.6,
+  eyeSmile: 0, eyeSquint: 0, eyeLid: 0, lookX: 0, lookY: 0, lookShift: 0, lookScale: 2.4,
+  browLift: 0, browTilt: 0, tear: 0,
+  mouthOpen: 0, mouthCurve: 0, mouthWide: 5, mouthRound: 0,
+  teeth: 0, toothLines: 0, tongue: 0, wobble: 0, asym: 0,
+};
+const OFFICE_EYES = {
+  dot: { eyeWhite: 0, pupil: 5.6, catch: 1.6, lookScale: 2.4 },
+  wide: { eyeWhite: 9, pupil: 4.4, catch: 0, lookScale: 3 },
+  happy: { eyeSmile: 1, eyeWhite: 0, pupil: 0, catch: 0 },
+  half: { eyeWhite: 8, pupil: 3.8, eyeLid: 1, lookScale: 2.4 },
+  squint: { eyeWhite: 8, pupil: 3.6, eyeSquint: 1, lookScale: 0 },
+  blank: { eyeWhite: 7.6, pupil: 3.4, pupilAlpha: 0.55, lookScale: 2 },
+  glance: { eyeWhite: 0, pupil: 5.6, catch: 1.4, lookScale: 2.4, lookShift: 3.8 },
+  closed: { eyeOpen: 0, eyeWhite: 0, pupil: 0, catch: 0 },
+  soft: { eyeOpen: 0.9, eyeWhite: 4.5, pupil: 4.2, catch: 1.2, eyeLid: 0.15, lookScale: 2.2 },
+};
+const OFFICE_MOUTHS = {
+  flat: { mouthOpen: 0, mouthCurve: 0, mouthWide: 5 },
+  smile: { mouthOpen: 7, mouthCurve: 3, mouthWide: 5.5 },
+  grin: { mouthOpen: 9, mouthCurve: 2, mouthWide: 9, teeth: 1 },
+  o: { mouthOpen: 4.8, mouthCurve: 0, mouthWide: 3.8, mouthRound: 1 },
+  O: { mouthOpen: 8.2, mouthCurve: 0, mouthWide: 6.2, mouthRound: 1, tongue: 1 },
+  wobble: { mouthOpen: 0, mouthCurve: 3.6, mouthWide: 5.5, wobble: 1 },
+  frown: { mouthOpen: 0, mouthCurve: -3.4, mouthWide: 5.5 },
+  smirk: { mouthOpen: 0, mouthCurve: 1.4, mouthWide: 5, asym: 1 },
+  grit: { mouthOpen: 2.6, mouthCurve: -2, mouthWide: 7, teeth: 1, toothLines: 1 },
+  soft: { mouthOpen: 2.4, mouthCurve: 2.4, mouthWide: 4.5 },
+};
+
+function officeFaceFields(f = {}) {
+  const out = { ...OFFICE_FACE_DEFAULTS };
+  const eye = typeof f.eyes === "string" ? OFFICE_EYES[f.eyes] : undefined;
+  const mouth = typeof f.mouth === "string" ? OFFICE_MOUTHS[f.mouth] : undefined;
+  if (eye) Object.assign(out, eye);
+  if (mouth) Object.assign(out, mouth);
+  for (const key of Object.keys(OFFICE_FACE_DEFAULTS)) {
+    if (typeof f[key] === "number" && Number.isFinite(f[key])) out[key] = f[key];
+  }
+  if (typeof f.brow === "number") out.browLift = f.brow * 4;
+  if (typeof f.browLift === "number") out.browLift = f.browLift;
+  if (typeof f.browTilt === "number") out.browTilt = f.browTilt;
+  if (Array.isArray(f.look)) {
+    out.lookX = typeof f.look[0] === "number" ? f.look[0] : 0;
+    out.lookY = typeof f.look[1] === "number" ? f.look[1] : 0;
+  }
+  if (typeof f.lookX === "number") out.lookX = f.lookX;
+  if (typeof f.lookY === "number") out.lookY = f.lookY;
+  if (f.tear === true) out.tear = 1;
+  if (typeof f.tear === "number") out.tear = f.tear;
+  return out;
+}
+
 function officeFigure(ctx, x, y, s, o = {}) {
   const t = o.t || 0;
   const p = o.pose || {};
@@ -130,6 +189,9 @@ function officeFigure(ctx, x, y, s, o = {}) {
     }
     const knee = limb(ctx, hx, hy, 156, 25, 20, a1, far ? C.shade(trouser, -12) : trouser, C.rgba(PAL.ink, 0.5), true);
     const ankle = limb(ctx, knee[0], knee[1], 117, 20, 16, a1 + a2, far ? C.shade(trouser, -12) : trouser, C.rgba(PAL.ink, 0.5), true);
+    // Publish the drawn ankle, so a walk without IK targets is still a
+    // measurable body rather than a shot with no subject box.
+    rigAnchor(ctx, side < 0 ? "foot-left" : "foot-right", ankle[0], ankle[1]);
     brad(ctx, hx, hy, 3.4);
     brad(ctx, knee[0], knee[1], 2.8);
     // A plain lace-up for the office; a platform boot for the stage.
@@ -356,56 +418,66 @@ function officeFigure(ctx, x, y, s, o = {}) {
   ctx.beginPath(); ctx.ellipse(22, 17, 8, 3.6, 0, 0, TAU); ctx.fill();
   ctx.globalAlpha = 1;
   const ey = -4;
-  // The library's expression vocabulary is explicit where it can be: `eyes`
-  // and `mouth` name a shape, so 14 names are 14 faces. The old adapter mapped
-  // four numbers onto four shapes and half the sheet was duplicates.
-  const es = f.eyes || (f.open > 1.12 ? "wide" : f.open < 0.62 ? "closed" : "dot");
-  const lookX = f.look?.[0] ?? f.lookX ?? 0;
-  const lookY = f.look?.[1] ?? f.lookY ?? 0;
+  // One numeric face. `eyes`/`mouth` still name the endpoint, but a blend
+  // changes open/white/pupil/curve/width continuously instead of cutting from
+  // one drawing to another.
+  const F = officeFaceFields(f);
+  const lookX = F.lookX;
+  const lookY = F.lookY;
   for (const sx of [-1, 1]) {
     ctx.save();
     ctx.translate(sx * 15, ey);
-    if (es === "closed") {
+    const closed = F.eyeOpen <= 0.08 && F.eyeSmile < 0.5;
+    if (closed) {
       ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2.2;
       ctx.beginPath(); ctx.arc(0, 0, 7, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
-    } else if (es === "wide") {
-      ctx.fillStyle = "#FFF"; ctx.beginPath(); ctx.arc(0, 0, 9, 0, TAU); ctx.fill();
-      ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.arc(lookX * 3, lookY * 3, 4.4, 0, TAU); ctx.fill();
-    } else if (es === "happy") {
+    } else if (F.eyeSmile < 0.99) {
+      ctx.globalAlpha = 1 - F.eyeSmile;
+      if (F.eyeWhite > 0.25) {
+        ctx.fillStyle = "#FFF";
+        ctx.beginPath(); ctx.ellipse(0, 0, F.eyeWhite, F.eyeWhite * Math.max(0.15, Math.min(1.15, F.eyeOpen)), 0, 0, TAU); ctx.fill();
+      }
+      if (F.pupil > 0.2) {
+        ctx.globalAlpha = (1 - F.eyeSmile) * F.pupilAlpha;
+        ctx.fillStyle = PAL.ink;
+        ctx.beginPath(); ctx.arc(lookX * F.lookScale, lookY * F.lookScale, F.pupil, 0, TAU); ctx.fill();
+        ctx.globalAlpha = 1 - F.eyeSmile;
+        if (F.catch > 0.1) {
+          ctx.fillStyle = "#FFF";
+          ctx.beginPath(); ctx.arc(1.8, -1.8, F.catch, 0, TAU); ctx.fill();
+        }
+      }
+      if (F.eyeLid > 0.02) {
+        ctx.globalAlpha = (1 - F.eyeSmile) * Math.min(1, F.eyeLid);
+        ctx.fillStyle = C.rgba(PAL.ink, 0.9);
+        ctx.beginPath(); ctx.ellipse(0, -3.4, 9, 3.2, 0, 0, TAU); ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+      if (F.eyeSquint > 0.02) {
+        ctx.globalAlpha = (1 - F.eyeSmile) * F.eyeSquint;
+        ctx.fillStyle = C.rgba(PAL.ink, 0.92);
+        ctx.beginPath(); ctx.moveTo(-9, -8); ctx.lineTo(9, -8); ctx.lineTo(9, -1); ctx.lineTo(-9, 3.5); ctx.closePath(); ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+      if (F.lookShift > 0.1) {
+        ctx.globalAlpha = 1 - F.eyeSmile;
+        ctx.fillStyle = PAL.ink;
+        ctx.beginPath(); ctx.arc(sx * F.lookShift, 0.6, 2.2, 0, TAU); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+    if (F.eyeSmile > 0.01) {
+      ctx.globalAlpha = F.eyeSmile;
       ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2.2;
       ctx.beginPath(); ctx.arc(0, 2, 7, 1.15 * Math.PI, 1.85 * Math.PI); ctx.stroke();
-    } else if (es === "half") {
-      // A lid across the top third, pupil below it: bored, tired, relieved.
-      ctx.fillStyle = "#FFF"; ctx.beginPath(); ctx.arc(0, 0, 8, 0, TAU); ctx.fill();
-      ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.arc(lookX * 2.4, 2 + lookY * 2.4, 3.8, 0, TAU); ctx.fill();
-      ctx.fillStyle = C.rgba(PAL.ink, 0.9);
-      ctx.beginPath(); ctx.ellipse(0, -3.4, 9, 3.2, 0, 0, TAU); ctx.fill();
-    } else if (es === "squint") {
-      // An angry eye is a wedge, not a dot: the lid cuts down from the inside.
-      ctx.fillStyle = "#FFF"; ctx.beginPath(); ctx.arc(0, 0, 8, 0, TAU); ctx.fill();
-      ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.arc(sx * -1.8, 1.4, 3.6, 0, TAU); ctx.fill();
-      ctx.fillStyle = C.rgba(PAL.ink, 0.92);
-      ctx.beginPath(); ctx.moveTo(-9, -8); ctx.lineTo(9, -8); ctx.lineTo(9, -1); ctx.lineTo(-9, 3.5); ctx.closePath(); ctx.fill();
-    } else if (es === "blank") {
-      // No catchlight and a smaller pupil: a person not home.
-      ctx.fillStyle = "#FFF"; ctx.beginPath(); ctx.arc(0, 0, 7.6, 0, TAU); ctx.fill();
-      ctx.fillStyle = C.rgba(PAL.ink, 0.55); ctx.beginPath(); ctx.arc(lookX * 2, lookY * 2, 3.4, 0, TAU); ctx.fill();
-    } else if (es === "glance") {
-      ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.arc(0, 0, 5.6, 0, TAU); ctx.fill();
-      ctx.fillStyle = "#FFF"; ctx.beginPath(); ctx.arc(1.8, -1.8, 1.4, 0, TAU); ctx.fill();
-      ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.arc(sx * 3.8, 0.6, 2.2, 0, TAU); ctx.fill();
-    } else {
-      ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.arc(0, 0, 5.6, 0, TAU); ctx.fill();
-      ctx.fillStyle = "#FFF"; ctx.beginPath(); ctx.arc(1.8, -1.8, 1.6, 0, TAU); ctx.fill();
-      ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.arc(lookX * 2.4, lookY * 2.4, 1.9, 0, TAU); ctx.fill();
+      ctx.globalAlpha = 1;
     }
     ctx.restore();
   }
   // brows: the film's only emotional instrument, so they are separate shapes.
-  // `browTilt` raises the inner ends (worried) or drops them (angry).
   ctx.strokeStyle = C.rgba(PAL.ink, 0.75); ctx.lineWidth = 1.7;
-  const browLift = f.browLift ?? (typeof f.brow === "number" ? f.brow * 4 : 0);
-  const browTilt = f.browTilt || 0;
+  const browLift = F.browLift;
+  const browTilt = F.browTilt;
   ctx.beginPath();
   ctx.moveTo(-23, ey - 17 - browLift);
   ctx.quadraticCurveTo(-15, ey - 21 - browLift, -7, ey - 17 - browLift - browTilt);
@@ -416,45 +488,70 @@ function officeFigure(ctx, x, y, s, o = {}) {
   ctx.stroke();
   ctx.strokeStyle = C.rgba(PAL.ink, 0.3); ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(0, 7); ctx.lineTo(2, 13); ctx.stroke();
-  if (f.tear) {
-    ctx.fillStyle = C.rgba("#7DB7D9", 0.9);
+  if (F.tear > 0.01) {
+    ctx.globalAlpha = F.tear;
+    ctx.fillStyle = "#7DB7D9";
     ctx.beginPath();
     ctx.moveTo(-20, 8);
     ctx.quadraticCurveTo(-24, 16, -20, 20);
     ctx.quadraticCurveTo(-16, 16, -20, 8);
     ctx.fill();
+    ctx.globalAlpha = 1;
   }
-  const m = f.mouth || (f.open > 1.3 ? "o" : typeof f.brow === "number" && f.brow > 0.25 ? "smile" : "flat");
+  // mouth
   ctx.save();
   ctx.translate(0, 27);
-  if (m === "o") {
-    ctx.fillStyle = "#8E2430"; ctx.beginPath(); ctx.ellipse(0, 0, 3.8, 4.8, 0, 0, TAU); ctx.fill();
-  } else if (m === "O") {
-    ctx.fillStyle = "#6E1822"; ctx.beginPath(); ctx.ellipse(0, 1, 6.2, 8.2, 0, 0, TAU); ctx.fill();
-    ctx.fillStyle = "#C94B58"; ctx.beginPath(); ctx.ellipse(0, 4, 3.4, 3.6, 0, 0, TAU); ctx.fill();
-  } else if (m === "smile") {
-    ctx.fillStyle = "#A62A36";
-    ctx.beginPath(); ctx.moveTo(-5.5, -1); ctx.quadraticCurveTo(0, 3, 5.5, -1); ctx.quadraticCurveTo(0, 7, -5.5, -1); ctx.fill();
-  } else if (m === "grin") {
+  const mw = Math.max(1, F.mouthWide);
+  const mo = Math.max(0, F.mouthOpen);
+  const mc = F.mouthCurve;
+  const wob = F.wobble * Math.sin(t * 5.5) * 1.5;
+  const asym = F.asym * 1.5;
+  const mouthPath = () => {
+    ctx.beginPath();
+    ctx.moveTo(-mw, 0);
+    ctx.quadraticCurveTo(0, -mc + wob, mw, asym);
+    ctx.quadraticCurveTo(0, mo + wob, -mw, 0);
+    ctx.closePath();
+  };
+  if (F.mouthRound > 0.5) {
     ctx.fillStyle = "#6E1822";
-    ctx.beginPath(); ctx.moveTo(-9, -2); ctx.quadraticCurveTo(0, 2, 9, -2); ctx.quadraticCurveTo(0, 9, -9, -2); ctx.fill();
-    ctx.fillStyle = "#FFF7E4"; ctx.fillRect(-7, 0, 14, 2.2);
-  } else if (m === "wobble") {
+    ctx.beginPath(); ctx.ellipse(0, 0, mw, Math.max(0.8, mo), 0, 0, TAU); ctx.fill();
+    if (F.tongue > 0.1) {
+      ctx.fillStyle = "#C94B58";
+      ctx.beginPath(); ctx.ellipse(0, mo * 0.3, mw * 0.55, mo * 0.45, 0, 0, TAU); ctx.fill();
+    }
+  } else if (mo < 0.6 && F.teeth < 0.1) {
+    // A frown, smirk and wobble are strokes, not filled lips: their curve is
+    // the whole expression, and filling them flattened the face.
     ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.7;
-    ctx.beginPath(); ctx.moveTo(-5.5, 0); ctx.quadraticCurveTo(0, 3.6, 5.5, 0); ctx.stroke();
-  } else if (m === "frown") {
-    ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.7;
-    ctx.beginPath(); ctx.moveTo(-5.5, 2); ctx.quadraticCurveTo(0, -3.4, 5.5, 2); ctx.stroke();
-  } else if (m === "smirk") {
-    ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.7;
-    ctx.beginPath(); ctx.moveTo(-4, 1); ctx.quadraticCurveTo(2, 1.4, 6, -2); ctx.stroke();
-  } else if (m === "grit") {
-    ctx.fillStyle = "#FFF7E4"; ctx.fillRect(-7, -2, 14, 4.6);
-    ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.2; ctx.strokeRect(-7, -2, 14, 4.6);
-    ctx.beginPath(); ctx.moveTo(-2.3, -2); ctx.lineTo(-2.3, 2.6); ctx.moveTo(2.3, -2); ctx.lineTo(2.3, 2.6); ctx.stroke();
+    if (F.wobble > 0.4) {
+      ctx.beginPath();
+      ctx.moveTo(-mw, 0);
+      ctx.quadraticCurveTo(-mw * 0.5, 3 + wob, 0, 0);
+      ctx.quadraticCurveTo(mw * 0.5, -3 + wob, mw, 0);
+      ctx.stroke();
+    } else {
+      ctx.beginPath(); ctx.moveTo(-mw, 0); ctx.quadraticCurveTo(0, mc + wob, mw, asym); ctx.stroke();
+    }
   } else {
-    ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.7;
-    ctx.beginPath(); ctx.moveTo(-5, 0); ctx.lineTo(5, 0); ctx.stroke();
+    ctx.fillStyle = "#A62A36";
+    mouthPath(); ctx.fill();
+    ctx.strokeStyle = C.rgba(PAL.ink, 0.35); ctx.lineWidth = 1; ctx.stroke();
+    if (F.teeth > 0.05) {
+      ctx.save();
+      mouthPath(); ctx.clip();
+      ctx.globalAlpha = F.teeth;
+      ctx.fillStyle = "#FFF7E4";
+      ctx.fillRect(-mw, 0, mw * 2, Math.max(1.5, mo * 0.35));
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    }
+    if (F.toothLines > 0.05) {
+      ctx.strokeStyle = C.rgba(PAL.ink, 0.5); ctx.lineWidth = 1;
+      for (const x of [-mw * 0.33, mw * 0.33]) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, Math.max(1.5, mo * 0.35)); ctx.stroke();
+      }
+    }
   }
   ctx.restore();
   // fringe
@@ -543,6 +640,19 @@ function officeFigure(ctx, x, y, s, o = {}) {
       edge,
       edgeW: 1,
     });
+    if (o.held === "diya" && !far) {
+      // The street carries the flame in the child's hand, not in an empty fist.
+      paper(ctx, () => {
+        ctx.beginPath();
+        ctx.moveTo(-12, 16); ctx.quadraticCurveTo(0, 26, 12, 16);
+        ctx.quadraticCurveTo(0, 20, -12, 16); ctx.closePath();
+      }, { fill: PAL.terracotta, edge, edgeW: 1.2 });
+      paper(ctx, () => {
+        ctx.beginPath();
+        ctx.moveTo(0, 4); ctx.quadraticCurveTo(-6, 14, 0, 16);
+        ctx.quadraticCurveTo(6, 14, 0, 4); ctx.closePath();
+      }, { fill: PAL.gold, edge: C.rgba(PAL.ink, 0.35), edgeW: 0.8 });
+    }
     rigAnchor(ctx, side < 0 ? "hand-left" : "hand-right", 0, 0, 18, 26);
     ctx.restore();
   }
@@ -570,3 +680,6 @@ window.CHARACTERS["performer@0.1.0"] = function performer(ctx, x, y, s, o = {}) 
 window.CHARACTERS["mortal@0.1.0"] = function mortal(ctx, x, y, s, o = {}) {
   return officeFigure(ctx, x, y, s, { ...o, outfit: "mortal" });
 };
+for (const rig of ["worker@0.1.0", "supervisor@0.1.0", "performer@0.1.0", "mortal@0.1.0"]) {
+  window.CHARACTERS[rig].faceFields = officeFaceFields;
+}

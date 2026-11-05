@@ -335,6 +335,23 @@ refuses a first pose after 0.25 s or two pose changes closer than 0.3 s
 reports **4 hue families / top 98.6%** instead of the always-zero outlier. The
 17.2 s proof is 6/6 staged, mood night, 78.9 / 22.2 / 10.8; **519 tests**.
 
+**Scenes have moods, faces interpolate, the first lamp is re-blocked (0060).**
+`scenes[].mood` inherits the film or names its own band; an unknown name is a
+finding. The proof declares sc03 **interior** while the film is **night**, and
+the delivered video measures every frame of each scene: sc01 80.2 / 23.1 / 10.5
+(177 frames), sc02 66.4 / 15.4 / 11.3 (222), sc03 104.7 / 35.8 / 10.7 (117).
+`preflight`, `visual:check` and `style:identity` publish `scenesHash`; the gate,
+renderer and review check it. The face is a numeric vector (`faceFields`) that
+`faceAt` blends between expression events; `visual:check` refuses a late first
+expression, two changes inside 0.3 s, or an expression on someone not in the
+shot. s01 is re-blocked at 1.02→1.30, diya 1.6, hand carrying toward the child,
+rangoli behind the flame, lamp lit at 0.5 s; s02's walking child carries the
+diya the device names. The render manifest now hashes every page script and
+`tokens.json`; the identity's frame report and the video's manifest are re-hashed,
+not trusted by presence. Delivered picture `sha256:a35472f3def7…`; `gate:7`
+**29 checks**, `film:review` **PASS**, palette 4 families / top 98.6%, ASR
+97.9%, **526 tests**.
+
 **The visual is authored before the recipe is chosen (0051).** A scene publishes
 `visual` (subject, setting, action, props); a shot publishes `visual` (shows,
 action, focus, the line it answers, why). `visual:check` refuses a missing brief,
@@ -384,10 +401,11 @@ narration is still spoken from the score (the text is proved identical, one
 stage from 0025); scenes are checked against the read, not auto-fitted;
 props and sets are not derived from shot slots; song films are a marker;
 backgrounds are not cached; the collage and the storyboard each paint their
-own frames; the mood is film-level, not per scene; a shot's face is a fixed
-override, so an expression change is authored as a pose event rather than
-interpolated in the painter. P0.5 (the 7-analysis/4-rebuild workflow) and the
-`reproduce` legacy marker remain parked; music and semantic vision remain parked.
+own frames; a named focus has no size floor (the s01 lamp is large, but a future
+shot can still name a tiny object); palette families are checked on the film,
+not per scene; the face proof is the vector plus the sheet and stills, not a
+face-pixel audit. P0.5 (the 7-analysis/4-rebuild workflow) and the `reproduce`
+legacy marker remain parked; music and semantic vision remain parked.
 `paint-match` repaints 61 frames in fresh browsers (~73 s), which is the price
 of that proof rather than waste. No new film starts until the user says so.
 

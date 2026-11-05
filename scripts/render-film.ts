@@ -147,11 +147,16 @@ function requireVisuals(cwd: string, id: string, scoreFile: string): void {
     contract?: number;
     pass?: boolean;
     score?: string;
+    scenesHash?: string | null;
     findings?: { code: string; message: string }[];
   };
   const hash = fileHash(scoreFile);
   if (written.score !== hash) {
     throw new Error(`refusing to paint ${id}: build/${id}/visual-check.json describes a different score. Run \`${run}\` again`);
+  }
+  const visualScenes = join(cwd, "films", id, "scenes.json");
+  if (existsSync(visualScenes) && written.scenesHash !== fileHash(visualScenes)) {
+    throw new Error(`refusing to paint ${id}: build/${id}/visual-check.json describes different scenes. Run \`${run}\` again`);
   }
   if (written.contract !== VISUAL_CONTRACT_VERSION) {
     throw new Error(`refusing to paint ${id}: build/${id}/visual-check.json predates the phrase/device/performer rules. Run \`${run}\` again`);
@@ -181,7 +186,9 @@ function requireStyleIdentity(
     pass?: boolean;
     score?: string;
     identityHash?: string;
+    frameReport?: string | null;
     frameReportHash?: string | null;
+    scenesHash?: string | null;
     stage?: string;
     findings?: { code: string; message: string }[];
   };
@@ -201,8 +208,23 @@ function requireStyleIdentity(
       `refusing to paint ${id}: the identity report was measured against a different identity block. Run \`${run}\` again`,
     );
   }
-  if (!written.frameReportHash) {
+  if (!written.frameReportHash || !written.frameReport) {
     throw new Error(`refusing to paint ${id}: the identity report has no frame-report hash. Run \`${run}\` again`);
+  }
+  const frameReportPath = resolve(cwd, written.frameReport);
+  if (!existsSync(frameReportPath) || fileHash(frameReportPath) !== written.frameReportHash) {
+    throw new Error(
+      `refusing to paint ${id}: the frame report was repainted after the identity report. Run \`${run}\` again`,
+    );
+  }
+  const scenesPath = join(cwd, "films", id, "scenes.json");
+  if (existsSync(scenesPath)) {
+    const scenesHash = fileHash(scenesPath);
+    if (written.scenesHash !== scenesHash) {
+      throw new Error(
+        `refusing to paint ${id}: the identity report was measured against different scenes. Run \`${run}\` again`,
+      );
+    }
   }
   if (!written.pass) {
     const findings = written.findings ?? [];
@@ -290,6 +312,7 @@ function requirePreflight(cwd: string, id: string, scoreFile: string, scorePath:
   const written = JSON.parse(readFileSync(reportPath, "utf8")) as {
     ok?: boolean;
     score?: string;
+    scenesHash?: string | null;
     reproduce?: boolean;
     errors?: { code: string; message: string }[];
     identity?: { pass?: boolean; findings?: { code: string; message: string }[] };
@@ -299,6 +322,12 @@ function requirePreflight(cwd: string, id: string, scoreFile: string, scorePath:
     throw new Error(
       `refusing to paint ${id}: build/${id}/preflight.json describes a different score ` +
         `(${written.score ?? "no hash"} ≠ ${hash}). Run \`${run}\` again`,
+    );
+  }
+  const preflightScenes = join(cwd, "films", id, "scenes.json");
+  if (existsSync(preflightScenes) && written.scenesHash !== fileHash(preflightScenes)) {
+    throw new Error(
+      `refusing to paint ${id}: build/${id}/preflight.json describes different scenes. Run \`${run}\` again`,
     );
   }
   if (!written.identity) {

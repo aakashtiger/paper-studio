@@ -1,8 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  checkSceneMoodDeclarations,
   checkStyleIdentity,
   resolveFilmBands,
+  resolveSceneBand,
   type CastIdentity,
   type CastLibraryFact,
   type FrameSummary,
@@ -125,6 +127,82 @@ test("a mood selects the pack's band, and an unknown mood falls back", () => {
   assert.deepEqual(resolveFilmBands(mooded, "night"), mooded.moods.night);
   assert.equal(resolveFilmBands(mooded, "snow").lumaMean[0], 75);
   assert.equal(resolveFilmBands(mooded, undefined).lumaMean[0], 75);
+});
+
+test("a scene inherits, overrides, or falls back to the absolute band", () => {
+  const mooded = {
+    ...filmBands,
+    moods: {
+      night: { lumaMean: [55, 115] as const, saturationMean: [12, 38] as const, edgesMean: [7, 18] as const },
+      day: { lumaMean: [115, 185] as const, saturationMean: [10, 42] as const, edgesMean: [7, 19] as const },
+    },
+  };
+  const inherited = resolveSceneBand(mooded, "night", undefined);
+  assert.equal(inherited.mood, "night");
+  assert.equal(inherited.inherited, true);
+  assert.deepEqual(inherited.bands.lumaMean, [55, 115]);
+  const override = resolveSceneBand(mooded, "night", "day");
+  assert.equal(override.mood, "day");
+  assert.equal(override.inherited, false);
+  assert.deepEqual(override.bands.lumaMean, [115, 185]);
+  const unknown = resolveSceneBand(mooded, "night", "dusk");
+  assert.equal(unknown.unknown, true);
+  const absolute = resolveSceneBand(filmBands, undefined, undefined);
+  assert.equal(absolute.mood, null);
+  assert.deepEqual(absolute.bands.lumaMean, [75, 130]);
+});
+
+test("an unknown scene mood is a finding, not a silent fallback", () => {
+  const findings = checkSceneMoodDeclarations({
+    scenes: [{ id: "sc01", mood: "dusk" }, { id: "sc02" }],
+    filmMood: "night",
+    moods: { night: {} },
+  });
+  assert.ok(findings.some((finding) => finding.code === "identity:scene-mood"));
+});
+
+test("a scene outside its own band fails while the film mean may still pass", () => {
+  const mooded = {
+    ...filmBands,
+    moods: {
+      night: { lumaMean: [55, 115] as const, saturationMean: [12, 38] as const, edgesMean: [7, 18] as const },
+    },
+  };
+  const result = checkStyleIdentity({
+    ...input,
+    filmBands: mooded,
+    cast: [measured],
+    castRule: proportionRule,
+    scenes: [
+      {
+        scene: "sc01",
+        mood: "night",
+        inherited: true,
+        bands: { lumaMean: [55, 115], saturationMean: [12, 38], edgesMean: [7, 18] },
+        metrics: { lumaMean: 150, saturationMean: 22, edgesMean: 12 },
+        samples: 2,
+      },
+    ],
+  });
+  assert.ok(result.findings.some((finding) => finding.code === "identity:scene-luma"));
+  assert.ok(!result.findings.some((finding) => finding.code === "identity:luma"));
+});
+
+test("a scene with no measurement is refused", () => {
+  const result = checkStyleIdentity({
+    ...input,
+    scenes: [
+      {
+        scene: "sc01",
+        mood: null,
+        inherited: false,
+        bands: filmBands,
+        metrics: { lumaMean: null, saturationMean: null, edgesMean: null },
+        samples: 0,
+      },
+    ],
+  });
+  assert.ok(result.findings.some((finding) => finding.code === "identity:scene-unmeasured"));
 });
 
 test("a measured doll ratio that matches its library and the pack passes", () => {

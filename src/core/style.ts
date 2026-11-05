@@ -924,6 +924,8 @@ export const StyleIdentitySchema = z
          */
         minPoseGapSeconds: z.number().positive().optional(),
         maxFirstPoseSeconds: z.number().positive().optional(),
+        minExpressionGapSeconds: z.number().positive().optional(),
+        maxFirstExpressionSeconds: z.number().positive().optional(),
         reference: z.string().min(1),
       })
       .strict()

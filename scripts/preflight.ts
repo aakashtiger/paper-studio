@@ -40,7 +40,7 @@ import { FilmScoreSchema, resolveFilm } from "../src/engine/treatment.js";
 import { pictureMatches } from "../src/engine/video.js";
 import { StyleIdentitySchema, identityCastRule } from "../src/core/style.js";
 import { FIELD_ROLES, checkFilmIdentity } from "../src/engine/identity.js";
-import { stagedBand } from "../src/engine/style-identity.js";
+import { checkSceneMoodDeclarations, stagedBand } from "../src/engine/style-identity.js";
 
 const args = process.argv.slice(2);
 const file = args.find((arg) => !arg.startsWith("--"));
@@ -235,7 +235,7 @@ const reproduce = (() => {
  */
 const scenesPath = resolve(filmDir, "scenes.json");
 let sceneCheck: { errors: Issue[]; warnings: Issue[] } | undefined;
-let sceneDocs: { id: string; beat: string; duration: number }[] | null = null;
+let sceneDocs: { id: string; beat: string; duration: number; mood?: string }[] | null = null;
 let sceneSource: "authored" | "derived" | "missing" = "missing";
 if (storyDoc && beatDoc) {
   if (!existsSync(scenesPath)) {
@@ -270,7 +270,7 @@ if (storyDoc && beatDoc) {
         plan.cast.map((member) => member.character),
       );
       sceneCheck = { errors: check.errors, warnings: check.warnings };
-      sceneDocs = parsed.data.scenes.map((scene) => ({ id: scene.id, beat: scene.beat, duration: scene.duration }));
+      sceneDocs = parsed.data.scenes.map((scene) => ({ id: scene.id, beat: scene.beat, duration: scene.duration, mood: scene.mood }));
       sceneSource = "authored";
     }
   }
@@ -335,6 +335,9 @@ const report = preflightFilm({
   reproduce,
 });
 const scoreHash = `sha256:${createHash("sha256").update(readFileSync(scorePath)).digest("hex")}`;
+const scenesHash = existsSync(scenesPath)
+  ? `sha256:${createHash("sha256").update(readFileSync(scenesPath)).digest("hex")}`
+  : null;
 
 // The score/cast half of the identity gate. The frame half runs after the
 // collage; this is what can refuse before a browser opens.
@@ -373,6 +376,13 @@ if (!parsedIdentity.success) {
         forbidden: identity.forbidden,
       },
       beatIds,
+    }),
+  );
+  identityFindings.push(
+    ...checkSceneMoodDeclarations({
+      scenes: sceneDocs ?? [],
+      filmMood: score.mood,
+      moods: identity.filmBands?.moods,
     }),
   );
   for (const member of score.cast) {
@@ -452,6 +462,7 @@ const written = {
   ...report,
   ok: report.ok && identityPass,
   score: scoreHash,
+  scenesHash,
   errors: [
     ...report.errors,
     ...identityFindings.map((finding) => ({ ...finding, check: "identity" as const })),

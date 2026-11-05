@@ -97,7 +97,7 @@ if (wantGate) {
   // Nothing in this chain rewrites `render-manifest.json`: the renderer is its
   // only writer (see `src/engine/manifest.ts`).
   steps.push({ name: "deliver", script: "scripts/deliver.ts", detail: "master into the picture, measured" });
-  steps.push({ name: "style:identity", script: "scripts/style-identity.ts", detail: "the picture is still this channel", args: ["--video"], tie: "picture", report: `build/${id}/style-identity/style-identity.json` });
+  steps.push({ name: "style:identity", script: "scripts/style-identity.ts", detail: "the picture is still this channel", args: ["--video"], tie: "picture+score", report: `build/${id}/style-identity/style-identity.json` });
   steps.push({ name: "gate:7", script: "scripts/gate-7.ts", detail: "the final gate" });
 }
 
@@ -182,6 +182,12 @@ function newestPaintChange(film: string): number | null {
   for (const name of ["painter.js", "score-data.js", "index.html"]) {
     files.push(resolve(root, "films", film, name));
   }
+  const vendor = resolve(root, "films", film, "vendor");
+  if (existsSync(vendor)) {
+    for (const entry of readdirSync(vendor)) if (entry.endsWith(".js")) files.push(resolve(vendor, entry));
+  }
+  files.push(resolve(root, "styles", score.style ?? "", "tokens.json"));
+  for (const member of score.cast) files.push(resolve(root, member.poses));
   let newest: number | null = null;
   for (const file of files) {
     const at = mtime(file);
@@ -223,6 +229,10 @@ async function main(): Promise<void> {
     ? ((JSON.parse(readFileSync(manifestFile, "utf8")) as { videoHash?: string }).videoHash ?? null)
     : null;
   const scoreNow = `sha256:${createHash("sha256").update(readFileSync(resolve(root, scorePath))).digest("hex")}`;
+  const scenesFile = resolve(root, "films", id, "scenes.json");
+  const scenesNow = existsSync(scenesFile)
+    ? `sha256:${createHash("sha256").update(readFileSync(scenesFile)).digest("hex")}`
+    : null;
   const paintChangedAt = newestPaintChange(id);
 
   for (const step of steps) {
@@ -234,6 +244,7 @@ async function main(): Promise<void> {
         tie: step.tie,
         frozenHash,
         scoreNow,
+        scenesNow,
         writtenAt: report ? mtime(path) : null,
         paintChangedAt,
       });

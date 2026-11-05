@@ -86,7 +86,8 @@
           "incense",
           "bell"
         ]
-      }
+      },
+      "mood": "interior"
     }
   ]
 }

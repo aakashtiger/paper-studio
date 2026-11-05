@@ -86,6 +86,23 @@ test("a report with no timestamp cannot be tied to the painter", () => {
   assert.match(verdict.why, /no timestamp/);
 });
 
+test("a picture+score report needs both ties and the scenes it measured", () => {
+  const base = {
+    report: { pass: true, videoHash: "sha256:the-picture", score: "sha256:the-score", scenesHash: "sha256:the-scenes" },
+    tie: "picture+score" as const,
+    frozenHash: "sha256:the-picture",
+    scoreNow: "sha256:the-score",
+    scenesNow: "sha256:the-scenes",
+    writtenAt: 2_000,
+    paintChangedAt: 1_000,
+  };
+  assert.equal(mayReuse(base).ok, true);
+  assert.equal(mayReuse({ ...base, frozenHash: "sha256:another-picture" }).ok, false);
+  assert.equal(mayReuse({ ...base, scoreNow: "sha256:another-score" }).ok, false);
+  assert.equal(mayReuse({ ...base, scenesNow: "sha256:another-scenes" }).ok, false);
+  assert.equal(mayReuse({ ...base, report: { ...base.report, scenesHash: undefined } }).ok, false);
+});
+
 test("no report at all means the step runs", () => {
   assert.equal(mayReuse(picture({ report: null })).ok, false);
   assert.match(mayReuse(picture({ report: null })).why, /no report on disk/);

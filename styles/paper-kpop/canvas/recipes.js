@@ -336,6 +336,7 @@ function drawCharacter(name, x, y, scale, poseName, flip, poseOverride, time, ex
     pose,
     poseKey: extra.poseKey || poseName,
     face: extra.face,
+    held: extra.held,
     colors: colorsFor(name),
     flip: flip || 1,
     shadow: 1,
@@ -1462,22 +1463,59 @@ function faceFromExpression(name, expression) {
   const brow = typeof p.brow === "number" ? p.brow : 0;
   // An explicit `eyes`/`mouth` is the library's newer vocabulary: 14 names can
   // be 14 shapes. The fallback keeps an older three-number expression legal.
-  if (typeof p.eyes === "string" || typeof p.mouth === "string") {
-    return {
-      eyes: typeof p.eyes === "string" ? p.eyes : open > 1.12 ? "wide" : open < 0.62 ? "closed" : "dot",
-      mouth: typeof p.mouth === "string" ? p.mouth : open > 1.3 ? "o" : brow > 0.25 ? "smile" : "flat",
-      browLift: typeof p.browLift === "number" ? p.browLift : brow * 4,
-      browTilt: typeof p.browTilt === "number" ? p.browTilt : 0,
-      look: [typeof p.lookX === "number" ? p.lookX : 0, typeof p.lookY === "number" ? p.lookY : 0],
-      tear: p.tear === true,
-    };
+  const legacy = (typeof p.eyes === "string" || typeof p.mouth === "string")
+    ? {
+        eyes: typeof p.eyes === "string" ? p.eyes : open > 1.12 ? "wide" : open < 0.62 ? "closed" : "dot",
+        mouth: typeof p.mouth === "string" ? p.mouth : open > 1.3 ? "o" : brow > 0.25 ? "smile" : "flat",
+        browLift: typeof p.browLift === "number" ? p.browLift : brow * 4,
+        browTilt: typeof p.browTilt === "number" ? p.browTilt : 0,
+        look: [typeof p.lookX === "number" ? p.lookX : 0, typeof p.lookY === "number" ? p.lookY : 0],
+        tear: p.tear === true,
+      }
+    : {
+        eyes: open > 1.12 ? "wide" : open < 0.62 ? "closed" : "dot",
+        browLift: brow * 4,
+        look: [typeof p.lookX === "number" ? p.lookX : 0, typeof p.lookY === "number" ? p.lookY : 0],
+        mouth: open > 1.3 ? "o" : brow > 0.25 ? "smile" : brow < -0.35 ? "wobble" : "flat",
+      };
+  // A rig that can interpolate publishes `faceFields`; its numeric vector is
+  // merged over the legacy names so old rigs keep the exact old drawing.
+  const rig = rigFor(name);
+  const draw = window.CHARACTERS && window.CHARACTERS[rig];
+  const numeric = draw && typeof draw.faceFields === "function" ? draw.faceFields(p) : {};
+  return { ...legacy, ...numeric };
+}
+
+/**
+ * The face at local time `lt`, between the previous and next expression event.
+ * The opening expression is in force at the cut; later changes ease in over a
+ * 0.25-0.4 s window. This is the face counterpart of `poseAt`.
+ */
+function faceAt(shot, lt, who) {
+  const events = ((shot && shot.direction && shot.direction.events) || [])
+    .filter((event) => event.kind === "pose" && event.expression && (!event.who || String(event.who).toLowerCase() === String(who).toLowerCase()))
+    .sort((a, b) => a.t - b.t);
+  if (events.length === 0) return undefined;
+  // The opening expression is in force at the cut, even if its event lands a
+  // few frames in; there is no earlier face to blend from.
+  if (lt <= events[0].t) return faceFromExpression(who, events[0].expression);
+  let previous = events[0];
+  for (let index = 1; index < events.length; index += 1) {
+    const next = events[index];
+    const blend = Math.min(0.4, Math.max(0.25, next.t - previous.t));
+    const start = Math.max(previous.t, next.t - blend);
+    if (lt < start) return faceFromExpression(who, previous.expression);
+    if (lt <= next.t) {
+      const k = C.smooth(C.clamp((lt - start) / Math.max(1e-4, next.t - start)));
+      return blendPose(
+        faceFromExpression(who, previous.expression),
+        faceFromExpression(who, next.expression),
+        k,
+      );
+    }
+    previous = next;
   }
-  return {
-    eyes: open > 1.12 ? "wide" : open < 0.62 ? "closed" : "dot",
-    browLift: brow * 4,
-    look: [typeof p.lookX === "number" ? p.lookX : 0, typeof p.lookY === "number" ? p.lookY : 0],
-    mouth: open > 1.3 ? "o" : brow > 0.25 ? "smile" : brow < -0.35 ? "wobble" : "flat",
-  };
+  return faceFromExpression(who, previous.expression);
 }
 
 function officeActor(shot, lt, t, name, x, y, scale, entry, flip, extra = {}) {
@@ -1490,10 +1528,9 @@ function officeActor(shot, lt, t, name, x, y, scale, entry, flip, extra = {}) {
   // The pose's name as well as its numbers: the rig chooses a face from the name,
   // because an open eye cannot be blended into a closed one. A named expression
   // from the score overrides it, through the library's face adapter.
-  const expression = expressionNameAt(shot, lt, name);
   drawCharacter(name, x, y, scale, "idle", flip || 1, pose, t, {
     poseKey: poseNameAt(name, keys, lt),
-    face: faceFromExpression(name, expression),
+    face: faceAt(shot, lt, name),
   });
   return pose;
 }

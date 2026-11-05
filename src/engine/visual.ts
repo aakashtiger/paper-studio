@@ -32,7 +32,7 @@ export type VisualShot = {
   duration?: number;
   /** The staged action. A cast member that never changes pose is a still. */
   direction?: {
-    events: { t: number; kind: string; who?: string; pose?: string }[];
+    events: { t: number; kind: string; who?: string; pose?: string; expression?: string }[];
   };
   visual?: {
     shows: string;
@@ -86,6 +86,8 @@ export type VisualFinding = {
     | "visual:performer-unearned"
     | "visual:performer-static"
     | "visual:pose-continuity"
+    | "visual:expression-continuity"
+    | "visual:expression-cast"
     | "visual:action-cadence";
   message: string;
   shot?: string;
@@ -194,6 +196,9 @@ export function checkVisuals(
     minPoseGapSeconds?: number;
     /** A shot must already be in character by this time. */
     maxFirstPoseSeconds?: number;
+    /** Expression changes obey the same spacing floor as poses. */
+    minExpressionGapSeconds?: number;
+    maxFirstExpressionSeconds?: number;
   },
 ): {
   findings: VisualFinding[];
@@ -208,6 +213,8 @@ export function checkVisuals(
   const contract = options?.contract ?? 2;
   const minPoseGap = options?.minPoseGapSeconds ?? 0.3;
   const maxFirstPose = options?.maxFirstPoseSeconds ?? 0.25;
+  const minExpressionGap = options?.minExpressionGapSeconds ?? minPoseGap;
+  const maxFirstExpression = options?.maxFirstExpressionSeconds ?? maxFirstPose;
   const byRecipe = new Map(recipes.map((recipe) => [recipe.id, recipe]));
   const lineById = new Map(lines.map((line) => [line.id, line]));
   const lineIds = new Set(lines.map((line) => line.id));
@@ -520,6 +527,55 @@ export function checkVisuals(
             findings.push({
               code: "visual:pose-continuity",
               message: `${shot.id} "${who}" changes pose ${gap.toFixed(2)}s after the last one; the style needs ${minPoseGap.toFixed(2)}s — back-to-back changes must blend, not snap`,
+              shot: shot.id,
+            });
+          }
+        }
+      }
+      const expressions = (shot.direction?.events ?? []).filter(
+        (event) => event.kind === "pose" && event.expression,
+      );
+      const expressionByWho = new Map<string, { t: number; expression: string }[]>();
+      for (const event of expressions) {
+        if (!event.who) {
+          findings.push({
+            code: "visual:expression-cast",
+            message: `${shot.id} has an expression event with no character - say whose face changes`,
+            shot: shot.id,
+          });
+          continue;
+        }
+        if (!cast.includes(event.who)) {
+          findings.push({
+            code: "visual:expression-cast",
+            message: `${shot.id} gives an expression to "${event.who}", who is not in the shot's cast`,
+            shot: shot.id,
+          });
+          continue;
+        }
+        const list = expressionByWho.get(event.who) ?? [];
+        list.push({ t: event.t, expression: event.expression as string });
+        expressionByWho.set(event.who, list);
+      }
+      for (const [who, list] of expressionByWho) {
+        const sorted = [...list].sort((a, b) => a.t - b.t);
+        const first = sorted[0];
+        if (first && first.t > maxFirstExpression + 1e-9) {
+          findings.push({
+            code: "visual:expression-continuity",
+            message: `${shot.id} "${who}" first changes expression at ${first.t.toFixed(2)}s; the face must be in character by ${maxFirstExpression.toFixed(2)}s`,
+            shot: shot.id,
+          });
+        }
+        for (let index = 1; index < sorted.length; index++) {
+          const previous = sorted[index - 1]!;
+          const current = sorted[index]!;
+          if (current.expression === previous.expression) continue;
+          const gap = current.t - previous.t;
+          if (gap < minExpressionGap - 1e-9) {
+            findings.push({
+              code: "visual:expression-continuity",
+              message: `${shot.id} "${who}" changes expression ${gap.toFixed(2)}s after the last one; the style needs ${minExpressionGap.toFixed(2)}s`,
               shot: shot.id,
             });
           }

@@ -393,9 +393,9 @@
         "brow": 0.1,
         "lookX": 0,
         "lookY": 0.15,
-        "eyes": "soft",
-        "mouth": "smile",
-        "browLift": 0
+        "eyes": "half",
+        "mouth": "soft",
+        "browLift": 0.5
       }
     },
     {
@@ -491,7 +491,7 @@
         "lookY": 0.2,
         "eyes": "soft",
         "mouth": "smile",
-        "browLift": 0
+        "browLift": 1.5
       }
     },
     {

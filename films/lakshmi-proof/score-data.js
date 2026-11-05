@@ -19,9 +19,9 @@ window.SCORE = {
       "slots": {},
       "camera": {
         "move": "push_in",
-        "from": 1,
-        "to": 1.18,
-        "ease": "linear"
+        "from": 1.02,
+        "to": 1.3,
+        "ease": "easeOut"
       },
       "transitionOut": "cut",
       "direction": {
@@ -32,12 +32,6 @@ window.SCORE = {
           "Child"
         ],
         "events": [
-          {
-            "t": 0,
-            "kind": "light",
-            "note": "the first flame and the child's lit face",
-            "quiet": "the line carries this beat"
-          },
           {
             "t": 0.1,
             "kind": "pose",
@@ -51,6 +45,12 @@ window.SCORE = {
             "t": 0.2,
             "kind": "build",
             "note": "the match touches the wick and the child leans into the new light",
+            "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.5,
+            "kind": "light",
+            "note": "the first flame and the child's lit face",
             "quiet": "the line carries this beat"
           },
           {
@@ -618,7 +618,7 @@ window.SCORE = {
       "id": "character.lakshmi-v2",
       "type": "character",
       "version": "1.0.0",
-      "hash": "sha256:22dbd42560914cbd2a64bb16b6e8d65f747d0e0299806875767253076c1c162e",
+      "hash": "sha256:364c3a127554fbc9fb3d452499b3d5dacdd6887fdaac3c31f702fdbdbcce32d1",
       "source": "new",
       "anchors": [
         "face",
@@ -637,7 +637,7 @@ window.SCORE = {
       "id": "texture.halftone",
       "type": "texture",
       "version": "0.1.0",
-      "hash": "sha256:78cf2787003d20dec40871ab3163a2b967cba92cd39078ad7cff107e7a23e310",
+      "hash": "sha256:bd72e531ef9c21b04e94fb368bdcfc0a63a356dcd3edcae4ee126debdf449429",
       "source": "reused",
       "anchors": [],
       "path": "styles/paper-kpop/canvas/recipes.js"
@@ -1091,9 +1091,9 @@ window.POSES = {
           "brow": 0.1,
           "lookX": 0,
           "lookY": 0.15,
-          "eyes": "soft",
-          "mouth": "smile",
-          "browLift": 0
+          "eyes": "half",
+          "mouth": "soft",
+          "browLift": 0.5
         }
       },
       {
@@ -1189,7 +1189,7 @@ window.POSES = {
           "lookY": 0.2,
           "eyes": "soft",
           "mouth": "smile",
-          "browLift": 0
+          "browLift": 1.5
         }
       },
       {

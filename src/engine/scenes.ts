@@ -20,14 +20,16 @@ import { NARRATION_HOLE_MAX, countWords, type Beats, type Issue, type Story } fr
  * it may not carry more than one narration hole of air beyond them.
  */
 
-export const SceneVisualSchema = z.object({
-  /** What the audience must see, in plain words — the subject of the shot. */
-  subject: z.string().min(1),
-  setting: z.string().min(1),
-  action: z.string().min(1),
-  /** The props the frame needs; the shot's recipe must be able to draw them. */
-  props: z.array(z.string().min(1)).default([]),
-});
+export const SceneVisualSchema = z
+  .object({
+    /** What the audience must see, in plain words — the subject of the shot. */
+    subject: z.string().min(1),
+    setting: z.string().min(1),
+    action: z.string().min(1),
+    /** The props the frame needs; the shot's recipe must be able to draw them. */
+    props: z.array(z.string().min(1)).default([]),
+  })
+  .strict();
 
 export const SceneSchema = z.object({
   id: z.string().min(1),
@@ -46,12 +48,20 @@ export const SceneSchema = z.object({
   lines: z.array(z.string().min(1)).default([]),
   /** Seconds this scene owns. The scenes must cover the film exactly. */
   duration: z.number().positive(),
-});
+  /**
+   * Which of the pack's `identity.filmBands.moods` this scene claims. Omitted
+   * means it inherits the film's mood. An unknown name is a finding, never a
+   * silent fallback.
+   */
+  mood: z.string().min(1).optional(),
+}).strict();
 
-export const ScenesSchema = z.object({
-  id: z.string().min(1),
-  scenes: z.array(SceneSchema).min(1),
-});
+export const ScenesSchema = z
+  .object({
+    id: z.string().min(1),
+    scenes: z.array(SceneSchema).min(1),
+  })
+  .strict();
 
 export type Scene = z.infer<typeof SceneSchema>;
 export type Scenes = z.infer<typeof ScenesSchema>;

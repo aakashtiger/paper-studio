@@ -36,7 +36,10 @@ function tree(): string {
       "<html><head>",
       '<style>@font-face { font-family: "Anton"; src: url("assets/fonts/Anton-Regular.ttf"); font-display: block; }',
       '@font-face { font-family: "DMMono"; src: url("assets/fonts/DMMono-Regular.ttf"); font-display: block; }</style>',
-      "</head></html>",
+      "</head><body>",
+      '<script src="vendor/core.js"></script>',
+      '<script src="vendor/office.js"></script>',
+      "</body></html>",
     ].join("\n"),
   );
   writeFileSync(join(film, "assets", "fonts", "Anton-Regular.ttf"), "ttf-anton");
@@ -44,6 +47,7 @@ function tree(): string {
   writeFileSync(join(film, "captions.srt"), "1\n00:00:00,000 --> 00:00:01,000\nhi\n");
   writeFileSync(join(film, "vendor", "core.js"), "// core");
   writeFileSync(join(film, "vendor", "type.js"), "// type");
+  writeFileSync(join(film, "vendor", "office.js"), "// office");
   writeFileSync(join(root, "styles", "paper-kpop", "canvas", "recipes.js"), "// recipes");
   writeFileSync(join(root, "cast", "mira.json"), "{\"poses\":[]}");
   return root;
@@ -65,6 +69,9 @@ test("renderInputs hashes every file the film is made from, with its path", asyn
   assert.equal(byPath.get("styles/paper-kpop/canvas/recipes.js"), await hashOf(root, "styles/paper-kpop/canvas/recipes.js"));
   assert.equal(byPath.get("cast/mira.json"), await hashOf(root, "cast/mira.json"));
   assert.equal(byPath.get("films/demo/vendor/core.js"), await hashOf(root, "films/demo/vendor/core.js"));
+  // A vendor file the page loads is pinned even when it is not in the old fixed
+  // list; the proof's office rig lives exactly here.
+  assert.equal(byPath.get("films/demo/vendor/office.js"), await hashOf(root, "films/demo/vendor/office.js"));
   // The fonts the page names are pinned by the page, not by a list in the engine.
   assert.equal(
     byPath.get("films/demo/assets/fonts/Anton-Regular.ttf"),

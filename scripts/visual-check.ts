@@ -68,7 +68,14 @@ const contract = (score as { visualContract?: number }).visualContract ?? 2;
 const tokensPath = resolve(root, "styles", score.style, "tokens.json");
 const motion = existsSync(tokensPath)
   ? (JSON.parse(readFileSync(tokensPath, "utf8").replace(/^\uFEFF/, "")) as {
-      identity?: { motion?: { minPoseGapSeconds?: number; maxFirstPoseSeconds?: number } };
+      identity?: {
+        motion?: {
+          minPoseGapSeconds?: number;
+          maxFirstPoseSeconds?: number;
+          minExpressionGapSeconds?: number;
+          maxFirstExpressionSeconds?: number;
+        };
+      };
     }).identity?.motion
   : undefined;
 const result = checkVisuals(
@@ -81,12 +88,18 @@ const result = checkVisuals(
     contract,
     minPoseGapSeconds: motion?.minPoseGapSeconds,
     maxFirstPoseSeconds: motion?.maxFirstPoseSeconds,
+    minExpressionGapSeconds: motion?.minExpressionGapSeconds,
+    maxFirstExpressionSeconds: motion?.maxFirstExpressionSeconds,
   },
 );
+const scenesHash = existsSync(scenesPath)
+  ? `sha256:${createHash("sha256").update(readFileSync(scenesPath)).digest("hex")}`
+  : null;
 const report = {
   film: score.id,
   contract,
   score: `sha256:${createHash("sha256").update(readFileSync(resolve(root, file))).digest("hex")}`,
+  scenesHash,
   pass: result.findings.length === 0,
   shots: shots.length,
   checked: result.checked,
