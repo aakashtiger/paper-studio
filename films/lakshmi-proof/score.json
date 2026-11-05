@@ -146,7 +146,7 @@
       "id": "character.lakshmi-v2",
       "type": "character",
       "version": "1.0.0",
-      "hash": "sha256:0d8ca1854aba8338e8b606f84a9646974f8a004b8836bcfb8449e7182d1bae21",
+      "hash": "sha256:22dbd42560914cbd2a64bb16b6e8d65f747d0e0299806875767253076c1c162e",
       "source": "new",
       "path": "films/lakshmi-proof/cast/lakshmi-v2.poses.json",
       "character": "LakshmiV2",
@@ -171,22 +171,40 @@
       "anchors": []
     },
     {
-      "id": "character.child-v2",
+      "id": "character.householder",
       "type": "character",
       "version": "1.0.0",
-      "hash": "sha256:1cada6111ec677e733db7a36435558abfe0afd633a9763942016bc24350bcf55",
-      "source": "new",
-      "path": "films/lakshmi-proof/cast/child-v2.poses.json",
-      "character": "ChildV2",
+      "hash": "sha256:08c88a31eaaf00f2bdd98f6a616c85f51b2f8cb393e33419a8e794c31599c2fe",
+      "source": "reused",
+      "path": "films/lakshmi-proof/cast/householder.poses.json",
+      "character": "Householder",
       "anchors": [
         "face",
-        "head",
         "hair",
         "hand-left",
         "hand-right",
         "foot-left",
         "foot-right"
-      ]
+      ],
+      "rig": "mortal@0.1.0"
+    },
+    {
+      "id": "character.child",
+      "type": "character",
+      "version": "1.0.0",
+      "hash": "sha256:697c4a1d4022a8b295ef3794b39ca3019383d27a5d1bde09ae3259b64aab30f9",
+      "source": "reused",
+      "path": "films/lakshmi-proof/cast/child.poses.json",
+      "character": "Child",
+      "anchors": [
+        "face",
+        "hair",
+        "hand-left",
+        "hand-right",
+        "foot-left",
+        "foot-right"
+      ],
+      "rig": "mortal@0.1.0"
     }
   ],
   "cast": [
@@ -196,13 +214,18 @@
       "rig": "lakshmi-v2@0.1.0"
     },
     {
-      "character": "ChildV2",
-      "poses": "films/lakshmi-proof/cast/child-v2.poses.json",
-      "rig": "child-v2@0.1.0"
+      "character": "Householder",
+      "poses": "films/lakshmi-proof/cast/householder.poses.json",
+      "rig": "mortal@0.1.0"
+    },
+    {
+      "character": "Child",
+      "poses": "films/lakshmi-proof/cast/child.poses.json",
+      "rig": "mortal@0.1.0"
     }
   ],
   "performance": {
-    "mode": "diagram-show",
+    "mode": "stage-show",
     "star": "LakshmiV2",
     "entrance": {
       "beat": "b02",
@@ -270,14 +293,21 @@
         "focus": "the first flame and the child's lit face",
         "link": "v01",
         "why": "the line names the darkest night and the first lamp; the door is the edge of the home",
-        "phrase": "On the darkest night",
-        "device": "clay_diya"
+        "phrase": "one lamp is lit",
+        "device": "clay_diya",
+        "performers": [
+          {
+            "who": "Child",
+            "does": "watches the first lamp and leans into the new light",
+            "why": "the line names the darkest night and the child is the one who sees the first flame"
+          }
+        ]
       },
       "slots": {},
       "camera": {
-        "move": "pan",
+        "move": "push_in",
         "from": 1,
-        "to": 1.09,
+        "to": 1.18,
         "ease": "linear"
       },
       "transitionOut": "cut",
@@ -285,7 +315,9 @@
         "entry": "a village street at night, a low doorway with a warm room inside, a hand lighting one clay diya on the threshold, a child watching",
         "exit": "the match touches the wick and the child leans into the new light",
         "spine": "the line names the darkest night and the first lamp; the door is the edge of the home",
-        "cast": [],
+        "cast": [
+          "Child"
+        ],
         "events": [
           {
             "t": 0,
@@ -294,10 +326,37 @@
             "quiet": "the line carries this beat"
           },
           {
+            "t": 0.1,
+            "kind": "pose",
+            "who": "Child",
+            "pose": "watch",
+            "expression": "shocked",
+            "note": "the child watches the new flame",
+            "quiet": "the line carries the beat"
+          },
+          {
             "t": 0.2,
             "kind": "build",
             "note": "the match touches the wick and the child leans into the new light",
             "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.8,
+            "kind": "action",
+            "note": "the hand lifts the diya from the threshold",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 1.7,
+            "kind": "action",
+            "note": "the child leans toward the new light",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 2.4,
+            "kind": "action",
+            "note": "the diya is carried toward the child",
+            "quiet": "the line carries the beat"
           },
           {
             "t": 2.7666666666666666,
@@ -335,7 +394,7 @@
         "device": "child_with_diya",
         "performers": [
           {
-            "who": "ChildV2",
+            "who": "Child",
             "does": "carries the flame down the street",
             "why": "the line says the flame passes hand to hand, so the child is the hand"
           }
@@ -354,7 +413,7 @@
         "exit": "the child walks and the neighbours lift their lamps as she passes",
         "spine": "the line says the flame passes hand to hand; the street is the hands",
         "cast": [
-          "ChildV2"
+          "Child"
         ],
         "events": [
           {
@@ -366,11 +425,11 @@
           {
             "t": 0.1,
             "kind": "pose",
-            "who": "ChildV2",
+            "who": "Child",
             "pose": "walk",
-            "expression": "happy",
-            "note": "she starts walking with the diya",
-            "quiet": "the street carries the beat"
+            "expression": "laugh",
+            "note": "the walk continues",
+            "quiet": "the line carries the beat"
           },
           {
             "t": 0.2,
@@ -379,13 +438,67 @@
             "quiet": "the line carries this beat"
           },
           {
-            "t": 1.3,
+            "t": 0.4666666666666667,
             "kind": "pose",
-            "who": "ChildV2",
-            "pose": "carry",
-            "expression": "awed",
-            "note": "she lifts the diya as the lamps answer",
-            "quiet": "the street carries the beat"
+            "who": "Child",
+            "pose": "look",
+            "expression": "laugh",
+            "note": "the other foot lands",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 0.8,
+            "kind": "pose",
+            "who": "Child",
+            "pose": "hold",
+            "expression": "laugh",
+            "note": "the walk continues",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 1.1666666666666667,
+            "kind": "pose",
+            "who": "Child",
+            "pose": "walk",
+            "expression": "laugh",
+            "note": "the other foot lands",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 1.5,
+            "kind": "pose",
+            "who": "Child",
+            "pose": "reach",
+            "expression": "laugh",
+            "note": "the walk continues",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 1.8666666666666667,
+            "kind": "pose",
+            "who": "Child",
+            "pose": "look",
+            "expression": "laugh",
+            "note": "the other foot lands",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 2.2,
+            "kind": "pose",
+            "who": "Child",
+            "pose": "walk",
+            "expression": "laugh",
+            "note": "the walk continues",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 2.566666666666667,
+            "kind": "pose",
+            "who": "Child",
+            "pose": "hold",
+            "expression": "laugh",
+            "note": "the other foot lands",
+            "quiet": "the line carries the beat"
           },
           {
             "t": 2.566666666666667,
@@ -489,6 +602,12 @@
             "quiet": "the line carries the beat"
           },
           {
+            "t": 3,
+            "kind": "action",
+            "note": "her head turns to the child",
+            "quiet": "the line carries the beat"
+          },
+          {
             "t": 3.3666666666666667,
             "kind": "transition",
             "note": "cut",
@@ -583,6 +702,12 @@
             "quiet": "the line carries the beat"
           },
           {
+            "t": 2.7,
+            "kind": "action",
+            "note": "a lotus passes from the upper hand to the lower palm",
+            "quiet": "the line carries the beat"
+          },
+          {
             "t": 3.433333333333333,
             "kind": "transition",
             "note": "cut",
@@ -615,7 +740,14 @@
         "link": "v03",
         "why": "the line asks for the rangoli, and the image is the drawing of it",
         "phrase": "Draw the rangoli",
-        "device": "rangoli_bloom"
+        "device": "rangoli_bloom",
+        "performers": [
+          {
+            "who": "Householder",
+            "does": "draws the first rangoli petal and leans into the pattern",
+            "why": "the line asks for the rangoli, and the householder's hands draw it"
+          }
+        ]
       },
       "slots": {},
       "camera": {
@@ -629,7 +761,9 @@
         "entry": "a courtyard floor with a real eight-fold rangoli being drawn in red, gold, green and cream, marigold garland, a hanging lamp, hands and powder bowls",
         "exit": "the hands pull the lines outward and the pattern blooms around the lamp",
         "spine": "the line asks for the rangoli, and the image is the drawing of it",
-        "cast": [],
+        "cast": [
+          "Householder"
+        ],
         "events": [
           {
             "t": 0,
@@ -638,10 +772,40 @@
             "quiet": "the line carries this beat"
           },
           {
+            "t": 0.1,
+            "kind": "pose",
+            "who": "Householder",
+            "pose": "hold",
+            "expression": "relieved",
+            "note": "the householder takes the powder",
+            "quiet": "the line carries the beat"
+          },
+          {
             "t": 0.2,
             "kind": "build",
             "note": "the hands pull the lines outward and the pattern blooms around the lamp",
             "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.9,
+            "kind": "action",
+            "note": "the hand draws the first rangoli petal",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 1,
+            "kind": "pose",
+            "who": "Householder",
+            "pose": "place",
+            "expression": "relieved",
+            "note": "the first petal is drawn",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 1.5,
+            "kind": "action",
+            "note": "the child sets a diya at the rim",
+            "quiet": "the line carries the beat"
           },
           {
             "t": 1.6666666666666667,
@@ -670,13 +834,25 @@
       "field": "red",
       "music": "brass and one small flame",
       "visual": {
-        "shows": "a brass thali with a lit diya, marigolds, a coconut and a banana, two hands sharing an offering, incense smoke, a warm wall and a hanging lamp",
-        "action": "the hands share the flower and the flame leans toward the camera",
-        "focus": "the flame and the offered flower",
+        "shows": "a brass thali with a lit diya, marigolds, a coconut and a banana, two hands that share an offering, incense smoke, a warm wall and a hanging lamp",
+        "action": "the hands share the marigold on the thali, the child lifts her diya, and the flame leans toward the camera",
+        "focus": "the flame and the shared flower",
         "link": "v03",
         "why": "the line closes on sharing; the thali is the offering and the flame is passed on",
         "phrase": "Share what you have",
-        "device": "puja_offer"
+        "device": "puja_offer",
+        "performers": [
+          {
+            "who": "Householder",
+            "does": "shares the marigold, sets it on the thali and folds her hands",
+            "why": "the line asks the householder to share the flower she has"
+          },
+          {
+            "who": "Child",
+            "does": "shares her diya with the flame and holds it up",
+            "why": "the line is shared with the child, who answers with her own light"
+          }
+        ]
       },
       "slots": {},
       "camera": {
@@ -690,7 +866,10 @@
         "entry": "a brass thali with a lit diya, marigolds, a coconut and a banana, two hands offering, incense smoke, a warm wall and a hanging lamp",
         "exit": "the hands set the flower down and the flame leans toward the camera",
         "spine": "the line closes on sharing; the thali is the offering and the flame is passed on",
-        "cast": [],
+        "cast": [
+          "Householder",
+          "Child"
+        ],
         "events": [
           {
             "t": 0,
@@ -699,10 +878,58 @@
             "quiet": "the line carries this beat"
           },
           {
+            "t": 0.1,
+            "kind": "pose",
+            "who": "Householder",
+            "pose": "offer",
+            "expression": "relieved",
+            "note": "the householder offers the flower",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 0.1,
+            "kind": "pose",
+            "who": "Child",
+            "pose": "hold",
+            "expression": "laugh",
+            "note": "the child holds her diya",
+            "quiet": "the line carries the beat"
+          },
+          {
             "t": 0.2,
             "kind": "build",
             "note": "the hands set the flower down and the flame leans toward the camera",
             "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.8,
+            "kind": "action",
+            "note": "the hand picks up the marigold",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 1.2,
+            "kind": "pose",
+            "who": "Householder",
+            "pose": "accept",
+            "expression": "relieved",
+            "note": "the flower is set down",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 1.3,
+            "kind": "pose",
+            "who": "Child",
+            "pose": "accept",
+            "expression": "laugh",
+            "note": "the child lifts the diya",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 1.4,
+            "kind": "action",
+            "note": "the flower is placed on the thali",
+            "quiet": "the line carries the beat"
           },
           {
             "t": 1.4666666666666666,
@@ -715,5 +942,6 @@
       "motif": "rangoli"
     }
   ],
-  "visualContract": 3
+  "visualContract": 3,
+  "mood": "night"
 }

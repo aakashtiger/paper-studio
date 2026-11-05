@@ -218,6 +218,64 @@ test("a performance/song clock without lines can have a device without a phrase"
   assert.deepEqual(result.findings, []);
 });
 
+const continuity: VisualShot = {
+  ...phone,
+  id: "s03",
+  start: 0,
+  duration: 3,
+  direction: {
+    events: [
+      { t: 0.1, kind: "pose", who: "Rider", pose: "hold" },
+      { t: 0.5, kind: "pose", who: "Rider", pose: "walk" },
+      { t: 1.2, kind: "pose", who: "Rider", pose: "reach" },
+    ],
+  },
+};
+
+test("a pose that lands too late or snaps into the next one is refused", () => {
+  const late = checkVisuals(
+    [
+      {
+        ...continuity,
+        direction: {
+          events: [
+            { t: 0.6, kind: "pose", who: "Rider", pose: "hold" },
+            { t: 1.2, kind: "pose", who: "Rider", pose: "walk" },
+            { t: 2.0, kind: "pose", who: "Rider", pose: "reach" },
+          ],
+        },
+      },
+    ],
+    recipes,
+    lines,
+    undefined,
+    undefined,
+    { contract: 3 },
+  );
+  assert.ok(late.findings.some((finding) => finding.code === "visual:pose-continuity"));
+
+  const snap = checkVisuals(
+    [
+      {
+        ...continuity,
+        direction: {
+          events: [
+            { t: 0.1, kind: "pose", who: "Rider", pose: "hold" },
+            { t: 0.3, kind: "pose", who: "Rider", pose: "walk" },
+            { t: 1.2, kind: "action", who: "Rider", pose: "reach" },
+          ],
+        },
+      },
+    ],
+    recipes,
+    lines,
+    undefined,
+    undefined,
+    { contract: 3 },
+  );
+  assert.ok(snap.findings.some((finding) => finding.code === "visual:pose-continuity"));
+});
+
 test("a lamp cannot answer a phone brief", () => {
   const result = check([{ ...phone, recipe: "lamp" }]);
   assert.ok(result.findings.some((finding) => finding.code === "visual:match"));

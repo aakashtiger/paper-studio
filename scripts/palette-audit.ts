@@ -4,10 +4,11 @@
  * Decodes the delivered video at a small size and checks two things about every
  * frame, not a sample of them:
  *
- * - **Palette.** The only saturated colours on screen are the ones the paper
- *   style allows: paper, ink, red, blue and a gold accent. Anything in the
- *   yellow-green to cyan band (roughly 70-170 degrees of hue) is an outlier, the
- *   way the old acid green was.
+ * - **Palette family.** The film may use the colours its world needs (green
+ *   grass, snow white, a blue night, an orange sunset), but the saturated
+ *   colours must still form a family: no more than five hue families, and those
+ *   families must cover at least 85% of the saturated pixels. A rainbow is not
+ *   a palette; a grassland or a snowfield is.
  * - **Clipping.** Paper is bright, so the risk is a blown highlight, not a
  *   crushed black. Pixels are counted at both ends of the scale; a frame whose
  *   flat color is averaged into pure white over a region is a frame that has
@@ -24,9 +25,10 @@ import { fileHash, videoStreamHash } from "../src/engine/video.js";
 const WIDTH = 160;
 const HEIGHT = 90;
 const SAT_MIN = 0.3;
-const FORBIDDEN_MIN = 70;
-const FORBIDDEN_MAX = 170;
-const MAX_OUTLIER = 0.005; // 0.5% of the frame may be an edge outlier
+const FAMILY_MIN = 0.05; // a hue must hold this share to count as a family
+const MAX_FAMILIES = 5;
+const TOP_FAMILIES = 0.85;
+const MAX_OUTLIER = 0.005; // retained for the audit's historical field
 /**
  * The most of a frame that may sit at either end of the scale. Measured, not
  * guessed: Understudy's worst frame clips 0.59% (frame 51 at 1.7 s, a black
@@ -84,7 +86,6 @@ const bins = new Array(12).fill(0);
 for (let frame = 0; frame < frames; frame++) {
   const base = frame * frameSize;
   let saturated = 0;
-  let forbidden = 0;
   let blown = 0;
   let crushed = 0;
   for (let i = 0; i < width * height; i++) {
@@ -111,16 +112,10 @@ for (let frame = 0; frame < frames; frame++) {
     else hue = 60 * ((r - g) / delta + 4);
     if (hue < 0) hue += 360;
     bins[Math.min(11, Math.floor(hue / 30))]++;
-    if (hue >= FORBIDDEN_MIN && hue <= FORBIDDEN_MAX) forbidden++;
   }
   saturatedSum += saturated;
   blownTotal += blown;
   crushedTotal += crushed;
-  const outlier = saturated === 0 ? 0 : forbidden / (width * height);
-  if (outlier > worstOutlier) {
-    worstOutlier = outlier;
-    worstFrame = frame;
-  }
   const clipped = (blown + crushed) / (width * height);
   if (clipped > worstClip) {
     worstClip = clipped;
@@ -128,7 +123,16 @@ for (let frame = 0; frame < frames; frame++) {
   }
 }
 
-const palettePass = worstOutlier <= MAX_OUTLIER;
+const saturatedTotal = bins.reduce((sum, value) => sum + value, 0);
+const shares = bins.map((value) => (saturatedTotal > 0 ? value / saturatedTotal : 0));
+const familyCount = shares.filter((share) => share >= FAMILY_MIN).length;
+const topFamilyShare = [...shares]
+  .sort((a, b) => b - a)
+  .slice(0, MAX_FAMILIES)
+  .reduce((sum, share) => sum + share, 0);
+const familyPass =
+  saturatedTotal === 0 || (familyCount <= MAX_FAMILIES && topFamilyShare >= TOP_FAMILIES);
+const palettePass = familyPass;
 const clippingPass = worstClip <= MAX_CLIPPED;
 const pass = palettePass && clippingPass && coverageOk;
 // Which film was measured: the audit reads a file, and the file is what the
@@ -147,8 +151,10 @@ const report = {
   frames,
   expectedFrames,
   satMin: SAT_MIN,
-  forbiddenHue: [FORBIDDEN_MIN, FORBIDDEN_MAX],
+  forbiddenHue: [],
   maxOutlierFraction: Number(worstOutlier.toFixed(5)),
+  hueFamilies: familyCount,
+  topFamiliesShare: Number(topFamilyShare.toFixed(3)),
   worstFrame,
   meanSaturatedPixels: Number((saturatedSum / Math.max(1, frames)).toFixed(1)),
   hueBins30deg: bins,
@@ -174,7 +180,9 @@ const report = {
 const out = resolve(root, "build", score.id, "palette-audit.json");
 mkdirSync(resolve(root, "build", score.id), { recursive: true });
 writeFileSync(out, JSON.stringify(report, null, 2) + "\n", "utf8");
-console.log(`palette: worst outlier ${(worstOutlier * 100).toFixed(2)}% of frame ${worstFrame} · ${palettePass ? "pass" : "FAIL"}`);
+console.log(
+  `palette: ${familyCount} hue famil${familyCount === 1 ? "y" : "ies"} · top ${(topFamilyShare * 100).toFixed(1)}% · ${palettePass ? "pass" : "FAIL"}`,
+);
 console.log(
   `clipping: worst ${(worstClip * 100).toFixed(2)}% of frame ${worstClipFrame} (${report.clipping.worst.time ?? "?"}s) · ${clippingPass ? "pass" : "FAIL"}`,
 );

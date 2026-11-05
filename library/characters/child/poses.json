@@ -8,10 +8,15 @@
       "minElbow": 0.02
     },
     "hand": {
-      "w": 18,
-      "h": 26,
-      "thumbW": 8,
-      "thumbH": 12
+      "w": 24,
+      "h": 35,
+      "thumbW": 11,
+      "thumbH": 16
+    },
+    "height": 622,
+    "head": {
+      "w": 144,
+      "h": 168
     }
   },
   "anchors": [
@@ -393,6 +398,41 @@
         "armR": [
           -1.15,
           0.35
+        ],
+        "footL": [
+          -16,
+          -8
+        ],
+        "footR": [
+          16,
+          -8
+        ],
+        "legL": [
+          0.03,
+          0.01
+        ],
+        "legR": [
+          -0.03,
+          -0.01
+        ]
+      }
+    },
+    {
+      "name": "watch",
+      "params": {
+        "bounce": 0,
+        "sway": 0,
+        "lean": 0.05,
+        "headTilt": -0.06,
+        "headTurn": -0.35,
+        "hairSwing": 1,
+        "armL": [
+          0.05,
+          0.03
+        ],
+        "armR": [
+          0.1,
+          0.04
         ],
         "footL": [
           -16,

@@ -320,6 +320,21 @@ and refuses a staged body with no pose change (`visualContract: 3`). The new
 puja; `gate:7` **29 checks**, `film:review` **PASS**. The 60 s film and its
 evidence stay historical.
 
+**A character is measured, and a film declares a mood (0059).** A pose library
+now publishes `body.height`, `body.head` and `body.hand`; `style:identity`
+computes the drawn doll ratio and hand/head ratio and refuses a library whose
+drawn figure is outside its own `visualHeadToBody` band, outside the pack's
+per-archetype `identity.cast.proportions`, or missing a measurement. The proof's
+mortals are **3.70 heads** (24×35 hand), the goddess **4.89**, both inside their
+bands; the mortal rig draws a 2× head, thicker arms and a hand that uses the
+cast's skin. `identity.filmBands.moods` carries `night`/`day`/`snow`/`mixed`
+bands and the score's `mood` selects one, so a blue night and a white snowfield
+are both legal while the palette-family audit still holds. `visual:check` now
+refuses a first pose after 0.25 s or two pose changes closer than 0.3 s
+(`visual:pose-continuity`); the proof blends every pose change. The palette row
+reports **4 hue families / top 98.6%** instead of the always-zero outlier. The
+17.2 s proof is 6/6 staged, mood night, 78.8 / 22.2 / 10.7; **519 tests**.
+
 **The visual is authored before the recipe is chosen (0051).** A scene publishes
 `visual` (subject, setting, action, props); a shot publishes `visual` (shows,
 action, focus, the line it answers, why). `visual:check` refuses a missing brief,
@@ -369,8 +384,10 @@ narration is still spoken from the score (the text is proved identical, one
 stage from 0025); scenes are checked against the read, not auto-fitted;
 props and sets are not derived from shot slots; song films are a marker;
 backgrounds are not cached; the collage and the storyboard each paint their
-own frames. P0.5 (the 7-analysis/4-rebuild workflow) and the `reproduce`
-legacy marker remain parked; music and semantic vision remain parked.
+own frames; the mood is film-level, not per scene; a shot's face is a fixed
+override, so an expression change is authored as a pose event rather than
+interpolated in the painter. P0.5 (the 7-analysis/4-rebuild workflow) and the
+`reproduce` legacy marker remain parked; music and semantic vision remain parked.
 `paint-match` repaints 61 frames in fresh browsers (~73 s), which is the price
 of that proof rather than waste. No new film starts until the user says so.
 

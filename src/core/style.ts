@@ -783,6 +783,38 @@ const IdentityAppearanceSchema = z
   })
   .strict();
 
+/**
+ * A film's mood selects a band; the bands are still the style's, not the
+ * film's. A blue night and a white snowfield are both Paper K-pop, but a night
+ * frame at snow luma is not. Older packs keep the one absolute band.
+ */
+const IdentityMoodBandSchema = z
+  .object({
+    lumaMean: IdentityBandSchema,
+    saturationMean: IdentityBandSchema,
+    edgesMean: IdentityBandSchema,
+  })
+  .strict();
+
+/**
+ * The cast's drawn proportions, keyed by construction archetype. The values are
+ * measured from the rig (`body.height`, `body.head`) and checked against the
+ * library's declared doll ratio. A pack may stage a tall goddess and a chibi
+ * mortal; it may not let one film's lead be 7 heads and the next 3.
+ */
+const IdentityProportionSchema = z
+  .object({
+    /** Total drawn height divided by head height. */
+    visualHeadToBody: z
+      .tuple([z.number().positive(), z.number().positive()])
+      .refine(([min, max]) => min < max, "visualHeadToBody min must be less than max"),
+    /** Hand height divided by head height. */
+    handToHead: z
+      .tuple([z.number().positive(), z.number().positive()])
+      .refine(([min, max]) => min < max, "handToHead min must be less than max"),
+  })
+  .strict();
+
 export const StyleIdentitySchema = z
   .object({
     envelope: z
@@ -801,6 +833,11 @@ export const StyleIdentitySchema = z
         lumaMean: IdentityBandSchema,
         saturationMean: IdentityBandSchema,
         edgesMean: IdentityBandSchema,
+        /**
+         * Optional named moods. The score's `mood` selects one; an unknown mood
+         * falls back to the absolute band, so an old score still resolves.
+         */
+        moods: z.record(z.string().min(1), IdentityMoodBandSchema).optional(),
       })
       .strict()
       .optional(),
@@ -813,6 +850,21 @@ export const StyleIdentitySchema = z
         saturatedShare: IdentityRatioBandSchema,
       })
       .strict(),
+    /**
+     * Colour is a family, not a fixed set of hexes. A film may use a green
+     * grassland, a white snowfield or a blue night; the audit asks only that
+     * the saturated colours form no more than a few hue families and that those
+     * families cover the picture. Older packs omit this block.
+     */
+    palette: z
+      .object({
+        mode: z.literal("family"),
+        maxHueFamilies: z.number().int().min(1).max(8),
+        minFamilyShare: z.number().min(0).max(1),
+        topFamiliesShare: z.number().min(0).max(1),
+      })
+      .strict()
+      .optional(),
     composition: z
       .object({
         subjectHeight: IdentityRatioBandSchema,
@@ -835,6 +887,7 @@ export const StyleIdentitySchema = z
         expressionsMin: z.number().int().min(1),
         anchors: z.array(z.string().min(1)).min(1),
         appearance: IdentityAppearanceSchema,
+        proportions: z.record(z.string().min(1), IdentityProportionSchema).optional(),
       })
       .strict(),
     performance: z
@@ -859,6 +912,22 @@ export const StyleIdentitySchema = z
           .optional(),
       })
       .strict(),
+    motion: z
+      .object({
+        maxShotSeconds: z.number().positive(),
+        actionsPerSecond: z.number().positive(),
+        poseEventsPerStagedShot: z.number().int().min(1),
+        /**
+         * Two pose changes closer than this are a pop, not a performance. The
+         * first pose must also be in force before this many seconds, so a shot
+         * does not open neutral and snap into character.
+         */
+        minPoseGapSeconds: z.number().positive().optional(),
+        maxFirstPoseSeconds: z.number().positive().optional(),
+        reference: z.string().min(1),
+      })
+      .strict()
+      .optional(),
     motifs: z
       .object({
         library: z.array(z.string().min(1)).min(1),
@@ -897,6 +966,7 @@ export function identityCastRule(identity: StyleIdentity): {
   expressionsMin: number;
   anchors: string[];
   appearance: StyleIdentity["cast"]["appearance"];
+  proportions?: StyleIdentity["cast"]["proportions"];
 } {
   return {
     archetype: identity.cast.archetype,
@@ -908,6 +978,7 @@ export function identityCastRule(identity: StyleIdentity): {
     expressionsMin: identity.cast.expressionsMin,
     anchors: identity.cast.anchors,
     appearance: identity.cast.appearance,
+    proportions: identity.cast.proportions,
   };
 }
 

@@ -11,7 +11,7 @@ diagram film is not forced to stage a character in every shot. The paint probe
 records a **face box**, and `audit:type` refuses any text over a face (the old
 film's 0:16 caption is now a finding). The rig draws both hands last, with a
 palm, four fingers and a thumb, and publishes `hand-left`/`hand-right`; the
-library gains `tap`, `hold` and `accept` poses. **513 tests**, typecheck clean.
+library gains `tap`, `hold` and `accept` poses. **519 tests**, typecheck clean.
 `npm run visual:check -- films/uber-model/score.json` now refuses the 0055
 score with **48 findings** (0 phrases, 10 staged with no action, four recipes
 used twice); `storyboard --check` refuses it. The 0055 28-check pass and MP4 are
@@ -24,6 +24,20 @@ short/reel shot at 4.5 s, and refuses a staged body with no pose change
 a real lotus/river reveal, an eight-fold rangoli and a brass thali. It passes
 **`gate:7` 29 checks** and `film:review --gate --reuse`; the 60 s film and its
 evidence stay historical.
+
+**Update 2026-11-05 (current, 0059):** the proof's humans are measured now.
+`style:identity` computes `body.height / body.head.h` and `body.hand.h /
+body.head.h` and refuses a library whose drawn figure is outside its own
+`visualHeadToBody` band, outside the pack's per-archetype proportions, or
+missing a measurement. The proof's mortals are **3.70 heads**, the goddess
+**4.89**, both inside their bands; the mortal rig draws a **2× head**, a 24×35
+hand and thicker arms. `filmBands.moods` carries **night/day/snow/mixed** and the
+score's `mood` selects one; the palette-family audit still holds. `visual:check`
+refuses a first pose after 0.25 s or two pose changes closer than 0.3 s
+(`visual:pose-continuity`), and every pose transition in the proof is blended.
+The palette row reports **4 hue families / top 98.6%**, not the always-zero
+outlier. Current delivered picture `sha256:d7241395fd7d…`; `gate:7` **29
+checks**, `film:review` **PASS**, ASR 97.9%, motion floor 6/6. **519 tests.**
 
 **Update 2026-11-05 (historical, superseded by the 0056 block above):** decision **0055** rebuilds *The Uber Cut* as
 the first passing example of the identity gate. The film is a presenter-show:

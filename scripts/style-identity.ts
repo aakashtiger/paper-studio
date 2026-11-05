@@ -35,6 +35,7 @@ import {
 import { PoseLibrarySchema, resolvePoseLibrary } from "../src/engine/pose.js";
 import {
   checkStyleIdentity,
+  resolveFilmBands,
   type CastLibraryFact,
   type IdentityMetrics,
 } from "../src/engine/style-identity.js";
@@ -110,6 +111,10 @@ const cast: CastLibraryFact[] = [];for (const member of score.cast) {
     expressions: library.expressions.length,
     anchors: library.anchors,
     body: Boolean(library.body),
+    bodyHeight: library.body?.height,
+    head: library.body?.head,
+    hand: library.body?.hand,
+    visualHeadToBody: library.visualHeadToBody,
     archetype: library.archetype,
     stageRoles: library.stageRoles,
     appearance: library.appearance,
@@ -206,7 +211,7 @@ const metrics: IdentityMetrics = {
 
 const scoreHash = `sha256:${createHash("sha256").update(readFileSync(scorePath)).digest("hex")}`;
 const identityHash = `sha256:${createHash("sha256")
-  .update(JSON.stringify(identity))
+  .update(JSON.stringify(tokens.identity))
   .digest("hex")}`;
 const ffmpeg = findFfmpeg();
 const videoHash = videoMode
@@ -267,12 +272,13 @@ if (videoMode) {
     .digest("hex")}`;
 }
 
+const activeBands = resolveFilmBands(identity.filmBands, score.mood);
 const result = checkStyleIdentity({
   shots: score.shots.length,
   stagedShots,
   cast,
   metrics,
-  filmBands: identity.filmBands,
+  filmBands: activeBands,
   field: identity.field,
   composition: identity.composition,
   castRule: identityCastRule(identity),
@@ -295,6 +301,7 @@ const report = {
     : null,
   frameReportHash,
   dimension: identity.envelope.dimension,
+  mood: score.mood ?? null,
   pass: findings.length === 0,
   stagedRatio: Number(result.stagedRatio.toFixed(3)),
   performanceMode: score.performance?.mode ?? null,
@@ -302,7 +309,7 @@ const report = {
   stages: { shots: score.shots.length, stagedShots },
   cast,
   metrics,
-  filmBands: identity.filmBands,
+  filmBands: activeBands,
   frame,
   findings,
 };
@@ -319,9 +326,10 @@ for (const member of cast) {
 }
 console.log(
   `identity: ${stagedShots}/${score.shots.length} staged shots · ` +
-    `luma ${metrics.lumaMean?.toFixed(1) ?? "?"} (${identity.filmBands.lumaMean[0]}-${identity.filmBands.lumaMean[1]}) · ` +
-    `sat ${metrics.saturationMean?.toFixed(1) ?? "?"} (${identity.filmBands.saturationMean[0]}-${identity.filmBands.saturationMean[1]}) · ` +
-    `edges ${metrics.edgesMean?.toFixed(1) ?? "?"} (${identity.filmBands.edgesMean[0]}-${identity.filmBands.edgesMean[1]})`,
+    `${score.mood ? `mood ${score.mood} · ` : ""}` +
+    `luma ${metrics.lumaMean?.toFixed(1) ?? "?"} (${activeBands.lumaMean[0]}-${activeBands.lumaMean[1]}) · ` +
+    `sat ${metrics.saturationMean?.toFixed(1) ?? "?"} (${activeBands.saturationMean[0]}-${activeBands.saturationMean[1]}) · ` +
+    `edges ${metrics.edgesMean?.toFixed(1) ?? "?"} (${activeBands.edgesMean[0]}-${activeBands.edgesMean[1]})`,
 );
 for (const finding of findings) {
   console.error(`  FAIL ${finding.code}: ${finding.message}`);

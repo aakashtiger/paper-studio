@@ -18,9 +18,9 @@ window.SCORE = {
       "duration": 3,
       "slots": {},
       "camera": {
-        "move": "pan",
+        "move": "push_in",
         "from": 1,
-        "to": 1.09,
+        "to": 1.18,
         "ease": "linear"
       },
       "transitionOut": "cut",
@@ -28,7 +28,9 @@ window.SCORE = {
         "entry": "a village street at night, a low doorway with a warm room inside, a hand lighting one clay diya on the threshold, a child watching",
         "exit": "the match touches the wick and the child leans into the new light",
         "spine": "the line names the darkest night and the first lamp; the door is the edge of the home",
-        "cast": [],
+        "cast": [
+          "Child"
+        ],
         "events": [
           {
             "t": 0,
@@ -37,10 +39,37 @@ window.SCORE = {
             "quiet": "the line carries this beat"
           },
           {
+            "t": 0.1,
+            "kind": "pose",
+            "note": "the child watches the new flame",
+            "quiet": "the line carries the beat",
+            "who": "Child",
+            "pose": "watch",
+            "expression": "shocked"
+          },
+          {
             "t": 0.2,
             "kind": "build",
             "note": "the match touches the wick and the child leans into the new light",
             "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.8,
+            "kind": "action",
+            "note": "the hand lifts the diya from the threshold",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 1.7,
+            "kind": "action",
+            "note": "the child leans toward the new light",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 2.4,
+            "kind": "action",
+            "note": "the diya is carried toward the child",
+            "quiet": "the line carries the beat"
           },
           {
             "t": 2.7666666666666666,
@@ -71,7 +100,7 @@ window.SCORE = {
         "exit": "the child walks and the neighbours lift their lamps as she passes",
         "spine": "the line says the flame passes hand to hand; the street is the hands",
         "cast": [
-          "ChildV2"
+          "Child"
         ],
         "events": [
           {
@@ -83,11 +112,11 @@ window.SCORE = {
           {
             "t": 0.1,
             "kind": "pose",
-            "note": "she starts walking with the diya",
-            "quiet": "the street carries the beat",
-            "who": "ChildV2",
+            "note": "the walk continues",
+            "quiet": "the line carries the beat",
+            "who": "Child",
             "pose": "walk",
-            "expression": "happy"
+            "expression": "laugh"
           },
           {
             "t": 0.2,
@@ -96,13 +125,67 @@ window.SCORE = {
             "quiet": "the line carries this beat"
           },
           {
-            "t": 1.3,
+            "t": 0.4666666666666667,
             "kind": "pose",
-            "note": "she lifts the diya as the lamps answer",
-            "quiet": "the street carries the beat",
-            "who": "ChildV2",
-            "pose": "carry",
-            "expression": "awed"
+            "note": "the other foot lands",
+            "quiet": "the line carries the beat",
+            "who": "Child",
+            "pose": "look",
+            "expression": "laugh"
+          },
+          {
+            "t": 0.8,
+            "kind": "pose",
+            "note": "the walk continues",
+            "quiet": "the line carries the beat",
+            "who": "Child",
+            "pose": "hold",
+            "expression": "laugh"
+          },
+          {
+            "t": 1.1666666666666667,
+            "kind": "pose",
+            "note": "the other foot lands",
+            "quiet": "the line carries the beat",
+            "who": "Child",
+            "pose": "walk",
+            "expression": "laugh"
+          },
+          {
+            "t": 1.5,
+            "kind": "pose",
+            "note": "the walk continues",
+            "quiet": "the line carries the beat",
+            "who": "Child",
+            "pose": "reach",
+            "expression": "laugh"
+          },
+          {
+            "t": 1.8666666666666667,
+            "kind": "pose",
+            "note": "the other foot lands",
+            "quiet": "the line carries the beat",
+            "who": "Child",
+            "pose": "look",
+            "expression": "laugh"
+          },
+          {
+            "t": 2.2,
+            "kind": "pose",
+            "note": "the walk continues",
+            "quiet": "the line carries the beat",
+            "who": "Child",
+            "pose": "walk",
+            "expression": "laugh"
+          },
+          {
+            "t": 2.566666666666667,
+            "kind": "pose",
+            "note": "the other foot lands",
+            "quiet": "the line carries the beat",
+            "who": "Child",
+            "pose": "hold",
+            "expression": "laugh"
           },
           {
             "t": 2.566666666666667,
@@ -174,6 +257,12 @@ window.SCORE = {
             "expression": "kind"
           },
           {
+            "t": 3,
+            "kind": "action",
+            "note": "her head turns to the child",
+            "quiet": "the line carries the beat"
+          },
+          {
             "t": 3.3666666666666667,
             "kind": "transition",
             "note": "cut",
@@ -236,6 +325,12 @@ window.SCORE = {
             "expression": "giving"
           },
           {
+            "t": 2.7,
+            "kind": "action",
+            "note": "a lotus passes from the upper hand to the lower palm",
+            "quiet": "the line carries the beat"
+          },
+          {
             "t": 3.433333333333333,
             "kind": "transition",
             "note": "cut",
@@ -263,7 +358,9 @@ window.SCORE = {
         "entry": "a courtyard floor with a real eight-fold rangoli being drawn in red, gold, green and cream, marigold garland, a hanging lamp, hands and powder bowls",
         "exit": "the hands pull the lines outward and the pattern blooms around the lamp",
         "spine": "the line asks for the rangoli, and the image is the drawing of it",
-        "cast": [],
+        "cast": [
+          "Householder"
+        ],
         "events": [
           {
             "t": 0,
@@ -272,10 +369,40 @@ window.SCORE = {
             "quiet": "the line carries this beat"
           },
           {
+            "t": 0.1,
+            "kind": "pose",
+            "note": "the householder takes the powder",
+            "quiet": "the line carries the beat",
+            "who": "Householder",
+            "pose": "hold",
+            "expression": "relieved"
+          },
+          {
             "t": 0.2,
             "kind": "build",
             "note": "the hands pull the lines outward and the pattern blooms around the lamp",
             "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.9,
+            "kind": "action",
+            "note": "the hand draws the first rangoli petal",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 1,
+            "kind": "pose",
+            "note": "the first petal is drawn",
+            "quiet": "the line carries the beat",
+            "who": "Householder",
+            "pose": "place",
+            "expression": "relieved"
+          },
+          {
+            "t": 1.5,
+            "kind": "action",
+            "note": "the child sets a diya at the rim",
+            "quiet": "the line carries the beat"
           },
           {
             "t": 1.6666666666666667,
@@ -305,7 +432,10 @@ window.SCORE = {
         "entry": "a brass thali with a lit diya, marigolds, a coconut and a banana, two hands offering, incense smoke, a warm wall and a hanging lamp",
         "exit": "the hands set the flower down and the flame leans toward the camera",
         "spine": "the line closes on sharing; the thali is the offering and the flame is passed on",
-        "cast": [],
+        "cast": [
+          "Householder",
+          "Child"
+        ],
         "events": [
           {
             "t": 0,
@@ -314,10 +444,58 @@ window.SCORE = {
             "quiet": "the line carries this beat"
           },
           {
+            "t": 0.1,
+            "kind": "pose",
+            "note": "the householder offers the flower",
+            "quiet": "the line carries the beat",
+            "who": "Householder",
+            "pose": "offer",
+            "expression": "relieved"
+          },
+          {
+            "t": 0.1,
+            "kind": "pose",
+            "note": "the child holds her diya",
+            "quiet": "the line carries the beat",
+            "who": "Child",
+            "pose": "hold",
+            "expression": "laugh"
+          },
+          {
             "t": 0.2,
             "kind": "build",
             "note": "the hands set the flower down and the flame leans toward the camera",
             "quiet": "the line carries this beat"
+          },
+          {
+            "t": 0.8,
+            "kind": "action",
+            "note": "the hand picks up the marigold",
+            "quiet": "the line carries the beat"
+          },
+          {
+            "t": 1.2,
+            "kind": "pose",
+            "note": "the flower is set down",
+            "quiet": "the line carries the beat",
+            "who": "Householder",
+            "pose": "accept",
+            "expression": "relieved"
+          },
+          {
+            "t": 1.3,
+            "kind": "pose",
+            "note": "the child lifts the diya",
+            "quiet": "the line carries the beat",
+            "who": "Child",
+            "pose": "accept",
+            "expression": "laugh"
+          },
+          {
+            "t": 1.4,
+            "kind": "action",
+            "note": "the flower is placed on the thali",
+            "quiet": "the line carries the beat"
           },
           {
             "t": 1.4666666666666666,
@@ -331,11 +509,7 @@ window.SCORE = {
   ],
   "warnings": [
     "poses \"lower\" and \"still\" are too close in silhouette",
-    "poses \"stand\" and \"look\" are too close in silhouette",
-    "poses \"stand\" and \"hold\" are too close in silhouette",
-    "poses \"stand\" and \"turn\" are too close in silhouette",
-    "poses \"look\" and \"hold\" are too close in silhouette",
-    "poses \"hold\" and \"still\" are too close in silhouette"
+    "poses \"idle\" and \"watch\" are too close in silhouette"
   ],
   "brief": "films/lakshmi-proof/brief.json",
   "clock": {
@@ -501,7 +675,7 @@ window.SCORE = {
       "id": "character.lakshmi-v2",
       "type": "character",
       "version": "1.0.0",
-      "hash": "sha256:0d8ca1854aba8338e8b606f84a9646974f8a004b8836bcfb8449e7182d1bae21",
+      "hash": "sha256:22dbd42560914cbd2a64bb16b6e8d65f747d0e0299806875767253076c1c162e",
       "source": "new",
       "anchors": [
         "face",
@@ -526,22 +700,38 @@ window.SCORE = {
       "path": "styles/paper-kpop/canvas/recipes.js"
     },
     {
-      "id": "character.child-v2",
+      "id": "character.householder",
       "type": "character",
       "version": "1.0.0",
-      "hash": "sha256:1cada6111ec677e733db7a36435558abfe0afd633a9763942016bc24350bcf55",
-      "source": "new",
+      "hash": "sha256:08c88a31eaaf00f2bdd98f6a616c85f51b2f8cb393e33419a8e794c31599c2fe",
+      "source": "reused",
       "anchors": [
         "face",
-        "head",
         "hair",
         "hand-left",
         "hand-right",
         "foot-left",
         "foot-right"
       ],
-      "path": "films/lakshmi-proof/cast/child-v2.poses.json",
-      "character": "ChildV2"
+      "path": "films/lakshmi-proof/cast/householder.poses.json",
+      "character": "Householder"
+    },
+    {
+      "id": "character.child",
+      "type": "character",
+      "version": "1.0.0",
+      "hash": "sha256:697c4a1d4022a8b295ef3794b39ca3019383d27a5d1bde09ae3259b64aab30f9",
+      "source": "reused",
+      "anchors": [
+        "face",
+        "hair",
+        "hand-left",
+        "hand-right",
+        "foot-left",
+        "foot-right"
+      ],
+      "path": "films/lakshmi-proof/cast/child.poses.json",
+      "character": "Child"
     }
   ],
   "cast": [
@@ -551,9 +741,14 @@ window.SCORE = {
       "rig": "lakshmi-v2@0.1.0"
     },
     {
-      "character": "ChildV2",
-      "poses": "films/lakshmi-proof/cast/child-v2.poses.json",
-      "rig": "child-v2@0.1.0"
+      "character": "Householder",
+      "poses": "films/lakshmi-proof/cast/householder.poses.json",
+      "rig": "mortal@0.1.0"
+    },
+    {
+      "character": "Child",
+      "poses": "films/lakshmi-proof/cast/child.poses.json",
+      "rig": "mortal@0.1.0"
     }
   ]
 };
@@ -596,6 +791,11 @@ window.POSES = {
         "h": 30,
         "thumbW": 9,
         "thumbH": 13
+      },
+      "height": 646,
+      "head": {
+        "w": 108,
+        "h": 132
       }
     },
     "anchors": [
@@ -1061,46 +1261,35 @@ window.POSES = {
           "browLift": 3
         }
       }
+    ],
+    "visualHeadToBody": [
+      4.5,
+      5.3
     ]
   },
-  "ChildV2": {
-    "character": "ChildV2",
-    "rig": "child-v2@0.1.0",
-    "archetype": "paper-human",
-    "stageRoles": [
-      "mortal",
-      "backing"
-    ],
-    "colors": {
-      "dress": "green",
-      "shawl": "red",
-      "gold": "gold",
-      "skin": "#B9784D",
-      "hair": "ink"
-    },
-    "appearance": {
-      "faceStyle": "drawn-cartoon",
-      "headLayers": 3,
-      "hairLayers": 3,
-      "bradMetal": "#C68E2E",
-      "fingers": true
-    },
+  "Householder": {
+    "character": "Householder",
+    "rig": "mortal@0.1.0",
     "body": {
       "arm": {
-        "upper": 54,
-        "fore": 46,
+        "upper": 92,
+        "fore": 78,
         "minElbow": 0.02
       },
       "hand": {
-        "w": 16,
-        "h": 22,
-        "thumbW": 7,
-        "thumbH": 10
+        "w": 24,
+        "h": 35,
+        "thumbW": 11,
+        "thumbH": 16
+      },
+      "height": 622,
+      "head": {
+        "w": 144,
+        "h": 168
       }
     },
     "anchors": [
       "face",
-      "head",
       "hair",
       "hand-left",
       "hand-right",
@@ -1109,31 +1298,217 @@ window.POSES = {
       "chest",
       "waist"
     ],
+    "colors": {
+      "shirt": "cream",
+      "jacket": "gold",
+      "skirt": "red",
+      "trouser": "ink2",
+      "boot": "ink",
+      "hair": "ink",
+      "skin": "#C98A5B",
+      "petal": "gold",
+      "sleeve": "cream"
+    },
     "poses": [
       {
-        "name": "stand",
+        "name": "idle",
         "params": {
           "bounce": 0,
           "sway": 0,
-          "lean": 0,
-          "headTilt": 0,
-          "headTurn": 0,
-          "hairSwing": 0,
+          "lean": 0.02,
+          "headTilt": 0.02,
+          "headTurn": -0.02,
+          "hairSwing": 2,
           "armL": [
-            0.2,
-            0.5
+            0.05,
+            0.03
           ],
           "armR": [
-            -0.2,
-            -0.5
+            -0.05,
+            -0.03
           ],
           "footL": [
-            -12,
-            -4
+            -16,
+            -8
           ],
           "footR": [
-            12,
-            -4
+            16,
+            -8
+          ],
+          "legL": [
+            0.03,
+            0.01
+          ],
+          "legR": [
+            -0.03,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "asleep",
+        "params": {
+          "bounce": 0,
+          "sway": 0.02,
+          "lean": 0.14,
+          "headTilt": 0.5,
+          "headTurn": 0.2,
+          "hairSwing": 5,
+          "armL": [
+            0.12,
+            0.38
+          ],
+          "armR": [
+            -0.12,
+            -0.38
+          ],
+          "footL": [
+            -16,
+            -8
+          ],
+          "footR": [
+            16,
+            -8
+          ],
+          "legL": [
+            0.02,
+            0.01
+          ],
+          "legR": [
+            -0.02,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "wake",
+        "params": {
+          "bounce": 0,
+          "sway": 0,
+          "lean": -0.05,
+          "headTilt": -0.22,
+          "headTurn": 0,
+          "hairSwing": -2,
+          "armL": [
+            -2.55,
+            -0.18
+          ],
+          "armR": [
+            2.55,
+            0.18
+          ],
+          "footL": [
+            -18,
+            -8
+          ],
+          "footR": [
+            18,
+            -8
+          ],
+          "legL": [
+            0.04,
+            0.01
+          ],
+          "legR": [
+            -0.04,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "reach",
+        "params": {
+          "bounce": 0,
+          "sway": 0.03,
+          "lean": 0.1,
+          "headTilt": -0.08,
+          "headTurn": -0.28,
+          "hairSwing": 1,
+          "armL": [
+            0.3,
+            0.22
+          ],
+          "armR": [
+            1.42,
+            0.16
+          ],
+          "footL": [
+            -16,
+            -8
+          ],
+          "footR": [
+            16,
+            -8
+          ],
+          "legL": [
+            0.03,
+            0.01
+          ],
+          "legR": [
+            -0.03,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "place",
+        "params": {
+          "bounce": 0,
+          "sway": 0,
+          "lean": 0.08,
+          "headTilt": 0.18,
+          "headTurn": 0.05,
+          "hairSwing": 1,
+          "armL": [
+            0.5,
+            -1.05
+          ],
+          "armR": [
+            -0.7,
+            -1.1
+          ],
+          "footL": [
+            -16,
+            -8
+          ],
+          "footR": [
+            16,
+            -8
+          ],
+          "legL": [
+            0.02,
+            0.01
+          ],
+          "legR": [
+            -0.02,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "offer",
+        "params": {
+          "bounce": 0,
+          "sway": -0.02,
+          "lean": 0.24,
+          "headTilt": 0.38,
+          "headTurn": -0.12,
+          "hairSwing": 4,
+          "armL": [
+            0.5,
+            0.9
+          ],
+          "armR": [
+            -0.5,
+            -0.9
+          ],
+          "footL": [
+            -20,
+            -8
+          ],
+          "footR": [
+            20,
+            -8
           ],
           "legL": [
             0.02,
@@ -1148,70 +1523,27 @@ window.POSES = {
       {
         "name": "walk",
         "params": {
-          "bounce": 0,
-          "sway": 0,
-          "lean": 0.08,
-          "headTilt": 0,
-          "headTurn": 0,
-          "hairSwing": 0,
+          "bounce": 1,
+          "sway": 0.04,
+          "lean": 0.04,
+          "headTilt": 0.02,
+          "headTurn": 0.08,
+          "hairSwing": 3,
           "armL": [
-            0.55,
-            0.7
+            0.5,
+            0.2
           ],
           "armR": [
-            -0.55,
-            -0.7
-          ],
-          "footL": [
-            -12,
-            -4
-          ],
-          "footR": [
-            12,
-            -4
+            -0.5,
+            -0.2
           ],
           "legL": [
-            0.02,
-            0.01
+            -0.12,
+            0.06
           ],
           "legR": [
-            -0.02,
-            -0.01
-          ]
-        }
-      },
-      {
-        "name": "carry",
-        "params": {
-          "bounce": 0,
-          "sway": 0,
-          "lean": 0.03,
-          "headTilt": 0,
-          "headTurn": 0,
-          "hairSwing": 0,
-          "armL": [
-            0.3,
-            1.1
-          ],
-          "armR": [
-            -0.3,
-            -1.1
-          ],
-          "footL": [
-            -12,
-            -4
-          ],
-          "footR": [
-            12,
-            -4
-          ],
-          "legL": [
-            0.02,
-            0.01
-          ],
-          "legR": [
-            -0.02,
-            -0.01
+            0.16,
+            -0.08
           ]
         }
       },
@@ -1219,68 +1551,68 @@ window.POSES = {
         "name": "look",
         "params": {
           "bounce": 0,
-          "sway": 0,
-          "lean": 0,
-          "headTilt": 0,
-          "headTurn": 0.35,
-          "hairSwing": 0,
+          "sway": -0.02,
+          "lean": 0.03,
+          "headTilt": -0.08,
+          "headTurn": 0.46,
+          "hairSwing": -1,
           "armL": [
-            0.15,
-            0.35
+            0.12,
+            0.18
           ],
           "armR": [
-            -0.15,
-            -0.35
+            2.02,
+            -0.92
           ],
           "footL": [
-            -12,
-            -4
+            -16,
+            -8
           ],
           "footR": [
-            12,
-            -4
+            16,
+            -8
           ],
           "legL": [
-            0.02,
+            0.03,
             0.01
           ],
           "legR": [
-            -0.02,
+            -0.03,
             -0.01
           ]
         }
       },
       {
-        "name": "reach",
+        "name": "tap",
         "params": {
           "bounce": 0,
           "sway": 0,
-          "lean": 0.06,
-          "headTilt": 0,
-          "headTurn": 0,
-          "hairSwing": 0,
+          "lean": 0.05,
+          "headTilt": -0.06,
+          "headTurn": 0.08,
+          "hairSwing": 2,
           "armL": [
-            0.4,
-            1.2
+            0.05,
+            0.03
           ],
           "armR": [
-            -0.2,
-            -0.4
+            -0.8,
+            0.55
           ],
           "footL": [
-            -12,
-            -4
+            -16,
+            -8
           ],
           "footR": [
-            12,
-            -4
+            16,
+            -8
           ],
           "legL": [
-            0.02,
+            0.03,
             0.01
           ],
           "legR": [
-            -0.02,
+            -0.03,
             -0.01
           ]
         }
@@ -1290,102 +1622,67 @@ window.POSES = {
         "params": {
           "bounce": 0,
           "sway": 0,
-          "lean": 0,
-          "headTilt": 0.08,
-          "headTurn": 0,
-          "hairSwing": 0,
+          "lean": 0.04,
+          "headTilt": -0.04,
+          "headTurn": 0.04,
+          "hairSwing": 2,
           "armL": [
-            0.12,
-            0.3
+            0.05,
+            0.03
           ],
           "armR": [
-            -0.12,
-            -0.3
+            -0.5,
+            0.95
           ],
           "footL": [
-            -12,
-            -4
+            -16,
+            -8
           ],
           "footR": [
-            12,
-            -4
+            16,
+            -8
           ],
           "legL": [
-            0.02,
+            0.03,
             0.01
           ],
           "legR": [
-            -0.02,
+            -0.03,
             -0.01
           ]
         }
       },
       {
-        "name": "turn",
+        "name": "accept",
         "params": {
           "bounce": 0,
           "sway": 0,
-          "lean": 0,
-          "headTilt": 0,
-          "headTurn": -0.3,
-          "hairSwing": 0,
+          "lean": -0.02,
+          "headTilt": 0.02,
+          "headTurn": -0.04,
+          "hairSwing": 2,
           "armL": [
-            0.28,
-            0.6
+            0.05,
+            0.03
           ],
           "armR": [
-            -0.2,
-            -0.4
+            -1.15,
+            0.35
           ],
           "footL": [
-            -12,
-            -4
+            -16,
+            -8
           ],
           "footR": [
-            12,
-            -4
+            16,
+            -8
           ],
           "legL": [
-            0.02,
+            0.03,
             0.01
           ],
           "legR": [
-            -0.02,
-            -0.01
-          ]
-        }
-      },
-      {
-        "name": "still",
-        "params": {
-          "bounce": 0,
-          "sway": 0,
-          "lean": 0,
-          "headTilt": 0.05,
-          "headTurn": 0,
-          "hairSwing": 0,
-          "armL": [
-            0.08,
-            0.18
-          ],
-          "armR": [
-            -0.08,
-            -0.18
-          ],
-          "footL": [
-            -12,
-            -4
-          ],
-          "footR": [
-            12,
-            -4
-          ],
-          "legL": [
-            0.02,
-            0.01
-          ],
-          "legR": [
-            -0.02,
+            -0.03,
             -0.01
           ]
         }
@@ -1393,159 +1690,854 @@ window.POSES = {
     ],
     "expressions": [
       {
-        "name": "calm",
+        "name": "neutral",
+        "params": {
+          "open": 0.85,
+          "brow": 0,
+          "lookX": 0,
+          "lookY": 0,
+          "eyes": "dot",
+          "mouth": "flat",
+          "browLift": 0
+        }
+      },
+      {
+        "name": "tired",
+        "params": {
+          "open": 0.55,
+          "brow": 0.05,
+          "lookX": 0,
+          "lookY": 0.1,
+          "eyes": "closed",
+          "mouth": "flat",
+          "browLift": 0.2
+        }
+      },
+      {
+        "name": "alarm",
+        "params": {
+          "open": 1.3,
+          "brow": 0.9,
+          "lookX": 0,
+          "lookY": 0,
+          "eyes": "wide",
+          "mouth": "o",
+          "browLift": 3
+        }
+      },
+      {
+        "name": "blank",
+        "params": {
+          "open": 0.75,
+          "brow": -0.05,
+          "lookX": 0.2,
+          "lookY": 0.05,
+          "eyes": "blank",
+          "mouth": "flat",
+          "browLift": 0
+        }
+      },
+      {
+        "name": "laugh",
+        "params": {
+          "open": 0.4,
+          "brow": 0.5,
+          "lookX": 0,
+          "lookY": 0.1,
+          "eyes": "happy",
+          "mouth": "grin",
+          "browLift": 2
+        }
+      },
+      {
+        "name": "cry",
+        "params": {
+          "open": 0.45,
+          "brow": -0.4,
+          "lookX": 0,
+          "lookY": -0.2,
+          "eyes": "closed",
+          "mouth": "wobble",
+          "browLift": -2,
+          "browTilt": 1.2,
+          "tear": true
+        }
+      },
+      {
+        "name": "angry",
         "params": {
           "open": 0.9,
-          "brow": 0,
+          "brow": -0.8,
           "lookX": 0,
           "lookY": 0,
-          "eyes": "soft",
-          "mouth": "smile"
+          "eyes": "squint",
+          "mouth": "frown",
+          "browLift": -1.8,
+          "browTilt": -2.4
         }
       },
       {
-        "name": "curious",
+        "name": "shocked",
         "params": {
-          "open": 1.1,
-          "brow": 0.4,
-          "lookX": 0.2,
+          "open": 1.5,
+          "brow": 1.2,
+          "lookX": 0,
           "lookY": 0,
           "eyes": "wide",
-          "mouth": "o"
+          "mouth": "O",
+          "browLift": 4.5
         }
       },
       {
-        "name": "happy",
-        "params": {
-          "open": 1,
-          "brow": 0.2,
-          "lookX": 0,
-          "lookY": 0,
-          "eyes": "soft",
-          "mouth": "smile"
-        }
-      },
-      {
-        "name": "shy",
-        "params": {
-          "open": 0.7,
-          "brow": 0.1,
-          "lookX": -0.1,
-          "lookY": 0.1,
-          "eyes": "half",
-          "mouth": "soft"
-        }
-      },
-      {
-        "name": "awed",
-        "params": {
-          "open": 1.2,
-          "brow": 0.7,
-          "lookX": 0,
-          "lookY": -0.1,
-          "eyes": "wide",
-          "mouth": "o"
-        }
-      },
-      {
-        "name": "sleepy",
+        "name": "sad",
         "params": {
           "open": 0.5,
-          "brow": 0,
+          "brow": -0.35,
+          "lookX": 0,
+          "lookY": -0.2,
+          "eyes": "half",
+          "mouth": "frown",
+          "browLift": -0.2,
+          "browTilt": 1.8
+        }
+      },
+      {
+        "name": "suspicious",
+        "params": {
+          "open": 0.8,
+          "brow": -0.25,
+          "lookX": 0.6,
+          "lookY": 0,
+          "eyes": "glance",
+          "mouth": "smirk",
+          "browLift": -0.8,
+          "browTilt": -1.2
+        }
+      },
+      {
+        "name": "relieved",
+        "params": {
+          "open": 0.65,
+          "brow": 0.2,
           "lookX": 0,
           "lookY": 0.1,
-          "eyes": "half",
-          "mouth": "flat"
+          "eyes": "happy",
+          "mouth": "smile",
+          "browLift": 1.4
+        }
+      },
+      {
+        "name": "confused",
+        "params": {
+          "open": 1,
+          "brow": 0.35,
+          "lookX": -0.5,
+          "lookY": 0,
+          "eyes": "dot",
+          "mouth": "wobble",
+          "browLift": 1.2,
+          "browTilt": 0.8
         }
       },
       {
         "name": "determined",
         "params": {
-          "open": 1,
-          "brow": 0.6,
+          "open": 0.75,
+          "brow": -0.3,
           "lookX": 0,
-          "lookY": 0,
-          "eyes": "wide",
-          "mouth": "flat"
+          "lookY": 0.1,
+          "eyes": "squint",
+          "mouth": "grit",
+          "browLift": -1.2,
+          "browTilt": -1.4
         }
       },
       {
-        "name": "kind",
+        "name": "bored",
         "params": {
-          "open": 0.85,
-          "brow": 0.2,
-          "lookX": 0,
-          "lookY": 0,
-          "eyes": "soft",
-          "mouth": "smile"
-        }
-      },
-      {
-        "name": "proud",
-        "params": {
-          "open": 1,
-          "brow": 0.3,
-          "lookX": 0,
-          "lookY": -0.1,
-          "eyes": "wide",
-          "mouth": "smile"
-        }
-      },
-      {
-        "name": "worried",
-        "params": {
-          "open": 1.1,
-          "brow": 0.5,
-          "lookX": 0,
-          "lookY": 0,
-          "eyes": "wide",
-          "mouth": "soft"
-        }
-      },
-      {
-        "name": "laughing",
-        "params": {
-          "open": 1,
-          "brow": 0.2,
-          "lookX": 0,
-          "lookY": 0,
-          "eyes": "closed",
-          "mouth": "o"
-        }
-      },
-      {
-        "name": "listening",
-        "params": {
-          "open": 0.9,
-          "brow": 0.2,
-          "lookX": 0.1,
-          "lookY": 0,
-          "eyes": "soft",
-          "mouth": "flat"
-        }
-      },
-      {
-        "name": "wonder",
-        "params": {
-          "open": 1.15,
-          "brow": 0.6,
-          "lookX": 0,
-          "lookY": -0.1,
-          "eyes": "wide",
-          "mouth": "o"
-        }
-      },
-      {
-        "name": "content",
-        "params": {
-          "open": 0.8,
-          "brow": 0.1,
-          "lookX": 0,
-          "lookY": 0,
-          "eyes": "closed",
-          "mouth": "smile"
+          "open": 0.45,
+          "brow": 0,
+          "lookX": 0.6,
+          "lookY": 0.2,
+          "eyes": "half",
+          "mouth": "flat",
+          "browLift": 0.6
         }
       }
+    ],
+    "archetype": "paper-human",
+    "stageRoles": [
+      "mortal"
+    ],
+    "appearance": {
+      "faceStyle": "drawn-cartoon",
+      "headLayers": 3,
+      "hairLayers": 3,
+      "bradMetal": "#C68E2E",
+      "fingers": true
+    },
+    "thumbOptional": false,
+    "visualHeadToBody": [
+      3.4,
+      4.5
+    ],
+    "headOrnamentDiameterPct": [
+      0.45,
+      0.65
+    ]
+  },
+  "Child": {
+    "character": "Child",
+    "rig": "mortal@0.1.0",
+    "body": {
+      "arm": {
+        "upper": 92,
+        "fore": 78,
+        "minElbow": 0.02
+      },
+      "hand": {
+        "w": 24,
+        "h": 35,
+        "thumbW": 11,
+        "thumbH": 16
+      },
+      "height": 622,
+      "head": {
+        "w": 144,
+        "h": 168
+      }
+    },
+    "anchors": [
+      "face",
+      "hair",
+      "hand-left",
+      "hand-right",
+      "foot-left",
+      "foot-right",
+      "chest",
+      "waist"
+    ],
+    "colors": {
+      "shirt": "goldL",
+      "jacket": "green",
+      "skirt": "green",
+      "trouser": "ink2",
+      "boot": "ink",
+      "hair": "ink",
+      "skin": "#D9A06A",
+      "petal": "gold",
+      "sleeve": "goldL"
+    },
+    "poses": [
+      {
+        "name": "idle",
+        "params": {
+          "bounce": 0,
+          "sway": 0,
+          "lean": 0.02,
+          "headTilt": 0.02,
+          "headTurn": -0.02,
+          "hairSwing": 2,
+          "armL": [
+            0.05,
+            0.03
+          ],
+          "armR": [
+            -0.05,
+            -0.03
+          ],
+          "footL": [
+            -16,
+            -8
+          ],
+          "footR": [
+            16,
+            -8
+          ],
+          "legL": [
+            0.03,
+            0.01
+          ],
+          "legR": [
+            -0.03,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "asleep",
+        "params": {
+          "bounce": 0,
+          "sway": 0.02,
+          "lean": 0.14,
+          "headTilt": 0.5,
+          "headTurn": 0.2,
+          "hairSwing": 5,
+          "armL": [
+            0.12,
+            0.38
+          ],
+          "armR": [
+            -0.12,
+            -0.38
+          ],
+          "footL": [
+            -16,
+            -8
+          ],
+          "footR": [
+            16,
+            -8
+          ],
+          "legL": [
+            0.02,
+            0.01
+          ],
+          "legR": [
+            -0.02,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "wake",
+        "params": {
+          "bounce": 0,
+          "sway": 0,
+          "lean": -0.05,
+          "headTilt": -0.22,
+          "headTurn": 0,
+          "hairSwing": -2,
+          "armL": [
+            -2.55,
+            -0.18
+          ],
+          "armR": [
+            2.55,
+            0.18
+          ],
+          "footL": [
+            -18,
+            -8
+          ],
+          "footR": [
+            18,
+            -8
+          ],
+          "legL": [
+            0.04,
+            0.01
+          ],
+          "legR": [
+            -0.04,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "reach",
+        "params": {
+          "bounce": 0,
+          "sway": 0.03,
+          "lean": 0.1,
+          "headTilt": -0.08,
+          "headTurn": -0.28,
+          "hairSwing": 1,
+          "armL": [
+            0.3,
+            0.22
+          ],
+          "armR": [
+            1.42,
+            0.16
+          ],
+          "footL": [
+            -16,
+            -8
+          ],
+          "footR": [
+            16,
+            -8
+          ],
+          "legL": [
+            0.03,
+            0.01
+          ],
+          "legR": [
+            -0.03,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "place",
+        "params": {
+          "bounce": 0,
+          "sway": 0,
+          "lean": 0.08,
+          "headTilt": 0.18,
+          "headTurn": 0.05,
+          "hairSwing": 1,
+          "armL": [
+            0.5,
+            -1.05
+          ],
+          "armR": [
+            -0.7,
+            -1.1
+          ],
+          "footL": [
+            -16,
+            -8
+          ],
+          "footR": [
+            16,
+            -8
+          ],
+          "legL": [
+            0.02,
+            0.01
+          ],
+          "legR": [
+            -0.02,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "offer",
+        "params": {
+          "bounce": 0,
+          "sway": -0.02,
+          "lean": 0.24,
+          "headTilt": 0.38,
+          "headTurn": -0.12,
+          "hairSwing": 4,
+          "armL": [
+            0.5,
+            0.9
+          ],
+          "armR": [
+            -0.5,
+            -0.9
+          ],
+          "footL": [
+            -20,
+            -8
+          ],
+          "footR": [
+            20,
+            -8
+          ],
+          "legL": [
+            0.02,
+            0.01
+          ],
+          "legR": [
+            -0.02,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "walk",
+        "params": {
+          "bounce": 1,
+          "sway": 0.04,
+          "lean": 0.04,
+          "headTilt": 0.02,
+          "headTurn": 0.08,
+          "hairSwing": 3,
+          "armL": [
+            0.5,
+            0.2
+          ],
+          "armR": [
+            -0.5,
+            -0.2
+          ],
+          "legL": [
+            -0.12,
+            0.06
+          ],
+          "legR": [
+            0.16,
+            -0.08
+          ]
+        }
+      },
+      {
+        "name": "look",
+        "params": {
+          "bounce": 0,
+          "sway": -0.02,
+          "lean": 0.03,
+          "headTilt": -0.08,
+          "headTurn": 0.46,
+          "hairSwing": -1,
+          "armL": [
+            0.12,
+            0.18
+          ],
+          "armR": [
+            2.02,
+            -0.92
+          ],
+          "footL": [
+            -16,
+            -8
+          ],
+          "footR": [
+            16,
+            -8
+          ],
+          "legL": [
+            0.03,
+            0.01
+          ],
+          "legR": [
+            -0.03,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "tap",
+        "params": {
+          "bounce": 0,
+          "sway": 0,
+          "lean": 0.05,
+          "headTilt": -0.06,
+          "headTurn": 0.08,
+          "hairSwing": 2,
+          "armL": [
+            0.05,
+            0.03
+          ],
+          "armR": [
+            -0.8,
+            0.55
+          ],
+          "footL": [
+            -16,
+            -8
+          ],
+          "footR": [
+            16,
+            -8
+          ],
+          "legL": [
+            0.03,
+            0.01
+          ],
+          "legR": [
+            -0.03,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "hold",
+        "params": {
+          "bounce": 0,
+          "sway": 0,
+          "lean": 0.04,
+          "headTilt": -0.04,
+          "headTurn": 0.04,
+          "hairSwing": 2,
+          "armL": [
+            0.05,
+            0.03
+          ],
+          "armR": [
+            -0.5,
+            0.95
+          ],
+          "footL": [
+            -16,
+            -8
+          ],
+          "footR": [
+            16,
+            -8
+          ],
+          "legL": [
+            0.03,
+            0.01
+          ],
+          "legR": [
+            -0.03,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "accept",
+        "params": {
+          "bounce": 0,
+          "sway": 0,
+          "lean": -0.02,
+          "headTilt": 0.02,
+          "headTurn": -0.04,
+          "hairSwing": 2,
+          "armL": [
+            0.05,
+            0.03
+          ],
+          "armR": [
+            -1.15,
+            0.35
+          ],
+          "footL": [
+            -16,
+            -8
+          ],
+          "footR": [
+            16,
+            -8
+          ],
+          "legL": [
+            0.03,
+            0.01
+          ],
+          "legR": [
+            -0.03,
+            -0.01
+          ]
+        }
+      },
+      {
+        "name": "watch",
+        "params": {
+          "bounce": 0,
+          "sway": 0,
+          "lean": 0.05,
+          "headTilt": -0.06,
+          "headTurn": -0.35,
+          "hairSwing": 1,
+          "armL": [
+            0.05,
+            0.03
+          ],
+          "armR": [
+            0.1,
+            0.04
+          ],
+          "footL": [
+            -16,
+            -8
+          ],
+          "footR": [
+            16,
+            -8
+          ],
+          "legL": [
+            0.03,
+            0.01
+          ],
+          "legR": [
+            -0.03,
+            -0.01
+          ]
+        }
+      }
+    ],
+    "expressions": [
+      {
+        "name": "neutral",
+        "params": {
+          "open": 0.85,
+          "brow": 0,
+          "lookX": 0,
+          "lookY": 0,
+          "eyes": "dot",
+          "mouth": "flat",
+          "browLift": 0
+        }
+      },
+      {
+        "name": "tired",
+        "params": {
+          "open": 0.55,
+          "brow": 0.05,
+          "lookX": 0,
+          "lookY": 0.1,
+          "eyes": "closed",
+          "mouth": "flat",
+          "browLift": 0.2
+        }
+      },
+      {
+        "name": "alarm",
+        "params": {
+          "open": 1.3,
+          "brow": 0.9,
+          "lookX": 0,
+          "lookY": 0,
+          "eyes": "wide",
+          "mouth": "o",
+          "browLift": 3
+        }
+      },
+      {
+        "name": "blank",
+        "params": {
+          "open": 0.75,
+          "brow": -0.05,
+          "lookX": 0.2,
+          "lookY": 0.05,
+          "eyes": "blank",
+          "mouth": "flat",
+          "browLift": 0
+        }
+      },
+      {
+        "name": "laugh",
+        "params": {
+          "open": 0.4,
+          "brow": 0.5,
+          "lookX": 0,
+          "lookY": 0.1,
+          "eyes": "happy",
+          "mouth": "grin",
+          "browLift": 2
+        }
+      },
+      {
+        "name": "cry",
+        "params": {
+          "open": 0.45,
+          "brow": -0.4,
+          "lookX": 0,
+          "lookY": -0.2,
+          "eyes": "closed",
+          "mouth": "wobble",
+          "browLift": -2,
+          "browTilt": 1.2,
+          "tear": true
+        }
+      },
+      {
+        "name": "angry",
+        "params": {
+          "open": 0.9,
+          "brow": -0.8,
+          "lookX": 0,
+          "lookY": 0,
+          "eyes": "squint",
+          "mouth": "frown",
+          "browLift": -1.8,
+          "browTilt": -2.4
+        }
+      },
+      {
+        "name": "shocked",
+        "params": {
+          "open": 1.5,
+          "brow": 1.2,
+          "lookX": 0,
+          "lookY": 0,
+          "eyes": "wide",
+          "mouth": "O",
+          "browLift": 4.5
+        }
+      },
+      {
+        "name": "sad",
+        "params": {
+          "open": 0.5,
+          "brow": -0.35,
+          "lookX": 0,
+          "lookY": -0.2,
+          "eyes": "half",
+          "mouth": "frown",
+          "browLift": -0.2,
+          "browTilt": 1.8
+        }
+      },
+      {
+        "name": "suspicious",
+        "params": {
+          "open": 0.8,
+          "brow": -0.25,
+          "lookX": 0.6,
+          "lookY": 0,
+          "eyes": "glance",
+          "mouth": "smirk",
+          "browLift": -0.8,
+          "browTilt": -1.2
+        }
+      },
+      {
+        "name": "relieved",
+        "params": {
+          "open": 0.65,
+          "brow": 0.2,
+          "lookX": 0,
+          "lookY": 0.1,
+          "eyes": "happy",
+          "mouth": "smile",
+          "browLift": 1.4
+        }
+      },
+      {
+        "name": "confused",
+        "params": {
+          "open": 1,
+          "brow": 0.35,
+          "lookX": -0.5,
+          "lookY": 0,
+          "eyes": "dot",
+          "mouth": "wobble",
+          "browLift": 1.2,
+          "browTilt": 0.8
+        }
+      },
+      {
+        "name": "determined",
+        "params": {
+          "open": 0.75,
+          "brow": -0.3,
+          "lookX": 0,
+          "lookY": 0.1,
+          "eyes": "squint",
+          "mouth": "grit",
+          "browLift": -1.2,
+          "browTilt": -1.4
+        }
+      },
+      {
+        "name": "bored",
+        "params": {
+          "open": 0.45,
+          "brow": 0,
+          "lookX": 0.6,
+          "lookY": 0.2,
+          "eyes": "half",
+          "mouth": "flat",
+          "browLift": 0.6
+        }
+      }
+    ],
+    "archetype": "paper-human",
+    "stageRoles": [
+      "mortal"
+    ],
+    "appearance": {
+      "faceStyle": "drawn-cartoon",
+      "headLayers": 3,
+      "hairLayers": 3,
+      "bradMetal": "#C68E2E",
+      "fingers": true
+    },
+    "thumbOptional": false,
+    "visualHeadToBody": [
+      3.4,
+      4.5
+    ],
+    "headOrnamentDiameterPct": [
+      0.45,
+      0.65
     ]
   }
 };

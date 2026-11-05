@@ -15,7 +15,17 @@ export type FilmBands = {
   lumaMean: NumericBand;
   saturationMean: NumericBand;
   edgesMean: NumericBand;
+  moods?: Record<string, { lumaMean: NumericBand; saturationMean: NumericBand; edgesMean: NumericBand }>;
 };
+
+/**
+ * A film's mood chooses a band from the pack. The absolute band stays the
+ * fallback, so an older score or a newer mood resolves to the same check.
+ */
+export function resolveFilmBands(filmBands: FilmBands, mood?: string): FilmBands {
+  const selected = mood ? filmBands.moods?.[mood] : undefined;
+  return selected ? { ...selected } : filmBands;
+}
 
 export type FieldBands = {
   edgeBarMax: number;
@@ -52,6 +62,10 @@ export type CastIdentity = {
     bradMetal: string;
     fingers: boolean;
   };
+  proportions?: Record<
+    string,
+    { visualHeadToBody: NumericBand; handToHead: NumericBand }
+  >;
 };
 
 export type CastLibraryFact = {
@@ -61,6 +75,12 @@ export type CastLibraryFact = {
   expressions: number;
   anchors: string[];
   body: boolean;
+  /** The drawn boxes from the library's body block, when it publishes them. */
+  bodyHeight?: number;
+  head?: { w: number; h: number };
+  hand?: { w: number; h: number };
+  /** The library's own measured doll ratio, when it declares one. */
+  visualHeadToBody?: NumericBand;
   archetype?: string;
   stageRoles?: string[];
   appearance?: CastIdentity["appearance"];
@@ -97,6 +117,7 @@ export type FrameSummary = {
 
 export type IdentityFindingCode =
   | "identity:cast"
+  | "identity:proportion"
   | "identity:staged"
   | "identity:luma"
   | "identity:saturation"
@@ -248,6 +269,50 @@ export function checkStyleIdentity(input: {
         }
       }
     }
+    if (input.castRule.proportions) {
+      const archetype = member.archetype ?? "?";
+      const band =
+        input.castRule.proportions[archetype] ?? input.castRule.proportions["*"];
+      if (!band) {
+        findings.push({
+          code: "identity:proportion",
+          message: `${member.character} is a "${archetype}" but the style declares no proportion band for it - a new construction must publish its own proportions`,
+        });
+      } else if (!member.bodyHeight || !member.head || !member.hand) {
+        findings.push({
+          code: "identity:proportion",
+          message: `${member.character} publishes no measured height, head or hand box; the proportion cannot be checked`,
+        });
+      } else {
+        const headToBody = member.bodyHeight / member.head.h;
+        const handToHead = member.hand.h / member.head.h;
+        if (
+          member.visualHeadToBody &&
+          (headToBody < member.visualHeadToBody[0] - 1e-9 ||
+            headToBody > member.visualHeadToBody[1] + 1e-9)
+        ) {
+          findings.push({
+            code: "identity:proportion",
+            message: `${member.character} draws ${headToBody.toFixed(2)} heads tall; its library declares ${member.visualHeadToBody[0]}-${member.visualHeadToBody[1]} - the published doll ratio is not the drawn one`,
+          });
+        }
+        if (
+          headToBody < band.visualHeadToBody[0] - 1e-9 ||
+          headToBody > band.visualHeadToBody[1] + 1e-9
+        ) {
+          findings.push({
+            code: "identity:proportion",
+            message: `${member.character} is ${headToBody.toFixed(2)} heads tall; this style builds "${archetype}" at ${band.visualHeadToBody[0]}-${band.visualHeadToBody[1]}`,
+          });
+        }
+        if (handToHead < band.handToHead[0] - 1e-9 || handToHead > band.handToHead[1] + 1e-9) {
+          findings.push({
+            code: "identity:proportion",
+            message: `${member.character} hand is ${handToHead.toFixed(2)} of its head; this style builds "${archetype}" at ${band.handToHead[0]}-${band.handToHead[1]}`,
+          });
+        }
+      }
+    }
     for (const error of member.errors) {
       findings.push({ code: "identity:cast", message: `${member.character}: ${error.message}` });
     }
@@ -269,17 +334,18 @@ export function checkStyleIdentity(input: {
     });
   }
 
-  const bands: Array<[keyof FilmBands, string, number | null]> = [
+  const bands: Array<["lumaMean" | "saturationMean" | "edgesMean", string, number | null]> = [
     ["lumaMean", "luma mean", input.metrics.lumaMean],
     ["saturationMean", "saturation mean", input.metrics.saturationMean],
     ["edgesMean", "edge mean", input.metrics.edgesMean],
   ];
   for (const [key, label, value] of bands) {
     if (!measured(label, value, findings)) continue;
-    if (!inBand(value, input.filmBands[key])) {
+    const filmBand = input.filmBands[key];
+    if (!inBand(value, filmBand)) {
       findings.push({
         code: key === "lumaMean" ? "identity:luma" : key === "saturationMean" ? "identity:saturation" : "identity:edges",
-        message: `${label} is ${value.toFixed(1)}; the film band is ${input.filmBands[key][0]}-${input.filmBands[key][1]}`,
+        message: `${label} is ${value.toFixed(1)}; the film band is ${filmBand[0]}-${filmBand[1]}`,
       });
     }
   }

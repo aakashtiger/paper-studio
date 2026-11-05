@@ -8,10 +8,15 @@
       "minElbow": 0.02
     },
     "hand": {
-      "w": 18,
-      "h": 26,
-      "thumbW": 8,
-      "thumbH": 12
+      "w": 24,
+      "h": 35,
+      "thumbW": 11,
+      "thumbH": 16
+    },
+    "height": 622,
+    "head": {
+      "w": 144,
+      "h": 168
     }
   },
   "anchors": [

@@ -7,7 +7,9 @@
       "title": "the dark street and the first lamp",
       "place": "a village street at night, a low doorway, tiled roofs, marigold garlands",
       "summary": "A hand lights one diya on a threshold; a child carries the flame down the street and the neighbours answer.",
-      "cast": [],
+      "cast": [
+        "Child"
+      ],
       "lines": [
         "v01"
       ],
@@ -61,7 +63,10 @@
       "title": "the home, the rangoli, the offering",
       "place": "a warm courtyard with a real eight-fold rangoli, then a brass puja thali",
       "summary": "Hands draw the rangoli around a lamp; the same hands set a flower on the thali and the flame leans out.",
-      "cast": [],
+      "cast": [
+        "Householder",
+        "Child"
+      ],
       "lines": [
         "v03"
       ],

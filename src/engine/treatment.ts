@@ -263,6 +263,12 @@ export const DirectionSchema = z.object({
 export const FilmScoreSchema = TreatmentSchema.omit({ proof: true })
   .extend({
     brief: z.string().min(1),
+    /**
+     * Which of the pack's film bands this film claims (night, day, snow...).
+     * The band is still the pack's; the mood only selects it. Omitted means the
+     * absolute band, as before.
+     */
+    mood: z.string().min(1).optional(),
     /** The visual contract this film was authored against. Older films omit it. */
     visualContract: z.number().int().min(2).max(3).optional(),
     /**

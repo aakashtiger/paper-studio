@@ -84,7 +84,9 @@ export type VisualFinding = {
     | "visual:performer-does"
     | "visual:performer-why"
     | "visual:performer-unearned"
-    | "visual:performer-static";
+    | "visual:performer-static"
+    | "visual:pose-continuity"
+    | "visual:action-cadence";
   message: string;
   shot?: string;
   /** For repeats/similarity: which field and which other shot. */
@@ -186,7 +188,13 @@ export function checkVisuals(
   lines: { id: string; text?: string }[],
   scenes?: { id: string; visual?: { subject: string }; lines: string[] }[],
   timedWords?: readonly TimedWord[],
-  options?: { contract?: number },
+  options?: {
+    contract?: number;
+    /** Two pose changes closer than this are a pop, not a performance. */
+    minPoseGapSeconds?: number;
+    /** A shot must already be in character by this time. */
+    maxFirstPoseSeconds?: number;
+  },
 ): {
   findings: VisualFinding[];
   checked: number;
@@ -198,6 +206,8 @@ export function checkVisuals(
 } {
   const findings: VisualFinding[] = [];
   const contract = options?.contract ?? 2;
+  const minPoseGap = options?.minPoseGapSeconds ?? 0.3;
+  const maxFirstPose = options?.maxFirstPoseSeconds ?? 0.25;
   const byRecipe = new Map(recipes.map((recipe) => [recipe.id, recipe]));
   const lineById = new Map(lines.map((line) => [line.id, line]));
   const lineIds = new Set(lines.map((line) => line.id));
@@ -459,6 +469,19 @@ export function checkVisuals(
         shot: shot.id,
       });
     }
+    if (contract >= 3 && shot.duration !== undefined) {
+      const actions = (shot.direction?.events ?? []).filter(
+        (event) => event.t > 0 && ["pose", "action", "build", "light"].includes(event.kind),
+      );
+      const needed = Math.max(2, Math.ceil(shot.duration));
+      if (actions.length < needed) {
+        findings.push({
+          code: "visual:action-cadence",
+          message: `${shot.id} has ${actions.length} action(s) in ${shot.duration.toFixed(1)}s; the style needs at least ${needed} - a shot may not hover`,
+          shot: shot.id,
+        });
+      }
+    }
     if (contract >= 3 && cast.length > 0) {
       const poses = (shot.direction?.events ?? []).filter(
         (event) => event.kind === "pose" && event.t > 0 && cast.includes(event.who ?? ""),
@@ -469,6 +492,38 @@ export function checkVisuals(
           message: `${shot.id} stages ${cast.join(", ")} with no pose change — a body in the frame is not a performance`,
           shot: shot.id,
         });
+      }
+      const byWho = new Map<string, { t: number; pose?: string }[]>();
+      for (const event of shot.direction?.events ?? []) {
+        if (event.kind !== "pose") continue;
+        if (!cast.includes(event.who ?? "")) continue;
+        const list = byWho.get(event.who ?? "") ?? [];
+        list.push({ t: event.t, pose: event.pose });
+        byWho.set(event.who ?? "", list);
+      }
+      for (const [who, list] of byWho) {
+        const sorted = [...list].sort((a, b) => a.t - b.t);
+        const first = sorted[0];
+        if (first && first.t > maxFirstPose + 1e-9) {
+          findings.push({
+            code: "visual:pose-continuity",
+            message: `${shot.id} "${who}" first changes pose at ${first.t.toFixed(2)}s; the shot must be in character by ${maxFirstPose.toFixed(2)}s — a late snap is a pop`,
+            shot: shot.id,
+          });
+        }
+        for (let index = 1; index < sorted.length; index++) {
+          const previous = sorted[index - 1]!;
+          const current = sorted[index]!;
+          if (current.pose === previous.pose) continue;
+          const gap = current.t - previous.t;
+          if (gap < minPoseGap - 1e-9) {
+            findings.push({
+              code: "visual:pose-continuity",
+              message: `${shot.id} "${who}" changes pose ${gap.toFixed(2)}s after the last one; the style needs ${minPoseGap.toFixed(2)}s — back-to-back changes must blend, not snap`,
+              shot: shot.id,
+            });
+          }
+        }
       }
     }
 

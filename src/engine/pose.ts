@@ -38,6 +38,18 @@ export const BodySchema = z.object({
     thumbW: z.number().positive(),
     thumbH: z.number().positive(),
   }),
+  /**
+   * The drawn figure height (feet to the top of the head) and the head box.
+   * The film identity check divides them and refuses a lead whose construction
+   * changes shape between films. Optional for older libraries.
+   */
+  height: z.number().positive().optional(),
+  head: z
+    .object({
+      w: z.number().positive(),
+      h: z.number().positive(),
+    })
+    .optional(),
 });
 
 export const PoseLibrarySchema = z.object({

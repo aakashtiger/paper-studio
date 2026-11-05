@@ -65,30 +65,32 @@
     ctx.restore();
   }
 
-  function hand(ctx, x, y, s, rot, side, open = true) {
+  function hand(ctx, x, y, s, rot, side, open = true, skin = V.skin) {
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(rot);
     ctx.scale(s * (side < 0 ? -1 : 1), s);
     // palm
     paper(ctx, () => roundRectPath(ctx, -11, -13, 22, 28, 7), {
-      fill: V.skin, edge: edge(0.55), edgeW: 2.2, shadow: C.rgba(PAL.ink, 0.15), sx: 2, sy: 4,
+      fill: skin, edge: edge(0.55), edgeW: 2.2, shadow: C.rgba(PAL.ink, 0.15), sx: 2, sy: 4,
     });
     // four fingers, fanned; the open hand is what says abhaya/varada
-    const fan = open ? 0.16 : 0.02;
+    const amount = open === true ? 1 : open === false ? 0 : C.clamp(Number(open));
+    const fan = 0.04 + 0.26 * amount;
     for (let i = 0; i < 4; i += 1) {
       const a = (i - 1.5) * fan;
       ctx.save();
       ctx.translate(-7.5 + i * 5, 12);
       ctx.rotate(a);
-      paper(ctx, () => roundRectPath(ctx, -2.4, 0, 4.8, 17 - Math.abs(i - 1.5) * 1.6, 2.4), {
-        fill: V.skin, edge: edge(0.5), edgeW: 1.4,
+      const len = (8 - Math.abs(i - 1.5) * 0.8) + amount * (10 - Math.abs(i - 1.5) * 0.7);
+      paper(ctx, () => roundRectPath(ctx, -2.4, 0, 4.8, len, 2.4), {
+        fill: skin, edge: edge(0.5), edgeW: 1.4,
       });
       ctx.restore();
     }
     // thumb
     paper(ctx, () => roundRectPath(ctx, side < 0 ? 9 : -15, -2, 6, 11, 3), {
-      fill: V.skin, edge: edge(0.5), edgeW: 1.4,
+      fill: skin, edge: edge(0.5), edgeW: 1.4,
     });
     // gold ring
     ctx.strokeStyle = V.gold; ctx.lineWidth = 1.6;
@@ -300,8 +302,12 @@
     const breathe = Math.sin(t * 1.35) * 3;
     const sway = Math.sin(t * 0.95) * 3;
     const headTurn = pose === "turn" ? Math.sin(t * 0.8) * 0.18 : Math.sin(t * 0.7) * 0.05;
-    const armLift = pose === "rise" ? 0.35 + 0.65 * phase : pose === "lower" ? 0.35 : pose === "offer" ? 0.72 : 1;
+    const armLift = C.clamp((o.pose?.armL?.[1] ?? (pose === "rise" ? 1.5 : 1.5)) / 2.2, 0.35, 1);
     const openPalm = pose === "bless" || pose === "open" || pose === "offer" || pose === "rise";
+  const lowerLift = C.clamp((o.pose?.armL?.[0] ?? 0.5) / 0.7, 0.2, 1);
+    // The giving hand rises continuously; it is not a pose cut between stand
+    // and bless. `bless` is 0..1, supplied by the shot.
+    const bless = C.clamp(o.face?.bless ?? 0);
     const lean = pose === "offer" ? 0.03 : pose === "rise" ? -0.02 : 0;
 
     ctx.save();
@@ -423,23 +429,42 @@
     for (const side of [-1, 1]) {
       const sx = shoulders[side < 0 ? 0 : 1];
       const sy = -420 + breathe;
-      let elbow = [sx + side * 112, sy + 22];
-      let wrist = [sx + side * 198, sy + 6];
+      let elbow = [sx + side * (90 + 40 * lowerLift), sy + 22 + (1 - lowerLift) * 20];
+      let wrist = [sx + side * (130 + 68 * lowerLift), sy + 6 + (1 - lowerLift) * 36];
       if (pose === "offer") { wrist = [sx + side * 150, sy + 80]; elbow = [sx + side * 96, sy + 40]; }
       if (pose === "bless" && side > 0) { wrist = [sx + 150, sy - 30]; elbow = [sx + 90, sy - 18]; }
       if (pose === "turn") { wrist = [sx + side * 120, sy + 46]; elbow = [sx + side * 80, sy + 8]; }
       if (pose === "rise") { wrist = [sx + side * 160 * phase, sy + 40 - 60 * phase]; elbow = [sx + side * 90, sy + 20]; }
+      if (bless > 0 && side > 0) {
+        const targetWrist = [sx + 70, sy - 100];
+        const targetElbow = [sx + 58, sy - 55];
+        wrist = [
+          wrist[0] + (targetWrist[0] - wrist[0]) * bless,
+          wrist[1] + (targetWrist[1] - wrist[1]) * bless,
+        ];
+        elbow = [
+          elbow[0] + (targetElbow[0] - elbow[0]) * bless,
+          elbow[1] + (targetElbow[1] - elbow[1]) * bless,
+        ];
+      }
       tapered(ctx, sx, sy, elbow[0], elbow[1], 28, 20, V.sari, edge(0.5));
       bangle(ctx, elbow[0], elbow[1], 11);
       tapered(ctx, elbow[0], elbow[1], wrist[0], wrist[1], 20, 14, V.sari, edge(0.5));
       bangle(ctx, wrist[0], wrist[1], 9);
-      hand(ctx, wrist[0], wrist[1], 1.25, side * 0.15, side, handOpen === undefined ? openPalm : handOpen > 0.5);
+      hand(ctx, wrist[0], wrist[1], 1.25, side * 0.15, side, handOpen === undefined ? (openPalm ? 1 : 0.35) : handOpen);
       if (pose === "offer") {
         // a small gold coin in the giving palm
         ctx.fillStyle = V.gold; ctx.strokeStyle = V.goldD; ctx.lineWidth = 2;
         ctx.beginPath(); ctx.arc(wrist[0], wrist[1] - 18, 10, 0, TAU); ctx.fill(); ctx.stroke();
         ctx.strokeStyle = C.rgba(V.goldL, 0.8); ctx.lineWidth = 1.5;
         ctx.beginPath(); ctx.arc(wrist[0], wrist[1] - 18, 5, 0, TAU); ctx.stroke();
+      }
+      if (bless > 0.55 && side > 0) {
+        // the lotus arrives in the giving palm as the hand rises
+        ctx.save();
+        ctx.globalAlpha = C.clamp((bless - 0.55) / 0.35);
+        lotusFlower(ctx, wrist[0], wrist[1] - 30, 36, t, V.lotus);
+        ctx.restore();
       }
       rigAnchor(ctx, side < 0 ? "hand-left" : "hand-right", wrist[0], wrist[1]);
     }
@@ -457,4 +482,5 @@
   window.CHARACTERS["lakshmi-v2@0.1.0"] = function (ctx, x, y, s, o = {}) {
     drawLakshmiV2(ctx, x, y, s, o);
   };
+  window.LAKSHMI_V2 = { hand, tapered, bangle, lotusFlower };
 })();

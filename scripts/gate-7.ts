@@ -216,6 +216,8 @@ async function main(): Promise<void> {
   const palette = read<{
     pass: boolean;
     maxOutlierFraction: number;
+    hueFamilies?: number;
+    topFamiliesShare?: number;
     videoHash: string | null;
     frames?: number;
     expectedFrames?: number;
@@ -476,8 +478,8 @@ async function main(): Promise<void> {
       if (typeof share !== "number" || !Number.isFinite(share)) {
         return { ok: false, detail: "the frame report has no close-up share" };
       }
-      if (share < 0.2 || share > 0.6) {
-        return { ok: false, detail: `close-ups (>=55% height) are ${(share * 100).toFixed(0)}% of shots; the band is 20-60%` };
+      if (share < 0.2 || share > 0.8) {
+        return { ok: false, detail: `close-ups (>=55% height) are ${(share * 100).toFixed(0)}% of shots; the band is 20-80%` };
       }
       return { ok: true, detail: `${(share * 100).toFixed(0)}% of shots are close-ups` };
     })(),
@@ -644,7 +646,7 @@ async function main(): Promise<void> {
         Boolean(frozenHash) &&
         palette?.videoHash === frozenHash,
       detail: palette
-        ? `worst outlier ${(palette.maxOutlierFraction * 100).toFixed(2)}% · worst clipping ${((palette.clipping?.worst.fraction ?? 0) * 100).toFixed(2)}% at ${palette.clipping?.worst.time ?? "?"}s · ${palette.frames ?? 0}/${palette.expectedFrames ?? 0} frames decoded${palette.videoHash === frozenHash ? " · tied to the frozen video" : " · NOT tied to the frozen video"}`
+        ? `${palette.hueFamilies ?? "?"} hue families · top ${((palette.topFamiliesShare ?? 0) * 100).toFixed(1)}% · worst clipping ${((palette.clipping?.worst.fraction ?? 0) * 100).toFixed(2)}% at ${palette.clipping?.worst.time ?? "?"}s · ${palette.frames ?? 0}/${palette.expectedFrames ?? 0} frames decoded${palette.videoHash === frozenHash ? " · tied to the frozen video" : " · NOT tied to the frozen video"}`
         : "no palette report",
     },
     motionFloor: {

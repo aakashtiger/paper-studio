@@ -8,30 +8,35 @@
  */
 (function () {
   const C2 = {
-    night: "#1A1B26",
-    indigo: "#232638",
-    teal: "#2A4A4A",
-    tealD: "#182E30",
-    water: "#24444A",
-    ochre: "#D8C49A",
-    ochreD: "#C2A878",
-    terra: "#B98A6A",
-    terraD: "#8A5A4A",
-    cream: "#FFF3DC",
+    night: "#101A3A",
+    indigo: "#1B2A55",
+    teal: "#0E5A5A",
+    tealD: "#0A3030",
+    water: "#0B3A46",
+    ochre: "#E0A93F",
+    ochreD: "#B77A26",
+    terra: "#C9663F",
+    terraD: "#8E3524",
+    cream: "#F6E8CC",
     paper: "#F2E8D5",
-    gold: "#E2C27A",
+    gold: "#F5B93F",
     goldD: "#B97A18",
-    goldL: "#F2E0B8",
-    red: "#B85A4A",
-    redD: "#7E2E26",
-    green: "#0D6C6C",
-    greenD: "#064A4A",
+    goldL: "#FFE08A",
+    red: "#D93A22",
+    redD: "#9E1E12",
+    green: "#1FA36B",
+    greenD: "#0B6B45",
     ink: "#120F1E",
     ink2: "#2A2340",
   };
   const V = () => window.LAKSHMI_V2 || {};
 
   function edge(a = 0.5) { return C.rgba(C2.ink, a); }
+
+  function underlay(col) {
+    ctx.fillStyle = col;
+    ctx.fillRect(0, 0, W, H);
+  }
 
   function sky(ctx, top = C2.night, bottom = C2.indigo) {
     const g = ctx.createLinearGradient(0, 0, 0, H);
@@ -232,6 +237,24 @@
     ctx.restore();
   }
 
+  function marigold(ctx, x, y, s, t, alpha = 1) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(s, s);
+    ctx.globalAlpha = alpha;
+    for (let i = 0; i < 10; i += 1) {
+      const a = (i / 10) * Math.PI * 2 + Math.sin(t * 1.1 + i) * 0.04;
+      const r = 12 + (i % 2) * 3;
+      paper(ctx, () => {
+        ctx.beginPath();
+        ctx.ellipse(Math.cos(a) * 13, Math.sin(a) * 13, 8, 5, a, 0, Math.PI * 2);
+      }, { fill: i % 3 === 0 ? C2.terra : i % 2 ? C2.goldL : C2.gold, edge: edge(0.45), edgeW: 1 });
+    }
+    ctx.fillStyle = C2.terraD;
+    ctx.beginPath(); ctx.arc(0, 0, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
   function wristBangle(ctx, x, y, r, col = C2.gold) {
     ctx.save();
     ctx.strokeStyle = C2.goldD; ctx.lineWidth = r * 0.55;
@@ -414,6 +437,12 @@
     }, { fill: C2.gold, edge: C2.greenD, edgeW: 2 });
   }
 
+  function blendAt(name, from, to, k) {
+    const a = poseFor(name, from);
+    const b = poseFor(name, to);
+    return blendPose(a, b, C.smooth(C.clamp(k)));
+  }
+
   function poseAt(shot, who, lt, fallback = "stand") {
     let pose = fallback;
     for (const event of shot.direction?.events ?? []) {
@@ -476,10 +505,24 @@
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   }
 
+  function pocket(ctx, x, y, rx, ry, alpha = 0.45) {
+    const g = ctx.createRadialGradient(x, y, 20, x, y, Math.max(rx, ry));
+    g.addColorStop(0, C.rgba(C2.ink, alpha));
+    g.addColorStop(1, C.rgba(C2.ink, 0));
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(1, ry / rx);
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(0, 0, rx, 0, TAU); ctx.fill();
+    ctx.restore();
+  }
+
   function framePaper() {
-    // A print margin: the film is a paper object, not a full-bleed screen.
-    const b = 100;
-    ctx.fillStyle = "#F5B93F";
+    // A full-bleed paper frame: the story fills 16:9, with no matte eating the
+    // picture. The paper edge is carried by the cut shapes, not by a border.
+    const b = 32;
+    if (b <= 0) return;
+    ctx.fillStyle = "#F6E8CC";
     ctx.fillRect(0, 0, W, b);
     ctx.fillRect(0, H - b, W, b);
     ctx.fillRect(0, 0, b, H);
@@ -503,6 +546,7 @@
   // ---------------------------------------------------------------- s01
   function door(shot, lt, t) {
     const d = shot.duration;
+    underlay(C2.night);
     shotCam(shot, lt, d, 860, 680, 0.06, t);
     beginCam(ctx);
     sky(ctx, C2.night, C2.indigo);
@@ -548,20 +592,31 @@
     paper(ctx, () => tornRectPath(ctx, -40, 950, W + 80, 180, 20, 19), {
       fill: C2.ink2, edge: C.rgba(C2.cream, 0.16), edgeW: 3, shadow: C.rgba(C2.ink, 0.28), sx: 0, sy: 0,
     });
-    // the first diya, large enough to be the subject
-    const k = C.smooth(C.clamp((lt - 0.1) / 1.0));
-    const k2 = C.smooth(C.clamp((lt - 1.4) / 0.8));
-    diya(ctx, 800, 900, 2.0, true, t);
-    // the child leans in
-    child(ctx, 555 + 14 * k, 995, 1.35, t, lt * 1.6, 1);
-    // the hand with the match, from the right
+    // The first diya is small: the hand lights it at the threshold, then picks
+    // it up. The hand and the diya share one path, so the object is never
+    // carried by an empty fist.
+    const pick = C.smooth(C.clamp((lt - 1.05) / 0.45));
+    const carry = C.smooth(C.clamp((lt - 1.6) / 0.9));
+    const dx = 800 + 250 * carry;
+    const dy = 900 - 150 * carry;
+    diya(ctx, dx, dy, 1.05, true, t);
+    // the child leans in, then reaches for the light
+    drawCharacter("Child", 555 + 20 * carry, 995, 0.6, "watch", -1, null, t, {
+      face: { eyes: "wide", mouth: "smile", look: [-1, 0] },
+    });
+    // the hand with the match, from the right, then carrying the diya
+    const handX = (1 - pick) * 1165 + pick * dx;
+    const handY = (1 - pick) * 820 + pick * dy;
     ctx.save();
-    ctx.globalAlpha = 0.55 + 0.45 * k;
-    humanHand(ctx, 1165 + 24 * k2, 820, 2.1, -0.85, false, "#B9784D", 1);
-    ctx.strokeStyle = C2.cream; ctx.lineWidth = 6;
-    ctx.beginPath(); ctx.moveTo(1065 + 24 * k2, 790); ctx.lineTo(845, 880); ctx.stroke();
-    ctx.fillStyle = C2.redD;
-    ctx.beginPath(); ctx.arc(845, 880, 7, 0, TAU); ctx.fill();
+    humanHand(ctx, handX, handY, 2.1, -0.85 + 0.55 * carry, false, "#F0C9A4", 1);
+    const matchAlpha = C.clamp(1 - (lt - 1.05) / 0.55);
+    if (matchAlpha > 0) {
+      ctx.globalAlpha = matchAlpha;
+      ctx.strokeStyle = C2.cream; ctx.lineWidth = 6;
+      ctx.beginPath(); ctx.moveTo(handX - 52, handY - 30); ctx.lineTo(dx, dy - 12); ctx.stroke();
+      ctx.fillStyle = C2.redD;
+      ctx.beginPath(); ctx.arc(dx, dy - 12, 7, 0, TAU); ctx.fill();
+    }
     ctx.restore();
     // marigold and powder at the threshold
     for (let i = 0; i < 14; i += 1) {
@@ -584,6 +639,7 @@
   // ---------------------------------------------------------------- s02
   function street(shot, lt, t) {
     const d = shot.duration;
+    underlay(C2.night);
     shotCam(shot, lt, d, W / 2 + 70, 650, 0.05, t);
     beginCam(ctx);
     sky(ctx, C2.night, C2.indigo);
@@ -639,8 +695,11 @@
     spot.addColorStop(0, C.rgba(C2.ink, 0.65));
     spot.addColorStop(1, C.rgba(C2.ink, 0));
     ctx.fillStyle = spot; ctx.fillRect(cx - 420, 430, 840, 640);
-    drawCharacter("ChildV2", cx, 1000, 1.4, "walk", 1, null, t, {
-      face: { eyes: "wide", mouth: "smile", walk: lt * 9, phase: k },
+    const childBlend = lt < 1.5
+      ? blendAt("Child", "walk", "look", lt / 1.5)
+      : blendAt("Child", "look", "hold", (lt - 1.5) / 1.2);
+    drawCharacter("Child", cx, 1000, 0.7, "walk", 1, childBlend, t, {
+      face: { eyes: "wide", mouth: "smile", look: [1, 0] },
     });
     // neighbours
     person(ctx, 210, 980, 1.15, C2.green, t, 1);
@@ -664,6 +723,7 @@
   // ---------------------------------------------------------------- s03
   function river(shot, lt, t) {
     const d = shot.duration;
+    underlay(C2.night);
     shotCam(shot, lt, d, W / 2, 520, 0.04, t);
     beginCam(ctx);
     sky(ctx, C2.night, C2.indigo);
@@ -720,7 +780,8 @@
     pocket.addColorStop(0, C.rgba(C2.ink, 0.5));
     pocket.addColorStop(1, C.rgba(C2.ink, 0));
     ctx.fillStyle = pocket; ctx.fillRect(300, 0, 1320, 1080);
-    drawCharacter("LakshmiV2", W / 2, 1008 - 30 * k, 0.72, pose, 1, null, t, {
+    const divineBlend = blendAt("LakshmiV2", "rise", "open", (lt - 0.15) / 2.25);
+    drawCharacter("LakshmiV2", W / 2, 1008 - 70 * k, 1.15, "rise", 1, divineBlend, t, {
       face: { eyes: "soft", mouth: "smile", phase: 1, handOpen: 0.35 + 0.65 * k },
     });
     // the giant flower opens around her feet
@@ -755,6 +816,7 @@
   // ---------------------------------------------------------------- s04
   function hands(shot, lt, t) {
     const d = shot.duration;
+    underlay("#0A2540");
     shotCam(shot, lt, d, W / 2, 560, 0.04, t);
     beginCam(ctx);
     // water and gold light behind the hands
@@ -774,10 +836,10 @@
       });
     }
     // The goddess fills the frame; the crop is the four hands and the face.
-    const k = C.smooth(C.clamp((lt - 0.2) / 1.6));
-    const pose = poseAt(shot, "LakshmiV2", lt, "stand");
-    drawCharacter("LakshmiV2", W / 2, 1300, 1.1, pose, 1, null, t, {
-      face: { eyes: "soft", mouth: "smile", phase: 1, handOpen: 0.2 + 0.8 * k },
+    const k = C.smooth(C.clamp((lt - 0.2) / 2.4));
+    const divineBlend = blendAt("LakshmiV2", "stand", "bless", (lt - 0.3) / 2.2);
+    drawCharacter("LakshmiV2", W / 2, 1320, 1.45, "stand", 1, divineBlend, t, {
+      face: { eyes: "soft", mouth: "smile", phase: 1, handOpen: 0.2 + 0.8 * k, bless: k },
     });
     // a foreground diya, small against the hands
     diya(ctx, 1540, 960, 1.0, true, t);
@@ -793,12 +855,13 @@
   // ---------------------------------------------------------------- s05
   function courtyard(shot, lt, t) {
     const d = shot.duration;
+    underlay(C2.ink2);
     shotCam(shot, lt, d, W / 2, 560, 0.04, t);
     beginCam(ctx);
     ctx.fillStyle = C2.ink2; ctx.fillRect(0, 0, W, H);
     // wall, niche and door
     paper(ctx, () => tornRectPath(ctx, 20, 30, 1880, 730, 18, 21), {
-      fill: C2.ochre, edge: edge(0.45), edgeW: 3, shadow: C.rgba(C2.ink, 0.2), sx: 8, sy: 12,
+      fill: C2.terraD, edge: edge(0.45), edgeW: 3, shadow: C.rgba(C2.ink, 0.2), sx: 8, sy: 12,
     });
     // panel lines and a niche on the left
     ctx.strokeStyle = C.rgba(C2.ink, 0.18); ctx.lineWidth = 4;
@@ -826,25 +889,24 @@
     paper(ctx, () => tornRectPath(ctx, -60, 740, W + 120, 380, 24, 27), {
       fill: C2.cream, edge: edge(0.35), edgeW: 3, shadow: C.rgba(C2.ink, 0.16), sx: 0, sy: 0,
     });
-    // the family, seated on either side, drawing the pattern
-    person(ctx, 370, 1080, 1.85, C2.green, t, 1);
-    person(ctx, 1540, 1070, 1.45, C2.red, t, -1);
+    // One pair of hands draws the pattern; the rangoli is the subject, not a
+    // second body the line never asks for.
+    drawCharacter("Householder", 370, 1080, 1.0, "hold", 1, blendAt("Householder", "hold", "place", lt / 1.4), t, {
+      face: { eyes: "soft", mouth: "smile", look: [1, 0] },
+    });
     // the rangoli, large and central
     const progress = C.smooth(C.clamp((lt - 0.1) / 1.3));
     rangoli(ctx, W / 2, 880, 350, progress, t);
-    // arms from the seated bodies to the powder
-    const draw = Math.sin(t * 2.2) * 22;
-    for (const [x, side, col] of [[370, 1, C2.greenD], [1540, -1, C2.redD]]) {
-      ctx.strokeStyle = col; ctx.lineWidth = 58; ctx.lineCap = "round";
-      ctx.beginPath();
-      ctx.moveTo(x + side * 30, 900);
-      ctx.quadraticCurveTo(x + side * 150, 900, x + side * 260, 840);
-      ctx.stroke();
-    }
-    wristBangle(ctx, 650 + draw, 850, 16);
-    wristBangle(ctx, 1270 - draw, 840, 15);
-    humanHand(ctx, 650 + draw, 850, 2.0, 0.55, false, "#B9784D", 1);
-    humanHand(ctx, 1270 - draw, 840, 1.85, -0.55, false, "#C98A4B", -1);
+    // One foreground hand draws the first petal, the same hand language as the
+    // threshold and the thali. It is the householder's hand, not a second body.
+    const drawK = C.smooth(C.clamp((lt - 0.15) / 1.2));
+    const drawX = 600 + 95 * drawK;
+    const drawY = 930 - 8 * drawK;
+    wristBangle(ctx, drawX - 18, drawY + 12, 15);
+    humanHand(ctx, drawX, drawY, 1.9, -0.9, false, "#F0C9A4", 1);
+    paper(ctx, () => blobPath(ctx, drawX + 30, drawY + 34, 12, 8, 9, 0.03, 7), {
+      fill: C2.red, edge: edge(0.4), edgeW: 1,
+    });
     // powder bowls
     for (const [x, col] of [[330, C2.red], [390, C2.gold], [1570, C2.green], [1630, C2.cream]]) {
       paper(ctx, () => blobPath(ctx, x, 1000, 46, 22, 14, 0.03, x), {
@@ -871,6 +933,7 @@
   // ---------------------------------------------------------------- s06
   function puja(shot, lt, t) {
     const d = shot.duration;
+    underlay(C2.ink2);
     shotCam(shot, lt, d, W / 2, 540, 0.03, t);
     beginCam(ctx);
     ctx.fillStyle = C2.ink2; ctx.fillRect(0, 0, W, H);
@@ -905,17 +968,29 @@
     ctx.beginPath(); ctx.moveTo(320, 800); ctx.lineTo(1600, 800); ctx.stroke();
     thali(ctx, W / 2, 810, 2.2, t);
     // the family offers from both sides
-    person(ctx, 260, 1080, 1.7, C2.green, t, 1);
-    person(ctx, 1660, 1080, 1.5, C2.red, t, -1);
-    const k = C.smooth(C.clamp((lt - 0.1) / 1.2));
-    ctx.strokeStyle = C2.greenD; ctx.lineWidth = 56; ctx.lineCap = "round";
-    ctx.beginPath(); ctx.moveTo(300, 900); ctx.quadraticCurveTo(400, 870, 500 + 40 * k, 790); ctx.stroke();
-    ctx.strokeStyle = C2.redD;
-    ctx.beginPath(); ctx.moveTo(1620, 900); ctx.quadraticCurveTo(1520, 870, 1420 - 40 * k, 780); ctx.stroke();
-    wristBangle(ctx, 500 + 40 * k, 790, 16);
-    wristBangle(ctx, 1420 - 40 * k, 780, 15);
-    humanHand(ctx, 500 + 40 * k, 790, 1.9, 0.75, true, "#B9784D", 1);
-    humanHand(ctx, 1420 - 40 * k, 780, 1.8, -0.75, true, "#C98A4B", -1);
+    drawCharacter("Householder", 260, 1080, 1.0, "accept", 1, blendAt("Householder", "hold", "offer", lt / 1.2), t, {
+      face: { eyes: "soft", mouth: "smile", look: [1, 0] },
+    });
+    drawCharacter("Child", 1660, 1080, 0.7, "accept", -1, blendAt("Child", "hold", "accept", lt / 1.2), t, {
+      face: { eyes: "soft", mouth: "smile", look: [1, 0] },
+    });
+    // One foreground hand, the way s01 lights the first lamp: a hand, no
+    // impossible tube from a body two metres away. It enters from the lower
+    // left, sets the marigold on the thali, and withdraws.
+    const reach = C.smooth(C.clamp((lt - 0.15) / 0.9));
+    const release = C.smooth(C.clamp((lt - 1.15) / 0.3));
+    const handX = 640 + 150 * reach + 40 * release;
+    const handY = 1010 - 190 * reach - 20 * release;
+    wristBangle(ctx, handX - 12, handY + 8, 17);
+    humanHand(ctx, handX, handY, 2.2, -0.95, false, "#F0C9A4", 1);
+    marigold(
+      ctx,
+      handX + 44 + (740 - handX - 44) * release,
+      handY + 42 + (790 - handY - 42) * release,
+      2.6 - 0.5 * release,
+      t,
+      1 - 0.15 * release,
+    );
     // bell, incense, smoke
     paper(ctx, () => blobPath(ctx, 560, 880, 26, 30, 14, 0.03, 5), {
       fill: C2.gold, edge: edge(0.5), edgeW: 2,

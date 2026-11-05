@@ -36,6 +36,11 @@
       "h": 30,
       "thumbW": 9,
       "thumbH": 13
+    },
+    "height": 646,
+    "head": {
+      "w": 108,
+      "h": 132
     }
   },
   "anchors": [
@@ -501,5 +506,9 @@
         "browLift": 3
       }
     }
+  ],
+  "visualHeadToBody": [
+    4.5,
+    5.3
   ]
 }

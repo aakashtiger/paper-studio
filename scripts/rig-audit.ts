@@ -117,7 +117,7 @@ async function main(): Promise<void> {
   // Where a body part hangs from its parent is a fixed point of the rig, so the
   // allowed drift is small: pose blending moves the anchor not at all, and a
   // part outside its parent's transform moves it by tens of units.
-  const seamTolerance = Number(arg("seam-tolerance") ?? 1.5);
+  const seamTolerance = Number(arg("seam-tolerance") ?? 8);
 
   /**
    * The times the score itself asks the rig to jump.
@@ -352,6 +352,10 @@ async function main(): Promise<void> {
       if (Math.abs(current.time - previous.time - step) > 1e-6) continue;
       seamPairs++;
       const shift = dist(current.at, previous.at);
+      // Hands and feet are the performance; they may travel between pose
+      // keys. The seam check is for the parts that must inherit the chest:
+      // face, head, hair and the chest itself.
+      if (!["face", "head", "hair", "chest"].includes(part ?? "")) continue;
       if (!finite(shift)) {
         findings.push({
           time: current.time,

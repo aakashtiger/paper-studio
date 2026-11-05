@@ -66,20 +66,20 @@
       "name": "Householder",
       "rig": "mortal@0.1.0",
       "poses": "library/characters/householder/poses.json",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "source": "paper-kpop / Lakshmi and the Lights (11 poses, 14 expressions)",
       "licence": "proprietary",
-      "hash": "sha256:582320d2c53a0e7c5de15a4d3cdbf2cdf77ceab3ee69cf4b767a8390d94179ed"
+      "hash": "sha256:bb1f57be2ec387968eab32a517a817710420edcefe4752a5f2169b93cce07395"
     },
     {
       "id": "child",
       "name": "Child",
       "rig": "mortal@0.1.0",
       "poses": "library/characters/child/poses.json",
-      "version": "1.0.0",
-      "source": "paper-kpop / Lakshmi and the Lights (11 poses, 14 expressions)",
+      "version": "1.2.0",
+      "source": "paper-kpop / Lakshmi and the Lights (12 poses, 14 expressions)",
       "licence": "proprietary",
-      "hash": "sha256:540e9626606b9c6c280df8ea1cdd34bdd38e0e550d1232a7e8ebfc284c5a8739"
+      "hash": "sha256:4b5c05908ad7fdff51e6c0c1e1fdb8c022f71225e4bad47c62209e5bedb3802b"
     }
   ]
 }

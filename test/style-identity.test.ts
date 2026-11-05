@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   checkStyleIdentity,
+  resolveFilmBands,
   type CastIdentity,
   type CastLibraryFact,
   type FrameSummary,
@@ -91,6 +92,82 @@ const input = {
   castRule,
   frame,
 };
+
+const proportionRule: CastIdentity = {
+  ...castRule,
+  proportions: {
+    "paper-pop-performer": {
+      visualHeadToBody: [3.3, 4.2],
+      handToHead: [0.16, 0.26],
+    },
+  },
+};
+
+const measured: CastLibraryFact = {
+  ...cast[0]!,
+  bodyHeight: 622,
+  head: { w: 144, h: 168 },
+  hand: { w: 24, h: 35 },
+  visualHeadToBody: [3.4, 4.5],
+};
+
+test("a mood selects the pack's band, and an unknown mood falls back", () => {
+  const mooded = {
+    ...filmBands,
+    moods: {
+      night: {
+        lumaMean: [55, 115] as const,
+        saturationMean: [12, 38] as const,
+        edgesMean: [7, 18] as const,
+      },
+    },
+  };
+  assert.deepEqual(resolveFilmBands(mooded, "night"), mooded.moods.night);
+  assert.equal(resolveFilmBands(mooded, "snow").lumaMean[0], 75);
+  assert.equal(resolveFilmBands(mooded, undefined).lumaMean[0], 75);
+});
+
+test("a measured doll ratio that matches its library and the pack passes", () => {
+  const result = checkStyleIdentity({
+    ...input,
+    cast: [measured],
+    castRule: proportionRule,
+  });
+  assert.deepEqual(result.findings, []);
+});
+
+test("a giant head or a tiny hand breaks the pack's construction", () => {
+  const giant = checkStyleIdentity({
+    ...input,
+    cast: [{ ...measured, head: { w: 144, h: 260 } }],
+    castRule: proportionRule,
+  });
+  assert.ok(giant.findings.some((finding) => finding.code === "identity:proportion"));
+  const tinyHand = checkStyleIdentity({
+    ...input,
+    cast: [{ ...measured, hand: { w: 10, h: 12 } }],
+    castRule: proportionRule,
+  });
+  assert.ok(tinyHand.findings.some((finding) => finding.code === "identity:proportion"));
+});
+
+test("a pack proportion with no measured body is refused, not skipped", () => {
+  const result = checkStyleIdentity({
+    ...input,
+    cast: [{ ...cast[0]! }],
+    castRule: proportionRule,
+  });
+  assert.ok(result.findings.some((finding) => finding.code === "identity:proportion"));
+});
+
+test("a library's declared doll ratio must contain the drawn figure", () => {
+  const result = checkStyleIdentity({
+    ...input,
+    cast: [{ ...measured, visualHeadToBody: [4.6, 5.4] }],
+    castRule: proportionRule,
+  });
+  assert.ok(result.findings.some((finding) => finding.code === "identity:proportion"));
+});
 
 test("a conforming cast, look and frame pass", () => {
   const result = checkStyleIdentity(input);

@@ -65,13 +65,23 @@ const shots = score.shots.map((shot, index) => {
   return entry;
 });
 const contract = (score as { visualContract?: number }).visualContract ?? 2;
+const tokensPath = resolve(root, "styles", score.style, "tokens.json");
+const motion = existsSync(tokensPath)
+  ? (JSON.parse(readFileSync(tokensPath, "utf8").replace(/^\uFEFF/, "")) as {
+      identity?: { motion?: { minPoseGapSeconds?: number; maxFirstPoseSeconds?: number } };
+    }).identity?.motion
+  : undefined;
 const result = checkVisuals(
   shots,
   recipes,
   lines.map((line) => ({ id: line.id, text: line.text })),
   scenes,
   timedWords,
-  { contract },
+  {
+    contract,
+    minPoseGapSeconds: motion?.minPoseGapSeconds,
+    maxFirstPoseSeconds: motion?.maxFirstPoseSeconds,
+  },
 );
 const report = {
   film: score.id,
