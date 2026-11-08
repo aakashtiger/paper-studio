@@ -73,8 +73,18 @@ holds the file.
 
 ## If you are on another machine
 
-1. Get the file from wherever it lives (a shared drive, or a **GitHub Release**
-   asset — a release allows 2 GB per file, unlike git).
+The film is published as a **release asset** on this repo, because a release allows
+2 GB where git allows 100 MB:
+
+```
+gh release download gold-2026-11-08 --repo aakashtiger/paper-studio -D ./refs
+```
+
+That brings `claude-pop.mp4` (276 MB), its `.sha256`, and `gate-gold.zip` (this
+folder, 11 MB) so a clone without the repo still has the reference. The repo is
+private, so `gh` must be authenticated (`gh auth status`).
+
+1. Get the file from there, or from wherever it lives (a shared drive).
 2. Check the hash before trusting a single number:
    ```
    certutil -hashfile claude-pop.mp4 SHA256
@@ -83,6 +93,7 @@ holds the file.
 3. Re-derive the evidence you need:
    ```
    npm run style:measure -- --ref <path to claude-pop.mp4>
+   npm run gold:stills -- --ref <path to claude-pop.mp4> --verify
    ```
    Do **not** re-pin the gold as a side effect of a measurement. If the numbers
    move, the file moved, and that is a finding, not a refresh.
