@@ -10,17 +10,19 @@ four files in §1 — they are the law. Do not re-derive anything in §2.
 
 ## 0. Where we are, in five lines
 
-1. **M0 is parked, not failed.** The 60 s Paper Crime film (`proofs/kpop-crime-60`,
-   outside this repo) passes every automated gate at 10/10 and was still refused by
-   two fresh critics at 5/10. It is kept as a **system proof, not a deliverable**.
-   Its fix list and the state at park are in `proofs/kpop-crime-60/FIXLIST.md` under
-   *STATE AT PARK*. **Do not resume it.**
+1. **M0 is parked, not failed.** The 60 s Paper Crime film passes every automated
+   gate at 10/10 and was still refused by two fresh critics at 5/10. It is kept as a
+   **system proof, not a deliverable**. Its source is in
+   `sources/m0/proofs/kpop-crime-60` (the renders are not); its fix list and the state
+   at park are in that folder's `FIXLIST.md` under *STATE AT PARK*. **Do not resume it.**
 2. **The next milestone is M1**: make the KPOP pack able to produce a 10/10 film
    **the first time**, by a different person, with different characters, props, sets
    and colours, in a known number of hours.
-3. The gold standard is **`Y:\NewVideoTest\out\claude-pop.mp4`**, 156.63 s, pinned
+3. The gold standard is **`claude-pop.mp4`**, 156.63 s, 4,698 frames, pinned
    `sha256:fb85200bc531...`. It is the only look reference. Same Alarm and Understudy
-   are rig/contract references, **not** look references.
+   are rig/contract references, **not** look references. It is **not in git** — it is
+   a release asset, and §1b says how to get it on a machine that is not the one it
+   was made on.
 4. The pack is **`styles/paper-kpop`** at 0.2.0, reviewable, unsealed.
 5. **One style at a time.** KPOP is finished (M1 → M2 → M3) before CPOP (M4) or
    Paper Crime as a style (M5).
@@ -37,6 +39,38 @@ four files in §1 — they are the law. Do not re-derive anything in §2.
 
 Also useful: `docs/decisions/0063`–`0065` (performance is measured; macro; shot
 length belongs to the system).
+
+## 1b. Getting the reference on a machine that is not this one
+
+Everything that fits in git is in git: `gate/gold/` carries the pin, the 54-shot
+map, **one still per shot** (`stills/s01...s54.jpg`), the per-shot palettes, the
+scene stats, two contact sheets and the 25 s look-proof proxy. **A clone can
+study the look without downloading the film.**
+
+The film itself is 276 MB, so it lives as a release asset on the same repo:
+
+```
+gh release download gold-2026-11-08 --repo aakashtiger/paper-studio -D ./refs
+certutil -hashfile refs/claude-pop.mp4 SHA256     # must be fb85200bc531...
+```
+
+The repo is **private**, so `gh` must be authenticated (`gh auth status`). If the
+hash differs, the file is a different cut: stop, do not re-pin. Downloading is only
+needed to re-derive a number or to watch the film move — `npm run gold:stills --
+--ref <film> --verify` regenerates the stills from it and refuses a wrong hash.
+
+If you are asked how to study it frame by frame:
+
+```
+ffmpeg -ss 22.72 -i claude-pop.mp4 -frames:v 1 frame.png
+ffmpeg -ss 22.72 -t 10 -i claude-pop.mp4 -vf fps=2 f_%04d.png
+```
+
+Sampling at each shot's midpoint in `gold-authored-shots.json` reproduces the 54
+committed stills exactly. The assets imported from the machine the gold was made on
+— its two generations of source, its fonts, its words, the analysis that reads each
+axis of the look, and the M0 toolchain — are in `sources/`, whose README gives a
+reading order.
 
 ## 2. Decided — do not re-litigate
 
