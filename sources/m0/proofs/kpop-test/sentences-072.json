@@ -1,0 +1,15 @@
+{
+  "film": "kpop-test",
+  "voice": "af_heart",
+  "speed": 0.72,
+  "provider": "kokoro",
+  "duration": 28.063,
+  "sentences": [
+    {
+      "id": "v01",
+      "text": "Every night the cue lamp calls one name, and every night the stage holds its breath, but tonight the lamp called Nova, and the wings were empty, so Mira picked up the star, and put it in her hand, and the crowd saw a girl who was never on the list, and the light found her, and the lamp called again, and the curtain opened on a stage that had been waiting all night.",
+      "start": 0.3,
+      "end": 28.063
+    }
+  ]
+}

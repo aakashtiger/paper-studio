@@ -1,0 +1,131 @@
+{
+  "role": "picture",
+  "critic": "picture-fresh-2026-11-08-flash",
+  "videoHash": "5769fef56e61287fe0ce48711bbc5d84d39fa8073d6cac5f15731f7dfa73839d",
+  "score": 5,
+  "verdict": "NO-GO",
+  "axes": {
+    "continuity": 5,
+    "anatomy": 5,
+    "legibility": 5,
+    "performance": 4,
+    "type": 6,
+    "variety": 5
+  },
+  "findings": [
+    {
+      "shot": "s15",
+      "t": 42.9,
+      "severity": "P0",
+      "what": "The film's hinge is not in the picture. The score says 'the cuffs close on his wrist', but no cuff is on the thief. At 40.0-42.9 the detective's right hand holds one open ring at his own hip and the second ring hangs on the chain in front of his belt; the thief's wrists are bare at his sides and the cuffs never move. The caption 'The cuffs closed' is contradicted by the frame.",
+      "evidence": "out/critic/cuffzoom-40.0.png, out/critic/cuffzoom-42.9.png, out/critic/s15-a.png (39.6), out/critic/s15-c.png (42.4)"
+    },
+    {
+      "shot": "s15",
+      "t": 41.0,
+      "severity": "P1",
+      "what": "The loose cuff ring is suspended in midair in front of the detective's belt, attached to neither wrist, while the other ring is around the detective's own hand, not a wrist. A prop at the centre of the frame is held by nobody.",
+      "evidence": "out/critic/cuffs-s15.png, out/critic/cuffzoom-42.9.png"
+    },
+    {
+      "shot": "s16",
+      "t": 43.6,
+      "severity": "P1",
+      "what": "Props change hands by cut, not by action. The cuffs are on the thief's wrists at 43.25 and on the warder's belt at 43.85; the warder's arms never move and no hand touches them. By 45.0 the court jacket has left the bench and is bunched in the thief's arms, again with no hand moving it. The stated action (the warder unlocks the cuffs, hooks them on his belt, lays the jacket on the bench) is a pop between two frames.",
+      "evidence": "out/critic/s16-start.png (43.25), out/critic/s16m-43.85.png, out/critic/s16m-44.15.png, out/critic/s16-end.png (45.0)"
+    },
+    {
+      "shot": "s20",
+      "t": 57.6,
+      "severity": "P1",
+      "what": "Duplicate handcuffs. The warder still carries two cuffs on his belt while the thief already wears a cuffed pair; the stateEvent is 'on the warder's belt -> on his wrists', but the same prop exists twice in frame at 56.2, 57.6 and 59.6.",
+      "evidence": "out/critic/z20-hands.png (56.2), out/critic/at57_60.png, out/critic/z21-hands.png (59.6)"
+    },
+    {
+      "shot": "s21",
+      "t": 59.6,
+      "severity": "P1",
+      "what": "The noose shadow is painted across the thief's face: a thin grey loop runs over his mouth and chin at 59.6 and around his head at 58.2, while the wall behind him stays clear. The last image is meant to be a noose that is only a shadow; here it reads as a wire in front of his face and has no knot or drop line.",
+      "evidence": "out/critic/z21-face.png (59.6), out/critic/n58_2.png (58.2), out/critic/n59_6.png"
+    },
+    {
+      "shot": "s20",
+      "t": 57.0,
+      "severity": "P2",
+      "what": "The day-10 page is present in the bottom-right corner at 56.2, absent at 57.0 and 57.2, and present again at 57.6 and 58.2 in the same corner. A day counter that blinks out for half of its own shot cannot be read as the film's chronology.",
+      "evidence": "out/critic/at56_20.png, out/critic/at57_00.png, out/critic/crop-s20-57.png, out/critic/at57_60.png, out/critic/n58_2.png"
+    },
+    {
+      "shot": "s20",
+      "t": 57.6,
+      "severity": "P1",
+      "what": "'At dawn they walked him to the yard': the pair translates about 550 px across the yard between 56.2 and 57.6, but the legs hold the identical stride pose at both times (same split, same feet, same arms). It is a slide with a frozen walk cycle, not a walk.",
+      "evidence": "out/critic/at56_20.png vs out/critic/at57_60.png (pair x about 690-900 -> 1230-1400, legs identical)"
+    },
+    {
+      "shot": "s13",
+      "t": 36.0,
+      "severity": "P1",
+      "what": "The 'SEARCHLIGHT' sticker sits on empty pavement; the only beam is a shaft behind the detective at the far right. The thief is lit by the lamp glow, not by a searchlight, and the 'far end' is an open span with nothing to find him. The shot's action ('the searchlight finds him') is not in the picture.",
+      "evidence": "out/stills/t36_00.png (36.0), out/critic/at37_55.png (37.55)"
+    },
+    {
+      "shot": "s12",
+      "t": 31.6,
+      "severity": "P2",
+      "what": "The thief's briefcase, carried in s07 (18.5), s09 (24.0), s10 (27.5) and s11 (29.8), is gone at 31.6 in the same checkpoint, although nothing has happened to it. It never returns.",
+      "evidence": "out/stills/t29_80.png (s11), out/critic/at31_60.png (s12), out/stills/t24_00.png (s09)"
+    },
+    {
+      "shot": "s14",
+      "t": 39.05,
+      "severity": "P2",
+      "what": "The open CASE 044 file is in the detective's hands at 33.4 (s12); by 39.05 his hands hold only the grey cap and a small ruled slip, though the state says 'file: with the detective'. The file reappears on the cell bench at 43.25 with no character carrying it.",
+      "evidence": "out/critic/at33_35.png (s12), out/critic/s14x-39.05.png, out/critic/s16-start.png (43.25)"
+    },
+    {
+      "shot": "s04",
+      "t": 10.15,
+      "severity": "P2",
+      "what": "The station clock reads 10:10 while the slate under the hero says 'THE STATION - 02:10' and the departures board lists 02:10 / 02:40 / 03:05. Three time labels agree; the clock does not.",
+      "evidence": "out/critic/at10_20.png, out/stills/t9_50.png"
+    },
+    {
+      "shot": "s02",
+      "t": 4.2,
+      "severity": "P2",
+      "what": "The 'he left it' event is a forearm and hand cut by the left frame edge, about 40 px from the knife, while the body under the sheet is at the far right. The thief has no body in his own shot, so the act of leaving the knife is inferred, not shown.",
+      "evidence": "out/stills/t4_20.png"
+    },
+    {
+      "shot": "s17",
+      "t": 46.6,
+      "severity": "P2",
+      "what": "The role sticker 'THE JUDGE' sits at the bottom-right directly under the warder's feet; the judge it names is at top centre behind the bench. The one role tag in the shot points at the wrong body.",
+      "evidence": "out/critic/n46_6.png"
+    },
+    {
+      "shot": "s09",
+      "t": 24.0,
+      "severity": "P2",
+      "what": "s09 reuses s08's hero 'THE HIDEOUT' for a new shot and a new day; the label changes ('HE COUNTED THE HOURS') but the hero does not, so the shot is not named apart from its neighbour.",
+      "evidence": "out/stills/t24_00.png, out/critic/at20_75.png (s08)"
+    },
+    {
+      "shot": "s12",
+      "t": 33.35,
+      "severity": "P2",
+      "what": "The hero is 'THROUGH', a preposition; the place ('THE CHECKPOINT') is demoted to the small label. Every other hero names a place, person or object, so the type hierarchy inverts here and the shot's subject becomes the caption's grammar, not its image.",
+      "evidence": "out/critic/at33_35.png, out/critic/at31_60.png"
+    },
+    {
+      "shot": "s15",
+      "t": 42.4,
+      "severity": "P2",
+      "what": "In the same room, s13 'THE BRIDGE' and s14 'THE FAR END' are rust-red; s15 'THE CUFFS' is cream. The hero colour changes inside the bridge sequence with no scene or mood change to explain it.",
+      "evidence": "out/stills/t36_00.png, out/stills/t38_50.png, out/critic/s15-c.png"
+    }
+  ],
+  "named_strongest": "The court two-shot (s17-s18): the CASE 044 file open at the knife drawing, the verdict card actually gripped by the judge's fingers over the seal, the GUILTY stamp, and by 50.0 s the warder's hand physically on the thief's arm - the one place where picture, prop and line agree.",
+  "named_weakest": "s15 (39.2-43.06), the arrest: the detective holds the open cuffs at his own hip, the thief's wrists are bare, the second cuff floats in midair and no closing motion occurs, so the caption's 'The cuffs closed' is the only place the turn exists."
+}

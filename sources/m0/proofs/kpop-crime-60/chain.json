@@ -1,0 +1,2662 @@
+{
+  "id": "kpop-crime-60",
+  "score": "proofs/kpop-crime-60",
+  "pass": true,
+  "checks": 233,
+  "failed": 0,
+  "table": [
+    {
+      "level": "north star → script",
+      "check": "north star id",
+      "detail": "kpop-crime vs story kpop-crime",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "title",
+      "detail": "The Run vs story The Run",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "logline",
+      "detail": "north star copies the story's logline",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "tone",
+      "detail": "north star copies the story's tone",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "audience",
+      "detail": "north star copies the story's audience",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "spine",
+      "detail": "want / obstacle / turn / button match the story",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "non-negotiables listed",
+      "detail": "9/9 in north-star.json",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "narration lines",
+      "detail": "14 (want 14)",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "narration words",
+      "detail": "186 (want 186)",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "shot-lines",
+      "detail": "21 (want 21)",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "shot-line words",
+      "detail": "186 (want 186)",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "beats",
+      "detail": "7 (want 7)",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "scenes",
+      "detail": "7 (want 7)",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "shot clock",
+      "detail": "60.000 s (want 60.00)",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "non-negotiable male-only cast",
+      "detail": "script rules say male only / no women; no female role",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "non-negotiable non-graphic",
+      "detail": "no gore, no body, no drop; s21 is a shadow and a fade",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "non-negotiable 60.00 s",
+      "detail": "story.duration 60, script 60.00 s, clock 60.00 s",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "non-negotiable 186 words",
+      "detail": "story and shot-lines both 186; script says 186 words",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "non-negotiable 14 lines",
+      "detail": "14 story lines; script says 14 voice-over lines",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "non-negotiable 21 shots",
+      "detail": "21 clock shots; script says 21 shots",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "non-negotiable 7 scenes",
+      "detail": "7 film scenes; script says 7 scenes",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "non-negotiable cell return",
+      "detail": "cell shots s16, s19; script says cell visits s16/s19",
+      "pass": true
+    },
+    {
+      "level": "north star → script",
+      "check": "non-negotiable calendar never 11",
+      "detail": "max calendar page 10; script says never reaches 11",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "line 1",
+      "detail": "v01 → b01",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "line 2",
+      "detail": "v02 → b01",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "line 3",
+      "detail": "v03 → b02",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "line 4",
+      "detail": "v04 → b02",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "line 5",
+      "detail": "v05 → b03",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "line 6",
+      "detail": "v06 → b03",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "line 7",
+      "detail": "v07 → b04",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "line 8",
+      "detail": "v08 → b04",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "line 9",
+      "detail": "v09 → b05",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "line 10",
+      "detail": "v10 → b05",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "line 11",
+      "detail": "v11 → b06",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "line 12",
+      "detail": "v12 → b06",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "line 13",
+      "detail": "v13 → b07",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "line 14",
+      "detail": "v14 → b07",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "beat b01 lines",
+      "detail": "2 line(s)",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "beat b02 lines",
+      "detail": "2 line(s)",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "beat b03 lines",
+      "detail": "2 line(s)",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "beat b04 lines",
+      "detail": "2 line(s)",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "beat b05 lines",
+      "detail": "2 line(s)",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "beat b06 lines",
+      "detail": "2 line(s)",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "beat b07 lines",
+      "detail": "2 line(s)",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "beat shares sum",
+      "detail": "99.9999 (want 100.00)",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "beat b01 ↔ scene S1",
+      "detail": "share 14.5000 vs 14.5000 (+0.0000)",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "beat b02 ↔ scene S2",
+      "detail": "share 14.3000 vs 14.3000 (+0.0000)",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "beat b03 ↔ scene S3",
+      "detail": "share 14.6333 vs 14.6333 (-0.0000)",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "beat b04 ↔ scene S4",
+      "detail": "share 14.2333 vs 14.2333 (-0.0000)",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "beat b05 ↔ scene S5",
+      "detail": "share 14.1000 vs 14.1000 (+0.0000)",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "beat b06 ↔ scene S6",
+      "detail": "share 14.1000 vs 14.1000 (-0.0000)",
+      "pass": true
+    },
+    {
+      "level": "script → beats",
+      "check": "beat b07 ↔ scene S7",
+      "detail": "share 14.1333 vs 14.1333 (-0.0000)",
+      "pass": true
+    },
+    {
+      "level": "beats → scenes",
+      "check": "beat count",
+      "detail": "7 (want 7)",
+      "pass": true
+    },
+    {
+      "level": "beats → scenes",
+      "check": "scene count",
+      "detail": "7 (want 7)",
+      "pass": true
+    },
+    {
+      "level": "beats → scenes",
+      "check": "same order",
+      "detail": "S1←b01 S2←b02 S3←b03 S4←b04 S5←b05 S6←b06 S7←b07",
+      "pass": true
+    },
+    {
+      "level": "beats → scenes",
+      "check": "scene S1",
+      "detail": "b01, 3 shots",
+      "pass": true
+    },
+    {
+      "level": "beats → scenes",
+      "check": "scene S2",
+      "detail": "b02, 3 shots",
+      "pass": true
+    },
+    {
+      "level": "beats → scenes",
+      "check": "scene S3",
+      "detail": "b03, 3 shots",
+      "pass": true
+    },
+    {
+      "level": "beats → scenes",
+      "check": "scene S4",
+      "detail": "b04, 3 shots",
+      "pass": true
+    },
+    {
+      "level": "beats → scenes",
+      "check": "scene S5",
+      "detail": "b05, 3 shots",
+      "pass": true
+    },
+    {
+      "level": "beats → scenes",
+      "check": "scene S6",
+      "detail": "b06, 3 shots",
+      "pass": true
+    },
+    {
+      "level": "beats → scenes",
+      "check": "scene S7",
+      "detail": "b07, 3 shots",
+      "pass": true
+    },
+    {
+      "level": "beats → scenes",
+      "check": "every scene has a beat",
+      "detail": "7/7",
+      "pass": true
+    },
+    {
+      "level": "beats → scenes",
+      "check": "every beat has a scene",
+      "detail": "7/7",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "one scene per shot",
+      "detail": "21/21 in exactly one scene",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "21 shot-lines cover 14 lines",
+      "detail": "14 line groups",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "line L1",
+      "detail": "expected s01–s02, actual s01–s02",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "line L2",
+      "detail": "expected s03, actual s03",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "line L3",
+      "detail": "expected s04–s05, actual s04–s05",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "line L4",
+      "detail": "expected s06, actual s06",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "line L5",
+      "detail": "expected s07–s08, actual s07–s08",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "line L6",
+      "detail": "expected s09, actual s09",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "line L7",
+      "detail": "expected s10–s11, actual s10–s11",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "line L8",
+      "detail": "expected s12, actual s12",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "line L9",
+      "detail": "expected s13–s14, actual s13–s14",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "line L10",
+      "detail": "expected s15, actual s15",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "line L11",
+      "detail": "expected s16–s17, actual s16–s17",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "line L12",
+      "detail": "expected s18, actual s18",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "line L13",
+      "detail": "expected s19, actual s19",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "line L14",
+      "detail": "expected s20–s21, actual s20–s21",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "shot-lines concatenate to story lines",
+      "detail": "all 14 shot-line groups match their story line",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "intent and action",
+      "detail": "21/21 shots",
+      "pass": true
+    },
+    {
+      "level": "scenes → shots",
+      "check": "opening",
+      "detail": "s01 action names the murder",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "cards",
+      "detail": "21 (want 21)",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card order",
+      "detail": "21 card ids in shot order",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s01",
+      "detail": "proofs/kpop-crime-60/out/stills/t1_70.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s02",
+      "detail": "proofs/kpop-crime-60/out/stills/t4_20.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s03",
+      "detail": "proofs/kpop-crime-60/out/stills/t6_50.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s04",
+      "detail": "proofs/kpop-crime-60/out/stills/t9_50.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s05",
+      "detail": "proofs/kpop-crime-60/out/stills/t11_50.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s06",
+      "detail": "proofs/kpop-crime-60/out/stills/t15_00.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s07",
+      "detail": "proofs/kpop-crime-60/out/stills/t18_50.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s08",
+      "detail": "proofs/kpop-crime-60/out/stills/t21_00.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s09",
+      "detail": "proofs/kpop-crime-60/out/stills/t24_00.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s10",
+      "detail": "proofs/kpop-crime-60/out/stills/t27_50.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s11",
+      "detail": "proofs/kpop-crime-60/out/stills/t29_80.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s12",
+      "detail": "proofs/kpop-crime-60/out/stills/t32_50.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s13",
+      "detail": "proofs/kpop-crime-60/out/stills/t36_00.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s14",
+      "detail": "proofs/kpop-crime-60/out/stills/t38_50.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s15",
+      "detail": "proofs/kpop-crime-60/out/stills/t41_00.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s16",
+      "detail": "proofs/kpop-crime-60/out/stills/t44_20.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s17",
+      "detail": "proofs/kpop-crime-60/out/stills/t46_50.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s18",
+      "detail": "proofs/kpop-crime-60/out/stills/t49_50.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s19",
+      "detail": "proofs/kpop-crime-60/out/stills/t53_50.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s20",
+      "detail": "proofs/kpop-crime-60/out/stills/t57_20.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "card s21",
+      "detail": "proofs/kpop-crime-60/out/stills/t59_20.png 1920x1080, hash ok",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard.json",
+      "detail": "21 rows, pass=true",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s01",
+      "detail": "proofs/kpop-crime-60/out/stills/t1_70.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s02",
+      "detail": "proofs/kpop-crime-60/out/stills/t4_20.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s03",
+      "detail": "proofs/kpop-crime-60/out/stills/t6_50.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s04",
+      "detail": "proofs/kpop-crime-60/out/stills/t9_50.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s05",
+      "detail": "proofs/kpop-crime-60/out/stills/t11_50.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s06",
+      "detail": "proofs/kpop-crime-60/out/stills/t15_00.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s07",
+      "detail": "proofs/kpop-crime-60/out/stills/t18_50.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s08",
+      "detail": "proofs/kpop-crime-60/out/stills/t21_00.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s09",
+      "detail": "proofs/kpop-crime-60/out/stills/t24_00.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s10",
+      "detail": "proofs/kpop-crime-60/out/stills/t27_50.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s11",
+      "detail": "proofs/kpop-crime-60/out/stills/t29_80.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s12",
+      "detail": "proofs/kpop-crime-60/out/stills/t32_50.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s13",
+      "detail": "proofs/kpop-crime-60/out/stills/t36_00.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s14",
+      "detail": "proofs/kpop-crime-60/out/stills/t38_50.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s15",
+      "detail": "proofs/kpop-crime-60/out/stills/t41_00.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s16",
+      "detail": "proofs/kpop-crime-60/out/stills/t44_20.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s17",
+      "detail": "proofs/kpop-crime-60/out/stills/t46_50.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s18",
+      "detail": "proofs/kpop-crime-60/out/stills/t49_50.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s19",
+      "detail": "proofs/kpop-crime-60/out/stills/t53_50.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s20",
+      "detail": "proofs/kpop-crime-60/out/stills/t57_20.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "storyboard s21",
+      "detail": "proofs/kpop-crime-60/out/stills/t59_20.png",
+      "pass": true
+    },
+    {
+      "level": "shots → storyboard",
+      "check": "contact sheet",
+      "detail": "1944x2568, pass=true",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set alley",
+      "detail": "alleySet()",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set station",
+      "detail": "stationSet()",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set chase",
+      "detail": "chaseSet()",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set train",
+      "detail": "trainSet()",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set hideout",
+      "detail": "hideoutSet()",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set checkpoint",
+      "detail": "checkpointSet()",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set bridge",
+      "detail": "bridgeSet()",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set cell",
+      "detail": "cellSet()",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set court",
+      "detail": "courtSet()",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set yard",
+      "detail": "yardSet()",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s01",
+      "detail": "alley → alley",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s02",
+      "detail": "alley → alley",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s03",
+      "detail": "alley → alley",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s04",
+      "detail": "station → station",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s05",
+      "detail": "chase → chase",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s06",
+      "detail": "train → train",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s07",
+      "detail": "hideout → hideout",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s08",
+      "detail": "hideout → hideout",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s09",
+      "detail": "hideout → hideout",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s10",
+      "detail": "checkpoint → checkpoint",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s11",
+      "detail": "checkpoint → checkpoint",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s12",
+      "detail": "checkpoint → checkpoint",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s13",
+      "detail": "bridge → bridge",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s14",
+      "detail": "bridge → bridge",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s15",
+      "detail": "bridge → bridge",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s16",
+      "detail": "cell → cell",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s17",
+      "detail": "court → court",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s18",
+      "detail": "court → court",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s19",
+      "detail": "cell-return → cell",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s20",
+      "detail": "yard → yard",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "set s21",
+      "detail": "yard → yard",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s01",
+      "detail": "alley: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s01",
+      "detail": "15 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s02",
+      "detail": "alley: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s02",
+      "detail": "12 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s03",
+      "detail": "alley: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s03",
+      "detail": "14 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s04",
+      "detail": "station: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s04",
+      "detail": "16 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s05",
+      "detail": "chase: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s05",
+      "detail": "12 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s06",
+      "detail": "train: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s06",
+      "detail": "12 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s07",
+      "detail": "hideout: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s07",
+      "detail": "14 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s08",
+      "detail": "hideout: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s08",
+      "detail": "14 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s09",
+      "detail": "hideout: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s09",
+      "detail": "15 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s10",
+      "detail": "checkpoint: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s10",
+      "detail": "13 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s11",
+      "detail": "checkpoint: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s11",
+      "detail": "12 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s12",
+      "detail": "checkpoint: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s12",
+      "detail": "12 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s13",
+      "detail": "bridge: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s13",
+      "detail": "13 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s14",
+      "detail": "bridge: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s14",
+      "detail": "15 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s15",
+      "detail": "bridge: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s15",
+      "detail": "15 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s16",
+      "detail": "cell: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s16",
+      "detail": "14 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s17",
+      "detail": "court: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s17",
+      "detail": "13 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s18",
+      "detail": "court: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s18",
+      "detail": "13 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s19",
+      "detail": "cell: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s19",
+      "detail": "13 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s20",
+      "detail": "yard: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s20",
+      "detail": "11 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "signature s21",
+      "detail": "yard: complete",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "names s21",
+      "detail": "11 names resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "castStyle thief",
+      "detail": "flatcap, worker, flat cap, scarf",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "castStyle detective",
+      "detail": "fedora, trench coat, fedora, tie, badge",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "castStyle warder",
+      "detail": "peaked, light grey uniform, peaked cap, baton",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "castStyle judge",
+      "detail": "none, robe, white collar, glasses",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "cast man",
+      "detail": "role thief",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "cast detective",
+      "detail": "role detective",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "cast warder",
+      "detail": "role warder",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "cast judge",
+      "detail": "role judge",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "handProp who man",
+      "detail": "role thief",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "handProp who detective",
+      "detail": "role detective",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "handProp who warder",
+      "detail": "role warder",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "handProp who judge",
+      "detail": "role judge",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "card cast keys",
+      "detail": "21 cards resolve",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "foreground s16 cellBarsFront",
+      "detail": "drawn at 231, after cast at 183",
+      "pass": true
+    },
+    {
+      "level": "shots → assets",
+      "check": "foreground s19 cellBarsFront",
+      "detail": "drawn at 145, after cast at 129",
+      "pass": true
+    },
+    {
+      "level": "shots → render",
+      "check": "shot ranges sum",
+      "detail": "60.000 s",
+      "pass": true
+    },
+    {
+      "level": "shots → render",
+      "check": "shot ranges contiguous",
+      "detail": "0 → 60",
+      "pass": true
+    },
+    {
+      "level": "shots → render",
+      "check": "shots.json matches measured clock",
+      "detail": "21 rows",
+      "pass": true
+    },
+    {
+      "level": "shots → render",
+      "check": "delivered video",
+      "detail": "proofs/kpop-crime-60/out/kpop-crime-60.mp4",
+      "pass": true
+    },
+    {
+      "level": "shots → render",
+      "check": "video sha256",
+      "detail": "5769fef56e61287fe0ce48711bbc5d84d39fa8073d6cac5f15731f7dfa73839d",
+      "pass": true
+    },
+    {
+      "level": "shots → render",
+      "check": "video duration",
+      "detail": "60.00 s (want 60.00)",
+      "pass": true
+    },
+    {
+      "level": "shots → render",
+      "check": "video fps",
+      "detail": "30 (want 30)",
+      "pass": true
+    },
+    {
+      "level": "shots → render",
+      "check": "video frames",
+      "detail": "1800 (want 1800)",
+      "pass": true
+    },
+    {
+      "level": "shots → render",
+      "check": "video size",
+      "detail": "1920x1080 (want 1920x1080)",
+      "pass": true
+    },
+    {
+      "level": "shots → render",
+      "check": "shots vs video",
+      "detail": "60.000 s vs 60.00 s",
+      "pass": true
+    },
+    {
+      "level": "shots → render",
+      "check": "look.json video",
+      "detail": "videoHash matches the delivered picture",
+      "pass": true
+    },
+    {
+      "level": "shots → render",
+      "check": "gate reports",
+      "detail": "4 report(s) carry a videoHash",
+      "pass": true
+    },
+    {
+      "level": "shots → render",
+      "check": "gate proofs/kpop-crime-60/out/cut-pairs.json",
+      "detail": "5769fef56e61287f… tied",
+      "pass": true
+    },
+    {
+      "level": "shots → render",
+      "check": "gate proofs/kpop-crime-60/out/frame-diff.json",
+      "detail": "5769fef56e61287f… tied",
+      "pass": true
+    },
+    {
+      "level": "shots → render",
+      "check": "gate proofs/kpop-crime-60/out/look.json",
+      "detail": "5769fef56e61287f… tied",
+      "pass": true
+    },
+    {
+      "level": "shots → render",
+      "check": "gate proofs/kpop-crime-60/out/twin.json",
+      "detail": "5769fef56e61287f… tied",
+      "pass": true
+    }
+  ],
+  "sections": [
+    {
+      "level": "north star → script",
+      "pass": true,
+      "failed": 0,
+      "rows": [
+        {
+          "check": "north star id",
+          "detail": "kpop-crime vs story kpop-crime",
+          "pass": true
+        },
+        {
+          "check": "title",
+          "detail": "The Run vs story The Run",
+          "pass": true
+        },
+        {
+          "check": "logline",
+          "detail": "north star copies the story's logline",
+          "pass": true
+        },
+        {
+          "check": "tone",
+          "detail": "north star copies the story's tone",
+          "pass": true
+        },
+        {
+          "check": "audience",
+          "detail": "north star copies the story's audience",
+          "pass": true
+        },
+        {
+          "check": "spine",
+          "detail": "want / obstacle / turn / button match the story",
+          "pass": true
+        },
+        {
+          "check": "non-negotiables listed",
+          "detail": "9/9 in north-star.json",
+          "pass": true
+        },
+        {
+          "check": "narration lines",
+          "detail": "14 (want 14)",
+          "pass": true
+        },
+        {
+          "check": "narration words",
+          "detail": "186 (want 186)",
+          "pass": true
+        },
+        {
+          "check": "shot-lines",
+          "detail": "21 (want 21)",
+          "pass": true
+        },
+        {
+          "check": "shot-line words",
+          "detail": "186 (want 186)",
+          "pass": true
+        },
+        {
+          "check": "beats",
+          "detail": "7 (want 7)",
+          "pass": true
+        },
+        {
+          "check": "scenes",
+          "detail": "7 (want 7)",
+          "pass": true
+        },
+        {
+          "check": "shot clock",
+          "detail": "60.000 s (want 60.00)",
+          "pass": true
+        },
+        {
+          "check": "non-negotiable male-only cast",
+          "detail": "script rules say male only / no women; no female role",
+          "pass": true
+        },
+        {
+          "check": "non-negotiable non-graphic",
+          "detail": "no gore, no body, no drop; s21 is a shadow and a fade",
+          "pass": true
+        },
+        {
+          "check": "non-negotiable 60.00 s",
+          "detail": "story.duration 60, script 60.00 s, clock 60.00 s",
+          "pass": true
+        },
+        {
+          "check": "non-negotiable 186 words",
+          "detail": "story and shot-lines both 186; script says 186 words",
+          "pass": true
+        },
+        {
+          "check": "non-negotiable 14 lines",
+          "detail": "14 story lines; script says 14 voice-over lines",
+          "pass": true
+        },
+        {
+          "check": "non-negotiable 21 shots",
+          "detail": "21 clock shots; script says 21 shots",
+          "pass": true
+        },
+        {
+          "check": "non-negotiable 7 scenes",
+          "detail": "7 film scenes; script says 7 scenes",
+          "pass": true
+        },
+        {
+          "check": "non-negotiable cell return",
+          "detail": "cell shots s16, s19; script says cell visits s16/s19",
+          "pass": true
+        },
+        {
+          "check": "non-negotiable calendar never 11",
+          "detail": "max calendar page 10; script says never reaches 11",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "level": "script → beats",
+      "pass": true,
+      "failed": 0,
+      "rows": [
+        {
+          "check": "line 1",
+          "detail": "v01 → b01",
+          "pass": true
+        },
+        {
+          "check": "line 2",
+          "detail": "v02 → b01",
+          "pass": true
+        },
+        {
+          "check": "line 3",
+          "detail": "v03 → b02",
+          "pass": true
+        },
+        {
+          "check": "line 4",
+          "detail": "v04 → b02",
+          "pass": true
+        },
+        {
+          "check": "line 5",
+          "detail": "v05 → b03",
+          "pass": true
+        },
+        {
+          "check": "line 6",
+          "detail": "v06 → b03",
+          "pass": true
+        },
+        {
+          "check": "line 7",
+          "detail": "v07 → b04",
+          "pass": true
+        },
+        {
+          "check": "line 8",
+          "detail": "v08 → b04",
+          "pass": true
+        },
+        {
+          "check": "line 9",
+          "detail": "v09 → b05",
+          "pass": true
+        },
+        {
+          "check": "line 10",
+          "detail": "v10 → b05",
+          "pass": true
+        },
+        {
+          "check": "line 11",
+          "detail": "v11 → b06",
+          "pass": true
+        },
+        {
+          "check": "line 12",
+          "detail": "v12 → b06",
+          "pass": true
+        },
+        {
+          "check": "line 13",
+          "detail": "v13 → b07",
+          "pass": true
+        },
+        {
+          "check": "line 14",
+          "detail": "v14 → b07",
+          "pass": true
+        },
+        {
+          "check": "beat b01 lines",
+          "detail": "2 line(s)",
+          "pass": true
+        },
+        {
+          "check": "beat b02 lines",
+          "detail": "2 line(s)",
+          "pass": true
+        },
+        {
+          "check": "beat b03 lines",
+          "detail": "2 line(s)",
+          "pass": true
+        },
+        {
+          "check": "beat b04 lines",
+          "detail": "2 line(s)",
+          "pass": true
+        },
+        {
+          "check": "beat b05 lines",
+          "detail": "2 line(s)",
+          "pass": true
+        },
+        {
+          "check": "beat b06 lines",
+          "detail": "2 line(s)",
+          "pass": true
+        },
+        {
+          "check": "beat b07 lines",
+          "detail": "2 line(s)",
+          "pass": true
+        },
+        {
+          "check": "beat shares sum",
+          "detail": "99.9999 (want 100.00)",
+          "pass": true
+        },
+        {
+          "check": "beat b01 ↔ scene S1",
+          "detail": "share 14.5000 vs 14.5000 (+0.0000)",
+          "pass": true
+        },
+        {
+          "check": "beat b02 ↔ scene S2",
+          "detail": "share 14.3000 vs 14.3000 (+0.0000)",
+          "pass": true
+        },
+        {
+          "check": "beat b03 ↔ scene S3",
+          "detail": "share 14.6333 vs 14.6333 (-0.0000)",
+          "pass": true
+        },
+        {
+          "check": "beat b04 ↔ scene S4",
+          "detail": "share 14.2333 vs 14.2333 (-0.0000)",
+          "pass": true
+        },
+        {
+          "check": "beat b05 ↔ scene S5",
+          "detail": "share 14.1000 vs 14.1000 (+0.0000)",
+          "pass": true
+        },
+        {
+          "check": "beat b06 ↔ scene S6",
+          "detail": "share 14.1000 vs 14.1000 (-0.0000)",
+          "pass": true
+        },
+        {
+          "check": "beat b07 ↔ scene S7",
+          "detail": "share 14.1333 vs 14.1333 (-0.0000)",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "level": "beats → scenes",
+      "pass": true,
+      "failed": 0,
+      "rows": [
+        {
+          "check": "beat count",
+          "detail": "7 (want 7)",
+          "pass": true
+        },
+        {
+          "check": "scene count",
+          "detail": "7 (want 7)",
+          "pass": true
+        },
+        {
+          "check": "same order",
+          "detail": "S1←b01 S2←b02 S3←b03 S4←b04 S5←b05 S6←b06 S7←b07",
+          "pass": true
+        },
+        {
+          "check": "scene S1",
+          "detail": "b01, 3 shots",
+          "pass": true
+        },
+        {
+          "check": "scene S2",
+          "detail": "b02, 3 shots",
+          "pass": true
+        },
+        {
+          "check": "scene S3",
+          "detail": "b03, 3 shots",
+          "pass": true
+        },
+        {
+          "check": "scene S4",
+          "detail": "b04, 3 shots",
+          "pass": true
+        },
+        {
+          "check": "scene S5",
+          "detail": "b05, 3 shots",
+          "pass": true
+        },
+        {
+          "check": "scene S6",
+          "detail": "b06, 3 shots",
+          "pass": true
+        },
+        {
+          "check": "scene S7",
+          "detail": "b07, 3 shots",
+          "pass": true
+        },
+        {
+          "check": "every scene has a beat",
+          "detail": "7/7",
+          "pass": true
+        },
+        {
+          "check": "every beat has a scene",
+          "detail": "7/7",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "level": "scenes → shots",
+      "pass": true,
+      "failed": 0,
+      "rows": [
+        {
+          "check": "one scene per shot",
+          "detail": "21/21 in exactly one scene",
+          "pass": true
+        },
+        {
+          "check": "21 shot-lines cover 14 lines",
+          "detail": "14 line groups",
+          "pass": true
+        },
+        {
+          "check": "line L1",
+          "detail": "expected s01–s02, actual s01–s02",
+          "pass": true
+        },
+        {
+          "check": "line L2",
+          "detail": "expected s03, actual s03",
+          "pass": true
+        },
+        {
+          "check": "line L3",
+          "detail": "expected s04–s05, actual s04–s05",
+          "pass": true
+        },
+        {
+          "check": "line L4",
+          "detail": "expected s06, actual s06",
+          "pass": true
+        },
+        {
+          "check": "line L5",
+          "detail": "expected s07–s08, actual s07–s08",
+          "pass": true
+        },
+        {
+          "check": "line L6",
+          "detail": "expected s09, actual s09",
+          "pass": true
+        },
+        {
+          "check": "line L7",
+          "detail": "expected s10–s11, actual s10–s11",
+          "pass": true
+        },
+        {
+          "check": "line L8",
+          "detail": "expected s12, actual s12",
+          "pass": true
+        },
+        {
+          "check": "line L9",
+          "detail": "expected s13–s14, actual s13–s14",
+          "pass": true
+        },
+        {
+          "check": "line L10",
+          "detail": "expected s15, actual s15",
+          "pass": true
+        },
+        {
+          "check": "line L11",
+          "detail": "expected s16–s17, actual s16–s17",
+          "pass": true
+        },
+        {
+          "check": "line L12",
+          "detail": "expected s18, actual s18",
+          "pass": true
+        },
+        {
+          "check": "line L13",
+          "detail": "expected s19, actual s19",
+          "pass": true
+        },
+        {
+          "check": "line L14",
+          "detail": "expected s20–s21, actual s20–s21",
+          "pass": true
+        },
+        {
+          "check": "shot-lines concatenate to story lines",
+          "detail": "all 14 shot-line groups match their story line",
+          "pass": true
+        },
+        {
+          "check": "intent and action",
+          "detail": "21/21 shots",
+          "pass": true
+        },
+        {
+          "check": "opening",
+          "detail": "s01 action names the murder",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "level": "shots → storyboard",
+      "pass": true,
+      "failed": 0,
+      "rows": [
+        {
+          "check": "cards",
+          "detail": "21 (want 21)",
+          "pass": true
+        },
+        {
+          "check": "card order",
+          "detail": "21 card ids in shot order",
+          "pass": true
+        },
+        {
+          "check": "card s01",
+          "detail": "proofs/kpop-crime-60/out/stills/t1_70.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s02",
+          "detail": "proofs/kpop-crime-60/out/stills/t4_20.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s03",
+          "detail": "proofs/kpop-crime-60/out/stills/t6_50.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s04",
+          "detail": "proofs/kpop-crime-60/out/stills/t9_50.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s05",
+          "detail": "proofs/kpop-crime-60/out/stills/t11_50.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s06",
+          "detail": "proofs/kpop-crime-60/out/stills/t15_00.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s07",
+          "detail": "proofs/kpop-crime-60/out/stills/t18_50.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s08",
+          "detail": "proofs/kpop-crime-60/out/stills/t21_00.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s09",
+          "detail": "proofs/kpop-crime-60/out/stills/t24_00.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s10",
+          "detail": "proofs/kpop-crime-60/out/stills/t27_50.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s11",
+          "detail": "proofs/kpop-crime-60/out/stills/t29_80.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s12",
+          "detail": "proofs/kpop-crime-60/out/stills/t32_50.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s13",
+          "detail": "proofs/kpop-crime-60/out/stills/t36_00.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s14",
+          "detail": "proofs/kpop-crime-60/out/stills/t38_50.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s15",
+          "detail": "proofs/kpop-crime-60/out/stills/t41_00.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s16",
+          "detail": "proofs/kpop-crime-60/out/stills/t44_20.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s17",
+          "detail": "proofs/kpop-crime-60/out/stills/t46_50.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s18",
+          "detail": "proofs/kpop-crime-60/out/stills/t49_50.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s19",
+          "detail": "proofs/kpop-crime-60/out/stills/t53_50.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s20",
+          "detail": "proofs/kpop-crime-60/out/stills/t57_20.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "card s21",
+          "detail": "proofs/kpop-crime-60/out/stills/t59_20.png 1920x1080, hash ok",
+          "pass": true
+        },
+        {
+          "check": "storyboard.json",
+          "detail": "21 rows, pass=true",
+          "pass": true
+        },
+        {
+          "check": "storyboard s01",
+          "detail": "proofs/kpop-crime-60/out/stills/t1_70.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s02",
+          "detail": "proofs/kpop-crime-60/out/stills/t4_20.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s03",
+          "detail": "proofs/kpop-crime-60/out/stills/t6_50.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s04",
+          "detail": "proofs/kpop-crime-60/out/stills/t9_50.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s05",
+          "detail": "proofs/kpop-crime-60/out/stills/t11_50.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s06",
+          "detail": "proofs/kpop-crime-60/out/stills/t15_00.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s07",
+          "detail": "proofs/kpop-crime-60/out/stills/t18_50.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s08",
+          "detail": "proofs/kpop-crime-60/out/stills/t21_00.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s09",
+          "detail": "proofs/kpop-crime-60/out/stills/t24_00.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s10",
+          "detail": "proofs/kpop-crime-60/out/stills/t27_50.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s11",
+          "detail": "proofs/kpop-crime-60/out/stills/t29_80.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s12",
+          "detail": "proofs/kpop-crime-60/out/stills/t32_50.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s13",
+          "detail": "proofs/kpop-crime-60/out/stills/t36_00.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s14",
+          "detail": "proofs/kpop-crime-60/out/stills/t38_50.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s15",
+          "detail": "proofs/kpop-crime-60/out/stills/t41_00.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s16",
+          "detail": "proofs/kpop-crime-60/out/stills/t44_20.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s17",
+          "detail": "proofs/kpop-crime-60/out/stills/t46_50.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s18",
+          "detail": "proofs/kpop-crime-60/out/stills/t49_50.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s19",
+          "detail": "proofs/kpop-crime-60/out/stills/t53_50.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s20",
+          "detail": "proofs/kpop-crime-60/out/stills/t57_20.png",
+          "pass": true
+        },
+        {
+          "check": "storyboard s21",
+          "detail": "proofs/kpop-crime-60/out/stills/t59_20.png",
+          "pass": true
+        },
+        {
+          "check": "contact sheet",
+          "detail": "1944x2568, pass=true",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "level": "shots → assets",
+      "pass": true,
+      "failed": 0,
+      "rows": [
+        {
+          "check": "set alley",
+          "detail": "alleySet()",
+          "pass": true
+        },
+        {
+          "check": "set station",
+          "detail": "stationSet()",
+          "pass": true
+        },
+        {
+          "check": "set chase",
+          "detail": "chaseSet()",
+          "pass": true
+        },
+        {
+          "check": "set train",
+          "detail": "trainSet()",
+          "pass": true
+        },
+        {
+          "check": "set hideout",
+          "detail": "hideoutSet()",
+          "pass": true
+        },
+        {
+          "check": "set checkpoint",
+          "detail": "checkpointSet()",
+          "pass": true
+        },
+        {
+          "check": "set bridge",
+          "detail": "bridgeSet()",
+          "pass": true
+        },
+        {
+          "check": "set cell",
+          "detail": "cellSet()",
+          "pass": true
+        },
+        {
+          "check": "set court",
+          "detail": "courtSet()",
+          "pass": true
+        },
+        {
+          "check": "set yard",
+          "detail": "yardSet()",
+          "pass": true
+        },
+        {
+          "check": "set s01",
+          "detail": "alley → alley",
+          "pass": true
+        },
+        {
+          "check": "set s02",
+          "detail": "alley → alley",
+          "pass": true
+        },
+        {
+          "check": "set s03",
+          "detail": "alley → alley",
+          "pass": true
+        },
+        {
+          "check": "set s04",
+          "detail": "station → station",
+          "pass": true
+        },
+        {
+          "check": "set s05",
+          "detail": "chase → chase",
+          "pass": true
+        },
+        {
+          "check": "set s06",
+          "detail": "train → train",
+          "pass": true
+        },
+        {
+          "check": "set s07",
+          "detail": "hideout → hideout",
+          "pass": true
+        },
+        {
+          "check": "set s08",
+          "detail": "hideout → hideout",
+          "pass": true
+        },
+        {
+          "check": "set s09",
+          "detail": "hideout → hideout",
+          "pass": true
+        },
+        {
+          "check": "set s10",
+          "detail": "checkpoint → checkpoint",
+          "pass": true
+        },
+        {
+          "check": "set s11",
+          "detail": "checkpoint → checkpoint",
+          "pass": true
+        },
+        {
+          "check": "set s12",
+          "detail": "checkpoint → checkpoint",
+          "pass": true
+        },
+        {
+          "check": "set s13",
+          "detail": "bridge → bridge",
+          "pass": true
+        },
+        {
+          "check": "set s14",
+          "detail": "bridge → bridge",
+          "pass": true
+        },
+        {
+          "check": "set s15",
+          "detail": "bridge → bridge",
+          "pass": true
+        },
+        {
+          "check": "set s16",
+          "detail": "cell → cell",
+          "pass": true
+        },
+        {
+          "check": "set s17",
+          "detail": "court → court",
+          "pass": true
+        },
+        {
+          "check": "set s18",
+          "detail": "court → court",
+          "pass": true
+        },
+        {
+          "check": "set s19",
+          "detail": "cell-return → cell",
+          "pass": true
+        },
+        {
+          "check": "set s20",
+          "detail": "yard → yard",
+          "pass": true
+        },
+        {
+          "check": "set s21",
+          "detail": "yard → yard",
+          "pass": true
+        },
+        {
+          "check": "signature s01",
+          "detail": "alley: complete",
+          "pass": true
+        },
+        {
+          "check": "names s01",
+          "detail": "15 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s02",
+          "detail": "alley: complete",
+          "pass": true
+        },
+        {
+          "check": "names s02",
+          "detail": "12 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s03",
+          "detail": "alley: complete",
+          "pass": true
+        },
+        {
+          "check": "names s03",
+          "detail": "14 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s04",
+          "detail": "station: complete",
+          "pass": true
+        },
+        {
+          "check": "names s04",
+          "detail": "16 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s05",
+          "detail": "chase: complete",
+          "pass": true
+        },
+        {
+          "check": "names s05",
+          "detail": "12 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s06",
+          "detail": "train: complete",
+          "pass": true
+        },
+        {
+          "check": "names s06",
+          "detail": "12 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s07",
+          "detail": "hideout: complete",
+          "pass": true
+        },
+        {
+          "check": "names s07",
+          "detail": "14 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s08",
+          "detail": "hideout: complete",
+          "pass": true
+        },
+        {
+          "check": "names s08",
+          "detail": "14 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s09",
+          "detail": "hideout: complete",
+          "pass": true
+        },
+        {
+          "check": "names s09",
+          "detail": "15 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s10",
+          "detail": "checkpoint: complete",
+          "pass": true
+        },
+        {
+          "check": "names s10",
+          "detail": "13 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s11",
+          "detail": "checkpoint: complete",
+          "pass": true
+        },
+        {
+          "check": "names s11",
+          "detail": "12 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s12",
+          "detail": "checkpoint: complete",
+          "pass": true
+        },
+        {
+          "check": "names s12",
+          "detail": "12 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s13",
+          "detail": "bridge: complete",
+          "pass": true
+        },
+        {
+          "check": "names s13",
+          "detail": "13 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s14",
+          "detail": "bridge: complete",
+          "pass": true
+        },
+        {
+          "check": "names s14",
+          "detail": "15 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s15",
+          "detail": "bridge: complete",
+          "pass": true
+        },
+        {
+          "check": "names s15",
+          "detail": "15 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s16",
+          "detail": "cell: complete",
+          "pass": true
+        },
+        {
+          "check": "names s16",
+          "detail": "14 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s17",
+          "detail": "court: complete",
+          "pass": true
+        },
+        {
+          "check": "names s17",
+          "detail": "13 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s18",
+          "detail": "court: complete",
+          "pass": true
+        },
+        {
+          "check": "names s18",
+          "detail": "13 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s19",
+          "detail": "cell: complete",
+          "pass": true
+        },
+        {
+          "check": "names s19",
+          "detail": "13 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s20",
+          "detail": "yard: complete",
+          "pass": true
+        },
+        {
+          "check": "names s20",
+          "detail": "11 names resolve",
+          "pass": true
+        },
+        {
+          "check": "signature s21",
+          "detail": "yard: complete",
+          "pass": true
+        },
+        {
+          "check": "names s21",
+          "detail": "11 names resolve",
+          "pass": true
+        },
+        {
+          "check": "castStyle thief",
+          "detail": "flatcap, worker, flat cap, scarf",
+          "pass": true
+        },
+        {
+          "check": "castStyle detective",
+          "detail": "fedora, trench coat, fedora, tie, badge",
+          "pass": true
+        },
+        {
+          "check": "castStyle warder",
+          "detail": "peaked, light grey uniform, peaked cap, baton",
+          "pass": true
+        },
+        {
+          "check": "castStyle judge",
+          "detail": "none, robe, white collar, glasses",
+          "pass": true
+        },
+        {
+          "check": "cast man",
+          "detail": "role thief",
+          "pass": true
+        },
+        {
+          "check": "cast detective",
+          "detail": "role detective",
+          "pass": true
+        },
+        {
+          "check": "cast warder",
+          "detail": "role warder",
+          "pass": true
+        },
+        {
+          "check": "cast judge",
+          "detail": "role judge",
+          "pass": true
+        },
+        {
+          "check": "handProp who man",
+          "detail": "role thief",
+          "pass": true
+        },
+        {
+          "check": "handProp who detective",
+          "detail": "role detective",
+          "pass": true
+        },
+        {
+          "check": "handProp who warder",
+          "detail": "role warder",
+          "pass": true
+        },
+        {
+          "check": "handProp who judge",
+          "detail": "role judge",
+          "pass": true
+        },
+        {
+          "check": "card cast keys",
+          "detail": "21 cards resolve",
+          "pass": true
+        },
+        {
+          "check": "foreground s16 cellBarsFront",
+          "detail": "drawn at 231, after cast at 183",
+          "pass": true
+        },
+        {
+          "check": "foreground s19 cellBarsFront",
+          "detail": "drawn at 145, after cast at 129",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "level": "shots → render",
+      "pass": true,
+      "failed": 0,
+      "rows": [
+        {
+          "check": "shot ranges sum",
+          "detail": "60.000 s",
+          "pass": true
+        },
+        {
+          "check": "shot ranges contiguous",
+          "detail": "0 → 60",
+          "pass": true
+        },
+        {
+          "check": "shots.json matches measured clock",
+          "detail": "21 rows",
+          "pass": true
+        },
+        {
+          "check": "delivered video",
+          "detail": "proofs/kpop-crime-60/out/kpop-crime-60.mp4",
+          "pass": true
+        },
+        {
+          "check": "video sha256",
+          "detail": "5769fef56e61287fe0ce48711bbc5d84d39fa8073d6cac5f15731f7dfa73839d",
+          "pass": true
+        },
+        {
+          "check": "video duration",
+          "detail": "60.00 s (want 60.00)",
+          "pass": true
+        },
+        {
+          "check": "video fps",
+          "detail": "30 (want 30)",
+          "pass": true
+        },
+        {
+          "check": "video frames",
+          "detail": "1800 (want 1800)",
+          "pass": true
+        },
+        {
+          "check": "video size",
+          "detail": "1920x1080 (want 1920x1080)",
+          "pass": true
+        },
+        {
+          "check": "shots vs video",
+          "detail": "60.000 s vs 60.00 s",
+          "pass": true
+        },
+        {
+          "check": "look.json video",
+          "detail": "videoHash matches the delivered picture",
+          "pass": true
+        },
+        {
+          "check": "gate reports",
+          "detail": "4 report(s) carry a videoHash",
+          "pass": true
+        },
+        {
+          "check": "gate proofs/kpop-crime-60/out/cut-pairs.json",
+          "detail": "5769fef56e61287f… tied",
+          "pass": true
+        },
+        {
+          "check": "gate proofs/kpop-crime-60/out/frame-diff.json",
+          "detail": "5769fef56e61287f… tied",
+          "pass": true
+        },
+        {
+          "check": "gate proofs/kpop-crime-60/out/look.json",
+          "detail": "5769fef56e61287f… tied",
+          "pass": true
+        },
+        {
+          "check": "gate proofs/kpop-crime-60/out/twin.json",
+          "detail": "5769fef56e61287f… tied",
+          "pass": true
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "inputs": {
+    "northStar": {
+      "path": "proofs/kpop-crime-60/north-star.json",
+      "sha256": "f53136f18f4d7af1d8c6cac4cd7637795aafa6d5caeda940feb3da458176ad42"
+    },
+    "story": {
+      "path": "studio/films/kpop-crime/story.json",
+      "sha256": "12b70315e08ac55067d30fbe1dc063373eca75b0dcbe0e226a20d710db65ea85"
+    },
+    "beats": {
+      "path": "studio/films/kpop-crime/beats.json",
+      "sha256": "80aa79e81551e1785eeaa24fc0ae1a7f05596a6ecc4c486976816423f81d6fbe"
+    },
+    "film": {
+      "path": "proofs/kpop-crime-60/film.json",
+      "sha256": "8a1f6380235a6764af172e15d9fa44a957f4cd8a092e4a04d801526b7b3e2f91"
+    },
+    "shots": {
+      "path": "proofs/kpop-crime-60/shots.json",
+      "sha256": "ea0dcfb35534c6cdfcea36f670e60dc47e74e0334ef1b778e04d85e60fd5f690"
+    },
+    "cards": {
+      "path": "proofs/kpop-crime-60/out/cards/index.json",
+      "sha256": "2caa71c12a8b40fcf730563fc0dc719e809ca6be62a45d32f613b15ae31c568c"
+    },
+    "storyboard": {
+      "path": "proofs/kpop-crime-60/out/storyboard.json",
+      "sha256": "1869375c36261ab46b99fd1339eff364fe2a0688b4d6cbdd4b6b0c0068d84bfc"
+    },
+    "script": {
+      "path": "proofs/kpop-crime/SCRIPT-60.md",
+      "sha256": "793953cf0baa3299c2f97ff81087e9c59856596843372edbaa55cdc0cfa12acf"
+    },
+    "video": {
+      "path": "proofs/kpop-crime-60/out/kpop-crime-60.mp4",
+      "sha256": "5769fef56e61287fe0ce48711bbc5d84d39fa8073d6cac5f15731f7dfa73839d"
+    }
+  }
+}

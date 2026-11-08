@@ -1,0 +1,79 @@
+{
+  "cues": 12,
+  "lufs": -14,
+  "truePeak": -1.6,
+  "list": [
+    {
+      "shot": "s1",
+      "id": "knife",
+      "kind": "click",
+      "t": 1.8
+    },
+    {
+      "shot": "s1",
+      "id": "body",
+      "kind": "thud",
+      "t": 2.4
+    },
+    {
+      "shot": "s2",
+      "id": "run",
+      "kind": "whoosh",
+      "t": 4.2
+    },
+    {
+      "shot": "s3",
+      "id": "calendar",
+      "kind": "paper",
+      "t": 8.4
+    },
+    {
+      "shot": "s4",
+      "id": "cuffs",
+      "kind": "click",
+      "t": 11.54
+    },
+    {
+      "shot": "s5",
+      "id": "cell",
+      "kind": "thud",
+      "t": 12.6
+    },
+    {
+      "shot": "s6",
+      "id": "gavel",
+      "kind": "stamp",
+      "t": 17.1
+    },
+    {
+      "shot": "s6",
+      "id": "verdict",
+      "kind": "chime",
+      "t": 17.7
+    },
+    {
+      "shot": "s7",
+      "id": "bell",
+      "kind": "bell",
+      "t": 20.1
+    },
+    {
+      "shot": "s7",
+      "id": "noose",
+      "kind": "paper",
+      "t": 18.6
+    },
+    {
+      "shot": "s2",
+      "id": "rain",
+      "kind": "breath",
+      "t": 5.1
+    },
+    {
+      "shot": "s7",
+      "id": "dawn",
+      "kind": "chime",
+      "t": 18.3
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "pass": true,
+  "idolHip": -315,
+  "miraHip": -281,
+  "armConvention": "armL+/armR-",
+  "noPetals": true,
+  "mirroredBoots": true,
+  "handThumb": true,
+  "footTargets": true,
+  "evidence": "proofs/kpop-test/test-rig.js (idol hip -315, mira hip -281, boot/sneaker flip, halo 0); s1-s9 15 fps sheets reviewed"
+}

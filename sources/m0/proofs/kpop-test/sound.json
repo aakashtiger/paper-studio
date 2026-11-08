@@ -1,0 +1,139 @@
+{
+  "cues": 22,
+  "lufs": -14.2,
+  "truePeak": -1.6,
+  "list": [
+    {
+      "shot": "s1",
+      "id": "lampOn",
+      "kind": "click",
+      "t": 0.4
+    },
+    {
+      "shot": "s1",
+      "id": "cardDrop",
+      "kind": "paper",
+      "t": 2.3
+    },
+    {
+      "shot": "s1",
+      "id": "spotNova",
+      "kind": "click",
+      "t": 2.72
+    },
+    {
+      "shot": "s1",
+      "id": "novaStep",
+      "kind": "thud",
+      "t": 3.1
+    },
+    {
+      "shot": "s2",
+      "id": "crowdInhale",
+      "kind": "whoosh",
+      "t": 5.12
+    },
+    {
+      "shot": "s2",
+      "id": "novaBreath",
+      "kind": "breath",
+      "t": 5.96
+    },
+    {
+      "shot": "s3",
+      "id": "workLight",
+      "kind": "click",
+      "t": 6.58
+    },
+    {
+      "shot": "s3",
+      "id": "cardFlutter",
+      "kind": "paper",
+      "t": 7.58
+    },
+    {
+      "shot": "s3",
+      "id": "starFall",
+      "kind": "whoosh",
+      "t": 9.38
+    },
+    {
+      "shot": "s3",
+      "id": "starLand",
+      "kind": "chime",
+      "t": 9.66
+    },
+    {
+      "shot": "s4",
+      "id": "miraReach",
+      "kind": "paper",
+      "t": 11.18
+    },
+    {
+      "shot": "s4",
+      "id": "starGlow",
+      "kind": "chime",
+      "t": 11.86
+    },
+    {
+      "shot": "s5",
+      "id": "starHand",
+      "kind": "chime",
+      "t": 13.26
+    },
+    {
+      "shot": "s6",
+      "id": "curtainHalf",
+      "kind": "whoosh",
+      "t": 14.52
+    },
+    {
+      "shot": "s6",
+      "id": "listStamp",
+      "kind": "stamp",
+      "t": 15.9
+    },
+    {
+      "shot": "s7",
+      "id": "spotLand",
+      "kind": "click",
+      "t": 17.94
+    },
+    {
+      "shot": "s8",
+      "id": "miraCard",
+      "kind": "paper",
+      "t": 19.42
+    },
+    {
+      "shot": "s8",
+      "id": "miraPoint",
+      "kind": "click",
+      "t": 19.88
+    },
+    {
+      "shot": "s9",
+      "id": "curtainStart",
+      "kind": "whoosh",
+      "t": 20.8
+    },
+    {
+      "shot": "s9",
+      "id": "curtainOpen",
+      "kind": "whoosh",
+      "t": 21.22
+    },
+    {
+      "shot": "s9",
+      "id": "novaBow",
+      "kind": "applause",
+      "t": 23.46
+    },
+    {
+      "shot": "s9",
+      "id": "finalTitle",
+      "kind": "bell",
+      "t": 24.32
+    }
+  ]
+}

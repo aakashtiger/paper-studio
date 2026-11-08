@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CLAUDE POP — studio</title>
+<style>
+  :root { --paper:#F2E8D5; --ink:#171310; --red:#E8452A; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; background:#0E0B09; color:var(--paper); font:13px/1.4 "DMMono", monospace; overflow:hidden; }
+  #stage { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; }
+  #out { width:min(100vw, calc(100vh * 16 / 9)); height:auto; aspect-ratio:16/9; background:var(--paper); box-shadow:0 30px 120px rgba(0,0,0,.6); }
+  #ui { position:fixed; left:0; right:0; bottom:0; padding:14px 18px 16px; background:linear-gradient(transparent, rgba(8,6,5,.88) 40%); display:flex; gap:14px; align-items:center; opacity:1; transition:opacity .3s; }
+  body.render #ui, body.render #hint { display:none; }
+  body.render #out { width:100vw; height:100vh; box-shadow:none; }
+  #scrub { flex:1; accent-color:var(--red); height:4px; }
+  #tt { min-width:186px; font-variant-numeric:tabular-nums; letter-spacing:.5px; color:#E9DDC7; }
+  #play { width:38px; height:38px; border:1px solid #5b4a3b; background:#1a1512; color:var(--paper); cursor:pointer; border-radius:50%; font-size:14px; }
+  #hint { position:fixed; top:18px; left:20px; color:rgba(242,232,213,.55); letter-spacing:1.4px; font-size:11px; }
+  #hint b { color:var(--red); letter-spacing:2px; }
+  #load { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#0E0B09; z-index:9; letter-spacing:3px; color:#8d7c68; }
+  body.ready #load { display:none; }
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="out" width="1920" height="1080"></canvas></div>
+<div id="hint"><b>CLAUDE POP</b> · a paper singularity · 156.6s</div>
+<div id="load">LOADING PAPER…</div>
+<div id="ui">
+  <button id="play">▶</button>
+  <input id="scrub" type="range" min="0" max="156.6" step="0.0333" value="0">
+  <span id="tt">00:00.00 / 02:36.60</span>
+</div>
+
+<script src="src/core.js"></script>
+<script src="src/type.js"></script>
+<script src="src/lyrics.js"></script>
+<script src="src/characters.js"></script>
+<script src="src/props.js"></script>
+<script src="src/scene_kit.js"></script>
+<script src="src/timeline.js"></script>
+<script src="src/scenes/act1.js"></script>
+<script src="src/scenes/act2.js"></script>
+<script src="src/scenes/act3.js"></script>
+<script src="src/scenes/act4.js"></script>
+<script src="src/scenes/act5.js"></script>
+<script>
+const RENDER = location.search.includes('render');
+if (RENDER) document.body.classList.add('render');
+
+async function loadFonts() {
+  const defs = [
+    ['Anton','Anton-Regular.ttf','400'],
+    ['Archivo Black','ArchivoBlack-Regular.ttf','400'],
+    ['Instrument Serif','InstrumentSerif-Regular.ttf','400'],
+    ['Instrument Serif','InstrumentSerif-Italic.ttf','400','italic'],
+    ['DMMono','DMMono-Regular.ttf','400'],
+    ['DMMono','DMMono-Medium.ttf','500'],
+    ['Permanent Marker','PermanentMarker-Regular.ttf','400'],
+    ['Black Han Sans','BlackHanSans-Regular.ttf','400'],
+    ['Space Grotesk','SpaceGrotesk.ttf','400'],
+  ];
+  for (const [family, file, weight, style] of defs) {
+    const r = await fetch('assets/fonts/' + file);
+    const b = await r.arrayBuffer();
+    const ff = new FontFace(family, b, { weight, style: style || 'normal' });
+    await ff.load(); document.fonts.add(ff);
+  }
+  await document.fonts.ready;
+  TY.ready = true;
+}
+
+let playing = false, t = 0, last = 0;
+function draw(t) {
+  const s = sceneAt(t);
+  beginShot(s);
+  drawScene(s, t);
+  drawTransition(t);
+  const line = lyricAt(t);
+  if (line && (s.lyric || 'sub') === 'sub') TY.subtitle(ctx, line, t);
+  if (!s.noDoom) drawDoomTicker(ctx, t);
+  drawPrintMarks(ctx, t);
+  paperOverlay(ctx, t, .5);
+  grainOverlay(ctx, t, .45);
+  vignette(ctx, .34);
+}
+function tick(now) {
+  if (playing) {
+    if (!last) last = now;
+    t += (now - last) / 1000; last = now;
+    if (t > 156.6) { t = 0; }
+    draw(t);
+    document.getElementById('scrub').value = t;
+    document.getElementById('tt').textContent = fmt(t) + ' / 02:36.60';
+  } else last = 0;
+  requestAnimationFrame(tick);
+}
+function fmt(x){ const m=Math.floor(x/60), s=(x%60); return String(m).padStart(2,'0')+':'+s.toFixed(2).padStart(5,'0'); }
+
+(async () => {
+  await loadFonts();
+  initTextures();
+  cv = document.getElementById('out'); ctx = cv.getContext('2d', { alpha:false });
+  window.ready = true;
+  document.body.classList.add('ready');
+  if (!RENDER) {
+    draw(0);
+    document.getElementById('scrub').addEventListener('input', e => { t = +e.target.value; draw(t); document.getElementById('tt').textContent = fmt(t) + ' / 02:36.60'; });
+    document.getElementById('play').addEventListener('click', e => { playing = !playing; e.target.textContent = playing ? '❚❚' : '▶'; });
+    window.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); playing = !playing; document.getElementById('play').textContent = playing ? '❚❚' : '▶'; } });
+    requestAnimationFrame(tick);
+  } else {
+    draw(0);
+    window.renderAt = renderAt;
+    window.renderSheet = renderSheet;
+    window.sceneAt = sceneAt;
+    window.gpuInfo = () => {
+      const gl = document.createElement('canvas').getContext('webgl');
+      if (!gl) return 'no webgl';
+      const d = gl.getExtension('WEBGL_debug_renderer_info');
+      return d ? gl.getParameter(d.UNMASKED_RENDERER_WEBGL) : 'webgl';
+    };
+  }
+})();
+</script>
+</body>
+</html>

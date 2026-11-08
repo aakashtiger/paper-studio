@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>KPOP TEST — THE CUE LAMP — 25 s</title>
+<style>
+  :root { --paper:#F2E8D5; --ink:#171310; --red:#E8452A; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; background:#0E0B09; color:var(--paper); font:13px/1.4 "DMMono", monospace; overflow:hidden; }
+  #stage { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; }
+  #out { width:min(100vw, calc(100vh * 16 / 9)); height:auto; aspect-ratio:16/9; background:var(--paper); box-shadow:0 30px 120px rgba(0,0,0,.6); }
+  body.render #ui, body.render #hint { display:none; }
+  body.render #out { width:100vw; height:100vh; box-shadow:none; }
+  #hint { position:fixed; top:18px; left:20px; color:rgba(242,232,213,.55); letter-spacing:1.4px; font-size:11px; }
+  #load { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#0E0B09; z-index:9; letter-spacing:3px; color:#8d7c68; }
+  body.ready #load { display:none; }
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="out" width="1920" height="1080"></canvas></div>
+<div id="hint"><b>KPOP TEST</b> · 25 s · NOVA / MIRA / THE CUE LAMP</div>
+<div id="load">CUTTING PAPER…</div>
+
+<script src="../../src/core.js"></script>
+<script src="../../src/type.js"></script>
+<script src="test-rig.js"></script>
+<script src="../../src/props.js"></script>
+<script src="../../src/scene_kit.js"></script>
+<script src="../../src/timeline.js"></script>
+<script src="test-words.js"></script>
+<script src="sync.js"></script>
+<script src="test-scenes.js"></script>
+<script>
+const RENDER = location.search.includes('render');
+if (RENDER) document.body.classList.add('render');
+
+async function loadFonts() {
+  const defs = [
+    ['Anton','Anton-Regular.ttf','400'],
+    ['Archivo Black','ArchivoBlack-Regular.ttf','400'],
+    ['Instrument Serif','InstrumentSerif-Regular.ttf','400'],
+    ['Instrument Serif','InstrumentSerif-Italic.ttf','400','italic'],
+    ['DMMono','DMMono-Regular.ttf','400'],
+    ['DMMono','DMMono-Medium.ttf','500'],
+    ['Permanent Marker','PermanentMarker-Regular.ttf','400'],
+    ['Black Han Sans','BlackHanSans-Regular.ttf','400'],
+    ['Space Grotesk','SpaceGrotesk.ttf','400'],
+  ];
+  for (const [family, file, weight, style] of defs) {
+    const r = await fetch('../../assets/fonts/' + file);
+    const b = await r.arrayBuffer();
+    const ff = new FontFace(family, b, { weight, style: style || 'normal' });
+    await ff.load(); document.fonts.add(ff);
+  }
+  await document.fonts.ready;
+  TY.ready = true;
+}
+
+(async () => {
+  await loadFonts();
+  initTextures();
+  cv = document.getElementById('out'); ctx = cv.getContext('2d', { alpha:false });
+  window.ready = true;
+  document.body.classList.add('ready');
+  if (RENDER) {
+    window.renderTestAt(0);
+    window.renderAt = window.renderTestAt;
+    window.renderSheet = window.renderTestSheet;
+    window.sceneAt = sceneAt;
+    window.gpuInfo = () => {
+      const gl = document.createElement('canvas').getContext('webgl');
+      if (!gl) return 'no webgl';
+      const d = gl.getExtension('WEBGL_debug_renderer_info');
+      return d ? gl.getParameter(d.UNMASKED_RENDERER_WEBGL) : 'webgl';
+    };
+  } else {
+    requestAnimationFrame(function tick(now) {
+      window.renderTestAt((now / 1000) % 24.9);
+      requestAnimationFrame(tick);
+    });
+  }
+})();
+</script>
+</body>
+</html>

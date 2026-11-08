@@ -1,0 +1,319 @@
+{
+  "shots": [
+    {
+      "id": "s1",
+      "events": [
+        {
+          "id": "e0",
+          "word": "first",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s1 first"
+        },
+        {
+          "id": "e1",
+          "word": "night",
+          "offset": 0,
+          "layer": "set",
+          "what": "s1 night"
+        },
+        {
+          "id": "e2",
+          "word": "knife",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s1 knife"
+        },
+        {
+          "id": "e3",
+          "word": "rain",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s1 rain"
+        },
+        {
+          "id": "cast0",
+          "word": "first",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s1 cast"
+        }
+      ]
+    },
+    {
+      "id": "s2",
+      "events": [
+        {
+          "id": "e0",
+          "word": "Nine",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s2 Nine"
+        },
+        {
+          "id": "e1",
+          "word": "days",
+          "offset": 0,
+          "layer": "set",
+          "what": "s2 days"
+        },
+        {
+          "id": "e2",
+          "word": "ran",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s2 ran"
+        },
+        {
+          "id": "e3",
+          "word": "city",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s2 city"
+        },
+        {
+          "id": "e4",
+          "word": "closed",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s2 closed"
+        },
+        {
+          "id": "e5",
+          "word": "behind",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s2 behind"
+        },
+        {
+          "id": "e6",
+          "word": "him",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s2 him"
+        },
+        {
+          "id": "cast0",
+          "word": "Nine",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s2 cast"
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "events": [
+        {
+          "id": "e0",
+          "word": "rented",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s3 rented"
+        },
+        {
+          "id": "e1",
+          "word": "room",
+          "offset": 0,
+          "layer": "set",
+          "what": "s3 room"
+        },
+        {
+          "id": "e2",
+          "word": "watched",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s3 watched"
+        },
+        {
+          "id": "e3",
+          "word": "calendar",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s3 calendar"
+        },
+        {
+          "id": "e4",
+          "word": "turn",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s3 turn"
+        },
+        {
+          "id": "cast0",
+          "word": "rented",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s3 cast"
+        }
+      ]
+    },
+    {
+      "id": "s4",
+      "events": [
+        {
+          "id": "e0",
+          "word": "took",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s4 took"
+        },
+        {
+          "id": "e1",
+          "word": "him",
+          "offset": 0,
+          "layer": "set",
+          "what": "s4 him"
+        },
+        {
+          "id": "e2",
+          "word": "rain",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s4 rain"
+        },
+        {
+          "id": "e3",
+          "word": "cuffs",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s4 cuffs"
+        },
+        {
+          "id": "e4",
+          "word": "closed",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s4 closed"
+        },
+        {
+          "id": "cast0",
+          "word": "took",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s4 cast"
+        }
+      ]
+    },
+    {
+      "id": "s5",
+      "events": [
+        {
+          "id": "e0",
+          "word": "cell",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s5 cell"
+        },
+        {
+          "id": "e1",
+          "word": "small",
+          "offset": 0,
+          "layer": "set",
+          "what": "s5 small"
+        },
+        {
+          "id": "e2",
+          "word": "days",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s5 days"
+        },
+        {
+          "id": "e3",
+          "word": "long",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s5 long"
+        },
+        {
+          "id": "cast0",
+          "word": "cell",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s5 cast"
+        }
+      ]
+    },
+    {
+      "id": "s6",
+      "events": [
+        {
+          "id": "e0",
+          "word": "court",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s6 court"
+        },
+        {
+          "id": "e1",
+          "word": "read",
+          "offset": 0,
+          "layer": "set",
+          "what": "s6 read"
+        },
+        {
+          "id": "e2",
+          "word": "file",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s6 file"
+        },
+        {
+          "id": "e3",
+          "word": "named",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s6 named"
+        },
+        {
+          "id": "e4",
+          "word": "sentence",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s6 sentence"
+        },
+        {
+          "id": "cast0",
+          "word": "court",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s6 cast"
+        }
+      ]
+    },
+    {
+      "id": "s7",
+      "events": [
+        {
+          "id": "e0",
+          "word": "dawn",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s7 dawn"
+        },
+        {
+          "id": "e1",
+          "word": "yard",
+          "offset": 0,
+          "layer": "set",
+          "what": "s7 yard"
+        },
+        {
+          "id": "e2",
+          "word": "bell",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s7 bell"
+        },
+        {
+          "id": "cast0",
+          "word": "dawn",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s7 cast"
+        }
+      ]
+    }
+  ]
+}

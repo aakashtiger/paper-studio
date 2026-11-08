@@ -1,0 +1,372 @@
+[
+{
+"word": "Every",
+"start": 0.05,
+"end": 0.75
+},
+{
+"word": "night",
+"start": 0.75,
+"end": 1.11
+},
+{
+"word": "the",
+"start": 1.11,
+"end": 1.37
+},
+{
+"word": "Q",
+"start": 1.37,
+"end": 1.65
+},
+{
+"word": "lamp",
+"start": 1.65,
+"end": 1.95
+},
+{
+"word": "calls",
+"start": 1.95,
+"end": 2.37
+},
+{
+"word": "one",
+"start": 2.37,
+"end": 2.75
+},
+{
+"word": "name,",
+"start": 2.75,
+"end": 3.17
+},
+{
+"word": "and",
+"start": 3.33,
+"end": 3.47
+},
+{
+"word": "every",
+"start": 3.47,
+"end": 3.85
+},
+{
+"word": "night",
+"start": 3.85,
+"end": 4.17
+},
+{
+"word": "the",
+"start": 4.17,
+"end": 4.39
+},
+{
+"word": "stage",
+"start": 4.39,
+"end": 4.77
+},
+{
+"word": "holds",
+"start": 4.77,
+"end": 5.27
+},
+{
+"word": "its",
+"start": 5.27,
+"end": 5.61
+},
+{
+"word": "breath,",
+"start": 5.61,
+"end": 5.97
+},
+{
+"word": "but",
+"start": 6.07,
+"end": 6.23
+},
+{
+"word": "tonight",
+"start": 6.23,
+"end": 6.65
+},
+{
+"word": "the",
+"start": 6.65,
+"end": 6.95
+},
+{
+"word": "lamp",
+"start": 6.95,
+"end": 7.23
+},
+{
+"word": "called",
+"start": 7.23,
+"end": 7.67
+},
+{
+"word": "Nova,",
+"start": 7.67,
+"end": 8.05
+},
+{
+"word": "and",
+"start": 8.47,
+"end": 8.57
+},
+{
+"word": "the",
+"start": 8.57,
+"end": 8.71
+},
+{
+"word": "wings",
+"start": 8.71,
+"end": 9.03
+},
+{
+"word": "were",
+"start": 9.03,
+"end": 9.31
+},
+{
+"word": "empty,",
+"start": 9.31,
+"end": 9.83
+},
+{
+"word": "so",
+"start": 10.09,
+"end": 10.31
+},
+{
+"word": "Mira",
+"start": 10.31,
+"end": 10.83
+},
+{
+"word": "picked",
+"start": 10.83,
+"end": 11.09
+},
+{
+"word": "up",
+"start": 11.09,
+"end": 11.33
+},
+{
+"word": "the",
+"start": 11.33,
+"end": 11.51
+},
+{
+"word": "star",
+"start": 11.51,
+"end": 11.91
+},
+{
+"word": "and",
+"start": 11.91,
+"end": 12.29
+},
+{
+"word": "put",
+"start": 12.29,
+"end": 12.49
+},
+{
+"word": "it",
+"start": 12.49,
+"end": 12.61
+},
+{
+"word": "in",
+"start": 12.61,
+"end": 12.73
+},
+{
+"word": "her",
+"start": 12.73,
+"end": 12.91
+},
+{
+"word": "hand,",
+"start": 12.91,
+"end": 13.39
+},
+{
+"word": "and",
+"start": 13.55,
+"end": 13.69
+},
+{
+"word": "the",
+"start": 13.69,
+"end": 13.81
+},
+{
+"word": "crowd",
+"start": 13.81,
+"end": 14.17
+},
+{
+"word": "saw",
+"start": 14.17,
+"end": 14.55
+},
+{
+"word": "a",
+"start": 14.55,
+"end": 14.83
+},
+{
+"word": "girl",
+"start": 14.83,
+"end": 15.01
+},
+{
+"word": "who",
+"start": 15.01,
+"end": 15.37
+},
+{
+"word": "was",
+"start": 15.37,
+"end": 15.55
+},
+{
+"word": "never",
+"start": 15.55,
+"end": 15.91
+},
+{
+"word": "on",
+"start": 15.91,
+"end": 16.27
+},
+{
+"word": "the",
+"start": 16.27,
+"end": 16.45
+},
+{
+"word": "list,",
+"start": 16.45,
+"end": 16.81
+},
+{
+"word": "and",
+"start": 17.09,
+"end": 17.21
+},
+{
+"word": "the",
+"start": 17.21,
+"end": 17.33
+},
+{
+"word": "light",
+"start": 17.33,
+"end": 17.59
+},
+{
+"word": "found",
+"start": 17.59,
+"end": 17.99
+},
+{
+"word": "her,",
+"start": 17.99,
+"end": 18.33
+},
+{
+"word": "and",
+"start": 18.51,
+"end": 18.61
+},
+{
+"word": "the",
+"start": 18.61,
+"end": 18.75
+},
+{
+"word": "lamp",
+"start": 18.75,
+"end": 19.07
+},
+{
+"word": "called",
+"start": 19.07,
+"end": 19.53
+},
+{
+"word": "again,",
+"start": 19.53,
+"end": 19.91
+},
+{
+"word": "and",
+"start": 20.17,
+"end": 20.33
+},
+{
+"word": "the",
+"start": 20.33,
+"end": 20.45
+},
+{
+"word": "curtain",
+"start": 20.45,
+"end": 20.87
+},
+{
+"word": "opened",
+"start": 20.87,
+"end": 21.45
+},
+{
+"word": "on",
+"start": 21.45,
+"end": 21.73
+},
+{
+"word": "a",
+"start": 21.73,
+"end": 21.91
+},
+{
+"word": "stage",
+"start": 21.91,
+"end": 22.33
+},
+{
+"word": "that",
+"start": 22.33,
+"end": 22.73
+},
+{
+"word": "had",
+"start": 22.73,
+"end": 22.89
+},
+{
+"word": "been",
+"start": 22.89,
+"end": 23.11
+},
+{
+"word": "waiting",
+"start": 23.11,
+"end": 23.49
+},
+{
+"word": "all",
+"start": 23.49,
+"end": 23.97
+},
+{
+"word": "night.",
+"start": 23.97,
+"end": 24.25
+}
+]

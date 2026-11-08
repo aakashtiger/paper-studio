@@ -1,0 +1,24 @@
+{
+  "id": "kpop-crime",
+  "title": "The Run",
+  "logline": "A man kills in the rain and runs for ten days; a detective's file, a checkpoint lamp and a gray hat close the circle, and the calendar never reaches eleven.",
+  "tone": "terse, cold, procedural; a case file read aloud in the rain, never a melodrama",
+  "audience": "A 60-second paper-cut crime short for festival and phone audiences; one male narrator, no dialogue, no women on screen.",
+  "spine": {
+    "want": "to get away with the murder and stay ahead of the file",
+    "obstacle": "the detective's file, the checkpoint lamp and a city that keeps his face",
+    "turn": "he leaves his gray hat on the checkpoint barrier, and the detective follows the hat to the bridge",
+    "button": "the calendar never reaches eleven: day ten ends in the yard, and the noose is only a shadow"
+  },
+  "nonNegotiables": [
+    "male-only cast",
+    "non-graphic murder and execution",
+    "60.00 s",
+    "186 words",
+    "14 voice-over lines",
+    "21 shots",
+    "7 scenes",
+    "the cell is visited twice",
+    "the calendar never reaches 11"
+  ]
+}

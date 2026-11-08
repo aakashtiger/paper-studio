@@ -1,0 +1,1033 @@
+{
+  "shots": [
+    {
+      "id": "s01",
+      "events": [
+        {
+          "id": "e0",
+          "word": "Day",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s01 Day"
+        },
+        {
+          "id": "e1",
+          "word": "one.",
+          "offset": 0,
+          "layer": "set",
+          "what": "s01 one."
+        },
+        {
+          "id": "e2",
+          "word": "Rain",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s01 Rain"
+        },
+        {
+          "id": "e3",
+          "word": "bricks.",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s01 bricks."
+        },
+        {
+          "id": "e4",
+          "word": "knife,",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s01 knife,"
+        },
+        {
+          "id": "e5",
+          "word": "coat,",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s01 coat,"
+        },
+        {
+          "id": "cast0",
+          "word": "Day",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s01 cast"
+        }
+      ]
+    },
+    {
+      "id": "s02",
+      "events": [
+        {
+          "id": "e0",
+          "word": "body",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s02 body"
+        },
+        {
+          "id": "e1",
+          "word": "under",
+          "offset": 0,
+          "layer": "set",
+          "what": "s02 under"
+        },
+        {
+          "id": "e2",
+          "word": "sheet.",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s02 sheet."
+        },
+        {
+          "id": "cast0",
+          "word": "body",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s02 cast"
+        }
+      ]
+    },
+    {
+      "id": "s03",
+      "events": [
+        {
+          "id": "e0",
+          "word": "By",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s03 By"
+        },
+        {
+          "id": "e1",
+          "word": "dawn",
+          "offset": 0,
+          "layer": "set",
+          "what": "s03 dawn"
+        },
+        {
+          "id": "e2",
+          "word": "file",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s03 file"
+        },
+        {
+          "id": "e3",
+          "word": "open,",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s03 open,"
+        },
+        {
+          "id": "e4",
+          "word": "name",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s03 name"
+        },
+        {
+          "id": "cast0",
+          "word": "By",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s03 cast"
+        }
+      ]
+    },
+    {
+      "id": "s04",
+      "events": [
+        {
+          "id": "e0",
+          "word": "Days",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s04 Days"
+        },
+        {
+          "id": "e1",
+          "word": "two",
+          "offset": 0,
+          "layer": "set",
+          "what": "s04 two"
+        },
+        {
+          "id": "e2",
+          "word": "three.",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s04 three."
+        },
+        {
+          "id": "e3",
+          "word": "ran",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s04 ran"
+        },
+        {
+          "id": "cast0",
+          "word": "Days",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s04 cast"
+        }
+      ]
+    },
+    {
+      "id": "s05",
+      "events": [
+        {
+          "id": "e0",
+          "word": "through",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s05 through"
+        },
+        {
+          "id": "e1",
+          "word": "rain;",
+          "offset": 0,
+          "layer": "set",
+          "what": "s05 rain;"
+        },
+        {
+          "id": "e2",
+          "word": "city",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s05 city"
+        },
+        {
+          "id": "e3",
+          "word": "kept",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s05 kept"
+        },
+        {
+          "id": "e4",
+          "word": "face.",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s05 face."
+        },
+        {
+          "id": "cast0",
+          "word": "through",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s05 cast"
+        }
+      ]
+    },
+    {
+      "id": "s06",
+      "events": [
+        {
+          "id": "e0",
+          "word": "Day",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s06 Day"
+        },
+        {
+          "id": "e1",
+          "word": "four.",
+          "offset": 0,
+          "layer": "set",
+          "what": "s06 four."
+        },
+        {
+          "id": "e2",
+          "word": "train,",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s06 train,"
+        },
+        {
+          "id": "e3",
+          "word": "tunnel,",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s06 tunnel,"
+        },
+        {
+          "id": "e4",
+          "word": "ticket",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s06 ticket"
+        },
+        {
+          "id": "e5",
+          "word": "seat",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s06 seat"
+        },
+        {
+          "id": "e6",
+          "word": "dark.",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s06 dark."
+        },
+        {
+          "id": "cast0",
+          "word": "Day",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s06 cast"
+        }
+      ]
+    },
+    {
+      "id": "s07",
+      "events": [
+        {
+          "id": "e0",
+          "word": "Days",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s07 Days"
+        },
+        {
+          "id": "e1",
+          "word": "five",
+          "offset": 0,
+          "layer": "set",
+          "what": "s07 five"
+        },
+        {
+          "id": "e2",
+          "word": "six.",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s07 six."
+        },
+        {
+          "id": "e3",
+          "word": "rented",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s07 rented"
+        },
+        {
+          "id": "e4",
+          "word": "room,",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s07 room,"
+        },
+        {
+          "id": "cast0",
+          "word": "Days",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s07 cast"
+        }
+      ]
+    },
+    {
+      "id": "s08",
+      "events": [
+        {
+          "id": "e0",
+          "word": "calendar,",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s08 calendar,"
+        },
+        {
+          "id": "e1",
+          "word": "door",
+          "offset": 0,
+          "layer": "set",
+          "what": "s08 door"
+        },
+        {
+          "id": "e2",
+          "word": "did",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s08 did"
+        },
+        {
+          "id": "e3",
+          "word": "not",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s08 not"
+        },
+        {
+          "id": "e4",
+          "word": "answer.",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s08 answer."
+        },
+        {
+          "id": "cast0",
+          "word": "calendar,",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s08 cast"
+        }
+      ]
+    },
+    {
+      "id": "s09",
+      "events": [
+        {
+          "id": "e0",
+          "word": "Day",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s09 Day"
+        },
+        {
+          "id": "e1",
+          "word": "seven.",
+          "offset": 0,
+          "layer": "set",
+          "what": "s09 seven."
+        },
+        {
+          "id": "e2",
+          "word": "page",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s09 page"
+        },
+        {
+          "id": "e3",
+          "word": "turned.",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s09 turned."
+        },
+        {
+          "id": "e4",
+          "word": "counted",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s09 counted"
+        },
+        {
+          "id": "e5",
+          "word": "hours,",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s09 hours,"
+        },
+        {
+          "id": "e6",
+          "word": "not",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s09 not"
+        },
+        {
+          "id": "e7",
+          "word": "money.",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s09 money."
+        },
+        {
+          "id": "cast0",
+          "word": "Day",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s09 cast"
+        }
+      ]
+    },
+    {
+      "id": "s10",
+      "events": [
+        {
+          "id": "e0",
+          "word": "Day",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s10 Day"
+        },
+        {
+          "id": "e1",
+          "word": "eight.",
+          "offset": 0,
+          "layer": "set",
+          "what": "s10 eight."
+        },
+        {
+          "id": "e2",
+          "word": "checkpoint",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s10 checkpoint"
+        },
+        {
+          "id": "e3",
+          "word": "city's",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s10 city's"
+        },
+        {
+          "id": "e4",
+          "word": "edge,",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s10 edge,"
+        },
+        {
+          "id": "cast0",
+          "word": "Day",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s10 cast"
+        }
+      ]
+    },
+    {
+      "id": "s11",
+      "events": [
+        {
+          "id": "e0",
+          "word": "lamp",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s11 lamp"
+        },
+        {
+          "id": "e1",
+          "word": "found",
+          "offset": 0,
+          "layer": "set",
+          "what": "s11 found"
+        },
+        {
+          "id": "e2",
+          "word": "face.",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s11 face."
+        },
+        {
+          "id": "cast0",
+          "word": "lamp",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s11 cast"
+        }
+      ]
+    },
+    {
+      "id": "s12",
+      "events": [
+        {
+          "id": "e0",
+          "word": "turned",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s12 turned"
+        },
+        {
+          "id": "e1",
+          "word": "collar",
+          "offset": 0,
+          "layer": "set",
+          "what": "s12 collar"
+        },
+        {
+          "id": "e2",
+          "word": "up",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s12 up"
+        },
+        {
+          "id": "e3",
+          "word": "walked",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s12 walked"
+        },
+        {
+          "id": "e4",
+          "word": "through",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s12 through"
+        },
+        {
+          "id": "e5",
+          "word": "light",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s12 light"
+        },
+        {
+          "id": "e6",
+          "word": "without",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s12 without"
+        },
+        {
+          "id": "e7",
+          "word": "stopping.",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s12 stopping."
+        },
+        {
+          "id": "cast0",
+          "word": "turned",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s12 cast"
+        }
+      ]
+    },
+    {
+      "id": "s13",
+      "events": [
+        {
+          "id": "e0",
+          "word": "Day",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s13 Day"
+        },
+        {
+          "id": "e1",
+          "word": "nine.",
+          "offset": 0,
+          "layer": "set",
+          "what": "s13 nine."
+        },
+        {
+          "id": "e2",
+          "word": "bridge",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s13 bridge"
+        },
+        {
+          "id": "e3",
+          "word": "wet,",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s13 wet,"
+        },
+        {
+          "id": "e4",
+          "word": "detective",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s13 detective"
+        },
+        {
+          "id": "cast0",
+          "word": "Day",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s13 cast"
+        }
+      ]
+    },
+    {
+      "id": "s14",
+      "events": [
+        {
+          "id": "e0",
+          "word": "waited",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s14 waited"
+        },
+        {
+          "id": "e1",
+          "word": "far",
+          "offset": 0,
+          "layer": "set",
+          "what": "s14 far"
+        },
+        {
+          "id": "e2",
+          "word": "end.",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s14 end."
+        },
+        {
+          "id": "cast0",
+          "word": "waited",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s14 cast"
+        }
+      ]
+    },
+    {
+      "id": "s15",
+      "events": [
+        {
+          "id": "e0",
+          "word": "cuffs",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s15 cuffs"
+        },
+        {
+          "id": "e1",
+          "word": "closed.",
+          "offset": 0,
+          "layer": "set",
+          "what": "s15 closed."
+        },
+        {
+          "id": "e2",
+          "word": "city",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s15 city"
+        },
+        {
+          "id": "e3",
+          "word": "went",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s15 went"
+        },
+        {
+          "id": "e4",
+          "word": "behind",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s15 behind"
+        },
+        {
+          "id": "e5",
+          "word": "him,",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s15 him,"
+        },
+        {
+          "id": "e6",
+          "word": "indifferent.",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s15 indifferent."
+        },
+        {
+          "id": "cast0",
+          "word": "cuffs",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s15 cast"
+        }
+      ]
+    },
+    {
+      "id": "s16",
+      "events": [
+        {
+          "id": "e0",
+          "word": "Day",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s16 Day"
+        },
+        {
+          "id": "e1",
+          "word": "ten.",
+          "offset": 0,
+          "layer": "set",
+          "what": "s16 ten."
+        },
+        {
+          "id": "e2",
+          "word": "cell,",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s16 cell,"
+        },
+        {
+          "id": "e3",
+          "word": "file,",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s16 file,"
+        },
+        {
+          "id": "cast0",
+          "word": "Day",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s16 cast"
+        }
+      ]
+    },
+    {
+      "id": "s17",
+      "events": [
+        {
+          "id": "e0",
+          "word": "judge,",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s17 judge,"
+        },
+        {
+          "id": "e1",
+          "word": "sentence",
+          "offset": 0,
+          "layer": "set",
+          "what": "s17 sentence"
+        },
+        {
+          "id": "e2",
+          "word": "read",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s17 read"
+        },
+        {
+          "id": "e3",
+          "word": "without",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s17 without"
+        },
+        {
+          "id": "e4",
+          "word": "hurry.",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s17 hurry."
+        },
+        {
+          "id": "cast0",
+          "word": "judge,",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s17 cast"
+        }
+      ]
+    },
+    {
+      "id": "s18",
+      "events": [
+        {
+          "id": "e0",
+          "word": "gavel",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s18 gavel"
+        },
+        {
+          "id": "e1",
+          "word": "fell.",
+          "offset": 0,
+          "layer": "set",
+          "what": "s18 fell."
+        },
+        {
+          "id": "e2",
+          "word": "warder",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s18 warder"
+        },
+        {
+          "id": "e3",
+          "word": "took",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s18 took"
+        },
+        {
+          "id": "e4",
+          "word": "arm,",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s18 arm,"
+        },
+        {
+          "id": "e5",
+          "word": "court",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s18 court"
+        },
+        {
+          "id": "e6",
+          "word": "empty.",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s18 empty."
+        },
+        {
+          "id": "cast0",
+          "word": "gavel",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s18 cast"
+        }
+      ]
+    },
+    {
+      "id": "s19",
+      "events": [
+        {
+          "id": "e0",
+          "word": "brought",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s19 brought"
+        },
+        {
+          "id": "e1",
+          "word": "him",
+          "offset": 0,
+          "layer": "set",
+          "what": "s19 him"
+        },
+        {
+          "id": "e2",
+          "word": "back",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s19 back"
+        },
+        {
+          "id": "e3",
+          "word": "same",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s19 same"
+        },
+        {
+          "id": "e4",
+          "word": "cell,",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s19 cell,"
+        },
+        {
+          "id": "e5",
+          "word": "calendar",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s19 calendar"
+        },
+        {
+          "id": "e6",
+          "word": "still",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s19 still"
+        },
+        {
+          "id": "e7",
+          "word": "said",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s19 said"
+        },
+        {
+          "id": "e8",
+          "word": "ten.",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s19 ten."
+        },
+        {
+          "id": "cast0",
+          "word": "brought",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s19 cast"
+        }
+      ]
+    },
+    {
+      "id": "s20",
+      "events": [
+        {
+          "id": "e0",
+          "word": "dawn",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s20 dawn"
+        },
+        {
+          "id": "e1",
+          "word": "walked",
+          "offset": 0,
+          "layer": "set",
+          "what": "s20 walked"
+        },
+        {
+          "id": "e2",
+          "word": "him",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s20 him"
+        },
+        {
+          "id": "e3",
+          "word": "yard,",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s20 yard,"
+        },
+        {
+          "id": "cast0",
+          "word": "dawn",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s20 cast"
+        }
+      ]
+    },
+    {
+      "id": "s21",
+      "events": [
+        {
+          "id": "e0",
+          "word": "where",
+          "offset": 0,
+          "layer": "camera",
+          "what": "s21 where"
+        },
+        {
+          "id": "e1",
+          "word": "noose",
+          "offset": 0,
+          "layer": "set",
+          "what": "s21 noose"
+        },
+        {
+          "id": "e2",
+          "word": "shadow.",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s21 shadow."
+        },
+        {
+          "id": "cast0",
+          "word": "where",
+          "offset": 0,
+          "layer": "cast",
+          "what": "s21 cast"
+        }
+      ]
+    }
+  ]
+}

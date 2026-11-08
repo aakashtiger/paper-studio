@@ -1,0 +1,83 @@
+[
+  {
+    "id": "s1",
+    "start": 0,
+    "end": 3.68,
+    "a": 0,
+    "b": 7,
+    "act": "test",
+    "duration": 3.68
+  },
+  {
+    "id": "s2",
+    "start": 3.68,
+    "end": 6.42,
+    "a": 8,
+    "b": 15,
+    "act": "test",
+    "duration": 2.74
+  },
+  {
+    "id": "s3",
+    "start": 6.42,
+    "end": 10.44,
+    "a": 16,
+    "b": 26,
+    "act": "test",
+    "duration": 4.02
+  },
+  {
+    "id": "s4",
+    "start": 10.44,
+    "end": 12.26,
+    "a": 27,
+    "b": 32,
+    "act": "test",
+    "duration": 1.82
+  },
+  {
+    "id": "s5",
+    "start": 12.26,
+    "end": 13.9,
+    "a": 33,
+    "b": 38,
+    "act": "test",
+    "duration": 1.64
+  },
+  {
+    "id": "s6",
+    "start": 13.9,
+    "end": 17.44,
+    "a": 39,
+    "b": 50,
+    "act": "test",
+    "duration": 3.54
+  },
+  {
+    "id": "s7",
+    "start": 17.44,
+    "end": 18.86,
+    "a": 51,
+    "b": 55,
+    "act": "test",
+    "duration": 1.42
+  },
+  {
+    "id": "s8",
+    "start": 18.86,
+    "end": 20.52,
+    "a": 56,
+    "b": 60,
+    "act": "test",
+    "duration": 1.66
+  },
+  {
+    "id": "s9",
+    "start": 20.52,
+    "end": 24.9,
+    "a": 61,
+    "b": 73,
+    "act": "test",
+    "duration": 4.38
+  }
+]

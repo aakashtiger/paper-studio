@@ -1,0 +1,124 @@
+{
+  "role": "story",
+  "score": 5,
+  "verdict": "NO-GO",
+  "videoHash": "5769fef56e61287fe0ce48711bbc5d84d39fa8073d6cac5f15731f7dfa73839d",
+  "critic": "story-critic-b",
+  "axes": {
+    "legibility": 5,
+    "line-to-picture": 4,
+    "ending": 3,
+    "invention": 6,
+    "argument": 4,
+    "pacing": 5
+  },
+  "findings": [
+    {
+      "shot": "s21",
+      "t": 58.6,
+      "severity": "P0",
+      "what": "The ending is not staged. The two men stand on the gallows platform in an embrace, the noose is a hairline loop around the prisoner's head (the top arc hidden by his hair, so it reads as a halo), the bell rings itself, and the film fades on them. No drop, no lever, no hood, no executioner, no empty platform, no reaction. The line 'where the noose was a shadow' (58.54-59.54) and the hero 'THE SHADOW' (59.5) are the only places the shadow exists; the picture shows a physical rope loop, not a shadow, and no consequence.",
+      "evidence": "MP4 58.2/58.6/59.5 (both on the platform; the loop around the prisoner's head; the warder's arm across him; the bell arcs; the gallows behind them; the day card 10), 57.0/57.2 (the noose hangs from the gallows at the right, not around him), 59.9 (fade); score s21 intent 'the execution happens off-screen'."
+    },
+    {
+      "shot": "s12",
+      "t": 34.45,
+      "severity": "P1",
+      "what": "This is the first shot where I lose the story. The hat decoy is the film's turn, but it is asserted by the label, not played. The detective has already found the man's face at 30.2 (the lamp, the open file, 'FOUND'), and at 34.45 he faces the camera with the thief standing beside him and the cap on the barrier behind them; his eyes never follow the hat. After a face ID a hat decoy cannot work, and the film never shows the detective picking it up or following it. The picture says the checkpoint (the only way out, the face) catches him, not the hat.",
+      "evidence": "MP4 30.2 (the lamp on the face; the detective holds the open file; 'FOUND'; 'HIS EYES DID NOT MOVE'), 33.35 (the thief bent, the grey cap in his hand at the barrier; the detective beside him, looking at him), 34.45 (the detective's eyes front, the thief beside him, the cap on the barrier behind them), 38.9 (the cap in the detective's hand at the bridge); the label 'THE EYES FOLLOWED THE HAT'."
+    },
+    {
+      "shot": "s15",
+      "t": 40.2,
+      "severity": "P1",
+      "what": "The cuffs never close on screen. 'The cuffs closed' (39.68-40.26) is sung over open cuffs held in the detective's left hand, with the thief's wrists free beside him; the cuffs are still open at 42.4 and 42.9, on 'indifferent' (42.2-42.7), and the film cuts to the cell without a close. The arrest is a pose: the detective holds an open pair of cuffs for 3.86 s, and the cuffing happens off-screen. The film's signature sound ('the cuffs closing') has no picture.",
+      "evidence": "MP4 39.5 (both rings open between them), 40.2 (one ring on the detective's hand, the other open; the thief's wrists free; the detective's eyes shut), 41.0 (same), 42.4 (still open; the thief's arms at his sides), 42.9 (still open; the cap in the detective's right hand); s15 ends 43.06 and s16 opens in the cell."
+    },
+    {
+      "shot": "s20",
+      "t": 56.84,
+      "severity": "P1",
+      "what": "The last walk is a teleport. 'walked him to the yard' (walked 56.84-57.06) is over a still frame: at 57.0 both men stand by the yard door with their feet planted; at 57.2 they are on the gallows platform, 2 m away, with no stride, no footfall and no camera pan that accounts for it. The film's last action before the execution is not played.",
+      "evidence": "MP4 56.2 (both at the yard door, feet planted), 57.0 (same spot; the noose hangs at the right), 57.2 (both on the platform; the day card 10 at the right edge), 57.6/57.9 (on the platform); the word 'walked' 56.84-57.06."
+    },
+    {
+      "shot": "s19",
+      "t": 53.5,
+      "severity": "P2",
+      "what": "The pacing is inverted at the climax: the static cell is 4.5 s (51.52-56.02), the longest shot in the film, while the last walk plus execution are s20 (2.12) + s21 (1.86) = 3.98 s; the execution itself gets 1.86 s. The film gives its quietest, least eventful shot more time than its button, so the ending is rushed exactly where it needs to be staged.",
+      "evidence": "shots.json s19 4.50, s20 2.12, s21 1.86; MP4 53.5/54.4 (static cell, the man behind bars, the warder at the door, the calendar 10); 58.2-59.5 (the last beat)."
+    },
+    {
+      "shot": "s13",
+      "t": 36.0,
+      "severity": "P2",
+      "what": "'the detective waited at the far end' (37.94-38.92) is contradicted by the bridge's flat geography: at 36.0 the detective's silhouette has its feet on the same deck line as the thief's, 3 m away, and at 38.5/38.9 he is at the same scale and depth, shoulder to shoulder. The film's 'far end' never becomes a place; the bridge is a backdrop.",
+      "evidence": "MP4 36.0 (silhouette at the right, feet at the thief's deck line), 37.55 (the detective 3 m away; the cap not in his hand), 38.5/38.9 (same scale/depth; the cap at the frame edge); the words 'at the far end' 37.94-38.92."
+    },
+    {
+      "shot": "s14",
+      "t": 38.5,
+      "severity": "P2",
+      "what": "The turn object is legible for 0.4 s. At 38.5 the grey cap is half out of frame at the right edge; at 38.9 it is fully visible; the shot cuts at 39.2. The film's one piece of evidence that the detective followed the hat is on screen for 0.4 s of a 1.78 s shot, at the frame edge, and the subtitle 'THE GREY CAP' has to telegraph it from 37.42.",
+      "evidence": "MP4 38.5 (the cap clipped at the right edge, x~1790-1900), 38.9 (the cap fully at x~1450-1600), 39.2 (cut); s14 37.42-39.2 (1.78 s); the label 'THE GREY CAP'."
+    },
+    {
+      "shot": "s21",
+      "t": 58.6,
+      "severity": "P2",
+      "what": "The s20 -> s21 'match cut' does not match. The prisoner's mouth goes from open (57.6) to closed (58.6), the warder's face from neutral to wide-eyed, the warder's arm is in a different place, and the door, bell and gallows all shift. The film's one continuous last beat reads as a reset, so the noose that was on the gallows at 57.2 appears around the prisoner's head at 58.2 as a graphic jump, not a match.",
+      "evidence": "MP4 57.6 vs 58.2 vs 58.6 (mouth, expression, arm, door/bell/gallows all differ); score s21 matchCut true; 57.2 (the noose on the gallows) vs 58.2 (the noose around the head)."
+    },
+    {
+      "shot": "s21",
+      "t": 58.6,
+      "severity": "P2",
+      "what": "The button 'the calendar never reaches eleven' is a card that says 10, not an event. The cell card is 10 at 53.5/54.4, the yard card is 10 at 57.2/58.6/59.5, and the line says 'At dawn' (56.12) after a full day ten. Nothing shows day 11 arriving, a page being withheld, or anyone stopping the calendar; a viewer reads 'still day ten' (which contradicts the court that just happened) or a continuity error.",
+      "evidence": "MP4 53.5/54.4 (cell card 10), 57.2 (yard card 10, cropped at the right edge), 58.6/59.5 (yard card 10); the line 'At dawn' 56.12; the story spine 'the calendar never reaches eleven'; no 11 in any frame."
+    },
+    {
+      "shot": "s04",
+      "t": 10.2,
+      "severity": "P2",
+      "what": "The film invents specific station facts the brief does not carry: 'CENTRAL STATION' (upper right), '02:10' (clock and label), 'NORTH' (the ticket), 'ONE WAY'/'ONE TICKET' (stickers), and 'NIGHT · 02:10' on the train at 15.0. The brief says 'a train, a tunnel, a ticket'; the film names the station, the time and the destination. These are readable facts, not set dressing.",
+      "evidence": "MP4 10.2 ('CENTRAL STATION'; the clock 02:10; the label '02:10'; the ticket '02:10 NORTH'; 'ONE WAY'), 15.0 ('NIGHT · 02:10'; the ticket '02:10 NORTH'); the brief's v04 'a train, a tunnel, a ticket'."
+    },
+    {
+      "shot": "s09",
+      "t": 23.7,
+      "severity": "P2",
+      "what": "The film invents a case number, a currency and a brand: 'CASE 044' on the file (6.5), the evidence bag (6.5), the prison shirt (44.75/53.5/58.6) and the bridge sticker (40.2); '$100' bills (19.3/20.75/23.7); 'CROSS WITH CARE' (40.2/41.0); 'THE RUN' as the newspaper masthead (10.2) and the calendar brand (19.3/21.45/23.7/25.6/33.35/46.5/53.5/59.5). The case number on the prison shirt is a category error - a shirt carries a prisoner number, not a case number - and 'THE RUN' is the film's title printed on diegetic props.",
+      "evidence": "MP4 6.5 (CASE 044 on the file; the bag), 10.2 (the masthead THE RUN), 19.3/20.75/23.7 ($100; the calendar brand), 40.2 (CROSS WITH CARE; CASE 044), 44.75/53.5/58.6 (044 on the shirt); the brief has no case number, currency or newspaper."
+    },
+    {
+      "shot": "s09",
+      "t": 24.6,
+      "severity": "P2",
+      "what": "'He counted the hours' (24.62-25.5) is not pictured: there is no clock in the shot at 23.7/25.6 and no look at one; the wall clock is in s07/s08 (19.3/21.45) and is frozen at ~2:08 across the calendar turning 5 -> 6. The line's contrast (hours, not money) is half-played: the money is on the table at 23.7/25.6, the hours are not.",
+      "evidence": "MP4 19.3/21.45 (the wall clock ~2:08 in both; the calendar 5 -> 6), 23.7/25.6 (no clock in frame; the calendar 7; the banded money on the table); the words 'counted' 24.62-24.9, 'hours,' 25.12-25.5."
+    },
+    {
+      "shot": "s06",
+      "t": 14.75,
+      "severity": "P2",
+      "what": "'a tunnel' (14.72-15.0) is sung over a lit city skyline in the train windows; the windows only go black at 15.0, as the word ends and the line moves to 'a ticket' (15.48). The tunnel is the blackout, but the blackout arrives after the word it belongs to.",
+      "evidence": "MP4 14.75 (lit skyline in all three windows), 15.0 (windows black); the words 'tunnel,' 14.72-15.0, 'a' 15.38, 'ticket' 15.48-15.68."
+    },
+    {
+      "shot": "s01",
+      "t": 1.7,
+      "severity": "P2",
+      "what": "The premise is carried by the line, not the picture: the sheeted body is a smooth wedge with no head, shoulder or foot, and the man sits astride it rather than kneeling over it; the frame reads 'a man on a white shape with a knife.' The knife in his hand at 2.3 is the one clear fact. The line that names the body ('a body under a sheet', 3.58-4.54) arrives after the film has cut away at 3.38; at 4.2 the body is a corner of sheet at the bottom right.",
+      "evidence": "MP4 1.7/2.3/3.0 (the sheet is a smooth wedge; no body shape; the man astride; the knife at 2.3), 3.38 (cut), 4.2 (the knife and a sheet corner); the words 'a body' 3.58-3.84, 'sheet.' 4.24-4.54."
+    },
+    {
+      "shot": "s15",
+      "t": 40.2,
+      "severity": "P2",
+      "what": "'The city went on behind him' (40.68-42.2) is answered by two static guards at the 'NO ENTRY' barrier, a 'CROSS WITH CARE' sign and an empty bridge; no traffic, no crowd, no one moving. The film's stated indifference is a backdrop, not an event, so the line's irony (the city does not care) has no city to be indifferent.",
+      "evidence": "MP4 40.2/41.0 (two faceless guards at the barrier, static; the bridge empty; the sign), 42.4 (same); the words 'The city went on' 40.68-41.44, 'behind him,' 41.44-42.2."
+    }
+  ],
+  "named_strongest": "The file and the knife, s03-s19: the detective bags the knife at 6.5 and opens CASE 044; the same file is open at the knife drawing in court at 46.5; the gavel lands on 'fell.' (48.45); the warder's hand lands on 'took his arm' (49.5); the court is empty on 'the court was empty' (51.1); the same cell and the calendar 10 at 53.5. This is the one chain where the pictures, not the labels, carry the plot.",
+  "named_weakest": "The last 4 s, s20-s21 (56.02-60): the walk to the yard is a teleport (57.0 at the door, 57.2 on the platform), the noose is a hairline loop around the prisoner's head (a halo), the bell rings itself, and the film fades on two men standing on the platform. No drop, no reaction, no empty platform; the button 'the noose was a shadow' is spoken and titled, never pictured."
+}

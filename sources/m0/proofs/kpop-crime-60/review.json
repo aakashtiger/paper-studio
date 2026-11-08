@@ -1,0 +1,17 @@
+{
+  "videoHash": "sha256:5769fef56e61287fe0ce48711bbc5d84d39fa8073d6cac5f15731f7dfa73839d",
+  "pass": true,
+  "contact": {
+    "path": "out/sheet/contact-sheet.png",
+    "sha256": "sha256:b965850b68bec718c509ea7bdaa99b9b380f255fd51b14b22c04dd578065961a"
+  },
+  "hands": {
+    "path": "out/hands/hands.json",
+    "sha256": "sha256:ffabc43f409173c18d1020e46ef8c04e896ec61df2d3a95e7d7e3c5a9453a8ff"
+  },
+  "cuts": {
+    "path": "out/cut-pairs.json",
+    "sha256": "sha256:e9ccf5d653c988bde01e28fe3ceac268bbe62c99beb58b7a275601db8b0c3d5c"
+  },
+  "notes": "M0 close-out: clean picture, no CUE HUD/tape; hideout continuity, male clerk, short hair, one cap size, both cuffs, neck noose, exhibit photo, one day counter. 21 stills, 6 hand pages, 4 cut pages."
+}

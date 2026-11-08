@@ -1,0 +1,565 @@
+{
+  "film": "kpop-test",
+  "note": "Every meaningful word has a visual event. The event time is the word's measured start plus offset. The scenes read these times; sync-check validates the table against the narration.",
+  "shots": [
+    {
+      "id": "s1",
+      "events": [
+        {
+          "id": "lampOn",
+          "word": "Every",
+          "offset": 0,
+          "layer": "light",
+          "what": "the cue lamp clicks on"
+        },
+        {
+          "id": "crowdSettle",
+          "word": "night",
+          "offset": 0,
+          "layer": "crowd",
+          "what": "the crowd settles"
+        },
+        {
+          "id": "lampTurn",
+          "word": "cue",
+          "offset": 0,
+          "layer": "prop",
+          "what": "the lamp head turns to the wing"
+        },
+        {
+          "id": "beamSweep",
+          "word": "lamp",
+          "offset": 0,
+          "layer": "light",
+          "what": "the beam sweeps the stage"
+        },
+        {
+          "id": "cardDrop",
+          "word": "calls",
+          "offset": 0,
+          "layer": "prop",
+          "what": "the NOVA card drops into the slot"
+        },
+        {
+          "id": "spotNova",
+          "word": "one",
+          "offset": 0,
+          "layer": "light",
+          "what": "the spotlight snaps on Nova"
+        },
+        {
+          "id": "novaStep",
+          "word": "name",
+          "offset": 0,
+          "layer": "cast",
+          "what": "Nova steps into the light",
+          "kind": "root"
+        },
+        {
+          "id": "cameraPull",
+          "word": "Every",
+          "offset": 0,
+          "layer": "camera",
+          "what": "the camera pulls from the lamp to the stage"
+        },
+        {
+          "id": "novaFace",
+          "word": "one",
+          "offset": 0,
+          "layer": "cast",
+          "kind": "face",
+          "what": "Nova's eyes go wide"
+        },
+        {
+          "id": "miraLook1",
+          "word": "one",
+          "offset": 0,
+          "layer": "cast",
+          "kind": "face",
+          "what": "Mira looks up"
+        }
+      ]
+    },
+    {
+      "id": "s2",
+      "events": [
+        {
+          "id": "novaStep2",
+          "word": "every",
+          "offset": 0,
+          "layer": "cast",
+          "what": "Nova takes another step to centre",
+          "kind": "root"
+        },
+        {
+          "id": "starPulse",
+          "word": "night",
+          "offset": 0,
+          "layer": "set",
+          "what": "the stage star pulses"
+        },
+        {
+          "id": "stageReveal",
+          "word": "stage",
+          "offset": 0,
+          "layer": "camera",
+          "what": "the camera pulls back to reveal the stage"
+        },
+        {
+          "id": "crowdInhale",
+          "word": "holds",
+          "offset": 0,
+          "layer": "crowd",
+          "what": "the crowd inhales and rises"
+        },
+        {
+          "id": "novaBreath",
+          "word": "breath",
+          "offset": 0,
+          "layer": "cast",
+          "what": "Nova puts her hands to her chest and breathes",
+          "kind": "pose"
+        },
+        {
+          "id": "miraLook",
+          "word": "the",
+          "offset": 0,
+          "layer": "cast",
+          "what": "Mira looks up from the call sheet",
+          "kind": "face"
+        },
+        {
+          "id": "novaFace2",
+          "word": "breath",
+          "offset": 0,
+          "layer": "cast",
+          "kind": "face",
+          "what": "Nova closes her eyes"
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "events": [
+        {
+          "id": "workLight",
+          "word": "tonight",
+          "offset": 0,
+          "layer": "light",
+          "what": "the work light flickers"
+        },
+        {
+          "id": "beamEnter",
+          "word": "lamp",
+          "offset": 0,
+          "layer": "light",
+          "what": "the lamp beam enters the wing"
+        },
+        {
+          "id": "cardFlutter",
+          "word": "called",
+          "offset": 0,
+          "layer": "prop",
+          "what": "the NOVA card flutters on the floor"
+        },
+        {
+          "id": "miraLook",
+          "word": "Nova",
+          "offset": 0,
+          "layer": "cast",
+          "what": "Mira looks at the empty mark",
+          "kind": "face"
+        },
+        {
+          "id": "trackWings",
+          "word": "wings",
+          "offset": 0,
+          "layer": "camera",
+          "what": "the camera tracks to the empty wings"
+        },
+        {
+          "id": "starFall",
+          "word": "were",
+          "offset": 0,
+          "layer": "prop",
+          "what": "the star falls from the rack"
+        },
+        {
+          "id": "starLand",
+          "word": "empty",
+          "offset": 0,
+          "layer": "prop",
+          "what": "the star lands on the empty mark"
+        },
+        {
+          "id": "miraWalk",
+          "word": "tonight",
+          "offset": 0,
+          "layer": "cast",
+          "kind": "root",
+          "what": "Mira walks to the mark"
+        },
+        {
+          "id": "miraReact",
+          "word": "empty",
+          "offset": 0,
+          "layer": "cast",
+          "kind": "face",
+          "what": "Mira sees the empty mark"
+        }
+      ]
+    },
+    {
+      "id": "s4",
+      "events": [
+        {
+          "id": "miraEnter",
+          "word": "Mira",
+          "offset": 0,
+          "layer": "cast",
+          "what": "Mira enters the dressing room",
+          "kind": "root"
+        },
+        {
+          "id": "miraReach",
+          "word": "picked",
+          "offset": 0,
+          "layer": "cast",
+          "what": "Mira reaches for the star",
+          "kind": "pose"
+        },
+        {
+          "id": "starLift",
+          "word": "up",
+          "offset": 0,
+          "layer": "prop",
+          "what": "the star lifts off the vanity"
+        },
+        {
+          "id": "starGlow",
+          "word": "star",
+          "offset": 0,
+          "layer": "prop",
+          "what": "the star glows in Mira's hand"
+        },
+        {
+          "id": "cameraPush",
+          "word": "Mira",
+          "offset": 0,
+          "layer": "camera",
+          "what": "the camera pushes into the dressing room"
+        },
+        {
+          "id": "novaLift",
+          "word": "star",
+          "offset": 0,
+          "layer": "cast",
+          "kind": "face",
+          "what": "Nova lifts her head"
+        }
+      ]
+    },
+    {
+      "id": "s5",
+      "events": [
+        {
+          "id": "miraExtend",
+          "word": "put",
+          "offset": 0,
+          "layer": "cast",
+          "what": "Mira extends the star",
+          "kind": "pose"
+        },
+        {
+          "id": "starHand",
+          "word": "hand",
+          "offset": 0,
+          "layer": "prop",
+          "what": "the star closes in Nova's hand and the shards burst"
+        },
+        {
+          "id": "novaOpen",
+          "word": "her",
+          "offset": 0,
+          "layer": "cast",
+          "what": "Nova opens her hand",
+          "kind": "pose"
+        },
+        {
+          "id": "cameraPush",
+          "word": "put",
+          "offset": 0,
+          "layer": "camera",
+          "what": "the camera pushes into the handoff"
+        },
+        {
+          "id": "novaGrip",
+          "word": "hand",
+          "offset": 0,
+          "layer": "cast",
+          "kind": "face",
+          "what": "Nova looks at the star"
+        },
+        {
+          "id": "miraGive",
+          "word": "hand",
+          "offset": 0,
+          "layer": "cast",
+          "kind": "face",
+          "what": "Mira smiles as she lets go"
+        }
+      ]
+    },
+    {
+      "id": "s6",
+      "events": [
+        {
+          "id": "crowdTurn",
+          "word": "crowd",
+          "offset": 0,
+          "layer": "crowd",
+          "what": "the crowd turns to the stage"
+        },
+        {
+          "id": "curtainHalf",
+          "word": "saw",
+          "offset": 0,
+          "layer": "set",
+          "what": "the curtain is half open and the light spills"
+        },
+        {
+          "id": "novaLight",
+          "word": "girl",
+          "offset": 0,
+          "layer": "cast",
+          "what": "Nova steps into the spotlight",
+          "kind": "root"
+        },
+        {
+          "id": "listStamp",
+          "word": "never",
+          "offset": 0,
+          "layer": "prop",
+          "what": "the NOT ON LIST stamp lands"
+        },
+        {
+          "id": "listShow",
+          "word": "list",
+          "offset": 0,
+          "layer": "prop",
+          "what": "the call sheet is held up to the crowd"
+        },
+        {
+          "id": "cameraPull",
+          "word": "crowd",
+          "offset": 0,
+          "layer": "camera",
+          "what": "the camera pulls back as the curtain opens"
+        },
+        {
+          "id": "novaSing6",
+          "word": "list",
+          "offset": 0,
+          "layer": "cast",
+          "kind": "face",
+          "what": "Nova sings to the crowd"
+        },
+        {
+          "id": "miraList",
+          "word": "list",
+          "offset": 0,
+          "layer": "cast",
+          "kind": "pose",
+          "what": "Mira holds the list up"
+        }
+      ]
+    },
+    {
+      "id": "s7",
+      "events": [
+        {
+          "id": "spotSweep",
+          "word": "light",
+          "offset": 0,
+          "layer": "light",
+          "what": "the spotlight sweeps across the stage"
+        },
+        {
+          "id": "spotLand",
+          "word": "found",
+          "offset": 0,
+          "layer": "light",
+          "what": "the beam lands on Nova and she looks up"
+        },
+        {
+          "id": "novaSing",
+          "word": "her",
+          "offset": 0,
+          "layer": "cast",
+          "what": "Nova sings",
+          "kind": "face"
+        },
+        {
+          "id": "cameraPush",
+          "word": "light",
+          "offset": 0,
+          "layer": "camera",
+          "what": "the camera pushes into the light"
+        },
+        {
+          "id": "novaArm",
+          "word": "found",
+          "offset": 0,
+          "layer": "cast",
+          "kind": "pose",
+          "what": "Nova raises her arm"
+        },
+        {
+          "id": "miraCheer",
+          "word": "her",
+          "offset": 0,
+          "layer": "cast",
+          "kind": "pose",
+          "what": "Mira cheers"
+        }
+      ]
+    },
+    {
+      "id": "s8",
+      "events": [
+        {
+          "id": "lampTurn2",
+          "word": "lamp",
+          "offset": 0,
+          "layer": "prop",
+          "what": "the lamp head turns to Mira"
+        },
+        {
+          "id": "miraCard",
+          "word": "called",
+          "offset": 0,
+          "layer": "prop",
+          "what": "the MIRA card drops"
+        },
+        {
+          "id": "miraPoint",
+          "word": "again",
+          "offset": 0,
+          "layer": "cast",
+          "what": "the card lands and Mira points at herself",
+          "kind": "pose"
+        },
+        {
+          "id": "cameraWhip",
+          "word": "lamp",
+          "offset": 0,
+          "layer": "camera",
+          "what": "the camera whip-pans to Mira"
+        },
+        {
+          "id": "novaTurn",
+          "word": "called",
+          "offset": 0,
+          "layer": "cast",
+          "kind": "face",
+          "what": "Nova turns to Mira"
+        },
+        {
+          "id": "miraLook8",
+          "word": "lamp",
+          "offset": 0,
+          "layer": "cast",
+          "kind": "face",
+          "what": "Mira looks up at the lamp"
+        }
+      ]
+    },
+    {
+      "id": "s9",
+      "events": [
+        {
+          "id": "curtainStart",
+          "word": "curtain",
+          "offset": 0,
+          "layer": "set",
+          "what": "the curtain starts to open"
+        },
+        {
+          "id": "curtainOpen",
+          "word": "opened",
+          "offset": 0,
+          "layer": "set",
+          "what": "the curtain is open and the stage is revealed"
+        },
+        {
+          "id": "stagePull",
+          "word": "stage",
+          "offset": 0,
+          "layer": "camera",
+          "what": "the camera pulls back across the stage"
+        },
+        {
+          "id": "crowdWait",
+          "word": "waiting",
+          "offset": 0,
+          "layer": "crowd",
+          "what": "the crowd waits in the dark"
+        },
+        {
+          "id": "nightSky",
+          "word": "all",
+          "offset": 0,
+          "layer": "set",
+          "what": "the night sky and the lamp fill the stage"
+        },
+        {
+          "id": "finalTitle",
+          "word": "night",
+          "offset": 0,
+          "layer": "type",
+          "what": "THE CUE LAMP end title"
+        },
+        {
+          "id": "novaBow",
+          "word": "waiting",
+          "offset": 0,
+          "layer": "cast",
+          "what": "Nova and Mira bow",
+          "kind": "pose"
+        },
+        {
+          "id": "miraBow",
+          "word": "waiting",
+          "offset": 0,
+          "layer": "cast",
+          "kind": "pose",
+          "what": "Mira bows"
+        },
+        {
+          "id": "novaSmile",
+          "word": "all",
+          "offset": 0,
+          "layer": "cast",
+          "kind": "face",
+          "what": "Nova smiles"
+        },
+        {
+          "id": "miraSmile",
+          "word": "night",
+          "offset": 0,
+          "layer": "cast",
+          "kind": "face",
+          "what": "Mira smiles"
+        },
+        {
+          "id": "novaStep9",
+          "word": "stage",
+          "offset": 0,
+          "layer": "cast",
+          "kind": "root",
+          "what": "Nova steps forward"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "pass": true,
+  "cast": {
+    "man": {
+      "shoulder": [
+        80,
+        -500
+      ],
+      "arm": [
+        104,
+        88
+      ],
+      "head": 128
+    },
+    "detective": {
+      "shoulder": [
+        80,
+        -500
+      ],
+      "arm": [
+        104,
+        88
+      ],
+      "head": 128
+    },
+    "warder": {
+      "shoulder": [
+        80,
+        -500
+      ],
+      "arm": [
+        104,
+        88
+      ],
+      "head": 128
+    },
+    "judge": {
+      "shoulder": [
+        80,
+        -500
+      ],
+      "arm": [
+        104,
+        88
+      ],
+      "head": 128
+    }
+  },
+  "armConvention": "armL+/armR-",
+  "noPetals": true,
+  "mirroredBoots": true,
+  "handThumb": true,
+  "footTargets": true
+}

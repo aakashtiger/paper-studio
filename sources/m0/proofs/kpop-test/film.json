@@ -1,0 +1,336 @@
+{
+  "id": "kpop-test",
+  "duration": 24.9,
+  "shots": [
+    {
+      "id": "s1",
+      "set": "front-house",
+      "camera": "pull",
+      "transition": "flash",
+      "layers": [
+        "backdrop",
+        "star",
+        "towers",
+        "truss",
+        "floor",
+        "clock",
+        "monitor",
+        "cast",
+        "lamp",
+        "crowd",
+        "type",
+        "hud"
+      ],
+      "props": [
+        "cueLamp",
+        "nameCard",
+        "stageClock",
+        "monitorWedge",
+        "fireExtinguisher"
+      ],
+      "type": [
+        "hero",
+        "label",
+        "subtitle",
+        "hud"
+      ]
+    },
+    {
+      "id": "s2",
+      "set": "audience-pov",
+      "camera": "push",
+      "transition": "flash",
+      "layers": [
+        "audience",
+        "stage",
+        "star",
+        "towers",
+        "lamp",
+        "cast",
+        "crowd",
+        "playbill",
+        "phone",
+        "type",
+        "hud"
+      ],
+      "props": [
+        "playbill",
+        "phone",
+        "cueLamp"
+      ],
+      "type": [
+        "hero",
+        "label",
+        "subtitle",
+        "hud"
+      ]
+    },
+    {
+      "id": "s3",
+      "set": "backstage",
+      "camera": "track",
+      "transition": "flash",
+      "layers": [
+        "wall",
+        "ropes",
+        "callSheet",
+        "workLight",
+        "door",
+        "costumeRack",
+        "ladder",
+        "flightCase",
+        "cast",
+        "star",
+        "type",
+        "hud"
+      ],
+      "props": [
+        "callSheet",
+        "clipboard",
+        "nameCard",
+        "star",
+        "ladder",
+        "flightCase"
+      ],
+      "type": [
+        "hero",
+        "label",
+        "subtitle",
+        "hud"
+      ]
+    },
+    {
+      "id": "s4",
+      "set": "dressing-room",
+      "camera": "push",
+      "transition": "flash",
+      "layers": [
+        "wall",
+        "mirror",
+        "bulbs",
+        "vanity",
+        "poster",
+        "robe",
+        "chair",
+        "costumeRack",
+        "cast",
+        "star",
+        "type",
+        "hud"
+      ],
+      "props": [
+        "star",
+        "robe",
+        "chair",
+        "bouquet",
+        "clipboard"
+      ],
+      "type": [
+        "hero",
+        "label",
+        "subtitle",
+        "hud"
+      ]
+    },
+    {
+      "id": "s5",
+      "set": "handoff-close",
+      "camera": "push",
+      "transition": "flash",
+      "layers": [
+        "bokeh",
+        "cast",
+        "star",
+        "ribbon",
+        "shards",
+        "type",
+        "hud"
+      ],
+      "props": [
+        "star",
+        "ribbon",
+        "clipboard"
+      ],
+      "type": [
+        "hero",
+        "label",
+        "subtitle",
+        "hud"
+      ]
+    },
+    {
+      "id": "s6",
+      "set": "wing-reveal",
+      "camera": "pull",
+      "transition": "curtain",
+      "layers": [
+        "stage",
+        "star",
+        "curtain",
+        "towers",
+        "truss",
+        "cast",
+        "backups",
+        "crowd",
+        "list",
+        "type",
+        "hud"
+      ],
+      "props": [
+        "callSheet",
+        "monitorWedge",
+        "waterBottle"
+      ],
+      "type": [
+        "hero",
+        "label",
+        "subtitle",
+        "hud"
+      ]
+    },
+    {
+      "id": "s7",
+      "set": "stage-front",
+      "camera": "push",
+      "transition": "flash",
+      "layers": [
+        "stage",
+        "star",
+        "spotlight",
+        "micStand",
+        "cast",
+        "backups",
+        "crowd",
+        "type",
+        "hud"
+      ],
+      "props": [
+        "micStand",
+        "monitorWedge",
+        "waterBottle"
+      ],
+      "type": [
+        "hero",
+        "label",
+        "subtitle",
+        "hud"
+      ]
+    },
+    {
+      "id": "s8",
+      "set": "cue-booth",
+      "camera": "whip",
+      "transition": "flash",
+      "layers": [
+        "booth",
+        "window",
+        "desk",
+        "lamp",
+        "switchboard",
+        "cast",
+        "type",
+        "hud"
+      ],
+      "props": [
+        "cueLamp",
+        "nameCard",
+        "callSheet",
+        "switchboard"
+      ],
+      "type": [
+        "hero",
+        "label",
+        "subtitle",
+        "hud"
+      ]
+    },
+    {
+      "id": "s9",
+      "set": "finale",
+      "camera": "pull",
+      "transition": "curtain",
+      "layers": [
+        "stage",
+        "star",
+        "curtain",
+        "moon",
+        "cast",
+        "crowd",
+        "star",
+        "callSheet",
+        "bouquet",
+        "lamp",
+        "type",
+        "hud"
+      ],
+      "props": [
+        "star",
+        "callSheet",
+        "bouquet",
+        "cueLamp"
+      ],
+      "type": [
+        "hero",
+        "label",
+        "subtitle",
+        "hud"
+      ]
+    }
+  ],
+  "sound": {
+    "cues": 22,
+    "lufs": -14.2,
+    "truePeak": -1.6
+  },
+  "look": {
+    "reference": {
+      "overall": {
+        "luma": 109.09,
+        "saturation": 27.36,
+        "edges": 4.36
+      },
+      "night": {
+        "luma": 79.79,
+        "saturation": 18.68,
+        "edges": 4.55
+      }
+    },
+    "luma": [
+      75,
+      100
+    ],
+    "saturation": [
+      16,
+      25
+    ],
+    "edges": [
+      3.5,
+      6
+    ]
+  },
+  "mood": "night",
+  "cast": {
+    "nova": {
+      "shoulder": [
+        45,
+        -516
+      ],
+      "arm": [
+        104,
+        88
+      ],
+      "head": 120
+    },
+    "mira": {
+      "shoulder": [
+        45,
+        -452
+      ],
+      "arm": [
+        92,
+        78
+      ],
+      "head": 96
+    }
+  }
+}

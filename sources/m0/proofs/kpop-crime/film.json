@@ -1,0 +1,303 @@
+{
+  "id": "kpop-crime",
+  "duration": 21,
+  "shots": [
+    {
+      "id": "s1",
+      "set": "alley",
+      "day": 1,
+      "place": "the alley",
+      "costume": "coat",
+      "state": "a body under a sheet; the detective kneels with the case file under his hand; the knife catches the lamp",
+      "camera": "push",
+      "transition": "flash",
+      "layers": [
+        "backdrop",
+        "wall",
+        "lamp",
+        "floor",
+        "body",
+        "foreground",
+        "cast",
+        "knife",
+        "type",
+        "hud"
+      ],
+      "props": [
+        "knife",
+        "caseFile",
+        "body"
+      ],
+      "type": [
+        "hero",
+        "label",
+        "subtitle",
+        "hud"
+      ]
+    },
+    {
+      "id": "s2",
+      "set": "chase",
+      "day": 3,
+      "place": "the city",
+      "costume": "coat",
+      "state": "one leg forward and one back; the detective reaches for the man's coat",
+      "camera": "track",
+      "transition": "flash",
+      "layers": [
+        "city",
+        "windows",
+        "searchlights",
+        "floor",
+        "cast",
+        "rain",
+        "type",
+        "hud"
+      ],
+      "props": [
+        "coat",
+        "hat",
+        "rain"
+      ],
+      "type": [
+        "hero",
+        "label",
+        "subtitle",
+        "hud"
+      ]
+    },
+    {
+      "id": "s3",
+      "set": "hideout",
+      "day": 6,
+      "place": "the hideout",
+      "costume": "coat",
+      "state": "the calendar turns from 6 to 7; the bulb flickers; he reaches up to the clear wall",
+      "camera": "push",
+      "transition": "flash",
+      "layers": [
+        "wall",
+        "window",
+        "table",
+        "calendar",
+        "bulb",
+        "cast",
+        "newspaper",
+        "type",
+        "hud"
+      ],
+      "props": [
+        "calendar",
+        "newspaper",
+        "table"
+      ],
+      "type": [
+        "hero",
+        "label",
+        "subtitle",
+        "hud"
+      ]
+    },
+    {
+      "id": "s4",
+      "set": "bridge",
+      "day": 9,
+      "place": "the bridge",
+      "costume": "coat",
+      "state": "the cuffs close on the wrist under a sweeping searchlight",
+      "camera": "pull",
+      "transition": "flash",
+      "layers": [
+        "bridge",
+        "river",
+        "lamps",
+        "cast",
+        "cuffs",
+        "rain",
+        "type",
+        "hud"
+      ],
+      "props": [
+        "handcuffs",
+        "lamp",
+        "rain"
+      ],
+      "type": [
+        "hero",
+        "label",
+        "subtitle",
+        "hud"
+      ]
+    },
+    {
+      "id": "s5",
+      "set": "cell",
+      "day": 10,
+      "place": "the cell",
+      "costume": "prison",
+      "state": "the cell door opens; the calendar on the wall reads day 10",
+      "camera": "push",
+      "transition": "flash",
+      "layers": [
+        "bars",
+        "window",
+        "bench",
+        "floor",
+        "cast",
+        "calendar",
+        "type",
+        "hud"
+      ],
+      "props": [
+        "bars",
+        "bench",
+        "calendar",
+        "door"
+      ],
+      "type": [
+        "hero",
+        "label",
+        "subtitle",
+        "hud"
+      ],
+      "costumeEvent": "arrest: coat -> prison"
+    },
+    {
+      "id": "s6",
+      "set": "court",
+      "day": 10,
+      "place": "the court",
+      "costume": "prison",
+      "state": "the gavel rests on the bench with its handle visible; the verdict lands on the sentence",
+      "camera": "track",
+      "transition": "curtain",
+      "layers": [
+        "wall",
+        "bench",
+        "flag",
+        "cast",
+        "gavel",
+        "verdict",
+        "type",
+        "hud"
+      ],
+      "props": [
+        "gavel",
+        "caseFile",
+        "verdict"
+      ],
+      "type": [
+        "hero",
+        "label",
+        "subtitle",
+        "hud"
+      ],
+      "sameDay": true
+    },
+    {
+      "id": "s7",
+      "set": "yard",
+      "day": 10,
+      "place": "the yard",
+      "costume": "prison",
+      "state": "the bell swings; the noose sits at the collar; the frame fades only in the last 0.4 s",
+      "camera": "pull",
+      "transition": "curtain",
+      "layers": [
+        "wall",
+        "gallows",
+        "bell",
+        "platform",
+        "cast",
+        "noose",
+        "type",
+        "hud"
+      ],
+      "props": [
+        "noose",
+        "bell",
+        "platform"
+      ],
+      "type": [
+        "hero",
+        "label",
+        "subtitle",
+        "hud"
+      ],
+      "sameDay": true
+    }
+  ],
+  "sound": {
+    "cues": 12,
+    "lufs": -14.2,
+    "truePeak": -1.6
+  },
+  "look": {
+    "reference": {
+      "night": {
+        "luma": 79.79,
+        "saturation": 18.68,
+        "edges": 4.55
+      }
+    },
+    "luma": [
+      55,
+      100
+    ],
+    "saturation": [
+      14,
+      26
+    ],
+    "edges": [
+      3,
+      6.5
+    ]
+  },
+  "mood": "mixed",
+  "cast": {
+    "man": {
+      "shoulder": [
+        80,
+        -500
+      ],
+      "arm": [
+        104,
+        88
+      ],
+      "head": 128
+    },
+    "detective": {
+      "shoulder": [
+        80,
+        -500
+      ],
+      "arm": [
+        104,
+        88
+      ],
+      "head": 128
+    },
+    "warder": {
+      "shoulder": [
+        80,
+        -500
+      ],
+      "arm": [
+        104,
+        88
+      ],
+      "head": 128
+    },
+    "judge": {
+      "shoulder": [
+        80,
+        -500
+      ],
+      "arm": [
+        104,
+        88
+      ],
+      "head": 128
+    }
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "cues": 12,
+  "lufs": -14,
+  "truePeak": -1.5,
+  "source": "voice-normalized",
+  "target": {
+    "lufs": -14,
+    "truePeak": -1.5
+  },
+  "voice": {
+    "lufs": -18.1,
+    "truePeak": -3.8
+  },
+  "normalized": true,
+  "audio": "proofs/kpop-crime-60/mix.wav",
+  "list": [
+    {
+      "shot": "s01",
+      "id": "knife",
+      "kind": "click",
+      "word": "knife,",
+      "t": 2.28
+    },
+    {
+      "shot": "s02",
+      "id": "sheet",
+      "kind": "paper",
+      "word": "sheet.",
+      "t": 4.24
+    },
+    {
+      "shot": "s03",
+      "id": "file",
+      "kind": "paper",
+      "word": "file",
+      "t": 5.74
+    },
+    {
+      "shot": "s06",
+      "id": "tunnel",
+      "kind": "whoosh",
+      "word": "tunnel,",
+      "t": 14.72
+    },
+    {
+      "shot": "s07",
+      "id": "room",
+      "kind": "paper",
+      "word": "room,",
+      "t": 19.16
+    },
+    {
+      "shot": "s08",
+      "id": "door",
+      "kind": "thud",
+      "word": "door",
+      "t": 20.7
+    },
+    {
+      "shot": "s09",
+      "id": "page",
+      "kind": "paper",
+      "word": "page",
+      "t": 23.32
+    },
+    {
+      "shot": "s11",
+      "id": "lamp",
+      "kind": "chime",
+      "word": "lamp",
+      "t": 29.38
+    },
+    {
+      "shot": "s15",
+      "id": "cuffs",
+      "kind": "click",
+      "word": "cuffs",
+      "t": 39.48
+    },
+    {
+      "shot": "s16",
+      "id": "cell",
+      "kind": "thud",
+      "word": "cell,",
+      "t": 44.04
+    },
+    {
+      "shot": "s18",
+      "id": "gavel",
+      "kind": "stamp",
+      "word": "gavel",
+      "t": 48.16
+    },
+    {
+      "shot": "s21",
+      "id": "bell",
+      "kind": "bell",
+      "word": "noose",
+      "t": 58.54
+    }
+  ]
+}
