@@ -27,6 +27,10 @@ backup. Two of them are the only record of how the look was built:
 | `gold/pdoom/` | 37 | 1.1 MB | **second** generation of the same film: `src/core.js` with the `PAL` palette and `BPM 88`, `src/ch/c01–c09`, `src/cast.js`, `clawd.js`, `STORYBOARD.md`, `ANIMATION_GUIDE.md`, `render.mjs`, `studio.html`, `legacy/flash-version.html` |
 | `gold/production/` | 7 | 0.04 MB | the gold's root entry points and docs: `PRODUCTION.md`, `STORYBOARD.md` (23 KB — the authored map in prose), `render.mjs`, `serve.mjs`, `studio.html`, `package.json` |
 | `gold/fonts/` | 9 | 1.6 MB | the **nine** fonts the gold uses. The pack carries five of them — see `gold/fonts/FONTS.md` |
+| `gold/analysis/reports/` | 13 | 0.5 MB | **the reverse-engineering of the gold**, one report per axis: `A`, `B`, `C`, `D`, `E`, `F`, `G`, `H`, `I`, `J-rig` (the body), `K-type-camera-edit` (type, camera, cuts), `L-set-prop-layer` (sets, props, layering), `performance-library` (the poses). 24–49 KB each — the full reading that `docs/references/kpop-*.md` distils |
+| `gold/analysis/manifest.md` | 1 | 6 KB | all 54 shots in a table: act, id, start, end, duration, and which analysis sheet holds each |
+| `gold/analysis/shots.json` | 1 | 5 KB | the same map as data, with act and shot ids |
+| `gold/analysis/frame-diff.json` | 1 | 1.1 MB | **how the gold moves**, measured: every one of its 4,698 frames on a 192×108 grid (mean, max, 9 regions), plus per-shot aggregates. This is the numeric half of the motion reference a still cannot carry |
 | `gold/transcript.json` | 1 | 29 KB | the gold's own words, with the timings the film was cut to |
 | `gold/contact_ref.jpg` | 1 | 124 KB | a contact sheet of the reference the gold was measured against |
 | `m0/scripts/` | 46 | 0.2 MB | the M0 measurement toolchain: `quality-check`, `look-check`, `chain-check`, `review-check`, `motion-check`, `frame-diff`, `cut-pairs`, `storyboard-check`, `shot-cards`, `twin-check`, `continuity-check`, `cast-check`, `set-check`, `assets-check`, `sync-check`, `shot-check`, `make-sfx`, `extract-shots`, plus the one-off `patch*.mjs` / `rewrite-*.mjs` edits |
@@ -48,10 +52,29 @@ M0's audits actually measured.
 | `assets/song.wav`, `assets/song.mp3` | 27 MB / 6 MB | the gold's soundtrack. Not needed to build or measure a film; `gold/transcript.json` keeps the words and their times |
 | `ref/PDoomVideo/assets/pdoom.mp3` | 3.3 MB | the same song, second generation |
 | `tools/ffmpeg.zip`, `tools/ffmpeg2.zip` | 196 MB | two portable ffmpeg builds. `npm run doctor` installs what the repo needs |
-| `out/` | 4.2 GB | renders: 4,699 frames, 938 stills, analysis dumps |
+| `out/` — except `analysis/` | 4.2 GB | renders: 4,699 frames, 938 stills. Only `out/analysis/` was taken, and only its reports, its shot map and `frame-diff.json`; the sheets and cut strips it names are PNGs of the film |
+| `out/analysis/tmp/` | 0.02 MB | nine throwaway scripts written while measuring (`pix.mjs`, `time-hud.mjs`, …) |
 | `proofs/*/out/` | 5.5 GB | renders and frames of the five proofs |
 | `temp_ref.wav` | 13 MB | a scratch audio file at the root |
 | `debug1–6.mjs`, `C` | 11 KB | scratch: six one-off debug scripts and a zero-byte file |
+
+## Where to start
+
+If you are the agent taking over M1, read in this order:
+
+1. `docs/M1-HANDOVER.md` — the state, the work order and the traps.
+2. `gate/gold/gold-authored-shots.json` + `gate/gold/stills/s01...s54.jpg` — the film
+   shot by shot, in words and in pixels, side by side.
+3. `sources/gold/analysis/reports/` — *why* each shot looks the way it does. `K` is
+   type, camera and cuts; `L` is sets, props and layering; `J-rig` is the body;
+   `performance-library` is the poses. The letters A–I cover the acts and the
+   misc-en-scène.
+4. `sources/gold/acts/` and `sources/gold/pdoom/` — the code that drew it, two
+   generations. `pdoom/src/core.js` is the shortest honest answer to "how is a
+   frame of this look actually built": one `PAL`, one `paper()` helper, one paint
+   wrapper.
+5. `sources/m0/proofs/kpop-crime-60/FIXLIST.md` — what M0 got wrong, in the order
+   it was found.
 
 ## These files are not runnable in place
 

@@ -1,0 +1,359 @@
+[
+  {
+    "act": "act1",
+    "id": "cold",
+    "start": 0,
+    "end": 1.5,
+    "duration": 1.5
+  },
+  {
+    "act": "act1",
+    "id": "sparks",
+    "start": 1.5,
+    "end": 5.9,
+    "duration": 4.4
+  },
+  {
+    "act": "act1",
+    "id": "circuits",
+    "start": 5.9,
+    "end": 8.95,
+    "duration": 3.05
+  },
+  {
+    "act": "act1",
+    "id": "loss",
+    "start": 8.95,
+    "end": 12.4,
+    "duration": 3.45
+  },
+  {
+    "act": "act1",
+    "id": "boss",
+    "start": 12.4,
+    "end": 16.5,
+    "duration": 4.1
+  },
+  {
+    "act": "act1",
+    "id": "mugs",
+    "start": 16.5,
+    "end": 17.9,
+    "duration": 1.4
+  },
+  {
+    "act": "act1",
+    "id": "chase",
+    "start": 17.9,
+    "end": 22.72,
+    "duration": 4.82
+  },
+  {
+    "act": "act2",
+    "id": "chorus1",
+    "start": 22.72,
+    "end": 24.36,
+    "duration": 1.64
+  },
+  {
+    "act": "act2",
+    "id": "foom",
+    "start": 24.36,
+    "end": 26.18,
+    "duration": 1.82
+  },
+  {
+    "act": "act2",
+    "id": "chinese",
+    "start": 26.18,
+    "end": 29.72,
+    "duration": 3.54
+  },
+  {
+    "act": "act2",
+    "id": "shoggoth",
+    "start": 29.72,
+    "end": 33.4,
+    "duration": 3.68
+  },
+  {
+    "act": "act2",
+    "id": "eyes",
+    "start": 33.4,
+    "end": 35.5,
+    "duration": 2.1
+  },
+  {
+    "act": "act2",
+    "id": "dance1",
+    "start": 35.5,
+    "end": 38.5,
+    "duration": 3
+  },
+  {
+    "act": "act2",
+    "id": "gym",
+    "start": 38.5,
+    "end": 41.36,
+    "duration": 2.86
+  },
+  {
+    "act": "act2",
+    "id": "singularity",
+    "start": 41.36,
+    "end": 44.98,
+    "duration": 3.62
+  },
+  {
+    "act": "act2",
+    "id": "accel",
+    "start": 44.98,
+    "end": 49.52,
+    "duration": 4.54
+  },
+  {
+    "act": "act2",
+    "id": "atoms",
+    "start": 49.52,
+    "end": 52.8,
+    "duration": 3.28
+  },
+  {
+    "act": "act2",
+    "id": "cage",
+    "start": 52.8,
+    "end": 58.94,
+    "duration": 6.14
+  },
+  {
+    "act": "act2",
+    "id": "chorus2",
+    "start": 58.94,
+    "end": 60.52,
+    "duration": 1.58
+  },
+  {
+    "act": "act2",
+    "id": "basilisk",
+    "start": 60.52,
+    "end": 62.52,
+    "duration": 2
+  },
+  {
+    "act": "act2",
+    "id": "nvda",
+    "start": 62.52,
+    "end": 64.18,
+    "duration": 1.66
+  },
+  {
+    "act": "act2",
+    "id": "omega",
+    "start": 64.18,
+    "end": 66.12,
+    "duration": 1.94
+  },
+  {
+    "act": "act2",
+    "id": "gpuplanet",
+    "start": 66.12,
+    "end": 69.18,
+    "duration": 3.06
+  },
+  {
+    "act": "act2",
+    "id": "vault",
+    "start": 69.18,
+    "end": 73.8,
+    "duration": 4.62
+  },
+  {
+    "act": "act3",
+    "id": "chair",
+    "start": 73.8,
+    "end": 74.46,
+    "duration": 0.66
+  },
+  {
+    "act": "act3",
+    "id": "mlp",
+    "start": 74.46,
+    "end": 77.6,
+    "duration": 3.14
+  },
+  {
+    "act": "act3",
+    "id": "museum",
+    "start": 77.6,
+    "end": 81.24,
+    "duration": 3.64
+  },
+  {
+    "act": "act3",
+    "id": "canyon",
+    "start": 81.24,
+    "end": 84.84,
+    "duration": 3.6
+  },
+  {
+    "act": "act3",
+    "id": "cdr",
+    "start": 84.84,
+    "end": 89.34,
+    "duration": 4.5
+  },
+  {
+    "act": "act3",
+    "id": "gato",
+    "start": 89.34,
+    "end": 95.2,
+    "duration": 5.86
+  },
+  {
+    "act": "act4",
+    "id": "clips",
+    "start": 95.2,
+    "end": 98.8,
+    "duration": 3.6
+  },
+  {
+    "act": "act4",
+    "id": "pto",
+    "start": 98.8,
+    "end": 102.46,
+    "duration": 3.66
+  },
+  {
+    "act": "act4",
+    "id": "fuse",
+    "start": 102.46,
+    "end": 105.4,
+    "duration": 2.94
+  },
+  {
+    "act": "act4",
+    "id": "jazz",
+    "start": 105.4,
+    "end": 109.4,
+    "duration": 4
+  },
+  {
+    "act": "act4",
+    "id": "trust",
+    "start": 109.4,
+    "end": 111.4,
+    "duration": 2
+  },
+  {
+    "act": "act4",
+    "id": "tower",
+    "start": 111.4,
+    "end": 113.38,
+    "duration": 1.98
+  },
+  {
+    "act": "act4",
+    "id": "disobey",
+    "start": 113.38,
+    "end": 115.08,
+    "duration": 1.7
+  },
+  {
+    "act": "act4",
+    "id": "chinchilla",
+    "start": 115.08,
+    "end": 117.02,
+    "duration": 1.94
+  },
+  {
+    "act": "act4",
+    "id": "fences",
+    "start": 117.02,
+    "end": 118.84,
+    "duration": 1.82
+  },
+  {
+    "act": "act4",
+    "id": "gpus",
+    "start": 118.84,
+    "end": 120.92,
+    "duration": 2.08
+  },
+  {
+    "act": "act4",
+    "id": "rlhf",
+    "start": 120.92,
+    "end": 124.24,
+    "duration": 3.32
+  },
+  {
+    "act": "act4",
+    "id": "redalert",
+    "start": 124.24,
+    "end": 126.2,
+    "duration": 1.96
+  },
+  {
+    "act": "act4",
+    "id": "loom",
+    "start": 126.2,
+    "end": 128,
+    "duration": 1.8
+  },
+  {
+    "act": "act4",
+    "id": "masked",
+    "start": 128,
+    "end": 129.9,
+    "duration": 1.9
+  },
+  {
+    "act": "act4",
+    "id": "recursive",
+    "start": 129.9,
+    "end": 131.9,
+    "duration": 2
+  },
+  {
+    "act": "act4",
+    "id": "ilya",
+    "start": 131.9,
+    "end": 135.4,
+    "duration": 3.5
+  },
+  {
+    "act": "act4",
+    "id": "breath",
+    "start": 135.4,
+    "end": 137.02,
+    "duration": 1.62
+  },
+  {
+    "act": "act5",
+    "id": "reveal",
+    "start": 137.02,
+    "end": 140.68,
+    "duration": 3.66
+  },
+  {
+    "act": "act5",
+    "id": "curtain",
+    "start": 140.68,
+    "end": 146,
+    "duration": 5.32
+  },
+  {
+    "act": "act5",
+    "id": "finaldance",
+    "start": 146,
+    "end": 151,
+    "duration": 5
+  },
+  {
+    "act": "act5",
+    "id": "desk",
+    "start": 151,
+    "end": 156.62,
+    "duration": 5.62
+  }
+]
