@@ -82,10 +82,16 @@ npm run recipes:check             # ← NEW, and it fails: 40 of 60 have no pain
 the duration resolver's fixtures (K3.3–3.4), the ported 25 s proof (K1.4), the
 seal (K7), the 9:16 maps, and two painters.
 
-**The gold's evidence is not in git.** `build/audit-gold/` (GOLD.json, the shots
-map, the contact sheet, `REPORT.md`) is gitignored with all of `build/`. It exists
-on this machine only. If you work in a fresh clone, re-derive it with
-`npm run style:measure -- --ref <gold.mp4>` before trusting any gold delta.
+**The gold's evidence is in `gate/gold/`** — `GOLD.json` (the pin: hash, container,
+look, edit, variety), the 54-shot authored map, per-shot palettes, scene stats,
+`REPORT.md` and two contact sheets. The MP4 itself (276 MB) is deliberately outside
+the repo; `gate/gold/README.md` says how to re-derive from it, and that a different
+hash means **stop**, not refresh. Never re-pin the gold to make a number pass.
+
+**The remote exists but nothing is pushed.** `origin` is
+`github.com/aakashtiger/paper-studio`; `main` is 89 commits ahead of `origin/main`.
+So a fresh clone does not have today's work. Either push, or work in this working
+copy — say which one you did before you start.
 
 **Two toolchains, deliberately.** The M0 film was painted by
 `Y:\NewVideoTest\proofs\kpop-crime-60` with the gate in `Y:\NewVideoTest\scripts`;

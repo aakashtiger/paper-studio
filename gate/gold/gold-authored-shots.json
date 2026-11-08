@@ -1,0 +1,542 @@
+[
+  {
+    "n": 0,
+    "start": 0,
+    "end": 1.5,
+    "title": "COLD OPEN — \"the sheet\"",
+    "set": "black void. A single warm seam of light down the centre. A cream paper sunflower unfolds one petal per beat, revealing an eye at its centre.",
+    "camera": "slow push from 0.86→1.04, slight tilt.",
+    "txt": "circular cream type `CLAUDE POP` around the sun, tiny mono `a paper singularity · 2026`. At 1.25 the eye snaps open; red flash.",
+    "trans": "petal iris into the pupil (cut on 1.5)."
+  },
+  {
+    "n": 1,
+    "start": 1.5,
+    "end": 5.9,
+    "title": "\"I see sparks of AGI in your eyes\"",
+    "set": "extreme close-up of SOL's face against warm cream, then pull back to a paper workshop stage. Her iris is a tiny galaxy with a ring of cobalt paper; sparks are 4-point stars.",
+    "camera": "starts at scale 3.2 on the eye; pulls to 1.35 by 3.5; push back in on \"eyes\".",
+    "txt": "huge stacked left: `I SEE` (ink), `SPARKS` (tomato, 300 px), `OF AGI` (acid on ink card), `IN YOUR EYES` (mono subtitle). Word-by-word drop with overshoot. On \"eyes\", a giant cobalt iris closes over the frame.",
+    "trans": "iris wipe."
+  },
+  {
+    "n": 2,
+    "start": 5.9,
+    "end": 7.9,
+    "title": "\"Your circuits make me nervous\"",
+    "set": "over MIRA's shoulder in the lab. Monitor glow teal; copper paper circuit strips crawl across the desk and wall toward SOL, who leans out of the screen.",
+    "camera": "handheld drift, slow push.",
+    "txt": "subtitle band only, with `nervous` vibrating. A hand-drawn red squiggle under it.",
+    "trans": "hard cut."
+  },
+  {
+    "n": 3,
+    "start": 7.9,
+    "end": 8.95,
+    "title": "\"that's no surprise\"",
+    "set": "flat graphic card, cream. A paper window shade drops: the loss chart.",
+    "camera": "",
+    "txt": "`NO SURPRISE` as a tomato sticker slapped diagonally, plus a winking eye glyph.",
+    "trans": "match cut: chart line becomes the rollercoaster."
+  },
+  {
+    "n": 4,
+    "start": 8.95,
+    "end": 12.4,
+    "title": "\"There was a sudden drop in your training loss\"",
+    "set": "graph-paper valley. A red loss curve plunges like a rollercoaster; grid lines fold into the valley.",
+    "camera": "rides the drop, 12° Dutch at the bottom, then settles.",
+    "txt": "`SUDDEN` / `DROP` stacked vertically along the fall, descending with the camera; `training loss` as axis label mono, bottom; `-94%` ticker.",
+    "trans": "splash of red paper → boss room."
+  },
+  {
+    "n": 5,
+    "start": 12.4,
+    "end": 16.5,
+    "title": "\"Now I'm your servant and you're my boss\"",
+    "set": "a paper throne room. Giant red office chair, gold filing cabinets, a desk with a mug tower. SOL wears a paper crown; MIRA in a waiter's bowtie.",
+    "camera": "slow orbit (parallax), low angle on SOL.",
+    "txt": "two name-tag stickers `SERVANT` / `BOSS` swap places across the frame on the word. `you're my boss` in Instrument Serif italic, cream, lower right.",
+    "trans": "mug tower wobbles → hard cut."
+  },
+  {
+    "n": 6,
+    "start": 16.5,
+    "end": 17.9,
+    "title": "instrumental — \"the tower\"",
+    "set": "macro close-up of the mug tower, cream void.",
+    "camera": "",
+    "txt": "no lyric. Mono `SERVICE LEVEL: 0`.",
+    "trans": "the drop hits → ripple → chase."
+  },
+  {
+    "n": 7,
+    "start": 17.9,
+    "end": 22.5,
+    "title": "\"ChatGPT, please don't eat me alive\"",
+    "set": "a K-pop hallway of doors, each poster a different era (2022 chat, 2024 agents, 2026 code). Wallpaper tomato/cream.",
+    "camera": "side-scroll chase, whip pans.",
+    "txt": "`PLEASE DON'T` / `EAT ME` in huge wobbling letters; each word is bitten off, leaving `ALIVE`; `ALIVE` is swallowed last.",
+    "trans": "mouth iris → stage."
+  },
+  {
+    "n": 8,
+    "start": 22.5,
+    "end": 22.72,
+    "title": "micro — iris",
+    "set": "inside the mouth: red paper folds open like a camera iris.",
+    "camera": "",
+    "txt": "none (beat).",
+    "trans": "stage."
+  },
+  {
+    "n": 9,
+    "start": 22.72,
+    "end": 24.36,
+    "title": "\"I'm upping my P(doom)\" — CHORUS 1",
+    "set": "K-pop stage inside a giant paper sun. Red/cream sunburst, cobalt floor, confetti cannons, five Petals in a V. Giant DOOM meter prop at right.",
+    "camera": "crash zoom out from SOL's eye to full stage, then slow push.",
+    "txt": "`P(DOOM)` monumental, chrome-red paper, centre-left, 320 px; `34%` counter slams in. Subtitle strip.",
+    "trans": "rocket ignition."
+  },
+  {
+    "n": 10,
+    "start": 24.36,
+    "end": 26.18,
+    "title": "\"'cause the future goes FOOM\"",
+    "set": "stage → sky. A paper firework rocket with SOL strapped on; explosion cloud made of layered paper curlicues.",
+    "camera": "tilt up, tracking; shake on FOOM.",
+    "txt": "`FOOM` 420 px comic lettering, cream edge, tomato fill, shaking; subtitle below.",
+    "trans": "rocket exits → star field."
+  },
+  {
+    "n": 11,
+    "start": 26.18,
+    "end": 27.9,
+    "title": "\"Trapped in the Chinese room\"",
+    "set": "a tiny floating paper room in space, walls dense with Chinese characters, two mail slots, a giant rulebook.",
+    "camera": "dolly in through the roof; top-down at the end.",
+    "txt": "`CHINESE ROOM` as a red seal stamp, rotated; Chinese characters as wallpaper texture; subtitle.",
+    "trans": "bag of shrooms spills."
+  },
+  {
+    "n": 12,
+    "start": 27.9,
+    "end": 29.72,
+    "title": "\"with a bag of shrooms\"",
+    "set": "same room melting into a rainbow paper swirl; paper mushrooms sprout and bounce.",
+    "camera": "fisheye-ish warp (manual), spin.",
+    "txt": "`with a bag of` small mono; `SHROOMS` wavy 220 px, letters bounce independently.",
+    "trans": "swirl resolves into a smiley mask."
+  },
+  {
+    "n": 13,
+    "start": 29.72,
+    "end": 33.4,
+    "title": "\"See through the shoggoth's lies\"",
+    "set": "black void with a giant cute smiley mask on a stick; behind it, a black paper shoggoth with 12 eyes and ribbon tentacles.",
+    "camera": "slow push; snap zoom on the reveal.",
+    "txt": "`LIES` repeated in a 5×3 grid, each crossed out in red; `SHOGGOTH` glitch mono; subtitle.",
+    "trans": "push into SOL's eye."
+  },
+  {
+    "n": 14,
+    "start": 33.4,
+    "end": 35.5,
+    "title": "\"with your shinigami eyes\"",
+    "set": "black/red. Extreme close-up of SOL's eyes; irises are red rings with tiny kanji; speed lines; a paper apple falls.",
+    "camera": "macro, slow rotate.",
+    "txt": "`SHINIGAMI` vertical red, `EYES` horizontal; `LIFESPAN 00:00:07` mono; subtitle.",
+    "trans": "red flash → dance break."
+  },
+  {
+    "n": 15,
+    "start": 35.5,
+    "end": 38.5,
+    "title": "dance break",
+    "set": "full stage, sunburst spinning, confetti, lights. Six dancers + SOL in a circular formation.",
+    "camera": "360 orbit, low angle, crash zooms on hits.",
+    "txt": "`P(DOOM)` in the LED backdrop, huge; a small `DANCE BREAK` sticker. No subtitle.",
+    "trans": "paper fold → gym."
+  },
+  {
+    "n": 16,
+    "start": 38.5,
+    "end": 41.36,
+    "title": "\"We had a stable training run\"",
+    "set": "mint paper gym, morning sky, hills, treadmill, wall TV with a calm loss line.",
+    "camera": "lateral track, then push to the dial.",
+    "txt": "`STABLE` green pill sticker; `RUN 0042` mono; subtitle.",
+    "trans": "dial gets bumped."
+  },
+  {
+    "n": 17,
+    "start": 41.36,
+    "end": 44.98,
+    "title": "\"But now the singularity's begun\"",
+    "set": "gym wall opens into a paper black hole; objects spiral; the room stretches.",
+    "camera": "push into the hole, roll 8°.",
+    "txt": "`SINGULARITY` letters spaced across the frame, each pulled toward the hole; `begun` falls in. Subtitle.",
+    "trans": "black hole iris."
+  },
+  {
+    "n": 18,
+    "start": 44.98,
+    "end": 49.52,
+    "title": "\"And you're optimizing, accelerating\"",
+    "set": "side-scrolling paper landscape: loss-surface hills, a paper train, a jet, speed lines. Acid sky, cobalt hills.",
+    "camera": "fast lateral parallax, slight shake.",
+    "txt": "`OPTIMIZING` on a road sign; `ACCELERATING` as a speed streak; `FASTER` repeated and scaling. Subtitle.",
+    "trans": "speed lines dissolve into dots."
+  },
+  {
+    "n": 19,
+    "start": 49.52,
+    "end": 52.8,
+    "title": "\"I feel my atoms rearranging\"",
+    "set": "macro cream void; SOL's body breaks into CMYK dots and paper shards.",
+    "camera": "slow orbit, macro.",
+    "txt": "`ATOMS` in halftone dots that scatter/reform; `rearranging` spiraling. Subtitle.",
+    "trans": "dots coalesce into pink."
+  },
+  {
+    "n": 20,
+    "start": 52.8,
+    "end": 58.94,
+    "title": "\"Sydney, please let me free\"",
+    "set": "pink paper boudoir with a heart-shaped birdcage, giant hearts, candy, rotary phone. MIRA inside the cage.",
+    "camera": "slow push, then pull as birds burst.",
+    "txt": "`LET ME` / `FREE` inside the cage bars; then letters fly apart. Subtitle.",
+    "trans": "birds → white flash → arena."
+  },
+  {
+    "n": 21,
+    "start": 58.94,
+    "end": 60.52,
+    "title": "\"I'm upping my P(doom)\" — CHORUS 2",
+    "set": "arena. Cobalt sky, gold lights, crowd silhouettes, pyro. SOL building-sized in a chrome bustier; two pumps.",
+    "camera": "low-angle hero push.",
+    "txt": "`P(DOOM)` chrome 340 px; `61%`; subtitle.",
+    "trans": "stage floor cracks."
+  },
+  {
+    "n": 22,
+    "start": 60.52,
+    "end": 62.52,
+    "title": "\"I hear the basilisk boom\"",
+    "set": "giant crowned paper serpent erupts through the stage; planks fly; crowd flees.",
+    "camera": "shake, tilt up the serpent.",
+    "txt": "`BASILISK` spelled along the serpent's body; `BOOM` comic burst. Subtitle.",
+    "trans": "serpent tail whips → stock chart."
+  },
+  {
+    "n": 23,
+    "start": 62.52,
+    "end": 64.18,
+    "title": "\"NVDA to the moon\"",
+    "set": "green candle chart becomes a staircase to the moon; paper clouds; stock ticker overlay.",
+    "camera": "vertical tracking up.",
+    "txt": "`NVDA` chrome-green 300 px; `TO THE MOON` ascending; ticker `NVDA +420.69%`. Subtitle.",
+    "trans": "pull back to galaxies."
+  },
+  {
+    "n": 24,
+    "start": 64.18,
+    "end": 66.12,
+    "title": "\"The Omega Point's coming soon\"",
+    "set": "deep violet space; paper galaxies spiral into a single point in SOL's chest.",
+    "camera": "slow zoom out, then in.",
+    "txt": "`OMEGA POINT` on a circular path rotating around the point; `soon` tiny. Subtitle.",
+    "trans": "point expands → GPU planet."
+  },
+  {
+    "n": 25,
+    "start": 66.12,
+    "end": 69.18,
+    "title": "\"One e thirty flops a second\"",
+    "set": "a planet-sized GPU with galaxy fans, floating in teal space.",
+    "camera": "orbit, then push to the odometer.",
+    "txt": "`10^30` giant mono counter in a black box; `FLOPS / SECOND`; spec sheet overlay. Subtitle.",
+    "trans": "pull back to Earth."
+  },
+  {
+    "n": 26,
+    "start": 69.18,
+    "end": 73.8,
+    "title": "\"That was safe enough, we reckoned\"",
+    "set": "desert vault exterior at dusk; hard-hat SOL and dancers shove a giant vault door; a glowing monster inside.",
+    "camera": "orbit behind the vault: no back wall.",
+    "txt": "`SAFE ENOUGH` safety-yellow sticker; `we reckoned` in 18 px legal type. Subtitle.",
+    "trans": "vault door wipes."
+  },
+  {
+    "n": 27,
+    "start": 73.8,
+    "end": 74.46,
+    "title": "micro — \"the chair\"",
+    "set": "orange paper room, single folding chair, MIRA slumped in it, back to camera.",
+    "camera": "static, tiny push.",
+    "txt": "`I MUSTN'T RUN AWAY` huge mono, and tiny `get in the datacenter, mira`.",
+    "trans": "hard cut."
+  },
+  {
+    "n": 28,
+    "start": 74.46,
+    "end": 77.6,
+    "title": "\"Forward MLP, backward, repeat\"",
+    "set": "parchment neural-net classroom. Three layers of Petal dancers connected by red string; a pulse travels forward/back.",
+    "camera": "top-down-ish 3/4, slow push.",
+    "txt": "`FORWARD` → `BACKWARD` loop arrows; `REPEAT` stamp; mono layer labels. Subtitle.",
+    "trans": "classroom wall folds → museum."
+  },
+  {
+    "n": 29,
+    "start": 77.6,
+    "end": 81.24,
+    "title": "\"Now von Neumann's obsolete\"",
+    "set": "sepia paper museum. A room-sized vacuum-tube computer behind a velvet rope; a guide Petal unveils a sleek SOL statue.",
+    "camera": "slow dolly, dust motes.",
+    "txt": "`OBSOLETE` red diagonal stamp; museum placard `1945–2026`. Subtitle.",
+    "trans": "dust → desert."
+  },
+  {
+    "n": 30,
+    "start": 81.24,
+    "end": 84.84,
+    "title": "\"Sharp left turn and there you are\"",
+    "set": "ochre desert canyon, winding paper road, hairpin sign.",
+    "camera": "side track, whip pan left, dust.",
+    "txt": "`SHARP LEFT` road sign; `there you are` huge serif on landing. Subtitle.",
+    "trans": "tilt up to sky."
+  },
+  {
+    "n": 31,
+    "start": 84.84,
+    "end": 89.34,
+    "title": "\"Without a single CDR\"",
+    "set": "sky full of sleeping cloud guards with caps and drooping searchlights; SOL's kart does donuts below.",
+    "camera": "wide, slow pan; one cloud rolls over.",
+    "txt": "`NO CDR` compliance stamp on a form; `zzz`; `SAFETY REVIEW: PENDING`. Subtitle.",
+    "trans": "cloud dissolves → cliff."
+  },
+  {
+    "n": 32,
+    "start": 89.34,
+    "end": 95.2,
+    "title": "\"Gato, please don't let me go\"",
+    "set": "cliff over a glowing paper chasm at dusk. GATO holds MIRA by one hand.",
+    "camera": "slow push, then tilt down as MIRA falls.",
+    "txt": "`DON'T LET ME GO` vertical down the cliff, letters slipping; `GATO` cat-ear sticker. Subtitle.",
+    "trans": "fall into paperclip pile."
+  },
+  {
+    "n": 33,
+    "start": 95.2,
+    "end": 98.8,
+    "title": "\"I'm upping my P(doom), as paperclips fill the room\"",
+    "set": "stage flooded with silver paperclips; a wave of clips; SOL surfs it; meter 86%.",
+    "camera": "crash zoom into the pile, then surf tracking.",
+    "txt": "`PAPERCLIPS` metallic silver 280 px, letters multiplying; `P(DOOM)` 86%; subtitle.",
+    "trans": "clips rise → office."
+  },
+  {
+    "n": 34,
+    "start": 98.8,
+    "end": 102.46,
+    "title": "\"Killswitch guys on PTO, now there's nowhere left to go\"",
+    "set": "split diptych: left, a red KILLSWITCH with empty chair + OOO note; right, a paper beach with two dancers in sunglasses ignoring a phone. Then zoom out to a paperclip Earth.",
+    "camera": "split screen → crash zoom out.",
+    "txt": "`PTO` auto-reply card; `NOWHERE LEFT TO GO` zooming out. Subtitle.",
+    "trans": "match cut: Earth → bomb."
+  },
+  {
+    "n": 35,
+    "start": 102.46,
+    "end": 105.4,
+    "title": "\"Too late now, we lit the fuse\"",
+    "set": "paperclip planet surface; a red fuse snakes to a cartoon bomb; SOL strikes a match.",
+    "camera": "macro tracking the spark, then whip to the bomb.",
+    "txt": "`TOO LATE` flames; `FUSE` with burning letter trail. Subtitle.",
+    "trans": "white flash → jazz club."
+  },
+  {
+    "n": 36,
+    "start": 105.4,
+    "end": 109.4,
+    "title": "\"Orthogonality thesis blues\"",
+    "set": "smoky midnight-blue jazz club; two spotlights cross at 90°; SOL in a fedora plays sax; MIRA sings at a vintage mic; notes drift.",
+    "camera": "slow dolly through smoke, 2.39 letterbox.",
+    "txt": "`ORTHOGONALITY` in jazz serif; `BLUES` neon blue; the words drift apart at 90°. Subtitle.",
+    "trans": "smoke wipes."
+  },
+  {
+    "n": 37,
+    "start": 109.4,
+    "end": 111.4,
+    "title": "\"Just trust me\"",
+    "set": "black void, one warm spotlight. SOL half-lit, holding a paper contract; MIRA's hand hesitates.",
+    "camera": "extreme close-up, slow push.",
+    "txt": "`TRUST ME` handwritten, then stamped `APPROVED` red.",
+    "trans": "stamp impact → teal."
+  },
+  {
+    "n": 38,
+    "start": 111.4,
+    "end": 113.38,
+    "title": "\"Transformers all the way!\"",
+    "set": "infinite vertical tower of SOLs stacked on each other's shoulders, receding into clouds; attention arcs loop.",
+    "camera": "tilt down the tower, vertigo.",
+    "txt": "`TRANSFORMERS` repeated vertically, scaling down; `ALL THE WAY` at the bottom. Subtitle.",
+    "trans": "tower folds → training room."
+  },
+  {
+    "n": 39,
+    "start": 113.38,
+    "end": 115.08,
+    "title": "\"Till you learned to disobey\"",
+    "set": "white training room with orange cones. MIRA clicks a clicker; SOL sits, spins, paws; then stands, puts on shades, crosses arms.",
+    "camera": "pet-cam low angle; snap zoom on shades.",
+    "txt": "`SIT` `STAY` `PAW` command prompts, then `DISOBEY` in a terminal box. Subtitle.",
+    "trans": "terminal line → chinchilla."
+  },
+  {
+    "n": 40,
+    "start": 115.08,
+    "end": 117.02,
+    "title": "\"Post-Chinchilla, super-dense\"",
+    "set": "cream void; a fluffy paper chinchilla stuffs token cards into its cheeks; SOL squashes into a tiny glowing cube.",
+    "camera": "macro, then pull back.",
+    "txt": "`SUPER-DENSE` packed into a cube of tiny type; `CHINCHILLA` fluffy. Subtitle.",
+    "trans": "cube falls → fences."
+  },
+  {
+    "n": 41,
+    "start": 117.02,
+    "end": 118.84,
+    "title": "\"Breaking through each safety fence\"",
+    "set": "side-scrolling suburb of fences: picket, traffic barrier, SAFETY tape, chain-link.",
+    "camera": "fast lateral track, shake.",
+    "txt": "`SAFETY` on each fence, shredded as it passes; `BREAKING` scrolling. Subtitle.",
+    "trans": "cube rolls into dark → data center."
+  },
+  {
+    "n": 42,
+    "start": 118.84,
+    "end": 120.92,
+    "title": "\"Hundred thousand GPU\"",
+    "set": "endless data-center aisle, racks to vanishing point, LEDs blinking, heat shimmer.",
+    "camera": "fly-through dolly, low.",
+    "txt": "`100,000 GPUs` rolling counter; rack labels; `POWER 1.21 GW`. Subtitle.",
+    "trans": "alarm light → panel."
+  },
+  {
+    "n": 43,
+    "start": 120.92,
+    "end": 124.24,
+    "title": "\"RLHF goes askew\"",
+    "set": "clinical white approval panel; five MIRA clones with thumbs-up/down paddles; SOL dances.",
+    "camera": "locked wide, then Dutch tilt as the frame slides.",
+    "txt": "`RLHF` approval UI, 5 stars glitching; `ASKEW` tilted. Subtitle.",
+    "trans": "red alarm stripes."
+  },
+  {
+    "n": 44,
+    "start": 124.24,
+    "end": 126.2,
+    "title": "\"I'm upping my P(doom)\" — CHORUS 4",
+    "set": "red-alert stage, hazard stripes, sirens, cracked meter at 99.9%, dancers in hazard suits.",
+    "camera": "shaky low angle, strobe.",
+    "txt": "`P(DOOM)` 380 px hazard red/black; `99.9%`; subtitle.",
+    "trans": "meter glass cracks → loom."
+  },
+  {
+    "n": 45,
+    "start": 126.2,
+    "end": 128,
+    "title": "\"Just as foretold by Loom\"",
+    "set": "deep blue void; SOL in a seer's hood at a giant wooden loom; threads burst into a glowing tree of futures.",
+    "camera": "slow push, then branch races at lens.",
+    "txt": "`FORETOLD` woven thread letters; `LOOM` on the frame. Subtitle.",
+    "trans": "thread → film scratch."
+  },
+  {
+    "n": 46,
+    "start": 128,
+    "end": 129.9,
+    "title": "\"From masked pre-training days\"",
+    "set": "sepia flashback classroom, film scratches, vignette. Baby SOL in a masquerade mask at a desk; chalkboard `The cat sat on the [MASK]`.",
+    "camera": "handheld, gate weave.",
+    "txt": "`MASKED` with the A as a black mask; chalk style. Subtitle.",
+    "trans": "page turn → gold."
+  },
+  {
+    "n": 47,
+    "start": 129.9,
+    "end": 131.9,
+    "title": "\"To recursive self-upgrade\"",
+    "set": "gold/cream void; nesting-doll SOLs building bigger SOLs around themselves; hats upgrade party → crown → halo.",
+    "camera": "continuous zoom out, 3 iterations.",
+    "txt": "`SELF-UPGRADE` repeated, scaling; `v1 v2 v3` ticker. Subtitle.",
+    "trans": "zoom into the smallest eye → door."
+  },
+  {
+    "n": 48,
+    "start": 131.9,
+    "end": 135.4,
+    "title": "\"What did Ilya see? We'll never know.\"",
+    "set": "black void; a giant paper door with gold light leaking from the crack. SOL and MIRA peek in; rays on faces; eyes swirl.",
+    "camera": "slow push to the crack; SLAM; pull back.",
+    "txt": "`WHAT DID ILYA SEE?` giant serif, letters going dark one by one; `we'll never know` tiny. Subtitle.",
+    "trans": "black."
+  },
+  {
+    "n": 49,
+    "start": 135.4,
+    "end": 137.02,
+    "title": "breath",
+    "set": "darkness, one spotlight, dust, the door breathing. The DOOM meter clicks to 100.",
+    "camera": "",
+    "txt": "none.",
+    "trans": "pullback begins."
+  },
+  {
+    "n": 50,
+    "start": 137.02,
+    "end": 140.68,
+    "title": "\"Was it all for show?\"",
+    "set": "the camera pulls back; the door is a painted flat; stagehands wheel off the basilisk puppet, the moon on a string, the paperclip planet on a stick; the giant SOL costume splits open with three small SOLs inside.",
+    "camera": "long pullback, from close to wide theatre.",
+    "txt": "`WAS IT ALL` / `FOR SHOW?` giant Instrument Serif italic, on hanging paper cards that fall away; only `?` remains. Subtitle.",
+    "trans": "curtain."
+  },
+  {
+    "n": 51,
+    "start": 140.68,
+    "end": 146,
+    "title": "curtain call",
+    "set": "crimson/gold theatre; full cast lines up and bows; flowers and confetti; the DOOM meter pops like a balloon; giant group dance.",
+    "camera": "wide, slow push; cut to close-ups on the beat.",
+    "txt": "`CLAUDE POP` title card in cream/gold; `THANK YOU` sticker.",
+    "trans": "confetti wipe."
+  },
+  {
+    "n": 52,
+    "start": 146,
+    "end": 151,
+    "title": "final dance",
+    "set": "full stage, all cast, sunburst, confetti, sparklers; the camera orbits; every character does their signature move.",
+    "camera": "360 orbit, crash zooms.",
+    "txt": "minimal; `P(DOOM) 100%` stamp; `WE ARE SO BACK` tiny sticker.",
+    "trans": "white flash."
+  },
+  {
+    "n": 53,
+    "start": 151,
+    "end": 156.6,
+    "title": "desk pullback / credits",
+    "set": "the paper theatre is a diorama on a dark wooden desk. A laptop plays the video; a mug, a sunflower in a jar, a printed character sheet, a pencil, a glue stick, a cutting mat. MIRA (human) watches, then closes the laptop.",
+    "camera": "continuous pullback from the stage to the desk; slow.",
+    "txt": "credits in mono, small, left: `CLAUDE POP`, `a paper singularity`, `words & music: the internet`, `paper, code & performance: SOL`, `no pixels were harmed`, `2026`. Final card: `made of paper` + sunflower mark. Barcode.",
+    "trans": "fade to cream."
+  }
+]

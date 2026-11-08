@@ -1,0 +1,39 @@
+{
+  "pinned": "2026-11-08",
+  "why": "The KPOP gold standard is one file. Every later measurement of a KPOP film is compared to this hash, not to a memory of it.",
+  "file": "Y:/NewVideoTest/out/claude-pop.mp4",
+  "bytes": 289495829,
+  "sha256": "fb85200bc5315ad7ad3b6be8676261bf02efd35713a15ff1a607600e9aaee85a",
+  "container": {
+    "duration": 156.63,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "frames": 4698,
+    "videoCodec": "h264",
+    "pixFmt": "yuv420p",
+    "audioCodec": "aac",
+    "bitRate": 14786226
+  },
+  "look": {
+    "units": "8-bit luma mean, saturation mean (0-255), edge density per 192x108 reduction",
+    "whole": { "luma": 100.98, "saturation": 22.11, "edges": 4.54 },
+    "nightAct": { "luma": 79.79, "saturation": 18.68, "edges": 4.55 }
+  },
+  "edit": {
+    "authoredShots": 54,
+    "shotRatePerSecond": 0.345,
+    "medianShotSeconds": 2.90,
+    "transitions": 53
+  },
+  "variety": {
+    "worldTypes": 8,
+    "palettes": 9,
+    "performanceModes": 7,
+    "compositions": 9
+  },
+  "sources": {
+    "shotMap": "gate/gold/gold-authored-shots.json",
+    "report": "gate/gold/REPORT.md"
+  }
+}
