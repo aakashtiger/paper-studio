@@ -27,6 +27,29 @@ goes in the repo.
 | `look-final.json` | the whole-film look reading in the one unit (`docs/references/kpop-units.md`) |
 | `gold-sheet-5s.png` | the gold, one frame every 5 s, for a human |
 | `test-sheet-9.png` | the 25 s look proof on the same sheet, for comparison |
+| `stills/s01…s54.jpg` | **one still per authored shot**, at its midpoint, 960 px — regenerate with `npm run gold:stills` |
+
+## How a clone sees the gold without the film
+
+The film is 276 MB and stays outside. A style cannot be built from a hash, so the
+reference is three things that *are* in git:
+
+1. **The map** — `gold-authored-shots.json`: all 54 shots with start, end, title,
+   set, camera, type and transition, in plain English. This is the most useful
+   artifact in the folder: it is what "the gold look" means, written down.
+2. **The stills** — `stills/s01…s54.jpg`, one per shot at its midpoint, named in
+   map order. Every shot in the film, ~5 MB. `npm run gold:stills -- --ref <film>`
+   regenerates them from any copy of the gold and refuses a file whose hash is not
+   the pin.
+3. **The numbers** — `GOLD.json` (look, edit, variety) and `palette-shots.json`
+   (per-shot palette). These are what `style:measure` and the palette audit
+   compare against.
+
+What is deliberately **not** here: motion. A still cannot show a camera move or a
+cut's rhythm. Those are carried by the map's `camera` and `trans` lines and by the
+measured edit (median 2.90 s, 53 transitions), not by pixels. If a film needs a
+motion reference, use a release-asset proxy of the gold rather than putting the
+master in git.
 
 ## Why the MP4 is not here
 

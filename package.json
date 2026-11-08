@@ -76,7 +76,8 @@
     "recipes:list": "tsx scripts/recipes.ts",
     "style:identity": "tsx scripts/style-identity.ts",
     "identity:accept": "tsx scripts/identity-accept.ts",
-    "recipes:check": "tsx scripts/recipes-check.ts"
+    "recipes:check": "tsx scripts/recipes-check.ts",
+    "gold:stills": "tsx scripts/gold-stills.ts"
   },
   "dependencies": {
     "zod": "^3.24.1"
