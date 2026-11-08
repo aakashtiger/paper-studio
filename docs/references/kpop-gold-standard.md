@@ -1,6 +1,11 @@
 # The KPOP gold standard — what actually made `out/claude-pop.mp4`
 
 **Date:** 6 Nov 2026
+
+> **The shot band is superseded (8 Nov 2026, decision 0065).** The band in this
+> note (`1.0-4.5 s, median 2.5-3.0`) describes the gate the earlier films were
+> made for. Shot length, shot count and aspect now belong to the system:
+> `kpop-shot-policy.md` decides them, and `npm run shot:policy` checks a cut.
 **Gold standard:** `Y:\NewVideoTest\out\claude-pop.mp4` — 156.6 s, 1920×1080, 30 fps, 4,699 frames.
 **Source repo the user gave:** `https://github.com/JohnHeibel/PDoomVideo`
 **Original film:** `https://oneshotted.io/v/opus-visual-design-test`

@@ -22,7 +22,7 @@
  */
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { cpus } from "node:os";
 import { resolve } from "node:path";
 
@@ -33,10 +33,12 @@ const flag = (name) => {
   return at === -1 ? undefined : args[at + 1];
 };
 const skipRender = args.includes("--skip-render");
+const ship = args.includes("--ship");
+const planOnly = args.includes("--plan");
 const from = flag("from");
 
 if (!scoreArg) {
-  console.error("usage: npm run film:chain -- <score.json> [--skip-render] [--from <step>] [--workers <n>]");
+  console.error("usage: npm run film:factory -- <score.json> [--skip-render] [--from <step>] [--workers <n>] [--ship] [--plan]");
   process.exit(2);
 }
 
@@ -67,10 +69,12 @@ if (typeof id !== "string" || id === "") {
   console.error(`error: ${score} has no id`);
   process.exit(2);
 }
-const scoreDoc = JSON.parse(readFileSync(resolve(root, score), "utf8")) as {
-  clock?: { mode?: string };
-  audio?: { narration?: unknown };
-};
+/**
+ * What the score says about itself, beyond its shots: a narrated film is spoken
+ * before it is cut, and `policy: "system"` opts into the duration band
+ * (decision 0065). Both are read here, once, before any step runs.
+ */
+const scoreDoc = JSON.parse(readFileSync(resolve(root, score), "utf8"));
 /** A narrated film is spoken before it is cut; a foley or music film is not. */
 const hasNarration = scoreDoc.clock?.mode === "narration" && Boolean(scoreDoc.audio?.narration);
 /**
@@ -125,6 +129,12 @@ const steps = [
   // the move has a real delta, and the film varies it (0041). A still frame is
   // refused before the expensive type/rig/motion probe.
   { name: "camera", tsx: "scripts/camera-check.ts", args: [score] },
+  // The cut must be inside the system's band before anything expensive happens
+  // (decision 0065). A film opts in with `"policy": "system"`; a pre-policy film
+  // keeps the band it was made for, and the skip is printed rather than hidden.
+  // The old place for this question was after the paint, which is the most
+  // expensive place to learn the median is wrong.
+  { name: "policy", skip: scoreDoc.policy !== "system", tsx: "scripts/shot-policy.ts", args: [score, `--out=${build}/shot-policy.json`] },
   // The film's assets[] must name every asset its recipes use (0042). Same
   // Alarm misses 6 of 11; a new film is refused before preflight.
   { name: "assets", tsx: "scripts/assets.ts", args: ["coverage", score] },
@@ -175,8 +185,28 @@ const steps = [
   // prints them from their reports instead of re-measuring them — but only when
   // a report is verifiably about this picture or this score (decision 0033).
   // Re-running them cost ~5 minutes to re-derive verdicts already in hand.
-  { name: "review", tsx: "scripts/film-review.ts", args: [score, "--gate", "--reuse"] },
+  // `--reuse`: the chain has just run every one of these audits, so the review
+  // re-runs none of them (0033). `--ship` adds the last row: two fresh critics,
+  // tied to this picture (K6). A 10/10 gate is necessary and not sufficient.
+  { name: "review", tsx: "scripts/film-review.ts", args: [score, "--gate", "--reuse", ...(ship ? ["--ship"] : [])] },
 ];
+
+/** What actually ran, in order, with its duration: `build/<id>/chain.json`. */
+const ran = [];
+
+// `--plan` prints the order and stops, for the same reason `film:review --plan`
+// exists: a person and the next agent both need to see what would run before a
+// browser opens, and a plan must write nothing.
+if (planOnly) {
+  console.log(
+    `chain --plan: ${id} — ${steps.length} steps, ${workers} worker(s), render ${skipRender ? "reused" : "once"}` +
+      `${ship ? ", ends at the critics" : ""}`,
+  );
+  for (const [index, step] of steps.entries()) {
+    console.log(`  ${String(index + 1).padStart(2)}  ${step.name}${step.skip ? "  (skipped for this film)" : ""}`);
+  }
+  process.exit(0);
+}
 
 function run(step) {
   const began = Date.now();
@@ -190,13 +220,40 @@ function run(step) {
   const seconds = ((Date.now() - began) / 1000).toFixed(1);
   if (child.error) {
     console.log(`chain: ${step.name} could not start — ${child.error.message}`);
-    process.exit(1);
+    finish("error", 1);
   }
   if (child.status !== 0) {
     console.log(`chain: STOPPED at ${step.name} (exit ${child.status}) after ${seconds}s`);
-    process.exit(child.status ?? 1);
+    ran.push({ name: step.name, seconds: Number(seconds), exit: child.status ?? 1 });
+    finish("stopped", child.status ?? 1);
   }
+  ran.push({ name: step.name, seconds: Number(seconds), exit: 0 });
   console.log(`chain: ${step.name} ok in ${seconds}s`);
+}
+
+/**
+ * The chain's own record: what ran, for how long, and the picture it produced.
+ * `film:review` and the critics need a hash to tie to; this file is where the
+ * chain says which one, so "the chain passed" cannot mean "some chain passed".
+ */
+function finish(status, code) {
+  const manifest = readJson(`build/${id}/render-manifest.json`);
+  const report = {
+    id,
+    score: scoreHash,
+    workers,
+    status,
+    ship,
+    videoHash: manifest?.videoHash ?? null,
+    steps: ran,
+  };
+  try {
+    mkdirSync(resolve(root, build), { recursive: true });
+    writeFileSync(resolve(root, build, "chain.json"), `${JSON.stringify(report, null, 2)}\n`);
+  } catch (error) {
+    console.log(`chain: could not write ${build}/chain.json — ${error.message}`);
+  }
+  process.exit(code);
 }
 
 mkdirSync(resolve(root, build), { recursive: true });
@@ -260,3 +317,5 @@ for (const step of steps) {
 }
 
 console.log(`\nchain: PASS · ${count} step(s) · delivered ${delivered}`);
+console.log(`chain: ${build}/chain.json names the score and the picture this pass is about.`);
+finish("pass", 0);

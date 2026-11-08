@@ -1,0 +1,17 @@
+{
+  "id": "kpop-proof",
+  "beats": [
+    {
+      "id": "b01",
+      "title": "the cue lamp",
+      "purpose": "hook",
+      "share": 100,
+      "energy": 4,
+      "sound": {
+        "world": "a paper stage, one cue lamp, a crowd holding its breath",
+        "signature": "one lamp and one name",
+        "quiet": false
+      }
+    }
+  ]
+}

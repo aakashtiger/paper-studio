@@ -1,0 +1,121 @@
+{
+  "id": "kpop-crime",
+  "title": "The Run",
+  "duration": 60,
+  "audience": "A 60-second paper-cut crime short for festival and phone audiences; one male narrator, no dialogue, no women on screen.",
+  "tone": "terse, cold, procedural; a case file read aloud in the rain, never a melodrama",
+  "logline": "A man kills in the rain and runs for ten days; a detective's file, a checkpoint lamp and a gray hat close the circle, and the calendar never reaches eleven.",
+  "spine": {
+    "want": "to get away with the murder and stay ahead of the file",
+    "obstacle": "the detective's file, the checkpoint lamp and a city that keeps his face",
+    "turn": "he leaves his gray hat on the checkpoint barrier, and the detective follows the hat to the bridge",
+    "button": "the calendar never reaches eleven: day ten ends in the yard, and the noose is only a shadow"
+  },
+  "pace": {
+    "wpm": [
+      180,
+      190
+    ],
+    "medianShot": [
+      2.4,
+      3
+    ]
+  },
+  "narration": [
+    {
+      "id": "v01",
+      "beat": "b01",
+      "text": "Day one. Rain on the bricks. A knife, a coat, a body under a sheet.",
+      "tone": "flat"
+    },
+    {
+      "id": "v02",
+      "beat": "b01",
+      "text": "By dawn the file was open, and his name was in it.",
+      "tone": "cold"
+    },
+    {
+      "id": "v03",
+      "beat": "b02",
+      "text": "Days two and three. He ran through rain; the city kept his face.",
+      "tone": "quick"
+    },
+    {
+      "id": "v04",
+      "beat": "b02",
+      "text": "Day four. A train, a tunnel, a ticket on a seat in the dark.",
+      "tone": "flat"
+    },
+    {
+      "id": "v05",
+      "beat": "b03",
+      "text": "Days five and six. A rented room, a calendar, a door he did not answer.",
+      "tone": "low"
+    },
+    {
+      "id": "v06",
+      "beat": "b03",
+      "text": "Day seven. The page turned. He counted the hours, not the money.",
+      "tone": "flat"
+    },
+    {
+      "id": "v07",
+      "beat": "b04",
+      "text": "Day eight. A checkpoint at the city's edge, and a lamp found his face.",
+      "tone": "tight"
+    },
+    {
+      "id": "v08",
+      "beat": "b04",
+      "text": "He turned his collar up and walked through the light without stopping.",
+      "tone": "flat"
+    },
+    {
+      "id": "v09",
+      "beat": "b05",
+      "text": "Day nine. The bridge was wet, and the detective waited at the far end.",
+      "tone": "cold"
+    },
+    {
+      "id": "v10",
+      "beat": "b05",
+      "text": "The cuffs closed. The city went on behind him, indifferent.",
+      "tone": "flat"
+    },
+    {
+      "id": "v11",
+      "beat": "b06",
+      "text": "Day ten. A cell, a file, a judge, and a sentence read without hurry.",
+      "tone": "measured"
+    },
+    {
+      "id": "v12",
+      "beat": "b06",
+      "text": "The gavel fell. The warder took his arm, and the court was empty.",
+      "tone": "flat"
+    },
+    {
+      "id": "v13",
+      "beat": "b07",
+      "text": "They brought him back to the same cell, and the calendar still said ten.",
+      "tone": "quiet"
+    },
+    {
+      "id": "v14",
+      "beat": "b07",
+      "text": "At dawn they walked him to the yard, where the noose was a shadow.",
+      "tone": "quiet"
+    }
+  ],
+  "mustSay": [
+    "Day one",
+    "Day ten",
+    "calendar",
+    "noose"
+  ],
+  "voice": {
+    "provider": "kokoro",
+    "voiceId": "bm_george",
+    "speed": 1.11
+  }
+}

@@ -285,6 +285,13 @@ export const FilmScoreSchema = TreatmentSchema.omit({ proof: true })
     /** The visual contract this film was authored against. Older films omit it. */
     visualContract: z.number().int().min(2).max(3).optional(),
     /**
+     * Which shot policy this film was cut to (decision 0065). `"system"` means
+     * `docs/references/kpop-shot-policy.md`: the review runs the duration band
+     * and the guards, so the film cannot pass on a cut it did not make.
+     * Omitted means a pre-policy film, judged by the band in `edit` alone.
+     */
+    policy: z.literal("system").optional(),
+    /**
      * A sealed pre-identity film. It may be reproduced, never re-rendered as a
      * new film; the marker is the difference between history and a bypass.
      */

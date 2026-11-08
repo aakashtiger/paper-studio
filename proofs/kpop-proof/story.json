@@ -1,0 +1,32 @@
+{
+  "id": "kpop-proof",
+  "title": "The Cue Lamp",
+  "duration": 10.2,
+  "audience": "A 10-second KPOP grammar proof: one continuous cue-lamp line, one clean human cast, one stage that changes.",
+  "tone": "warm, urgent, pop; a stage calling a name",
+  "logline": "Every night the cue lamp calls one name; tonight it called Nova, but the wings were empty.",
+  "spine": {
+    "want": "to answer the cue lamp",
+    "obstacle": "the name it calls is not there",
+    "turn": "the empty wings become the story",
+    "button": "the crowd waits for a star who never came"
+  },
+  "pace": {
+    "wpm": [180, 190],
+    "medianShot": [2.5, 3]
+  },
+  "narration": [
+    {
+      "id": "v01",
+      "beat": "b01",
+      "text": "Every night the cue lamp calls one name, tonight it called Nova, but the wings were empty and the crowd waited for a star who never came.",
+      "tone": "continuous, warm, no holes"
+    }
+  ],
+  "mustSay": [],
+  "voice": {
+    "provider": "kokoro",
+    "voiceId": "af_heart",
+    "speed": 1.1
+  }
+}

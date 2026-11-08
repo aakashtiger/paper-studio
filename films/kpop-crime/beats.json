@@ -1,0 +1,89 @@
+{
+  "id": "kpop-crime",
+  "beats": [
+    {
+      "id": "b01",
+      "title": "the murder in the rain",
+      "purpose": "hook",
+      "share": 14.5,
+      "energy": 3,
+      "sound": {
+        "world": "rain on brick, a knife in the gutter, one lamp",
+        "signature": "rain and one lamp",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b02",
+      "title": "the flight",
+      "purpose": "setup",
+      "share": 14.3,
+      "energy": 3,
+      "sound": {
+        "world": "a wet station, a train, a city that keeps his face",
+        "signature": "a ticket left on the seat",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b03",
+      "title": "the hideout",
+      "purpose": "escalate",
+      "share": 14.6333,
+      "energy": 2,
+      "sound": {
+        "world": "a rented room, a bulb, a door he does not answer",
+        "signature": "a knock and no answer",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b04",
+      "title": "the checkpoint",
+      "purpose": "escalate",
+      "share": 14.2333,
+      "energy": 4,
+      "sound": {
+        "world": "a queue under a swinging lamp at the city's edge",
+        "signature": "the lamp finding his face",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b05",
+      "title": "the arrest",
+      "purpose": "turn",
+      "share": 14.1,
+      "energy": 4,
+      "sound": {
+        "world": "rain on the bridge, a gray hat, the city behind him",
+        "signature": "the cuffs closing",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b06",
+      "title": "the cell and the court",
+      "purpose": "release",
+      "share": 14.1,
+      "energy": 3,
+      "sound": {
+        "world": "a cell door, a gavel, an empty court",
+        "signature": "the gavel",
+        "quiet": false
+      }
+    },
+    {
+      "id": "b07",
+      "title": "the return and the yard",
+      "purpose": "button",
+      "share": 14.1333,
+      "energy": 5,
+      "sound": {
+        "world": "a dry yard at dawn, a wall, a bell",
+        "signature": "the bell swings once",
+        "quiet": true
+      }
+    }
+  ]
+}

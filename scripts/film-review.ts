@@ -61,7 +61,10 @@ const id = score.id;
 const startedAt = Date.now();
 const video = resolve(root, "films", id, `${id}.mp4`);
 const hasVideo = existsSync(video);
-const wantGate = args.includes("--gate");
+// `--ship` is the full question: the gate **and** two fresh critics. It implies
+// `--gate`, because a ship without the gate is a ship without a picture.
+const wantShip = args.includes("--ship");
+const wantGate = args.includes("--gate") || wantShip;
 // `--reuse` trusts a gate report that is *verifiably about this film* instead of
 // re-measuring it (decision 0033). The chain has just run every one of these
 // audits; re-running them costs ~5 minutes to re-derive the same verdicts. A
@@ -80,6 +83,20 @@ const steps: Step[] = [
   // WAV, so a master mixed before it is a master of a different cue set.
   { name: "mix", script: "scripts/mix.ts", detail: "master, measured" },
 ];
+
+// A film that declares the system shot policy (`docs/references/kpop-shot-policy.md`)
+// cannot pass on a cut it did not make. Pre-policy films omit the field and keep
+// the band they were made for; the review prints which one it read.
+if (score.policy === "system") {
+  steps.push({
+    name: "shot-policy",
+    script: "scripts/shot-policy.ts",
+    detail: "the cut is inside the system's band",
+    args: [`--out=build/${id}/shot-policy.json`],
+    tie: "score",
+    report: `build/${id}/shot-policy.json`,
+  });
+}
 if (hasVideo) {
   steps.push({ name: "strips", script: "scripts/strips.ts", detail: "per-shot strips" });
 }
@@ -101,6 +118,33 @@ if (wantGate) {
   steps.push({ name: "deliver", script: "scripts/deliver.ts", detail: "master into the picture, measured" });
   steps.push({ name: "style:identity", script: "scripts/style-identity.ts", detail: "the picture is still this channel", args: ["--video"], tie: "picture+score", report: `build/${id}/style-identity/style-identity.json` });
   steps.push({ name: "gate:7", script: "scripts/gate-7.ts", detail: "the final gate" });
+  // The last row is a person, twice (K6): a 10/10 gate is necessary and not
+  // sufficient. This step reads `films/<id>/critics/*.json` and refuses a GO
+  // that is stale, thin, below the bar, or signed by one hand twice.
+  if (wantShip) {
+    steps.push({
+      name: "critics",
+      script: "scripts/critics-check.ts",
+      detail: "two fresh GOes, tied to this picture",
+    });
+  }
+}
+
+// `--plan` prints the order and stops. The factory (K4) and a person both need
+// to see what would run, and what each step would be tied to, before a browser
+// opens. It writes nothing, so it is safe to run on a sealed film.
+if (args.includes("--plan")) {
+  console.log(
+    `film:review --plan: ${id}  ${score.duration}s  ${plan.shots.length} shots  ` +
+      (score.policy === "system" ? "system shot policy" : "pre-policy cut (no policy row)"),
+  );
+  for (const [index, step] of steps.entries()) {
+    console.log(
+      `  ${String(index + 1).padStart(2)}  ${step.name.padEnd(15)} ${step.script.padEnd(30)} ${step.detail}` +
+        (step.tie ? `  [tie: ${step.tie}${step.report ? ` ${step.report}` : ""}]` : ""),
+    );
+  }
+  process.exit(0);
 }
 
 /**
@@ -134,6 +178,8 @@ function artifact(name: string): string | null {
       return `build/${id}/style-identity/style-identity.json`;
     case "gate:7":
       return `build/${id}/gate-7.json`;
+    case "shot-policy":
+      return `build/${id}/shot-policy.json`;
     default:
       return name.endsWith("-audit") || name === "paint-match" ? `build/${id}/${name}.json` : null;
   }
@@ -367,6 +413,19 @@ function describe(name: string): string | null {
       }
       if (!report.ok) return `FAIL · ${report.errors.length} refusal(s) — see preflight.json`;
       return "score, cast and identity pass before the paint";
+    }
+    case "shot-policy": {
+      const report = readJson<{
+        band: { min: number; median: number; max: number; shots: number };
+        shots: unknown[];
+        median: number;
+        findings: Array<{ message: string }>;
+      }>(`build/${id}/shot-policy.json`);
+      if (!report) return null;
+      if (report.findings.length > 0) {
+        return `FAIL - ${report.findings[0]?.message ?? "the cut is outside the band"}`;
+      }
+      return `${report.shots.length} shots, median ${report.median}s inside ${report.band.min}/${report.band.median}/${report.band.max}s`;
     }
     case "audit": {
       const report = readJson<{

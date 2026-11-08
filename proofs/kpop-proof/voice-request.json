@@ -1,0 +1,16 @@
+{
+  "film": "kpop-proof",
+  "source": "tts",
+  "provider": "kokoro",
+  "voice": "af_heart",
+  "speed": 0.95,
+  "lang": "en-us",
+  "lines": [
+    {
+      "id": "v01",
+      "text": "Every night the cue lamp calls one name, tonight it called Nova, but the wings were empty and the crowd waited for a star who never came, and the stage waited.",
+      "start": 0.3,
+      "hold": 0
+    }
+  ]
+}

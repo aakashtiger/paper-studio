@@ -10,7 +10,9 @@
     "film": "tsx scripts/film.ts",
     "film:new": "tsx scripts/film-new.ts",
     "film:review": "tsx scripts/film-review.ts",
+    "critics:check": "tsx scripts/critics-check.ts",
     "film:chain": "node scripts/film-chain.mjs",
+    "film:factory": "node scripts/film-chain.mjs",
     "board": "tsx scripts/board.ts",
     "storyboard": "tsx scripts/storyboard.ts",
     "stills": "tsx scripts/stills.ts",
@@ -45,6 +47,7 @@
     "voice:story": "tsx scripts/voice-story.ts",
     "camera:check": "tsx scripts/camera-check.ts",
     "camera:plan": "tsx scripts/camera-plan.ts",
+    "shot:policy": "tsx scripts/shot-policy.ts",
     "assets:list": "tsx scripts/assets.ts list",
     "assets:check": "tsx scripts/assets.ts check",
     "assets:coverage": "tsx scripts/assets.ts coverage",
@@ -72,7 +75,8 @@
     "visual:check": "tsx scripts/visual-check.ts",
     "recipes:list": "tsx scripts/recipes.ts",
     "style:identity": "tsx scripts/style-identity.ts",
-    "identity:accept": "tsx scripts/identity-accept.ts"
+    "identity:accept": "tsx scripts/identity-accept.ts",
+    "recipes:check": "tsx scripts/recipes-check.ts"
   },
   "dependencies": {
     "zod": "^3.24.1"

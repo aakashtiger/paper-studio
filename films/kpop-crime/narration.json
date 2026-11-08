@@ -1,0 +1,1075 @@
+{
+  "film": "kpop-crime",
+  "source": "asr",
+  "audio": "films/kpop-crime/voice.wav",
+  "audioHash": "sha256:25de6cb1add9d063546f8673f8847d8e73be1d941524f7845e0adb80fcc00439",
+  "model": "small.en",
+  "duration": 60,
+  "scriptWords": 186,
+  "heardWords": 186,
+  "matched": 185,
+  "coverage": 0.9946,
+  "scriptWpm": 186,
+  "spokenWpm": 222.2,
+  "speech": 50.21,
+  "speechCoverage": 0.837,
+  "silence": 9.786,
+  "longestSilence": 0.445,
+  "longestSilenceAt": 34.37,
+  "first": 0,
+  "lastEnd": 59.54,
+  "hole": 0.58,
+  "holeAt": 12.56,
+  "unheard": [
+    "warder"
+  ],
+  "checks": {
+    "everyLineSpoken": true,
+    "everyWordHeard": true,
+    "firstLine": true,
+    "hole": true,
+    "coverage": true,
+    "withinFilm": true
+  },
+  "pass": true,
+  "read": {
+    "voice": "bm_george",
+    "speed": 1.11,
+    "hold": {
+      "v10": 0.1
+    },
+    "note": "v10 hold shortened from 0.30 s to 0.10 s so the L10->L11 word gap stays under 0.55 s"
+  },
+  "lines": [
+    {
+      "id": "v01",
+      "text": "Day one. Rain on the bricks. A knife, a coat, a body under a sheet.",
+      "start": 0,
+      "duration": 4.54,
+      "beat": "b01"
+    },
+    {
+      "id": "v02",
+      "text": "By dawn the file was open, and his name was in it.",
+      "start": 4.98,
+      "duration": 3.48,
+      "beat": "b01"
+    },
+    {
+      "id": "v03",
+      "text": "Days two and three. He ran through rain; the city kept his face.",
+      "start": 8.8,
+      "duration": 3.76,
+      "beat": "b02"
+    },
+    {
+      "id": "v04",
+      "text": "Day four. A train, a tunnel, a ticket on a seat in the dark.",
+      "start": 13.14,
+      "duration": 3.74,
+      "beat": "b02"
+    },
+    {
+      "id": "v05",
+      "text": "Days five and six. A rented room, a calendar, a door he did not answer.",
+      "start": 17.38,
+      "duration": 4.46,
+      "beat": "b03"
+    },
+    {
+      "id": "v06",
+      "text": "Day seven. The page turned. He counted the hours, not the money.",
+      "start": 22.32,
+      "duration": 3.84,
+      "beat": "b03"
+    },
+    {
+      "id": "v07",
+      "text": "Day eight. A checkpoint at the city's edge, and a lamp found his face.",
+      "start": 26.16,
+      "duration": 4.34,
+      "beat": "b04"
+    },
+    {
+      "id": "v08",
+      "text": "He turned his collar up and walked through the light without stopping.",
+      "start": 31,
+      "duration": 3.3,
+      "beat": "b04"
+    },
+    {
+      "id": "v09",
+      "text": "Day nine. The bridge was wet, and the detective waited at the far end.",
+      "start": 34.7,
+      "duration": 4.22,
+      "beat": "b05"
+    },
+    {
+      "id": "v10",
+      "text": "The cuffs closed. The city went on behind him, indifferent.",
+      "start": 39.3,
+      "duration": 3.4,
+      "beat": "b05"
+    },
+    {
+      "id": "v11",
+      "text": "Day ten. A cell, a file, a judge, and a sentence read without hurry.",
+      "start": 43.16,
+      "duration": 4.4,
+      "beat": "b06"
+    },
+    {
+      "id": "v12",
+      "text": "The gavel fell. The warder took his arm, and the court was empty.",
+      "start": 47.9,
+      "duration": 3.66,
+      "beat": "b06"
+    },
+    {
+      "id": "v13",
+      "text": "They brought him back to the same cell, and the calendar still said ten.",
+      "start": 51.56,
+      "duration": 4,
+      "beat": "b07"
+    },
+    {
+      "id": "v14",
+      "text": "At dawn they walked him to the yard, where the noose was a shadow.",
+      "start": 56.12,
+      "duration": 3.42,
+      "beat": "b07"
+    }
+  ],
+  "words": [
+    {
+      "w": "Day",
+      "start": 0,
+      "end": 0.48
+    },
+    {
+      "w": "one.",
+      "start": 0.48,
+      "end": 0.74
+    },
+    {
+      "w": "Rain",
+      "start": 1.02,
+      "end": 1.1
+    },
+    {
+      "w": "on",
+      "start": 1.1,
+      "end": 1.28
+    },
+    {
+      "w": "the",
+      "start": 1.28,
+      "end": 1.42
+    },
+    {
+      "w": "bricks.",
+      "start": 1.42,
+      "end": 1.72
+    },
+    {
+      "w": "A",
+      "start": 2.08,
+      "end": 2.28
+    },
+    {
+      "w": "knife,",
+      "start": 2.28,
+      "end": 2.54
+    },
+    {
+      "w": "a",
+      "start": 2.78,
+      "end": 2.9
+    },
+    {
+      "w": "coat,",
+      "start": 2.9,
+      "end": 3.2
+    },
+    {
+      "w": "a",
+      "start": 3.48,
+      "end": 3.58
+    },
+    {
+      "w": "body",
+      "start": 3.58,
+      "end": 3.84
+    },
+    {
+      "w": "under",
+      "start": 3.84,
+      "end": 4.06
+    },
+    {
+      "w": "a",
+      "start": 4.06,
+      "end": 4.24
+    },
+    {
+      "w": "sheet.",
+      "start": 4.24,
+      "end": 4.54
+    },
+    {
+      "w": "By",
+      "start": 4.98,
+      "end": 5.16
+    },
+    {
+      "w": "dawn",
+      "start": 5.16,
+      "end": 5.44
+    },
+    {
+      "w": "the",
+      "start": 5.44,
+      "end": 5.74
+    },
+    {
+      "w": "file",
+      "start": 5.74,
+      "end": 6.06
+    },
+    {
+      "w": "was",
+      "start": 6.06,
+      "end": 6.24
+    },
+    {
+      "w": "open,",
+      "start": 6.24,
+      "end": 6.64
+    },
+    {
+      "w": "and",
+      "start": 6.64,
+      "end": 7.14
+    },
+    {
+      "w": "his",
+      "start": 7.14,
+      "end": 7.28
+    },
+    {
+      "w": "name",
+      "start": 7.28,
+      "end": 7.56
+    },
+    {
+      "w": "was",
+      "start": 7.56,
+      "end": 7.84
+    },
+    {
+      "w": "in",
+      "start": 7.84,
+      "end": 8.04
+    },
+    {
+      "w": "it.",
+      "start": 8.04,
+      "end": 8.46
+    },
+    {
+      "w": "Days",
+      "start": 8.8,
+      "end": 8.88
+    },
+    {
+      "w": "two",
+      "start": 8.88,
+      "end": 9.18
+    },
+    {
+      "w": "and",
+      "start": 9.18,
+      "end": 9.38
+    },
+    {
+      "w": "three.",
+      "start": 9.38,
+      "end": 9.7
+    },
+    {
+      "w": "He",
+      "start": 10.02,
+      "end": 10.2
+    },
+    {
+      "w": "ran",
+      "start": 10.2,
+      "end": 10.4
+    },
+    {
+      "w": "through",
+      "start": 10.4,
+      "end": 10.72
+    },
+    {
+      "w": "rain;",
+      "start": 10.72,
+      "end": 11.1
+    },
+    {
+      "w": "the",
+      "start": 11.4,
+      "end": 11.5
+    },
+    {
+      "w": "city",
+      "start": 11.5,
+      "end": 11.74
+    },
+    {
+      "w": "kept",
+      "start": 11.74,
+      "end": 12.04
+    },
+    {
+      "w": "his",
+      "start": 12.04,
+      "end": 12.26
+    },
+    {
+      "w": "face.",
+      "start": 12.26,
+      "end": 12.56
+    },
+    {
+      "w": "Day",
+      "start": 13.14,
+      "end": 13.28
+    },
+    {
+      "w": "four.",
+      "start": 13.28,
+      "end": 13.6
+    },
+    {
+      "w": "A",
+      "start": 13.82,
+      "end": 13.9
+    },
+    {
+      "w": "train,",
+      "start": 13.9,
+      "end": 14.3
+    },
+    {
+      "w": "a",
+      "start": 14.66,
+      "end": 14.72
+    },
+    {
+      "w": "tunnel,",
+      "start": 14.72,
+      "end": 15
+    },
+    {
+      "w": "a",
+      "start": 15.38,
+      "end": 15.48
+    },
+    {
+      "w": "ticket",
+      "start": 15.48,
+      "end": 15.68
+    },
+    {
+      "w": "on",
+      "start": 15.68,
+      "end": 15.88
+    },
+    {
+      "w": "a",
+      "start": 15.88,
+      "end": 16.02
+    },
+    {
+      "w": "seat",
+      "start": 16.02,
+      "end": 16.24
+    },
+    {
+      "w": "in",
+      "start": 16.24,
+      "end": 16.44
+    },
+    {
+      "w": "the",
+      "start": 16.44,
+      "end": 16.56
+    },
+    {
+      "w": "dark.",
+      "start": 16.56,
+      "end": 16.88
+    },
+    {
+      "w": "Days",
+      "start": 17.38,
+      "end": 17.52
+    },
+    {
+      "w": "five",
+      "start": 17.52,
+      "end": 17.84
+    },
+    {
+      "w": "and",
+      "start": 17.84,
+      "end": 18.04
+    },
+    {
+      "w": "six.",
+      "start": 18.04,
+      "end": 18.34
+    },
+    {
+      "w": "A",
+      "start": 18.88,
+      "end": 18.92
+    },
+    {
+      "w": "rented",
+      "start": 18.92,
+      "end": 19.16
+    },
+    {
+      "w": "room,",
+      "start": 19.16,
+      "end": 19.56
+    },
+    {
+      "w": "a",
+      "start": 19.8,
+      "end": 19.9
+    },
+    {
+      "w": "calendar,",
+      "start": 19.9,
+      "end": 20.18
+    },
+    {
+      "w": "a",
+      "start": 20.6,
+      "end": 20.7
+    },
+    {
+      "w": "door",
+      "start": 20.7,
+      "end": 20.88
+    },
+    {
+      "w": "he",
+      "start": 20.88,
+      "end": 21.06
+    },
+    {
+      "w": "did",
+      "start": 21.06,
+      "end": 21.22
+    },
+    {
+      "w": "not",
+      "start": 21.22,
+      "end": 21.4
+    },
+    {
+      "w": "answer.",
+      "start": 21.4,
+      "end": 21.84
+    },
+    {
+      "w": "Day",
+      "start": 22.32,
+      "end": 22.48
+    },
+    {
+      "w": "seven.",
+      "start": 22.48,
+      "end": 22.88
+    },
+    {
+      "w": "The",
+      "start": 23.18,
+      "end": 23.32
+    },
+    {
+      "w": "page",
+      "start": 23.32,
+      "end": 23.62
+    },
+    {
+      "w": "turned.",
+      "start": 23.62,
+      "end": 24.04
+    },
+    {
+      "w": "He",
+      "start": 24.46,
+      "end": 24.62
+    },
+    {
+      "w": "counted",
+      "start": 24.62,
+      "end": 24.9
+    },
+    {
+      "w": "the",
+      "start": 24.9,
+      "end": 25.12
+    },
+    {
+      "w": "hours,",
+      "start": 25.12,
+      "end": 25.5
+    },
+    {
+      "w": "not",
+      "start": 25.5,
+      "end": 25.74
+    },
+    {
+      "w": "the",
+      "start": 25.74,
+      "end": 25.92
+    },
+    {
+      "w": "money.",
+      "start": 25.92,
+      "end": 26.16
+    },
+    {
+      "w": "Day",
+      "start": 26.16,
+      "end": 26.8
+    },
+    {
+      "w": "eight.",
+      "start": 26.8,
+      "end": 27.08
+    },
+    {
+      "w": "A",
+      "start": 27.36,
+      "end": 27.38
+    },
+    {
+      "w": "checkpoint",
+      "start": 27.38,
+      "end": 27.82
+    },
+    {
+      "w": "at",
+      "start": 27.82,
+      "end": 28.06
+    },
+    {
+      "w": "the",
+      "start": 28.06,
+      "end": 28.18
+    },
+    {
+      "w": "city's",
+      "start": 28.18,
+      "end": 28.52
+    },
+    {
+      "w": "edge,",
+      "start": 28.52,
+      "end": 28.82
+    },
+    {
+      "w": "and",
+      "start": 28.82,
+      "end": 29.26
+    },
+    {
+      "w": "a",
+      "start": 29.26,
+      "end": 29.38
+    },
+    {
+      "w": "lamp",
+      "start": 29.38,
+      "end": 29.6
+    },
+    {
+      "w": "found",
+      "start": 29.6,
+      "end": 29.9
+    },
+    {
+      "w": "his",
+      "start": 29.9,
+      "end": 30.14
+    },
+    {
+      "w": "face.",
+      "start": 30.14,
+      "end": 30.5
+    },
+    {
+      "w": "He",
+      "start": 31,
+      "end": 31.12
+    },
+    {
+      "w": "turned",
+      "start": 31.12,
+      "end": 31.36
+    },
+    {
+      "w": "his",
+      "start": 31.36,
+      "end": 31.56
+    },
+    {
+      "w": "collar",
+      "start": 31.56,
+      "end": 31.78
+    },
+    {
+      "w": "up",
+      "start": 31.78,
+      "end": 32.1
+    },
+    {
+      "w": "and",
+      "start": 32.1,
+      "end": 32.52
+    },
+    {
+      "w": "walked",
+      "start": 32.52,
+      "end": 32.7
+    },
+    {
+      "w": "through",
+      "start": 32.7,
+      "end": 32.98
+    },
+    {
+      "w": "the",
+      "start": 32.98,
+      "end": 33.16
+    },
+    {
+      "w": "light",
+      "start": 33.16,
+      "end": 33.4
+    },
+    {
+      "w": "without",
+      "start": 33.4,
+      "end": 33.74
+    },
+    {
+      "w": "stopping.",
+      "start": 33.74,
+      "end": 34.3
+    },
+    {
+      "w": "Day",
+      "start": 34.7,
+      "end": 34.98
+    },
+    {
+      "w": "nine.",
+      "start": 34.98,
+      "end": 35.3
+    },
+    {
+      "w": "The",
+      "start": 35.68,
+      "end": 35.8
+    },
+    {
+      "w": "bridge",
+      "start": 35.8,
+      "end": 36.04
+    },
+    {
+      "w": "was",
+      "start": 36.04,
+      "end": 36.32
+    },
+    {
+      "w": "wet,",
+      "start": 36.32,
+      "end": 36.64
+    },
+    {
+      "w": "and",
+      "start": 36.64,
+      "end": 37.02
+    },
+    {
+      "w": "the",
+      "start": 37.02,
+      "end": 37.14
+    },
+    {
+      "w": "detective",
+      "start": 37.14,
+      "end": 37.52
+    },
+    {
+      "w": "waited",
+      "start": 37.52,
+      "end": 37.94
+    },
+    {
+      "w": "at",
+      "start": 37.94,
+      "end": 38.16
+    },
+    {
+      "w": "the",
+      "start": 38.16,
+      "end": 38.3
+    },
+    {
+      "w": "far",
+      "start": 38.3,
+      "end": 38.54
+    },
+    {
+      "w": "end.",
+      "start": 38.54,
+      "end": 38.92
+    },
+    {
+      "w": "The",
+      "start": 39.3,
+      "end": 39.48
+    },
+    {
+      "w": "cuffs",
+      "start": 39.48,
+      "end": 39.68
+    },
+    {
+      "w": "closed.",
+      "start": 39.68,
+      "end": 40.26
+    },
+    {
+      "w": "The",
+      "start": 40.68,
+      "end": 40.78
+    },
+    {
+      "w": "city",
+      "start": 40.78,
+      "end": 41
+    },
+    {
+      "w": "went",
+      "start": 41,
+      "end": 41.22
+    },
+    {
+      "w": "on",
+      "start": 41.22,
+      "end": 41.44
+    },
+    {
+      "w": "behind",
+      "start": 41.44,
+      "end": 41.82
+    },
+    {
+      "w": "him,",
+      "start": 41.82,
+      "end": 42.2
+    },
+    {
+      "w": "indifferent.",
+      "start": 42.2,
+      "end": 42.7
+    },
+    {
+      "w": "Day",
+      "start": 43.16,
+      "end": 43.34
+    },
+    {
+      "w": "ten.",
+      "start": 43.34,
+      "end": 43.64
+    },
+    {
+      "w": "A",
+      "start": 43.94,
+      "end": 44.04
+    },
+    {
+      "w": "cell,",
+      "start": 44.04,
+      "end": 44.32
+    },
+    {
+      "w": "a",
+      "start": 44.64,
+      "end": 44.7
+    },
+    {
+      "w": "file,",
+      "start": 44.7,
+      "end": 44.98
+    },
+    {
+      "w": "a",
+      "start": 45.28,
+      "end": 45.34
+    },
+    {
+      "w": "judge,",
+      "start": 45.34,
+      "end": 45.62
+    },
+    {
+      "w": "and",
+      "start": 45.86,
+      "end": 46.12
+    },
+    {
+      "w": "a",
+      "start": 46.12,
+      "end": 46.24
+    },
+    {
+      "w": "sentence",
+      "start": 46.24,
+      "end": 46.56
+    },
+    {
+      "w": "read",
+      "start": 46.56,
+      "end": 46.86
+    },
+    {
+      "w": "without",
+      "start": 46.86,
+      "end": 47.22
+    },
+    {
+      "w": "hurry.",
+      "start": 47.22,
+      "end": 47.56
+    },
+    {
+      "w": "The",
+      "start": 47.9,
+      "end": 48.16
+    },
+    {
+      "w": "gavel",
+      "start": 48.16,
+      "end": 48.42
+    },
+    {
+      "w": "fell.",
+      "start": 48.42,
+      "end": 48.76
+    },
+    {
+      "w": "The",
+      "start": 49.18,
+      "end": 49.28
+    },
+    {
+      "w": "warder",
+      "start": 49.28,
+      "end": 49.5
+    },
+    {
+      "w": "took",
+      "start": 49.5,
+      "end": 49.72
+    },
+    {
+      "w": "his",
+      "start": 49.72,
+      "end": 49.9
+    },
+    {
+      "w": "arm,",
+      "start": 49.9,
+      "end": 50.2
+    },
+    {
+      "w": "and",
+      "start": 50.34,
+      "end": 50.56
+    },
+    {
+      "w": "the",
+      "start": 50.56,
+      "end": 50.66
+    },
+    {
+      "w": "court",
+      "start": 50.66,
+      "end": 50.9
+    },
+    {
+      "w": "was",
+      "start": 50.9,
+      "end": 51.14
+    },
+    {
+      "w": "empty.",
+      "start": 51.14,
+      "end": 51.56
+    },
+    {
+      "w": "They",
+      "start": 51.56,
+      "end": 52.18
+    },
+    {
+      "w": "brought",
+      "start": 52.18,
+      "end": 52.4
+    },
+    {
+      "w": "him",
+      "start": 52.4,
+      "end": 52.58
+    },
+    {
+      "w": "back",
+      "start": 52.58,
+      "end": 52.8
+    },
+    {
+      "w": "to",
+      "start": 52.8,
+      "end": 52.98
+    },
+    {
+      "w": "the",
+      "start": 52.98,
+      "end": 53.1
+    },
+    {
+      "w": "same",
+      "start": 53.1,
+      "end": 53.36
+    },
+    {
+      "w": "cell,",
+      "start": 53.36,
+      "end": 53.7
+    },
+    {
+      "w": "and",
+      "start": 54.1,
+      "end": 54.2
+    },
+    {
+      "w": "the",
+      "start": 54.2,
+      "end": 54.32
+    },
+    {
+      "w": "calendar",
+      "start": 54.32,
+      "end": 54.56
+    },
+    {
+      "w": "still",
+      "start": 54.56,
+      "end": 54.98
+    },
+    {
+      "w": "said",
+      "start": 54.98,
+      "end": 55.28
+    },
+    {
+      "w": "ten.",
+      "start": 55.28,
+      "end": 55.56
+    },
+    {
+      "w": "At",
+      "start": 56.12,
+      "end": 56.26
+    },
+    {
+      "w": "dawn",
+      "start": 56.26,
+      "end": 56.54
+    },
+    {
+      "w": "they",
+      "start": 56.54,
+      "end": 56.84
+    },
+    {
+      "w": "walked",
+      "start": 56.84,
+      "end": 57.06
+    },
+    {
+      "w": "him",
+      "start": 57.06,
+      "end": 57.28
+    },
+    {
+      "w": "to",
+      "start": 57.28,
+      "end": 57.42
+    },
+    {
+      "w": "the",
+      "start": 57.42,
+      "end": 57.54
+    },
+    {
+      "w": "yard,",
+      "start": 57.54,
+      "end": 57.92
+    },
+    {
+      "w": "where",
+      "start": 58.24,
+      "end": 58.4
+    },
+    {
+      "w": "the",
+      "start": 58.4,
+      "end": 58.54
+    },
+    {
+      "w": "noose",
+      "start": 58.54,
+      "end": 58.9
+    },
+    {
+      "w": "was",
+      "start": 58.9,
+      "end": 59.12
+    },
+    {
+      "w": "a",
+      "start": 59.12,
+      "end": 59.28
+    },
+    {
+      "w": "shadow.",
+      "start": 59.28,
+      "end": 59.54
+    }
+  ]
+}

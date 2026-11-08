@@ -16,7 +16,10 @@
 ## Non-negotiables
 
 1. **Continuous motion in every frame**, not camera-only. A still camera must carry at least two of: body breathing, ornament pulse, type boil, fibre/grain, ambient particles, a secondary prop.
-2. **Variable cuts:** minimum 1.0 s, median 2.5–3.0 s, maximum 4.5 s. No constant 2/3/4 s grid. Cut on the word or the action, not the metronome.
+2. **Variable cuts:** the band belongs to the system — see
+   `references/kpop-shot-policy.md` (under 3 min: 1.2 / 3.0 / 5.5 s; 3 min and
+   over: 3.0 / 5.0 / 7.0 s; the shot count is derived from the duration). No
+   constant 2/3/4 s grid. Cut on the word or the action, not the metronome.
 3. **Camera is subordinate:** push/pan/orbit ≤12%; one move per shot; no 30% zooms; no linear camera doing the acting.
 4. **A body must perform.** A staged shot has a pose change by 0.25 s, another by 0.3 s later, and the painter must read the score's pose times, not a hardcoded local blend.
 5. **Paper physics:** one authored event per shot — fold, tear, curl, flutter, stamp, stack, slam. No particle dissolve, no glow as the event.
