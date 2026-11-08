@@ -28,6 +28,7 @@ goes in the repo.
 | `gold-sheet-5s.png` | the gold, one frame every 5 s, for a human |
 | `test-sheet-9.png` | the 25 s look proof on the same sheet, for comparison |
 | `stills/s01…s54.jpg` | **one still per authored shot**, at its midpoint, 960 px — regenerate with `npm run gold:stills` |
+| `proof-kpop-25s-proxy.mp4` | the 25 s look proof, **720p proxy** (3.6 MB): how the pack looks *in motion* against the gold |
 
 ## How a clone sees the gold without the film
 
@@ -50,6 +51,13 @@ cut's rhythm. Those are carried by the map's `camera` and `trans` lines and by t
 measured edit (median 2.90 s, 53 transitions), not by pixels. If a film needs a
 motion reference, use a release-asset proxy of the gold rather than putting the
 master in git.
+
+`proof-kpop-25s-proxy.mp4` is the one moving reference in the repo: the pack's
+own 25 s look proof, re-encoded to 720p from
+`proofs/kpop-test/out/kpop-test.mp4` (24.90 s, 51 MB), so that a reader can see
+**our** look move before M1 re-renders it. **It is a proxy, not the delivered
+cut** — no hash of it is evidence. When M1-E ports the proof into the pack, the
+new film's own MP4 replaces it and this file is deleted.
 
 ## Why the MP4 is not here
 

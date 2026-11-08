@@ -23,6 +23,8 @@ build/
 !styles/**/references/**/*.mp4
 !proofs/**/*.mp4
 !films/**/voice.wav
+# the gold reference pack: a 720p proxy, never the 276 MB master (gate/gold/README.md)
+!gate/gold/**/*.mp4
 
 # tool artifacts
 proofs/**/.hyperframes/
